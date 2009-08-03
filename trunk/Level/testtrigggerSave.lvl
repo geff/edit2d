@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="200,00;200,00" Name="BigRec1" TextureName="BigRec" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="100;100" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00">
+    <Script ScriptName="Script1">
+      <Event ActionName="Event0" PropertyName="Position" IsRelative="True" Value="{X:0 Y:0}" />
+    </Script>
+    <TriggerCollision TriggerName="Trigger1" TargetEntiteName="Alert-Trap1" ScriptEntiteName="BigRec1" ScriptName="Script1" />
+    <TriggerValueChanged TriggerName="Trigger2" PropertyName="Position" Sens="{;0;1}" Value="{X:0 Y:50}" ScriptEntiteName="BigRec1" ScriptName="Script1" />
+  </Entite>
+  <Entite Position="535,00;226,00" Name="Alert-Trap1" TextureName="Alert-Trap" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="72;42" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00" />
+</Root>

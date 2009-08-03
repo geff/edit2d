@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="352,00;277,00" Name="Perle3 " TextureName="Perle3" AngularSpeed="0,20" IsColisionable="True" IsStatic="False" Size="533;533" Rotation="4,77">
+    <FixedRevoluteJoint Anchor="352,00;277,00" MaxImpulse="340282300000000000000000000000000000000,00" />
+  </Entite>
+  <Entite Position="202,11;14,01" Name="Rock1 " TextureName="Rock" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="98;98" Rotation="1,94">
+    <LinearSpring Body2="Perle3 " AttachPoint1="-8,00;2,00" AttachPoint2="204,00;-19,00" RestLength="155,72" />
+  </Entite>
+  <Entite Position="89,27;131,69" Name="Rock2 " TextureName="Rock" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="98;98" Rotation="5,30">
+    <LinearSpring Body2="Perle3 " AttachPoint1="-5,00;4,00" AttachPoint2="162,00;-127,00" RestLength="146,48" />
+  </Entite>
+  <Entite Position="675,85;148,43" Name="Rock3 " TextureName="Rock" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="98;98" Rotation="4,20">
+    <LinearSpring Body2="Perle3 " AttachPoint1="-6,00;-7,00" AttachPoint2="146,00;180,00" RestLength="126,48" />
+  </Entite>
+</Root>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="312,13;246,91" Name="Perle3 " TextureName="Perle3" AngularSpeed="0,10" IsColisionable="True" IsStatic="False" Size="533;533" Rotation="1,44" />
+  <Entite Position="430,40;727,45" Name="Perle2 " TextureName="Perle2" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="538;539" Rotation="1,39" />
+</Root>

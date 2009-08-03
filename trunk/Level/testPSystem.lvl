@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="200,00;200,00" Name="BigRec1" TextureName="BigRec" IsColisionable="False" IsStatic="True" Size="100;100" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50">
+    <ParticleSystem ParticleSystemName="ParticleSystem1" EmmittingAngle="-1,08" FieldAngle="2,09" EmmittingFromAllSurface="False" Rate="500" Velocity="1500,00">
+      <Entite Position="0,00;0,00" Name="ParticleTemplate1" TextureName="Icon-Time" IsColisionable="True" IsStatic="False" Size="20;20" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,10" RestitutionCoefficient="0,10" />
+    </ParticleSystem>
+  </Entite>
+</Root>

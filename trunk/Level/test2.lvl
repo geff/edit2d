@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="383,23;349,39" Name="Background1" TextureName="Background" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="801;601" Rotation="6,28" />
+  <Entite Position="65,00;541,00" Name="Block-Place-Gel1" TextureName="Block-Place-Gel" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="72;62" Rotation="6,28" />
+  <Entite Position="152,00;542,00" Name="Block-Place-Gel2" TextureName="Block-Place-Gel" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="72;62" Rotation="6,28" />
+  <Entite Position="242,00;543,00" Name="Block-Place-Gel3" TextureName="Block-Place-Gel" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="72;62" Rotation="6,28" />
+  <Entite Position="340,00;545,00" Name="Block-Place-Gel4" TextureName="Block-Place-Gel" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="72;62" Rotation="6,28" />
+  <Entite Position="435,00;546,00" Name="Block-Place-Gel5" TextureName="Block-Place-Gel" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="72;62" Rotation="6,28" />
+  <Entite Position="49,74;118,97" Name="Cloud11" TextureName="Cloud1" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="260;180" Rotation="6,28">
+    <FixedLinearSpring BodyAttachPoint="82,00;-22,00" Position="157,00;9,00" RestLength="89,49" WorldAttachPoint="157,00;9,00" />
+    <FixedLinearSpring BodyAttachPoint="-40,00;-24,00" Position="5,00;13,00" RestLength="79,03" WorldAttachPoint="5,00;13,00" />
+  </Entite>
+  <Entite Position="394,47;223,96" Name="Cloud21" TextureName="Cloud2" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="188;130" Rotation="6,22">
+    <FixedLinearSpring BodyAttachPoint="-28,00;-14,00" Position="307,00;126,00" RestLength="101,21" WorldAttachPoint="307,00;126,00" />
+    <FixedLinearSpring BodyAttachPoint="42,00;-27,00" Position="478,00;105,00" RestLength="96,25" WorldAttachPoint="478,00;105,00" />
+  </Entite>
+  <Entite Position="644,80;152,55" Name="Cloud31" TextureName="Cloud3" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="159;110" Rotation="6,27">
+    <FixedLinearSpring BodyAttachPoint="-34,00;-19,00" Position="574,00;77,00" RestLength="64,64" WorldAttachPoint="574,00;77,00" />
+    <FixedLinearSpring BodyAttachPoint="34,00;-15,00" Position="719,00;77,00" RestLength="69,63" WorldAttachPoint="719,00;77,00" />
+  </Entite>
+  <Entite Position="187,00;353,00" Name="Rouage1" TextureName="Rouage" AngularSpeed="0,20" IsColisionable="True" IsStatic="False" Size="189;190" Rotation="3,59">
+    <FixedRevoluteJoint Anchor="187,00;353,00" MaxImpulse="340282300000000000000000000000000000000,00" />
+  </Entite>
+  <Entite Position="362,00;387,00" Name="Rouage2" TextureName="Rouage" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="189;190" Rotation="4,91">
+    <FixedRevoluteJoint Anchor="362,00;387,00" MaxImpulse="340282300000000000000000000000000000000,00" />
+  </Entite>
+  <Entite Position="582,00;493,00" Name="Stone Block Tall1" TextureName="Stone Block Tall" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="101;163" Rotation="6,28" />
+  <Entite Position="477,00;374,00" Name="Flag-Pole1" TextureName="Flag-Pole" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="16;68" Rotation="4,71">
+    <FixedRevoluteJoint Anchor="504,00;373,00" MaxImpulse="340282300000000000000000000000000000000,00" />
+  </Entite>
+</Root>

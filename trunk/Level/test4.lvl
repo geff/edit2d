@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="200,00;200,00" Name="BigRec1" TextureName="BigRec" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="100;100" Rotation="6,28" />
+</Root>

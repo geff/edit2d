@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="125,00;48,00" Name="Ciel" TextureName="BigRec" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="1543;206" Rotation="6,28" Color="{R:100 G:200 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00" />
+  <Entite Position="473,93;85,97" Name="Character Pink Girl1" TextureName="Character Pink Girl" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="76;89" Rotation="0,09" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00">
+    <LinearSpring Body2="Cloud11" AttachPoint1="0,09;-22,07" AttachPoint2="-0,53;5,65" RestLength="188,96" />
+    <Script ScriptName="Script1">
+      <Event ActionName="Event0" PropertyName="BlurFactor" IsRelative="True" ChangeValue="{;False}" Value="0" />
+    </Script>
+    <Script ScriptName="Script2">
+      <Event ActionName="Event0" PropertyName="BlurFactor" IsRelative="True" ChangeValue="{;False}" Value="0,1" />
+    </Script>
+    <TriggerValueChanged TriggerName="Trigger1" PropertyName="Position" Sens="{;0;1}" Value="{X:0 Y:200}" ScriptEntiteName="Character Pink Girl1" ScriptName="Script2" />
+    <TriggerValueChanged TriggerName="Trigger2" PropertyName="Position" Sens="{;0;2}" Value="{X:0 Y:200}" ScriptEntiteName="Character Pink Girl1" ScriptName="Script1" />
+  </Entite>
+  <Entite Position="51,00;510,00" Name="Grass Block2" TextureName="Grass Block" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,02" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00" />
+  <Entite Position="155,00;513,00" Name="Grass Block3" TextureName="Grass Block" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,02" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00" />
+  <Entite Position="258,00;519,00" Name="Grass Block4" TextureName="Grass Block" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,02" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00" />
+  <Entite Position="362,00;530,00" Name="Grass Block5" TextureName="Grass Block" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,02" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00" />
+  <Entite Position="466,00;542,00" Name="Grass Block6" TextureName="Grass Block" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,02" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00" />
+  <Entite Position="570,00;522,00" Name="Grass Block1" TextureName="Grass Block" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,02" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00" />
+  <Entite Position="673,00;486,00" Name="Grass Block7" TextureName="Grass Block" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,02" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00" />
+  <Entite Position="778,00;431,00" Name="Grass Block8" TextureName="Grass Block" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,02" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00" />
+  <Entite Position="364,00;347,00" Name="Mer" TextureName="BigRec" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="1064;401" Rotation="6,28" Color="{R:100 G:200 B:220 A:150}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00" />
+  <Entite Position="288,59;77,35" Name="Cloud11" TextureName="Cloud1" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="148;88" Rotation="0,01" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="1,00" RestitutionCoefficient="1,00">
+    <Script ScriptName="Script1">
+      <Event ActionName="Event0" PropertyName="Position" IsRelative="True" ChangeValue="{;False;True}" Value="{X:0 Y:130}" />
+    </Script>
+    <TriggerValueChanged TriggerName="Trigger1" PropertyName="Position" Sens="{;0;1}" Value="{X:0 Y:130}" ScriptEntiteName="Cloud11" ScriptName="Script1" />
+  </Entite>
+</Root>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="658,00;339,00" Name="backgroundFish1" TextureName="backgroundFish" IsColisionable="False" IsStatic="True" Size="2048;776" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="288,02;100,00" Name="Cloud31" TextureName="Cloud3" IsColisionable="True" IsStatic="True" Size="159;110" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50">
+    <Script ScriptName="Script1">
+      <Curve ActionName="Curve0" PropertyName="Position" IsRelative="False" IsLoop="True">
+        <Points>
+          <Point X="0,00" Y="300,88" />
+          <Point X="254,54" Y="370,51" />
+          <Point X="621,95" Y="266,18" />
+          <Point X="997,25" Y="296,38" />
+        </Points>
+        <Points>
+          <Point X="23,73" Y="100,00" />
+          <Point X="313,58" Y="129,26" />
+          <Point X="563,27" Y="83,33" />
+          <Point X="797,01" Y="100,00" />
+        </Points>
+      </Curve>
+    </Script>
+    <TriggerScript ScriptEntiteName="Cloud31" ScriptName="Script1" />
+  </Entite>
+</Root>

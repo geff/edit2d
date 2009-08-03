@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="144,00;179,39" Name="Alert-Trap1" TextureName="Alert-Trap" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="72;42" Rotation="6,28">
+    <Script ScriptName="Script1" Duration="800">
+      <Curve ActionName="Curve0" CurveType="3">
+        <Points>
+          <Point X="0,00" Y="50,00" />
+          <Point X="800,00" Y="200,00" />
+        </Points>
+        <Points>
+          <Point X="31,38" Y="7,11" />
+          <Point X="535,56" Y="179,20" />
+        </Points>
+        <Points />
+        <Points />
+      </Curve>
+    </Script>
+  </Entite>
+  <Entite Position="500,00;304,39" Name="Alert-Ninja1" TextureName="Alert-Ninja" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="72;42" Rotation="6,28">
+    <Script ScriptName="Script1" Duration="594">
+      <Curve ActionName="Curve0" CurveType="2">
+        <Points>
+          <Point X="0,00" Y="0,00" />
+          <Point X="594,14" Y="3,97" />
+        </Points>
+      </Curve>
+    </Script>
+  </Entite>
+</Root>

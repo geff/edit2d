@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="724,00;130,00" Name="Block-LeftRamp1" TextureName="Block-LeftRamp" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="71;59" Rotation="6,28" />
+  <Entite Position="674,00;191,00" Name="Block-LeftRamp2" TextureName="Block-LeftRamp" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="71;59" Rotation="6,28" />
+  <Entite Position="637,00;256,00" Name="Block-LeftRamp3" TextureName="Block-LeftRamp" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="71;59" Rotation="6,28" />
+  <Entite Position="400,00;120,00" Name="Block-Place-RightRamp1" TextureName="Block-Place-RightRamp" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="72;60" Rotation="6,28" />
+  <Entite Position="432,00;190,00" Name="Block-Place-RightRamp2" TextureName="Block-Place-RightRamp" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="72;60" Rotation="6,28" />
+  <Entite Position="471,00;257,00" Name="Block-Place-RightRamp3" TextureName="Block-Place-RightRamp" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="72;60" Rotation="6,28" />
+  <Entite Position="507,00;323,00" Name="Block-Place-RightRamp4" TextureName="Block-Place-RightRamp" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="72;60" Rotation="6,28" />
+  <Entite Position="602,00;321,00" Name="Block-LeftRamp4" TextureName="Block-LeftRamp" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="71;59" Rotation="6,28" />
+  <Entite Position="1024,00;111,77" Name="Brown Block1" TextureName="Brown Block" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="309;89" Rotation="6,28">
+    <Script ScriptName="Script1">
+      <Curve ActionName="Curve0" PropertyName="Rotation">
+        <Points>
+          <Point X="0,00" Y="0,00" />
+          <Point X="5000,00" Y="4,00" />
+        </Points>
+      </Curve>
+    </Script>
+  </Entite>
+  <Entite Position="1011,00;67,62" Name="Icon-HappyPoints1" TextureName="Icon-HappyPoints" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="20;20" Rotation="0,11" />
+  <Entite Position="441,00;88,39" Name="Icon-Time1" TextureName="Icon-Time" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="20;20" Rotation="6,28" />
+  <Entite Position="542,00;638,00" Name="Perle41" TextureName="Perle4" AngularSpeed="0,00" IsColisionable="True" IsStatic="True" Size="403;403" Rotation="6,28">
+    <Script ScriptName="Script1">
+      <Curve ActionName="Curve0" PropertyName="Position">
+        <Points>
+          <Point X="0,00" Y="542,00" />
+        </Points>
+        <Points>
+          <Point X="0,00" Y="638,00" />
+          <Point X="5000,00" Y="800,00" />
+        </Points>
+      </Curve>
+    </Script>
+  </Entite>
+</Root>
