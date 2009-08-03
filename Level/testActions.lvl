@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="106,00;177,39" Name="Character Boy1" TextureName="Character Boy" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="67;88" Rotation="6,28">
+    <Script ScriptName="Script1">
+      <Event ActionName="Event0" PropertyName="Rotation" Value="2" />
+      <Curve ActionName="Curve0" PropertyName="BlurFactor">
+        <Points>
+          <Point X="34,13" Y="0,07" />
+          <Point X="274,74" Y="0,14" />
+          <Point X="612,63" Y="0,00" />
+        </Points>
+      </Curve>
+      <Event ActionName="Event1" PropertyName="Position" Value="{X:5 Y:6}" />
+    </Script>
+  </Entite>
+  <Entite Position="540,00;197,39" Name="Character Cat Girl1" TextureName="Character Cat Girl" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="68;90" Rotation="6,28">
+    <Script ScriptName="Script1">
+      <Event ActionName="Event0" PropertyName="Color" Value="{R:128 G:64 B:0 A:255}" />
+      <Curve ActionName="Curve0" PropertyName="Color">
+        <Points>
+          <Point X="30,72" Y="211,91" />
+          <Point X="404,44" Y="91,02" />
+        </Points>
+        <Points>
+          <Point X="30,72" Y="211,91" />
+          <Point X="404,44" Y="91,02" />
+        </Points>
+        <Points>
+          <Point X="30,72" Y="211,91" />
+          <Point X="404,44" Y="91,02" />
+        </Points>
+        <Points>
+          <Point X="42,66" Y="231,82" />
+          <Point X="447,10" Y="231,82" />
+        </Points>
+      </Curve>
+    </Script>
+  </Entite>
+</Root>

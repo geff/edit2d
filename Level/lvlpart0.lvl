@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="396,00;281,00" Name="Background1" TextureName="Background" IsColisionable="False" IsStatic="True" Size="801;601" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="701,00;205,00" Name="Wood Block1" TextureName="Wood Block" IsColisionable="False" IsStatic="True" Size="98;368" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,05" IsInBackground="True" FrictionCoefficient="1,00" RestitutionCoefficient="1,00" />
+  <Entite Position="783,00;168,00" Name="Rouage2" TextureName="Rouage" IsColisionable="False" IsStatic="True" Size="189;190" Rotation="6,13" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,05" IsInBackground="True" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="646,74;188,84" Name="Rouage1" TextureName="Rouage" IsColisionable="False" IsStatic="True" Size="101;95" Rotation="0,19" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,05" IsInBackground="True" FrictionCoefficient="1,00" RestitutionCoefficient="1,00">
+    <ParticleSystem ParticleSystemName="ParticleSystem1" EmmittingAngle="-0,79" FieldAngle="6,00" EmmittingFromAllSurface="False" Rate="500" Velocity="1500,00">
+      <ParticleTemplate LifeTime="20000" Position="18,39;17,47" Name="ParticleTemplate1" TextureName="Pea-Shadow" IsColisionable="False" IsStatic="False" Size="37;35" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,05" IsInBackground="True" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+    </ParticleSystem>
+  </Entite>
+  <Entite Position="169,00;90,00" Name="Cloud11" TextureName="Cloud1" IsColisionable="False" IsStatic="True" Size="260;180" Rotation="6,28" Color="{R:180 G:180 B:180 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50">
+    <ParticleSystem ParticleSystemName="ParticleSystem1" EmmittingAngle="1,57" FieldAngle="0,10" EmmittingFromAllSurface="True" Rate="20" Velocity="50,00">
+      <ParticleTemplate LifeTime="20000" Position="4,43;10,58" Name="ParticleTemplate1" TextureName="Goutte" IsColisionable="False" IsStatic="False" Size="10;20" Rotation="0,00" Color="{R:255 G:255 B:255 A:120}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+    </ParticleSystem>
+  </Entite>
+  <Entite Position="280,00;24,00" Name="Cloud31" TextureName="Cloud3" IsColisionable="False" IsStatic="True" Size="159;110" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="47,00;358,00" Name="Grass Block1" TextureName="Grass Block" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="152,00;359,00" Name="Grass Block2" TextureName="Grass Block" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="256,00;370,00" Name="Grass Block3" TextureName="Grass Block" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="362,00;380,00" Name="Grass Block4" TextureName="Grass Block" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="467,00;395,00" Name="Grass Block5" TextureName="Grass Block" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="574,00;371,00" Name="Grass Block6" TextureName="Grass Block" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="679,00;367,00" Name="Stone Block Tall1" TextureName="Stone Block Tall" IsColisionable="True" IsStatic="True" Size="101;163" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="781,00;356,00" Name="Stone Block Tall2" TextureName="Stone Block Tall" IsColisionable="True" IsStatic="True" Size="101;163" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+</Root>

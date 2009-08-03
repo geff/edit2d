@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="229,95;170,26" Name="Perle21" TextureName="Perle2" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="140;123" Rotation="4,39" />
+  <Entite Position="97,68;202,58" Name="Perle22" TextureName="Perle2" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="166;165" Rotation="4,46" />
+  <Entite Position="322,26;105,47" Name="Perle23" TextureName="Perle2" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="198;166" Rotation="4,35" />
+  <Entite Position="356,61;434,78" Name="Perle101" TextureName="Perle10" AngularSpeed="0,00" IsColisionable="False" IsStatic="False" Size="636;587" Rotation="5,89" />
+  <Entite Position="507,81;230,62" Name="Perle31" TextureName="Perle3" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="139;132" Rotation="1,38" />
+  <Entite Position="518,00;481,00" Name="Perle111" TextureName="Perle11" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="238;175" Rotation="6,15" />
+  <Entite Position="355,00;307,00" Name="Perle32" TextureName="Perle3" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="197;228" Rotation="6,28" />
+  <Entite Position="134,00;468,00" Name="Perle51" TextureName="Perle5" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="178;194" Rotation="2,69" />
+  <Entite Position="136,00;446,00" Name="Perle71" TextureName="Perle7" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="201;239" Rotation="6,28" />
+  <Entite Position="504,00;240,00" Name="Perle61" TextureName="Perle6" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="141;102" Rotation="2,10" />
+  <Entite Position="363,00;300,00" Name="Perle62" TextureName="Perle6" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="190;170" Rotation="6,28" />
+  <Entite Position="413,00;856,00" Name="Perle argent 11" TextureName="Perle argent 1" AngularSpeed="0,00" IsColisionable="False" IsStatic="True" Size="869;659" Rotation="2,80" />
+</Root>

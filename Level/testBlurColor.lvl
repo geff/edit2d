@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="411,00;229,00" Name="Character Cat Girl1" TextureName="Character Cat Girl" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="68;90" Rotation="6,28">
+    <Script ScriptName="Script1" Duration="1000">
+      <Curve ActionName="Curve0" ActionType="4">
+        <Points>
+          <Point X="0,00" Y="0,00" />
+          <Point X="1000,00" Y="0,06" />
+        </Points>
+      </Curve>
+      <Curve ActionName="Curve1" ActionType="3">
+        <Points>
+          <Point X="0,00" Y="255,00" />
+        </Points>
+        <Points>
+          <Point X="0,00" Y="255,00" />
+        </Points>
+        <Points>
+          <Point X="0,00" Y="255,00" />
+        </Points>
+        <Points>
+          <Point X="0,00" Y="0,00" />
+          <Point X="500,00" Y="255,00" />
+          <Point X="1000,00" Y="0,00" />
+        </Points>
+      </Curve>
+    </Script>
+  </Entite>
+</Root>

@@ -1,0 +1,202 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{234E9085-8B73-4BBA-8363-6898048124AB}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Edit2D</RootNamespace>
+    <AssemblyName>Edit2D</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FarseerPhysics, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\FarseerPhysics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Engine" />
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86" />
+    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86" />
+    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.AudioImporters, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.EffectImporter, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.FBXImporter, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86" />
+    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.TextureImporter, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86" />
+    <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.XImporter, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86" />
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=MSIL" />
+    <Reference Include="PresentationCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=x86" />
+    <Reference Include="PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Action\ActionBase.cs" />
+    <Compile Include="Action\ActionCurve.cs" />
+    <Compile Include="Action\ActionEvent.cs" />
+    <Compile Include="Action\ActionType.cs" />
+    <Compile Include="Action\ActionSound.cs" />
+    <Compile Include="Action\IActionHandler.cs" />
+    <Compile Include="AttributeAction.cs" />
+    <Compile Include="Extension\StringExtension.cs" />
+    <Compile Include="FileSystem.cs" />
+    <Compile Include="ParticleControl\ParticleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ParticleControl\ParticleControl.Designer.cs">
+      <DependentUpon>ParticleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Particles\Particle.cs" />
+    <Compile Include="Particles\ParticleSystem.cs" />
+    <Compile Include="Script.cs" />
+    <Compile Include="ScriptControl\ActionEventLineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScriptControl\ActionEventLineControl.Designer.cs">
+      <DependentUpon>ActionEventLineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScriptControl\ActionSoundControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScriptControl\ActionSoundControl.Designer.cs">
+      <DependentUpon>ActionSoundControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScriptControl\ScriptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScriptControl\ScriptControl.Designer.cs">
+      <DependentUpon>ScriptControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextureManager.cs" />
+    <Compile Include="DrawingSystem\CircleBrush.cs" />
+    <Compile Include="DrawingSystem\DrawingHelper.cs" />
+    <Compile Include="DrawingSystem\LineBrush.cs" />
+    <Compile Include="DrawingSystem\RectangleBrush.cs" />
+    <Compile Include="PhysicsSimulatorView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Repository.cs" />
+    <Compile Include="Entite.cs" />
+    <Compile Include="FrmEdit2D.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmEdit2D.Designer.cs">
+      <DependentUpon>FrmEdit2D.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FrmEdit2D.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FrmEdit2D.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ParticleControl\ParticleControl.resx">
+      <DependentUpon>ParticleControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScriptControl\ActionEventLineControl.resx">
+      <DependentUpon>ActionEventLineControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScriptControl\ActionSoundControl.resx">
+      <DependentUpon>ActionSoundControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScriptControl\ScriptControl.resx">
+      <DependentUpon>ScriptControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TriggerControl\TriggerControl.resx">
+      <DependentUpon>TriggerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="SpriteBatch.fx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="TriggerControl\TriggerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TriggerControl\TriggerControl.Designer.cs">
+      <DependentUpon>TriggerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Trigger\ITriggerHandler.cs" />
+    <Compile Include="Trigger\TriggerTime.cs" />
+    <Compile Include="Trigger\TriggerLoad.cs" />
+    <Compile Include="Trigger\TriggerMouse.cs" />
+    <Compile Include="Trigger\TriggerBase.cs" />
+    <Compile Include="Trigger\TriggerCollision.cs" />
+    <Compile Include="Trigger\TriggerValueChanged.cs" />
+    <Compile Include="World.cs" />
+    <Compile Include="XNA\ContentBuilder.cs" />
+    <Compile Include="XNA\ErrorLogger.cs" />
+    <Compile Include="XNA\GraphicsDeviceControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="XNA\GraphicsDeviceService.cs" />
+    <Compile Include="XNA\ModelViewerControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="XNA\ServiceContainer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CurveEditor\CurveControl\CurveControl.csproj">
+      <Project>{C2A845A6-EF89-4D81-9C77-269BFDC5759F}</Project>
+      <Name>CurveControl</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

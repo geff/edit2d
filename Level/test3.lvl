@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="200,00;200,00" Name="BigRec1" TextureName="BigRec" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="220;193" Rotation="6,28" />
+  <Entite Position="499,00;302,00" Name="Flag-Bad1" TextureName="Flag-Bad" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="183;123" Rotation="6,28" />
+  <Entite Position="278,00;506,00" Name="Flag-Good1" TextureName="Flag-Good" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="20;13" Rotation="6,28" />
+</Root>

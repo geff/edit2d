@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="281,00;300,00" Name="BigRec2" TextureName="BigRec" IsColisionable="True" IsStatic="True" Size="100;100" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="85,00;301,00" Name="BigRec3" TextureName="BigRec" IsColisionable="True" IsStatic="True" Size="100;100" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="84,00;101,00" Name="BigRec4" TextureName="BigRec" IsColisionable="True" IsStatic="True" Size="100;100" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="281,00;102,00" Name="BigRec5" TextureName="BigRec" IsColisionable="True" IsStatic="True" Size="100;100" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+</Root>
