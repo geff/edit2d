@@ -333,7 +333,7 @@ namespace Edit2D
             Vector2 vec;//inutile
 
             //--- Calcul des vertices originaux
-            originalVerts = Vertices.CreatePolygon(data, polygonTexture.Width, polygonTexture.Height, Vector2.Zero, 127, 2f, out vec);
+            originalVerts = Vertices.CreatePolygon(data, polygonTexture.Width, polygonTexture.Height);//, 1f, 127, true, true);// 2f, out vec);
             //---
         }
 
@@ -344,7 +344,8 @@ namespace Edit2D
 
             //--- Copie des vertices originaux puis transformation
             Vertices verts = new Vertices(originalVerts);
-            verts.Scale(new Vector2(widthFactor, heightFactor));
+            Vector2 vecScale = new Vector2(widthFactor, heightFactor);
+            verts.Scale(ref vecScale);
             //---
 
             //--- Calcul du centre du polygone
@@ -381,7 +382,7 @@ namespace Edit2D
                 polygonGeom = GeomFactory.Instance.CreatePolygonGeom(Repository.physicSimulator, polygonBody, verts, 0f);
 
                 polygonGeom.SetBody(polygonBody);
-                polygonGeom.ComputeCollisionGrid();
+                //polygonGeom.ComputeCollisionGrid();
 
                 if (polygonBody != null)
                 {
@@ -468,7 +469,7 @@ namespace Edit2D
             //Vector2 deltaCenterLocal = this.Body.GetLocalPosition(position);
             //Vector2 newCenterLocal = (position - this.Position) + oldCenterLocal;
 
-            Vector2 deltaCenterWorld = position - this.Position;
+            Vector2 deltaCenterWorld = -(position - this.Position);
 
             float ratioX = (float)this.Size.Width / (float)this.NativeImageSize.Width;
             float ratioY = (float)this.Size.Height / (float)this.NativeImageSize.Height;
@@ -495,9 +496,9 @@ namespace Edit2D
             this.Position = position;
             this.Rotation = rotation;
 
-            this.geom.LocalVertices.Translate(-deltaCenterLocal);
+            this.geom.WorldVertices.Translate(ref deltaCenterLocal);
 
-            this.geom.ComputeCollisionGrid();
+            //this.geom.ComputeCollisionGrid();
             Repository.physicSimulator.Update(0.000002f);
         }
 
