@@ -91,7 +91,7 @@ namespace Edit2D
 
                         spring.Body = entite.Body;
                         spring.BodyAttachPoint = ReadVector2(reader["BodyAttachPoint"]);
-                        spring.Position = ReadVector2(reader["Position"]);
+                        //spring..Position = ReadVector2(reader["Position"]);
                         spring.WorldAttachPoint = ReadVector2(reader["WorldAttachPoint"]);
                         spring.RestLength = float.Parse(reader["RestLength"]);
                         spring.DampingConstant = 10f;
@@ -354,7 +354,7 @@ namespace Edit2D
                 FixedLinearSpring spring = entite.ListFixedLinearSpring[j];
 
                 writer.WriteAttributeString("BodyAttachPoint", WriteVector2(spring.BodyAttachPoint));
-                writer.WriteAttributeString("Position", WriteVector2(spring.Position));
+                //writer.WriteAttributeString("Position", WriteVector2(spring.Position));
                 writer.WriteAttributeString("RestLength", WriteFloat(spring.RestLength));
                 writer.WriteAttributeString("WorldAttachPoint", WriteVector2(spring.WorldAttachPoint));
                 writer.WriteEndElement();
