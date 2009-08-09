@@ -6,11 +6,12 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Edit2D.Action;
+using Edit2DEngine.Action;
 using Microsoft.Xna.Framework;
 using Xna.Tools;
 using System.Reflection;
-using Edit2D.Particles;
+using Edit2DEngine.Particles;
+using Edit2DEngine;
 
 namespace Edit2D.ScriptControl
 {
@@ -27,6 +28,20 @@ namespace Edit2D.ScriptControl
         int currentScript = -1;
         int currentAction = -1;
         int currentSubAction = -1;
+
+        private int timeLineValue;
+        public int TimeLineValue 
+        { 
+            get
+            {
+                return timeLineValue;
+            }
+            set
+            {
+                timeLineValue = value;
+                this.curveControl.TimeLine = value;
+            }
+        }
         #endregion
 
         public ScriptControl()
@@ -586,20 +601,7 @@ namespace Edit2D.ScriptControl
         #region Script events
         private void btnAddScript_Click(object sender, EventArgs e)
         {
-            IActionHandler actionHandler = GetCurrentActionHandler();
-
-            if (actionHandler != null)
-            {
-                Script script = new Script(String.Format("Script{0}", actionHandler.ListScript.Count + 1), actionHandler);
-                actionHandler.ListScript.Add(script);
-
-                RefreshScriptView();
-
-                currentScript = actionHandler.ListScript.Count - 1;
-                listboxScript.SelectedIndex = listboxScript.Items.Count - 1;
-
-                RefreshActionView();
-            }
+            AddScriptToCurrentEntity();
 
 
             //if (repository.CurrentEntite != null)
@@ -826,6 +828,7 @@ namespace Edit2D.ScriptControl
         private void curveControl_TimeLineChange(object sender, int value)
         {
             ActionCurve actionCurve = GetCurrentActionCurve();
+            this.timeLineValue = value;
 
             if (actionCurve != null)
             {
@@ -868,6 +871,39 @@ namespace Edit2D.ScriptControl
         #endregion
 
         #region Public methods
+        public Script AddScriptToCurrentEntity()
+        {
+            IActionHandler actionHandler = GetCurrentActionHandler();
+            Script script = null;
+
+            if (actionHandler != null)
+            {
+                script = new Script(String.Format("Script{0}", actionHandler.ListScript.Count + 1), actionHandler);
+                actionHandler.ListScript.Add(script);
+
+                RefreshScriptView();
+
+                currentScript = actionHandler.ListScript.Count - 1;
+                listboxScript.SelectedIndex = listboxScript.Items.Count - 1;
+
+                RefreshActionView();
+            }
+
+            return script;
+        }
+
+        public Script GetSelectedScript()
+        {
+            Script script = null;
+
+            if (repository.CurrentEntite != null && currentScript != -1)
+            {
+                script = repository.CurrentEntite.ListScript[currentScript];
+            }
+
+            return script;
+        }
+
         public void RefreshScriptControl()
         {
             currentScript = -1;

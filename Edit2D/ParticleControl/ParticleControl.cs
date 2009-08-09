@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework.Graphics;
-using Edit2D.Particles;
+using Edit2DEngine.Particles;
+using Edit2DEngine;
 
 namespace Edit2D.ParticleControl
 {

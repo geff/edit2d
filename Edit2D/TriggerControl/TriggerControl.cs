@@ -6,10 +6,11 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Edit2D.Trigger;
+using Edit2DEngine.Trigger;
 using System.Reflection;
 using Microsoft.Xna.Framework;
-using Edit2D.Particles;
+using Edit2DEngine.Particles;
+using Edit2DEngine;
 
 namespace Edit2D.TriggerControl
 {

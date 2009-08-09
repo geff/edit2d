@@ -64,24 +64,13 @@
     <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Action\ActionBase.cs" />
-    <Compile Include="Action\ActionCurve.cs" />
-    <Compile Include="Action\ActionEvent.cs" />
-    <Compile Include="Action\ActionType.cs" />
-    <Compile Include="Action\ActionSound.cs" />
-    <Compile Include="Action\IActionHandler.cs" />
-    <Compile Include="AttributeAction.cs" />
-    <Compile Include="Extension\StringExtension.cs" />
-    <Compile Include="FileSystem.cs" />
     <Compile Include="ParticleControl\ParticleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ParticleControl\ParticleControl.Designer.cs">
       <DependentUpon>ParticleControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Particles\Particle.cs" />
-    <Compile Include="Particles\ParticleSystem.cs" />
-    <Compile Include="Script.cs" />
+    <Compile Include="Repository.cs" />
     <Compile Include="ScriptControl\ActionEventLineControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -100,7 +89,6 @@
     <Compile Include="ScriptControl\ScriptControl.Designer.cs">
       <DependentUpon>ScriptControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="TextureManager.cs" />
     <Compile Include="DrawingSystem\CircleBrush.cs" />
     <Compile Include="DrawingSystem\DrawingHelper.cs" />
     <Compile Include="DrawingSystem\LineBrush.cs" />
@@ -108,8 +96,6 @@
     <Compile Include="PhysicsSimulatorView.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Repository.cs" />
-    <Compile Include="Entite.cs" />
     <Compile Include="FrmEdit2D.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -149,32 +135,15 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="SpriteBatch.fx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <Compile Include="TriggerControl\TriggerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="TriggerControl\TriggerControl.Designer.cs">
       <DependentUpon>TriggerControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Trigger\ITriggerHandler.cs" />
-    <Compile Include="Trigger\TriggerTime.cs" />
-    <Compile Include="Trigger\TriggerLoad.cs" />
-    <Compile Include="Trigger\TriggerMouse.cs" />
-    <Compile Include="Trigger\TriggerBase.cs" />
-    <Compile Include="Trigger\TriggerCollision.cs" />
-    <Compile Include="Trigger\TriggerValueChanged.cs" />
-    <Compile Include="World.cs" />
     <Compile Include="XNA\ContentBuilder.cs" />
     <Compile Include="XNA\ErrorLogger.cs" />
     <Compile Include="XNA\GraphicsDeviceControl.cs">
@@ -191,6 +160,40 @@
       <Project>{C2A845A6-EF89-4D81-9C77-269BFDC5759F}</Project>
       <Name>CurveControl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Edit2DEngine\Edit2DEngine.csproj">
+      <Project>{5C65D8A9-7565-4315-93B8-9DA83320F109}</Project>
+      <Name>Edit2DEngine</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_CenterToCursor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_CursorToCenter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_EditMode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_EditWhenPlaying.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_MoveScene.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_Pause.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_Play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_Rec.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_ResetPhysic.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_Stop.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

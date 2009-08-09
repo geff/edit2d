@@ -10,9 +10,11 @@ using Microsoft.Xna.Framework;
 using FarseerGames.GettingStarted;
 using System.IO;
 using Xna.Tools;
-using Edit2D.Action;
-using Edit2D.Trigger;
-using Edit2D.Particles;
+using Edit2DEngine.Action;
+using Edit2DEngine.Trigger;
+using Edit2DEngine.Particles;
+using Edit2DEngine;
+using Edit2DEngine.Render;
 
 namespace Edit2D
 {
@@ -25,7 +27,7 @@ namespace Edit2D
 
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
         public Repository repository = new Repository();
-
+        private Render render;
         //private static string path = @"D:\Geff\Log\Edit2D\Edit2D\Data\";
         //private static string path = @"D:\Log\Edit2D\Edit2D\Data\";
 
@@ -116,6 +118,7 @@ namespace Edit2D
 
             modelViewerControl.Initialize(repository, contentManager, contentBuilder);
             TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice);
+            render = new Render(modelViewerControl.spriteBatch, modelViewerControl.GraphicsDevice, repository);
 
             InitPhysicSimulatorView();
         }
@@ -354,122 +357,6 @@ namespace Edit2D
             }
         }
 
-        private void UpdatePhysic()
-        {
-            //for (int i = 0; i < repository.listEntite.Count; i++)
-            //{
-            //    repository.listEntite[i].Update();
-            //}
-
-            Repository.physicSimulator.Update(0.2f);
-        }
-
-        private void UpdateEntityActionPlayer()
-        {
-            for (int i = 0; i < repository.listEntite.Count; i++)
-            {
-                Entite entite = repository.listEntite[i];
-
-                UpdateActionHandlerPlayer(entite);
-
-                for (int j = 0; j < entite.ListParticleSystem.Count; j++)
-                {
-                    UpdateActionHandlerPlayer(entite.ListParticleSystem[j]);
-
-                    for (int k = 0; k < entite.ListParticleSystem[j].ListParticleTemplate.Count; k++)
-                    {
-                        UpdateActionHandlerPlayer(entite.ListParticleSystem[j].ListParticleTemplate[k]);
-                    }
-                }
-            }
-        }
-
-        private void UpdateActionHandlerPlayer(IActionHandler actionHandler)
-        {
-            //--- Update Script
-            for (int j = 0; j < actionHandler.ListScript.Count; j++)
-            {
-                for (int k = 0; k < actionHandler.ListScript[j].ListAction.Count; k++)
-                {
-                    ActionBase action = actionHandler.ListScript[j].ListAction[k];
-
-                    if (action is ActionCurve && ((ActionCurve)action).playAnimationState != PlayAnimationState.Stop)
-                    {
-                        ActionCurve actionCurve = (ActionCurve)action;
-
-                        if ((repository.pause && (actionCurve.playAnimationState == PlayAnimationState.PlayInEditor) ||
-                           (!repository.pause && (actionCurve.playAnimationState == PlayAnimationState.Play))))
-                        {
-                            //--- Lit la courbe d'animation
-                            ((ActionCurve)action).UpdateAnimation();
-                            //---
-
-                            //--- Si l'entité courante est animée, met à jour le contrôle de courbe
-                            scriptControl.UpdateEntityActionPlayer(((ActionCurve)action));
-                            //---
-                        }
-                    }
-                    else if (action is ActionEvent && !repository.pause && ((ActionEvent)action).Playing)
-                    {
-                        ((ActionEvent)action).UpdateValue(repository);
-                    }
-                }
-            }
-            //---
-        }
-
-        private void UpdateEntityTrigger()
-        {
-            for (int i = 0; i < repository.listEntite.Count; i++)
-            {
-                Entite entite = repository.listEntite[i];
-
-                //--- Update Trigger
-                for (int j = 0; j < entite.ListTrigger.Count; j++)
-                {
-                    //TODO : appeler LaunchTrigger uniquement à la fin de la boucle
-                    entite.ListTrigger[j].CheckTrigger(repository);
-                }
-                //---
-
-                //--- Update Trigger des particules
-                for (int j = 0; j < entite.ListParticleSystem.Count; j++)
-                {
-                    for (int k = 0; k < entite.ListParticleSystem[j].ListParticle.Count; k++)
-                    {
-                        for (int l = 0; l < entite.ListParticleSystem[j].ListParticle[k].ListTrigger.Count; l++)
-                        {
-                            entite.ListParticleSystem[j].ListParticle[k].ListTrigger[l].CheckTrigger(repository);
-                        }
-                    }
-                }
-                //---
-            }
-
-            //--- Update Trigger
-            for (int j = 0; j < repository.World.ListTrigger.Count; j++)
-            {
-                repository.World.ListTrigger[j].CheckTrigger(repository);
-            }
-            //---
-        }
-
-        private void UpdateEntityParticleSystem()
-        {
-            for (int i = 0; i < repository.listEntite.Count; i++)
-            {
-                Entite entite = repository.listEntite[i];
-
-                //--- Update Trigger
-                for (int j = 0; j < entite.ListParticleSystem.Count; j++)
-                {
-                    //TODO : appeler LaunchTrigger uniquement à la fin de la boucle
-                    entite.ListParticleSystem[j].Update();
-                }
-                //---
-            }
-        }
-
         private void RefreshTreeView()
         {
             treeView.Nodes.Clear();
@@ -558,7 +445,7 @@ namespace Edit2D
             repository.CurrentTextureName = textureName;
             repository.FrmEdit2D = this;
 
-            UpdatePhysic();
+            render.UpdatePhysic();
             RefreshTreeView();
 
             triggerControl.repository = repository;
@@ -585,7 +472,7 @@ namespace Edit2D
             Repository.physicSimulator.Enabled = true;
 
             RefreshTreeView();
-            UpdatePhysic();
+            render.UpdatePhysic();
         }
 
         private void Save()
@@ -661,6 +548,68 @@ namespace Edit2D
                 trigger.InitTrigger(repository);
             }
             //---
+        }
+
+        private void btnRecObjectStatus_Click(object sender, EventArgs e)
+        {
+            if (repository.CurrentEntite != null)
+            {
+                Script script = null;
+
+                if (!(btnScriptModeBar.Checked && (script = scriptControl.GetSelectedScript() ) != null))
+                {
+                    ShowScriptMode();
+                    script = this.scriptControl.AddScriptToCurrentEntity();
+                }
+
+                if (script.ListAction.Count == 0)
+                {
+                    //--- Position
+                    ActionCurve actionPosition = new ActionCurve(script, "Position", false, false, typeof(Entite), "Position");
+                    script.ListAction.Add(actionPosition);
+                    //---
+
+                    //--- Rotation
+                    ActionCurve actionRotation = new ActionCurve(script, "Rotation", false, false, typeof(Entite), "Rotation");
+                    script.ListAction.Add(actionRotation);
+                    //---
+
+                    //--- Size
+                    ActionCurve actionSize = new ActionCurve(script, "Size", false, false, typeof(Entite), "Size");
+                    script.ListAction.Add(actionSize);
+                    //---
+                }
+
+                foreach (ActionBase action in script.ListAction)
+                {
+                    if (action is ActionCurve)
+                    {
+                        ActionCurve actionCurve = (ActionCurve)action;
+
+                        if (actionCurve.ActionName == "Position")
+                        {
+                            actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, repository.CurrentEntite.Position.X));
+                            actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, repository.CurrentEntite.Position.Y));
+                        }
+
+                        if (actionCurve.ActionName == "Rotation")
+                        {
+                            actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, repository.CurrentEntite.Rotation));
+                        }
+
+                        if (actionCurve.ActionName == "Size")
+                        {
+                            actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, repository.CurrentEntite.SizeVector.X));
+                            actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, repository.CurrentEntite.SizeVector.Y));
+
+                        }
+                        actionCurve.CalcDuration();
+                    }
+                }
+
+                scriptControl.TimeLineValue += 200;
+                scriptControl.RefreshScriptControl();
+            }
         }
 
         private void btnShowPhysic_Click(object sender, EventArgs e)
@@ -787,6 +736,11 @@ namespace Edit2D
                 }
             }
         }
+
+        private void btnGameClickableOnPlay_Click(object sender, EventArgs e)
+        {
+            repository.IsEntityClickableOnPlay = btnGameClickableOnPlay.Checked;
+        }
         #endregion
 
         #region Events
@@ -835,15 +789,16 @@ namespace Edit2D
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            UpdateEntityActionPlayer();
+            //UpdateEntityActionPlayer();
 
-            if (!repository.pause)
-            {
-                UpdateEntityTrigger();
-                UpdateEntityParticleSystem();
+            //if (!repository.pause)
+            //{
+            //    UpdateEntityTrigger();
+            //    UpdateEntityParticleSystem();
 
-                UpdatePhysic();
-            }
+            //    UpdatePhysic();
+            //}
+            render.Update();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -2078,10 +2033,5 @@ namespace Edit2D
             EntiteSelectionChange(true, repository.CurrentEntite, repository.CurrentEntite);
         }
         #endregion
-
-        private void btnGameClickableOnPlay_Click(object sender, EventArgs e)
-        {
-            repository.IsEntityClickableOnPlay = btnGameClickableOnPlay.Checked;
-        }
     }
 }

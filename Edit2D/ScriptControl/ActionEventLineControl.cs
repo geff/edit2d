@@ -6,9 +6,10 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Edit2D.Action;
-using Edit2D.Particles;
+using Edit2DEngine.Action;
+using Edit2DEngine.Particles;
 using System.Reflection;
+using Edit2DEngine;
 
 namespace Edit2D.ScriptControl
 {
