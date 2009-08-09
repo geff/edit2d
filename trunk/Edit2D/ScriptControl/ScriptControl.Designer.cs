@@ -109,7 +109,7 @@
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 55F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 82F));
             this.tableLayoutPanel2.Controls.Add(this.btnPlayScript, 3, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnAddScript, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnDelSrcipt, 1, 0);
@@ -132,9 +132,9 @@
             this.btnPlayScript.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPlayScript.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnPlayScript.Image = ((System.Drawing.Image)(resources.GetObject("btnPlayScript.Image")));
-            this.btnPlayScript.Location = new System.Drawing.Point(149, 3);
+            this.btnPlayScript.Location = new System.Drawing.Point(147, 3);
             this.btnPlayScript.Name = "btnPlayScript";
-            this.btnPlayScript.Size = new System.Drawing.Size(75, 26);
+            this.btnPlayScript.Size = new System.Drawing.Size(77, 26);
             this.btnPlayScript.TabIndex = 13;
             this.btnPlayScript.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.btnPlayScript.UseVisualStyleBackColor = true;
@@ -147,7 +147,7 @@
             this.btnAddScript.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
             this.btnAddScript.Location = new System.Drawing.Point(3, 3);
             this.btnAddScript.Name = "btnAddScript";
-            this.btnAddScript.Size = new System.Drawing.Size(46, 26);
+            this.btnAddScript.Size = new System.Drawing.Size(45, 26);
             this.btnAddScript.TabIndex = 0;
             this.btnAddScript.Text = "+";
             this.btnAddScript.UseVisualStyleBackColor = true;
@@ -158,9 +158,9 @@
             this.btnDelSrcipt.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnDelSrcipt.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnDelSrcipt.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
-            this.btnDelSrcipt.Location = new System.Drawing.Point(55, 3);
+            this.btnDelSrcipt.Location = new System.Drawing.Point(54, 3);
             this.btnDelSrcipt.Name = "btnDelSrcipt";
-            this.btnDelSrcipt.Size = new System.Drawing.Size(58, 26);
+            this.btnDelSrcipt.Size = new System.Drawing.Size(57, 26);
             this.btnDelSrcipt.TabIndex = 1;
             this.btnDelSrcipt.Text = "-";
             this.btnDelSrcipt.UseVisualStyleBackColor = true;

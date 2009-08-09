@@ -18,7 +18,9 @@ using Microsoft.Xna.Framework.Content;
 using System.IO;
 using Edit2D;
 using FarseerGames.GettingStarted.DrawingSystem;
-using Edit2D.Particles;
+using Edit2DEngine.Particles;
+using Edit2DEngine.Particles;
+using Edit2DEngine;
 #endregion
 
 namespace WinFormsContentLoading
@@ -30,38 +32,17 @@ namespace WinFormsContentLoading
     /// </summary>
     public class ModelViewerControl : GraphicsDeviceControl
     {
-        /// <summary>
-        /// Gets or sets the current model.
-        /// </summary>
-        //public Model Model
-        //{
-        //    get { return model; }
-
-        //    set
-        //    {
-        //        model = value;
-
-        //        if (model != null)
-        //        {
-        //            MeasureModel();
-        //        }
-        //    }
-        //}
-
-        //Model model;
-
-
         LineBrush line;
 
 
         // Timer controls the rotation speed.
         Stopwatch timer;
 
-        ContentManager Content;
+        public ContentManager Content;
         ContentBuilder contentBuilder;
 
-        SpriteBatch spriteBatch;
-        Repository repository;
+        public SpriteBatch spriteBatch;
+        Edit2D.Repository repository;
         Effect effect;
 
         //public Vector2 scenePosition;
@@ -71,7 +52,7 @@ namespace WinFormsContentLoading
         /// <summary>
         /// Initializes the control.
         /// </summary>
-        public void Initialize(Repository repository, ContentManager content, ContentBuilder contentBuilder)
+        public void Initialize(Edit2D.Repository repository, ContentManager content, ContentBuilder contentBuilder)
         {
             this.Content = content;
             this.contentBuilder = contentBuilder;
