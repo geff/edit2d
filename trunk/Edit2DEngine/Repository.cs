@@ -14,7 +14,6 @@ namespace Edit2DEngine
         public Entite tempEntite;
         private Entite _currentEntite;
         private Random rnd;
-
         public static int EntityCount = 0;
 
         public Entite CurrentEntite
@@ -88,11 +87,14 @@ namespace Edit2DEngine
         public static PhysicsSimulator physicSimulator;
         public string CurrentTextureName;
 
+        public Camera Camera;
+
         public Repository()
         {
             listEntite = new List<Entite>();
             rnd = new Random();
             World = new World();
+            this.Camera = new Camera();
 
             Repository.physicSimulator = new PhysicsSimulator(new Vector2(0, 9.81f));
         }

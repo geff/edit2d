@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{234E9085-8B73-4BBA-8363-6898048124AB}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -36,7 +36,7 @@
   <ItemGroup>
     <Reference Include="FarseerPhysics, Version=2.1.1.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Lib\FarseerPhysics.dll</HintPath>
+      <HintPath>..\Lib\FarseerPhysics.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Build.Engine" />
     <Reference Include="Microsoft.Build.Framework" />

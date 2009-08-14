@@ -11,7 +11,16 @@ namespace Edit2DEngine.Trigger
         public ITriggerHandler TriggerHandler { get; set; }
 
         public List<Script> ListScript { get; set; }
-        public List<String> ListTargetScriptEntiteName { get; set; }
+
+        /// <summary>
+        /// Collection utilisée lors du chargement des trigger.
+        /// Permet d'associer après le chargement l'ActionHandler (Entite, ParticleSystem, World) au trigger
+        /// </summary>
+        public List<String> ListTargetActionHandlerName { get; set; }
+        /// <summary>
+        /// Collection utilisée lors du chargement des trigger.
+        /// Permet d'associer après le chargement le script de l'ActionHandler (Entite, ParticleSystem, World) au trigger
+        /// </summary>
         public List<String> ListTargetScriptName { get; set; }
 
         abstract public void CheckTrigger(Repository repository);

@@ -59,7 +59,7 @@ namespace Edit2D
             timer.Interval = 1;
             timer.Enabled = true;
 
-            Repository.physicSimulator = new FarseerGames.FarseerPhysics.PhysicsSimulator(new Vector2(0, 9.81f));
+            //Repository.physicSimulator = new FarseerGames.FarseerPhysics.PhysicsSimulator(new Vector2(0, 9.81f));
 
             repository = new Repository();
 
@@ -117,7 +117,8 @@ namespace Edit2D
                                                 directory);
 
             modelViewerControl.Initialize(repository, contentManager, contentBuilder);
-            TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice);
+            //TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice);
+            TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice, @"..\..\..");
             render = new Render(modelViewerControl.spriteBatch, modelViewerControl.GraphicsDevice, repository);
 
             InitPhysicSimulatorView();
@@ -149,7 +150,7 @@ namespace Edit2D
                 string name = repository.FoundNewName(repository.CurrentTextureName);
                 //---
 
-                Entite entite = new Entite(true, repository.CurrentTextureName.ToString(), name);
+                Entite entite = new Entite(true, false, repository.CurrentTextureName.ToString(), name);
 
                 entite.SetPosition(repository.pointer);
                 repository.listEntite.Add(entite);
@@ -157,6 +158,8 @@ namespace Edit2D
                 EntiteSelectionChange(repository.CurrentEntite, entite);
 
                 Repository.physicSimulator.Update(0.0000001f);
+
+                entite.geom.CollisionEnabled = true;
             }
         }
 
@@ -467,6 +470,7 @@ namespace Edit2D
                 FileSystem.Open(dlg.FileName, this.repository);
 
                 triggerControl.repository = repository;
+                render.repository = repository;
             }
 
             Repository.physicSimulator.Enabled = true;
@@ -556,7 +560,7 @@ namespace Edit2D
             {
                 Script script = null;
 
-                if (!(btnScriptModeBar.Checked && (script = scriptControl.GetSelectedScript() ) != null))
+                if (!(btnScriptModeBar.Checked && (script = scriptControl.GetSelectedScript()) != null))
                 {
                     ShowScriptMode();
                     script = this.scriptControl.AddScriptToCurrentEntity();
@@ -1011,6 +1015,30 @@ namespace Edit2D
         #endregion
 
         #region ModelViewerControl events
+        private Vector2 GetMousePointerLocation(System.Drawing.Point location, ref Vector2 pointerDraw)
+        {
+            int dimPointer = 10;
+
+            //Vector2 vecLocation = new Vector2((Location.X + repository.Camera.Position.X) * repository.Camera.Zoom,
+            //                     (Location.Y + repository.Camera.Position.Y) * repository.Camera.Zoom);
+
+            //pointerDraw = new Vector2(vecLocation.X - dimPointer / 2, vecLocation.Y - dimPointer / 2);
+
+            Vector2 vecLocation = new Vector2(location.X, location.Y);
+
+            Vector2 vecLocationZ = new Vector2(vecLocation.X / repository.Camera.Zoom - repository.Camera.Position.X,
+                                              vecLocation.Y / repository.Camera.Zoom - repository.Camera.Position.Y );
+
+            pointerDraw = new Vector2(vecLocation.X - dimPointer / 2, vecLocation.Y - dimPointer / 2);
+
+
+
+            //vecLocation = vecLocationZ;
+            //pointerDraw = new Vector2(vecocationZ.X / repository.Camera.Zoom - repository.Camera.Position.X, vecocationZ.Y / repository.Camera.Zoom - repository.Camera.Position.Y);
+
+            return vecLocationZ;
+        }
+
         void modelViewerControl_MouseDown(object sender, MouseEventArgs e)
         {
             if (!repository.pause && !btnGameClickableOnPlay.Checked)
@@ -1018,19 +1046,41 @@ namespace Edit2D
 
             modelViewerControl.Focus();
 
-            int dimPointer = 10;
+
+            if (e.Button == MouseButtons.Middle)
+            {
+                //repository.pointer = new Vector2((e.Location.X + repository.Camera.Position.X) * repository.Camera.Zoom,
+                //                                 (e.Location.Y + repository.Camera.Position.Y) * repository.Camera.Zoom);
+
+                //repository.pointerDraw = new Vector2(repository.pointer.X - dimPointer / 2, repository.pointer.Y - dimPointer / 2);
+
+                repository.pointer = GetMousePointerLocation(e.Location, ref repository.pointerDraw);
+
+                //---> enregistre la position du pointeur clické
+                //prevPos = repository.pointer;
+                prevPos = new Vector2(e.Location.X, e.Location.Y);
+                //---
+
+                prevPosCamera = repository.Camera.Position;
+
+                return;
+            }
 
             if (repository.keyCtrlPressed)
             {
-                repository.pointer2 = new Vector2(e.Location.X, e.Location.Y);
-                repository.pointerDraw2 = new Vector2(repository.pointer2.X - dimPointer / 2, repository.pointer2.Y - dimPointer / 2);
+                //repository.pointer2 = new Vector2(e.Location.X, e.Location.Y);
+                //repository.pointerDraw2 = new Vector2(repository.pointer2.X - dimPointer / 2, repository.pointer2.Y - dimPointer / 2);
 
+                repository.pointer2 = GetMousePointerLocation(e.Location, ref repository.pointerDraw2);
+                
                 repository.currentEntite2 = repository.GetSelectedEntite(repository.pointer2);
             }
             else
             {
-                repository.pointer = new Vector2(e.Location.X, e.Location.Y);
-                repository.pointerDraw = new Vector2(repository.pointer.X - dimPointer / 2, repository.pointer.Y - dimPointer / 2);
+                //repository.pointer = new Vector2(e.Location.X, e.Location.Y);
+                //repository.pointerDraw = new Vector2(repository.pointer.X - dimPointer / 2, repository.pointer.Y - dimPointer / 2);
+
+                repository.pointer = GetMousePointerLocation(e.Location, ref repository.pointerDraw);
 
                 //--- Si la touche MouseMode n'est pas pressée, change l'entité courante
                 if (!repository.keyAltPressed)
@@ -1070,8 +1120,9 @@ namespace Edit2D
                     }
                     //---
 
-                    //---> enreigstre la position du pointeur clické
-                    prevPos = repository.pointer;
+                    //---> enregistre la position du pointeur clické
+                    //prevPos = repository.pointer;
+                    prevPos = new Vector2(e.Location.X, e.Location.Y);
                     //---
                 }
                 //---
@@ -1087,15 +1138,30 @@ namespace Edit2D
 
             if (repository.keyCtrlPressed)
             {
-                repository.pointer2 = new Vector2(e.Location.X, e.Location.Y);
-                repository.pointerDraw2 = new Vector2(repository.pointer2.X - dimPointer / 2, repository.pointer2.Y - dimPointer / 2);
+                //repository.pointer2 = new Vector2(e.Location.X, e.Location.Y);
+                //repository.pointerDraw2 = new Vector2(repository.pointer2.X - dimPointer / 2, repository.pointer2.Y - dimPointer / 2);
+
+                repository.pointer2 = GetMousePointerLocation(e.Location, ref repository.pointerDraw2);
 
                 repository.currentEntite2 = repository.GetSelectedEntite(repository.pointer2);
             }
             else
             {
-                repository.pointer = new Vector2(e.Location.X, e.Location.Y);
-                repository.pointerDraw = new Vector2(repository.pointer.X - dimPointer / 2, repository.pointer.Y - dimPointer / 2);
+                //repository.pointer = new Vector2(e.Location.X, e.Location.Y);
+                //repository.pointerDraw = new Vector2(repository.pointer.X - dimPointer / 2, repository.pointer.Y - dimPointer / 2);
+                
+                repository.pointer = GetMousePointerLocation(e.Location, ref repository.pointerDraw);
+
+                //vecFocalZ = repository.pointerDraw + new Vector2(5) + repository.Camera.Focal * repository.Camera.Zoom + repository.Camera.FocalZ;
+
+                // F(n+1) = Pt + F(n)
+                vecFocal = repository.pointer + (-repository.Camera.Focal );// + repository.Camera.FocalZ);
+
+                vecFocalZ = repository.pointerDraw + new Vector2(5);// +repository.Camera.FocalZ;
+
+                // new Vector2(e.Location.X, e.Location.Y);// *repository.Camera.Zoom;
+
+                //repository.Camera.Focal = (repository.pointerDraw + new Vector2(5, 5)) * repository.Camera.Zoom;
 
                 //--- Redonne le statut Static à l'entité courante
                 if (repository.CurrentEntite != null)
@@ -1114,7 +1180,7 @@ namespace Edit2D
                     //prop.SelectedObject = repository.currentEntite;
                     Entite selectedEntite = repository.GetSelectedEntite(repository.pointer);
 
-                    if (selectedEntite == null || (selectedEntite != null && selectedEntite.IsColisionable))
+                    if (selectedEntite != null)//|| (selectedEntite != null && selectedEntite.IsColisionable))
                         EntiteSelectionChange(repository.CurrentEntite, repository.GetSelectedEntite(repository.pointer));
                 }
                 //--- Si la touche MouseMode est pressée, réinjecte les nouvelles valeurs des propriétés (Size, Rotation)
@@ -1129,7 +1195,6 @@ namespace Edit2D
                                 repository.CurrentEntite.ListFixedRevoluteJoint[i].Anchor = repository.CurrentEntite.ListFixedRevoluteJoint[i].Anchor + repository.CurrentEntite.Position - repository.tempEntite.Position;
                             }
                         }
-
 
                         if (repository.mouseMode == MouseMode.Resize)
                         {
@@ -1146,6 +1211,10 @@ namespace Edit2D
             }
         }
 
+        private Vector2 prevPosCamera = Vector2.Zero;
+        private Vector2 vecFocal = Vector2.Zero;
+        private Vector2 vecFocalZ = Vector2.Zero;
+
         private void modelViewerControl_MouseMove(object sender, MouseEventArgs e)
         {
             //--- Affichage de la position de la souris
@@ -1155,14 +1224,28 @@ namespace Edit2D
             if (!repository.pause && !btnGameClickableOnPlay.Checked)
                 return;
 
-            if (e.Button == MouseButtons.Left)
-            {
-                int dimPointer = 10;
+            int dimPointer = 10;
 
+            if (e.Button == MouseButtons.Middle)
+            {
+                //repository.pointer = new Vector2(e.Location.X, e.Location.Y);
+                //repository.pointerDraw = new Vector2(repository.pointer.X - dimPointer / 2, repository.pointer.Y - dimPointer / 2);
+
+                repository.pointer = GetMousePointerLocation(e.Location, ref repository.pointerDraw);
+
+                //repository.Camera.Position = prevPosCamera + repository.pointer - prevPos;
+                repository.Camera.Position = prevPosCamera + new Vector2(e.Location.X, e.Location.Y) - prevPos;
+
+                //this.Text = String.Format("{0}", repository.Camera.Position.ToString());
+            }
+            else if (e.Button == MouseButtons.Left)
+            {
                 if (repository.keyCtrlPressed)
                 {
-                    repository.pointer2 = new Vector2(e.Location.X, e.Location.Y);
-                    repository.pointerDraw2 = new Vector2(repository.pointer2.X - dimPointer / 2, repository.pointer2.Y - dimPointer / 2);
+                    //repository.pointer2 = new Vector2(e.Location.X, e.Location.Y);
+                    //repository.pointerDraw2 = new Vector2(repository.pointer2.X - dimPointer / 2, repository.pointer2.Y - dimPointer / 2);
+
+                    repository.pointer2 = GetMousePointerLocation(e.Location, ref repository.pointerDraw2);
 
                     if (btnParticleSystemModeBar.Checked)
                     {
@@ -1177,8 +1260,10 @@ namespace Edit2D
                 }
                 else
                 {
-                    repository.pointer = new Vector2(e.Location.X, e.Location.Y);
-                    repository.pointerDraw = new Vector2(repository.pointer.X - dimPointer / 2, repository.pointer.Y - dimPointer / 2);
+                    //repository.pointer = new Vector2(e.Location.X, e.Location.Y);
+                    //repository.pointerDraw = new Vector2(repository.pointer.X - dimPointer / 2, repository.pointer.Y - dimPointer / 2);
+
+                    repository.pointer = GetMousePointerLocation(e.Location, ref repository.pointerDraw);
 
                     //--- Si la touche MouseMode n'est pas pressée, change l'entité courante
                     //if (!repository.keyAltPressed)
@@ -1188,7 +1273,7 @@ namespace Edit2D
                     //--- MouseMode.Move
                     if (repository.CurrentEntite != null && repository.keyAltPressed && repository.mouseMode == MouseMode.Move && repository.tempEntite != null)
                     {
-                        repository.CurrentEntite.FixPosition(repository.tempEntite.Position + repository.pointer - prevPos);
+                        repository.CurrentEntite.FixPosition(repository.tempEntite.Position + repository.pointerDraw - prevPos+ new Vector2(dimPointer/2, dimPointer/2));
 
                         //Repository.physicSimulator.Update(0.000002f);
                     }
@@ -1351,6 +1436,14 @@ namespace Edit2D
                 ParticleSystem pSystem = particleControl.GetCurrentParticleSystem();
 
                 pSystem.FieldAngle += (float)e.Delta / 960f;
+            }
+            else
+            {
+                repository.Camera.Zoom += (float)e.Delta / 2000f;
+                //repository.Camera.Focal = (repository.pointerDraw + new Vector2(5, 5));
+                
+                repository.Camera.Focal = vecFocal;// (repository.pointerDraw + new Vector2(5, 5));
+                repository.Camera.FocalZ = vecFocalZ;
             }
         }
 

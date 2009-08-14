@@ -913,7 +913,7 @@ namespace Edit2D.TriggerControl
                 //--- Affichage des colonnes pour une entité ne disposant pas de triggers
                 pnlTrigger.ColumnStyles[0].Width = 12;
                 pnlTrigger.ColumnStyles[1].Width = 12;
-                pnlTrigger.ColumnStyles[7].Width = 76;
+                //pnlTrigger.ColumnStyles[7].Width = 76;
                 //---
             }
         }

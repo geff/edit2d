@@ -8,5 +8,6 @@ namespace Edit2DEngine.Action
     public interface IActionHandler
     {
         List<Script> ListScript { get; set; }
+        String Name { get; set; }
     }
 }
