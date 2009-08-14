@@ -29,7 +29,7 @@ namespace Edit2DEngine
         public List<LinearSpring> ListLinearSpring { get; set; }
         [Category("Spring")]
         public List<FixedLinearSpring> ListFixedLinearSpring { get; set; }
-        
+
         [Category("Joint")]
         public List<PinJoint> ListPinJoint { get; set; }
         [Category("Joint")]
@@ -113,7 +113,7 @@ namespace Edit2DEngine
         {
             get { return new Microsoft.Xna.Framework.Vector2(this.Size.Width, this.Size.Height); }
         }
-        
+
         [Browsable(false)]
         public Microsoft.Xna.Framework.Rectangle Rectangle
         {
@@ -168,7 +168,7 @@ namespace Edit2DEngine
 
         [Browsable(true), DefaultValue(0.0f), AttributeAction, Category("Graphics")]
         public float BlurFactor { get; set; }
-        
+
         [Browsable(true), AttributeAction, Category("Physic")]
         public Boolean IsStatic
         {
@@ -254,12 +254,17 @@ namespace Edit2DEngine
             }
         }
 
-        public Entite(bool linkToPhysiSimulator, string textureName, string name)
+        public Entite(bool linkToPhysiSimulator, bool isCollisionable, string textureName, string name)
         {
-            Constructor(linkToPhysiSimulator, textureName, name);
+            Constructor(linkToPhysiSimulator, isCollisionable, textureName, name);
         }
 
-        protected void Constructor(bool addToPhysicSimulator, string textureName, string name)
+        public Entite(bool linkToPhysiSimulator, string textureName, string name)
+        {
+            Constructor(linkToPhysiSimulator, true, textureName, name);
+        }
+
+        protected void Constructor(bool addToPhysicSimulator, bool isCollisionable, string textureName, string name)
         {
             ListFixedLinearSpring = new List<FixedLinearSpring>();
             ListLinearSpring = new List<LinearSpring>();
@@ -275,23 +280,23 @@ namespace Edit2DEngine
             this.Name = name;
             this.TextureName = textureName;
 
-            if(!(this is Particle))
+            if (!(this is Particle))
                 UniqueId = ++Repository.EntityCount;
             //Texture2D texture = this.GetTexture();
 
             //this.NativeImageSize = new Size(texture.Width, texture.Height);
             //this.Size = new Size(texture.Width, texture.Height);
 
-            Init(addToPhysicSimulator);
+            Init(addToPhysicSimulator, isCollisionable);
         }
 
-        public void Init(bool addToPhysicSimulator)
+        public void Init(bool addToPhysicSimulator, bool isCollisionable)
         {
-            ChangeTexture(this.TextureName, addToPhysicSimulator);
+            ChangeTexture(this.TextureName, addToPhysicSimulator, isCollisionable);
 
             if (geom != null)
             {
-                geom.CollisionEnabled = true;
+                geom.CollisionEnabled = isCollisionable;
                 geom.CollidesWith = CollisionCategory.All;
                 geom.CollisionResponseEnabled = true;
                 geom.FrictionCoefficient = 0.5f;
@@ -299,7 +304,7 @@ namespace Edit2DEngine
             }
         }
 
-        public virtual void ChangeTexture(string textureName, bool addToPhysicSimulator)
+        public virtual void ChangeTexture(string textureName, bool addToPhysicSimulator, bool isCollisionable)
         {
             this.TextureName = textureName;
 
@@ -309,7 +314,7 @@ namespace Edit2DEngine
             this._size = new Size(texture.Width, texture.Height);
 
             CalcVerticesFromTexture(texture);
-            CreateBodyFromVertices(addToPhysicSimulator, ref body, ref geom, texture.Width, texture.Height);
+            CreateBodyFromVertices(addToPhysicSimulator, isCollisionable, ref body, ref geom, texture.Width, texture.Height);
         }
 
         public void ChangeSize(int width, int height, bool addToPhysicSimulator)
@@ -317,7 +322,7 @@ namespace Edit2DEngine
             this._size = new Size(width, height);
 
             Texture2D texture = GetTexture();
-            CreateBodyFromVertices(addToPhysicSimulator, ref body, ref geom, width, height);
+            CreateBodyFromVertices(addToPhysicSimulator, true, ref body, ref geom, width, height);
         }
 
         private void CalcVerticesFromTexture(Texture2D polygonTexture)
@@ -336,7 +341,7 @@ namespace Edit2DEngine
             //---
         }
 
-        private void CreateBodyFromVertices(Boolean addToPhysicSimulator, ref Body polygonBody, ref Geom polygonGeom, int width, int height)
+        private void CreateBodyFromVertices(Boolean addToPhysicSimulator, bool isCollisionable, ref Body polygonBody, ref Geom polygonGeom, int width, int height)
         {
             float widthFactor = (float)width / (float)NativeImageSize.Width;
             float heightFactor = (float)height / (float)NativeImageSize.Height;
@@ -388,7 +393,14 @@ namespace Edit2DEngine
                     polygonBody.Position = prevBodyPosition;
                     polygonBody.Rotation = prevBodyRotation;
                     polygonBody.IsStatic = prevStatic;
-                    polygonGeom.CollisionEnabled = prevCollisionable;
+                    if (isCollisionable)
+                    {
+                        polygonGeom.CollisionEnabled = prevCollisionable;
+                    }
+                    else
+                    {
+                        polygonGeom.CollisionEnabled = false;
+                    }
                     polygonBody.Mass = prevMass;
                 }
             }

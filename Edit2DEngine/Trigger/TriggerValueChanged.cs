@@ -78,7 +78,7 @@ namespace Edit2DEngine.Trigger
             this.Entite = (Entite)triggerHandler;
 
             this.ListScript = new List<Script>();
-            this.ListTargetScriptEntiteName = new List<string>();
+            this.ListTargetActionHandlerName = new List<string>();
             this.ListTargetScriptName = new List<string>();
 
             this.PropertyName = propertyName;

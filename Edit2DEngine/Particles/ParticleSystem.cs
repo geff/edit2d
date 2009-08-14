@@ -12,6 +12,7 @@ namespace Edit2DEngine.Particles
     {
         [Browsable(false)]
         public Entite Entite { get; set; }
+        public String Name { get { return String.Format("{0}-{1}", Entite.Name, ParticleSystemName); } set{} }
         public String ParticleSystemName { get; set; }
         [Browsable(false)]
         public List<Particle> ListParticle { get; set; }

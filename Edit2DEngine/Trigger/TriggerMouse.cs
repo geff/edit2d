@@ -18,7 +18,7 @@ namespace Edit2DEngine.Trigger
             this.TriggerHandler = triggerHandler;
 
             this.ListScript = new List<Script>();
-            this.ListTargetScriptEntiteName = new List<string>();
+            this.ListTargetActionHandlerName = new List<string>();
             this.ListTargetScriptName = new List<string>();
 
             this.TriggerMouseType = triggerMouseType;

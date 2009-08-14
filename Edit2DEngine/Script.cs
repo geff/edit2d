@@ -10,10 +10,10 @@ namespace Edit2DEngine
         public List<ActionBase> ListAction { get; set; }
         
         //public Entite Entite { get; set; }
-        public Object ActionHandler { get; set; }
+        public IActionHandler ActionHandler { get; set; }
         public String ScriptName { get; set; }
 
-        public Script(string scriptName, Object actionHandler)
+        public Script(string scriptName, IActionHandler actionHandler)
         {
             this.ScriptName = scriptName;
             //this.Entite = entite;

@@ -5,6 +5,9 @@ namespace FarseerGames.GettingStarted.DrawingSystem
 {
     public class CircleBrush
     {
+        public static Vector2 CameraPosition { get; set; }
+        public static float CameraZoom { get; set; }
+
         private Color _borderColor;
         private Texture2D _circleTexture;
         private Color _color = Color.Black;
@@ -53,10 +56,15 @@ namespace FarseerGames.GettingStarted.DrawingSystem
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position)
         {
-            spriteBatch.Draw(_circleTexture, position, null, Color.White, 0,
-                             new Vector2(1 + _circleTexture.Width/2f, 1 + _circleTexture.Height/2), 1,
+            spriteBatch.Draw(_circleTexture, GetPos(position), null, Color.White, 0,
+                             new Vector2(1f + (float)_circleTexture.Width / 2f * CameraZoom, 1f + (float)_circleTexture.Height / 2* CameraZoom) , CameraZoom,
                              SpriteEffects.None,
                              _layer);
+        }
+
+        private Vector2 GetPos(Vector2 vec)
+        {
+            return (vec + CameraPosition) * CameraZoom;
         }
     }
 }

@@ -91,7 +91,6 @@ namespace WinFormsContentLoading
         {
             if (entite.ListParticleSystem.Count > 0)
             {
-
                 //--- Rendu du système de particule
                 for (int j = 0; j < entite.ListParticleSystem.Count; j++)
                 {
@@ -115,9 +114,9 @@ namespace WinFormsContentLoading
                         vecEnd1 = vecStart1 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f));
                         vecEnd2 = vecStart2 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f));
 
-                        line.Draw(spriteBatch, vecStart1, vecEnd1);
-                        line.Draw(spriteBatch, vecStart2, vecEnd2);
-                        line.Draw(spriteBatch, vecEnd1, vecEnd2);
+                        line.Draw(spriteBatch, GetPos(vecStart1), GetPos(vecEnd1));
+                        line.Draw(spriteBatch, GetPos(vecStart2), GetPos(vecEnd2));
+                        line.Draw(spriteBatch, GetPos(vecEnd1), GetPos(vecEnd2));
 
                         this.spriteBatch.End();
 
@@ -129,7 +128,6 @@ namespace WinFormsContentLoading
                     }
                 }
                 //---
-
             }
 
             //--- Texture de l'entité
@@ -153,7 +151,6 @@ namespace WinFormsContentLoading
 
             //effect.Techniques[idTechnique].Passes[0].Begin();
 
-
             Texture2D texture = null;
 
             if (entite is Particle)
@@ -165,9 +162,9 @@ namespace WinFormsContentLoading
                 texture = TextureManager.LoadTexture2D(entite.TextureName);
             }
 
-            this.spriteBatch.Draw(texture, entite.Rectangle, null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 1f);
+            this.spriteBatch.Draw(texture, GetRec(entite.Rectangle), null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 1f);
             //this.spriteBatch.Draw(TextureManager.LoadTexture2D(entite.TextureName), entite.Position, null, entite.Color, entite.Body.Rotation, entite.Center, 1f, SpriteEffects.None, 1f);
-            
+
             //effect.Techniques[idTechnique].Passes[0].End();
 
             this.spriteBatch.End();
@@ -181,8 +178,11 @@ namespace WinFormsContentLoading
                 //--- Pin static
                 if (repository.showPhysic && entite.IsStatic)
                 {
-                    this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pin"), new Rectangle((int)entite.Position.X, (int)entite.Position.Y, 10, 16), null, Color.White, entite.Body.Rotation,
-                        entite.SizeVector / 2 + new Vector2(5, 8), SpriteEffects.None, 1f);
+                    Rectangle recPin = new Rectangle((int)((entite.Position.X + repository.Camera.Position.X) * repository.Camera.Zoom),
+                                                     (int)((entite.Position.Y + repository.Camera.Position.Y) * repository.Camera.Zoom),10,16);
+
+                    this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pin"), recPin, null, Color.White, entite.Body.Rotation,
+                        (entite.SizeVector / 2 + new Vector2(5, 8)), SpriteEffects.None, 1f);
                 }
                 //---
 
@@ -195,8 +195,8 @@ namespace WinFormsContentLoading
                     Vector2 vecCenter = Vector2.Zero;
                     vecCenter.X = 5f * entite.Center.X / (float)entite.Size.Width * ratioX;
                     vecCenter.Y = 5f * entite.Center.Y / (float)entite.Size.Height * ratioY;
-
-                    this.spriteBatch.Draw(TextureManager.LoadTexture2D("Anchor"), entite.Rectangle, null, new Color(0, 150, 250, 100), entite.Body.Rotation, vecCenter, SpriteEffects.None, 1f);
+                    
+                    this.spriteBatch.Draw(TextureManager.LoadTexture2D("Anchor"), GetRec(entite.Rectangle), null, new Color(0, 150, 250, 100), entite.Body.Rotation, vecCenter, SpriteEffects.None, 1f);
                 }
                 //---
 
@@ -235,6 +235,58 @@ namespace WinFormsContentLoading
             }
         }
 
+        private Rectangle GetRec(Rectangle rec)
+        {
+            // Pg = (P + Pc - Fc) * Zc + Fc
+
+            //Rectangle rec3 = rec;
+            //rec3.Offset((int)repository.Camera.Position.X - (int)repository.Camera.Focal.X,
+            //            (int)repository.Camera.Position.Y - (int)repository.Camera.Focal.Y);
+
+            //Rectangle rec4 = new Rectangle((int)((float)rec3.X * repository.Camera.Zoom),
+            //    (int)((float)rec3.Y * repository.Camera.Zoom),
+            //    (int)((float)rec3.Width * repository.Camera.Zoom),
+            //    (int)((float)rec3.Height * repository.Camera.Zoom));
+
+            Vector2 vecFcZ = repository.Camera.FocalZ;// +new Vector2(5, 5);
+
+            // Pg = (P + Pc - Fc) * Zc + FcZ
+            Rectangle rec3 = rec;
+            rec3.Offset((int)repository.Camera.Position.X - (int)repository.Camera.Focal.X,
+                        (int)repository.Camera.Position.Y - (int)repository.Camera.Focal.Y);
+
+            Rectangle rec4 = new Rectangle((int)((float)rec3.X * repository.Camera.Zoom + vecFcZ.X),
+                (int)((float)rec3.Y * repository.Camera.Zoom + vecFcZ.Y),
+                (int)((float)rec3.Width * repository.Camera.Zoom),
+                (int)((float)rec3.Height * repository.Camera.Zoom));
+
+            //Rectangle rec3 = rec;
+            //rec3.Offset((int)repository.Camera.Position.X - (int)repository.Camera.Focal.X,
+            //            (int)repository.Camera.Position.Y - (int)repository.Camera.Focal.Y);
+
+            //Rectangle rec4 = new Rectangle((int)((float)rec3.X * repository.Camera.Zoom + repository.Camera.Focal.X / repository.Camera.Zoom),
+            //    (int)((float)rec3.Y * repository.Camera.Zoom + repository.Camera.Focal.Y / repository.Camera.Zoom),
+            //    (int)((float)rec3.Width * repository.Camera.Zoom),
+            //    (int)((float)rec3.Height * repository.Camera.Zoom));
+
+
+            //Rectangle rec3 = rec;
+            //rec3.Offset((int)repository.Camera.Position.X ,
+            //            (int)repository.Camera.Position.Y);
+
+            //Rectangle rec4 = new Rectangle((int)((float)rec3.X * repository.Camera.Zoom- repository.Camera.Focal.X),
+            //    (int)((float)rec3.Y * repository.Camera.Zoom - repository.Camera.Focal.Y),
+            //    (int)((float)rec3.Width * repository.Camera.Zoom),
+            //    (int)((float)rec3.Height * repository.Camera.Zoom));
+
+            return rec4;
+        }
+
+        private Vector2 GetPos(Vector2 pos)
+        {
+            return (pos + repository.Camera.Position - repository.Camera.Focal) * repository.Camera.Zoom;
+        }
+
         /// <summary>
         /// Draws the control.
         /// </summary>
@@ -249,6 +301,15 @@ namespace WinFormsContentLoading
                 repository.PhysicsSimulatorView.LoadContent(GraphicsDevice, Content);
             }
 
+            LineBrush.CameraPosition = repository.Camera.Position;
+            LineBrush.CameraZoom = repository.Camera.Zoom;
+
+            RectangleBrush.CameraPosition = repository.Camera.Position;
+            RectangleBrush.CameraZoom = repository.Camera.Zoom;
+
+            CircleBrush.CameraPosition = repository.Camera.Position;
+            CircleBrush.CameraZoom = repository.Camera.Zoom;
+
             // Clear to the default control background color.
             GraphicsDevice.Clear(Color.White);
 
@@ -261,8 +322,6 @@ namespace WinFormsContentLoading
             for (int i = 0; i < repository.listEntite.Count; i++)
             {
                 Entite entite = repository.listEntite[i];
-
-
                 DrawEntite(entite);
             }
 

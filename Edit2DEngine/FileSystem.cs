@@ -61,258 +61,291 @@ namespace Edit2DEngine
 
         public static void Open(string fileName, Repository repository)
         {
-            XmlTextReader reader = new XmlTextReader(fileName);
-
-            Entite entite = null;
-            //Script script = null;
-            //Curve curve = null;
-            int indexPoints = 0;
-
-            while (reader.Read())
+            unsafe
             {
-                if (reader.NodeType == XmlNodeType.Element)
+                XmlTextReader reader = new XmlTextReader(fileName);
+
+                Entite entite = null;
+                int indexPoints = 0;
+
+                repository.listEntite = new List<Entite>();
+                Repository.physicSimulator.Clear();
+                ITriggerHandler currentTriggerHandler = null;
+                IActionHandler currentActionHandler = null;
+
+                Dictionary<String, IActionHandler> dicActionHandler = new Dictionary<string, IActionHandler>();
+
+                while (reader.Read())
                 {
-                    if (reader.Name == "Entite")
+                    if (reader.NodeType == XmlNodeType.Element)
                     {
-                        string name = repository.FoundNewName(reader["TextureName"]);
-
-                        entite = new Entite(true, reader["TextureName"], name);
-                        repository.listEntite.Add(entite);
-
-                        OpenEntity(entite, false, reader, repository);
-                    }
-                    else if (reader.Name == "FixedLinearSpring")
-                    {
-                        Entite ent = repository.listEntite.Last();
-
-                        FixedLinearSpring spring = new FixedLinearSpring();
-                        ent.ListFixedLinearSpring.Add(spring);
-
-                        spring.Body = entite.Body;
-                        spring.BodyAttachPoint = ReadVector2(reader["BodyAttachPoint"]);
-                        //spring..Position = ReadVector2(reader["Position"]);
-                        spring.WorldAttachPoint = ReadVector2(reader["WorldAttachPoint"]);
-                        spring.RestLength = float.Parse(reader["RestLength"]);
-                        spring.DampingConstant = 10f;
-                        spring.SpringConstant = 10f;
-
-                        Repository.physicSimulator.SpringList.Add(spring);
-                    }
-                    else if (reader.Name == "LinearSpring")
-                    {
-                        Entite ent = repository.listEntite.Last();
-
-                        //ent.AddLinearSpring
-
-                        LinearSpring spring = new LinearSpring();
-                        ent.ListLinearSpring.Add(spring);
-
-                        //SpringFactory.Instance.CreateLinearSpring(Repository.physicSimulator, body, vec1, entite.body, vec2, 10f, 10f);
-
-
-                        spring.Body1 = ent.Body;
-                        spring.Body2 = ent.Body;
-                        spring.Tag = reader["Body2"];
-                        spring.AttachPoint1 = ReadVector2(reader["AttachPoint1"]);
-                        spring.AttachPoint2 = ReadVector2(reader["AttachPoint2"]);
-                        spring.RestLength = float.Parse(reader["RestLength"]);
-                        spring.DampingConstant = 10f;
-                        spring.SpringConstant = 10f;
-
-                        Repository.physicSimulator.SpringList.Add(spring);
-                    }
-                    else if (reader.Name == "FixedRevoluteJoint")
-                    {
-                        Entite ent = repository.listEntite.Last();
-
-                        FixedRevoluteJoint joint = new FixedRevoluteJoint();
-                        ent.ListFixedRevoluteJoint.Add(joint);
-
-                        joint.Body = entite.Body;
-                        joint.Anchor = ReadVector2(reader["Anchor"]);
-                        joint.MaxImpulse = float.Parse(reader["MaxImpulse"]);
-
-                        Repository.physicSimulator.JointList.Add(joint);
-                    }
-                    else if (reader.Name == "Script")
-                    {
-                        Entite ent = repository.listEntite.Last();
-
-                        Script script = new Script(reader["ScriptName"], ent);
-                        //script.Duration = int.Parse(reader["Duration"]);
-
-                        ent.ListScript.Add(script);
-                    }
-                    else if (reader.Name == "Curve")
-                    {
-                        Entite ent = repository.listEntite.Last();
-                        Script scr = ent.ListScript.Last();
-
-                        ActionCurve curve = new ActionCurve(scr, reader["ActionName"], bool.Parse(reader["IsRelative"]), bool.Parse(reader["IsLoop"]), ent.GetType(), reader["PropertyName"]);
-
-                        scr.ListAction.Add(curve);
-
-                        indexPoints = -1;
-                    }
-                    else if (reader.Name == "Points")
-                    {
-                        indexPoints++;
-                    }
-                    else if (reader.Name == "Point")
-                    {
-                        CurveKey point = new CurveKey(float.Parse(reader["X"]), float.Parse(reader["Y"]));
-
-                        Entite ent = repository.listEntite.Last();
-                        Script scr = ent.ListScript.Last();
-                        Curve crv = ((ActionCurve)scr.ListAction.Last(action => action is ActionCurve)).ListCurve[indexPoints];
-
-                        crv.Keys.Add(point);
-
-                        ((ActionCurve)scr.ListAction.Last()).CalcDuration();
-                    }
-                    else if (reader.Name == "Event")
-                    {
-                        //Entite ent = repository.listEntite.Last();
-                        //Script scr = ent.ListScript.Last();
-
-                        //ActionEvent actionEvent = new ActionEvent(scr, reader["ActionName"], bool.Parse(reader["IsRelative"]), reader["PropertyName"]);
-
-                        //if (actionEvent.PropertyType.Name == "Color")
-                        //{
-                        //    actionEvent.Value = reader["Color"].ToColor();
-                        //}
-                        //else if (actionEvent.PropertyType.Name == "Single")
-                        //{
-                        //    actionEvent.Value = float.Parse(reader["Value"]);
-                        //}
-                        //else if (actionEvent.PropertyType.Name == "Vector2")
-                        //{
-                        //    actionEvent.Value = reader["Value"].ToVector2();
-                        //}
-
-                        ////if (reader["ChangeValue"] != null)
-                        ////{
-                        ////    actionEvent.ChangeValue = reader["ChangeValue"].ToBools();
-                        ////}
-
-                        //scr.ListAction.Add(actionEvent);
-
-                        //indexPoints = -1;
-                    }
-                    else if (reader.Name == "TriggerCollision")
-                    {
-                        Entite ent = repository.listEntite.Last();
-
-                        TriggerCollision triggerCollision = new TriggerCollision(reader["TriggerName"], ent, null);
-
-                        triggerCollision.TargetCollisionEntiteName = reader["TargetEntiteName"];
-
-                        ent.ListTrigger.Add(triggerCollision);
-                    }
-                    else if (reader.Name == "TriggerScript")
-                    {
-                        Entite ent = repository.listEntite.Last();
-                        TriggerBase trigger = ent.ListTrigger.Last();
-
-                        trigger.ListTargetScriptEntiteName.Add(reader["ScriptEntiteName"]);
-                        trigger.ListTargetScriptName.Add(reader["ScriptName"]);
-                    }
-                    else if (reader.Name == "TriggerValueChanged")
-                    {
-                        Entite ent = repository.listEntite.Last();
-
-                        TriggerValueChanged triggerValueChanged = new TriggerValueChanged(reader["TriggerName"], ent, reader["PropertyName"], null, null, bool.Parse(reader["IsCustomProperty"]));
-
-                        string[] sens = reader["Sens"].Split(new char[] { ' ', '{', '}', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                        TriggerValueChangedSens[] sensTrigger = new TriggerValueChangedSens[sens.Length];
-
-                        for (int i = 0; i < sens.Length; i++)
+                        if (reader.Name == "World")
                         {
-                            sensTrigger[i] = (TriggerValueChangedSens)int.Parse(sens[i]);
+                            repository.World = new World();
+                            currentTriggerHandler = repository.World;
                         }
-
-                        triggerValueChanged.Sens = sensTrigger;
-
-
-                        if (triggerValueChanged.PropertyType.Name == "Vector2")
+                        if (reader.Name == "Entite")
                         {
+                            //string name = repository.FoundNewName(reader["Name"]);
+                            string name = reader["Name"].ToString();
 
-                            triggerValueChanged.Value = reader["Value"].ToVector2();
+                            entite = new Entite(true, reader["TextureName"], name);
+
+                            OpenEntity(entite, false, reader, repository);
+
+                            currentTriggerHandler = entite;
+                            currentActionHandler = entite;
+
+                            dicActionHandler.Add(currentActionHandler.Name, currentActionHandler);
+                            repository.listEntite.Add(entite);
                         }
-                        else if (triggerValueChanged.PropertyType.Name == "Single")
+                        else if (reader.Name == "FixedLinearSpring")
                         {
-                            triggerValueChanged.Value = float.Parse(reader["Value"]);
+                            Entite ent = repository.listEntite.Last();
+
+                            FixedLinearSpring spring = new FixedLinearSpring();
+                            ent.ListFixedLinearSpring.Add(spring);
+
+                            spring.Body = entite.Body;
+                            spring.BodyAttachPoint = ReadVector2(reader["BodyAttachPoint"]);
+                            //spring..Position = ReadVector2(reader["Position"]);
+                            spring.WorldAttachPoint = ReadVector2(reader["WorldAttachPoint"]);
+                            spring.RestLength = float.Parse(reader["RestLength"]);
+                            spring.DampingConstant = 10f;
+                            spring.SpringConstant = 10f;
+
+                            Repository.physicSimulator.SpringList.Add(spring);
                         }
-                        else if (triggerValueChanged.PropertyType.Name == "Color")
+                        else if (reader.Name == "LinearSpring")
                         {
-                            triggerValueChanged.Value = reader["Value"].ToColor();
+                            Entite ent = repository.listEntite.Last();
+
+                            //ent.AddLinearSpring
+
+                            LinearSpring spring = new LinearSpring();
+                            ent.ListLinearSpring.Add(spring);
+
+                            //SpringFactory.Instance.CreateLinearSpring(Repository.physicSimulator, body, vec1, entite.body, vec2, 10f, 10f);
+
+                            spring.Body1 = ent.Body;
+                            spring.Body2 = ent.Body;
+                            spring.Tag = reader["Body2"];
+                            spring.AttachPoint1 = ReadVector2(reader["AttachPoint1"]);
+                            spring.AttachPoint2 = ReadVector2(reader["AttachPoint2"]);
+                            spring.RestLength = float.Parse(reader["RestLength"]);
+                            spring.DampingConstant = 10f;
+                            spring.SpringConstant = 10f;
+
+                            Repository.physicSimulator.SpringList.Add(spring);
                         }
+                        else if (reader.Name == "FixedRevoluteJoint")
+                        {
+                            Entite ent = repository.listEntite.Last();
 
-                        ent.ListTrigger.Add(triggerValueChanged);
+                            FixedRevoluteJoint joint = new FixedRevoluteJoint();
+                            ent.ListFixedRevoluteJoint.Add(joint);
+
+                            joint.Body = entite.Body;
+                            joint.Anchor = ReadVector2(reader["Anchor"]);
+                            joint.MaxImpulse = float.Parse(reader["MaxImpulse"]);
+
+                            Repository.physicSimulator.JointList.Add(joint);
+                        }
+                        else if (reader.Name == "Script")
+                        {
+                            Script script = new Script(reader["ScriptName"], currentActionHandler);
+
+                            currentActionHandler.ListScript.Add(script);
+                        }
+                        else if (reader.Name == "Curve")
+                        {
+                            Script scr = currentActionHandler.ListScript.Last();
+
+                            ActionCurve curve = new ActionCurve(scr, reader["ActionName"], bool.Parse(reader["IsRelative"]), bool.Parse(reader["IsLoop"]), currentActionHandler.GetType(), reader["PropertyName"]);
+
+                            scr.ListAction.Add(curve);
+
+                            indexPoints = -1;
+                        }
+                        else if (reader.Name == "Points")
+                        {
+                            indexPoints++;
+                        }
+                        else if (reader.Name == "Point")
+                        {
+                            CurveKey point = new CurveKey(float.Parse(reader["X"]), float.Parse(reader["Y"]));
+
+                            Script scr = currentActionHandler.ListScript.Last();
+                            Curve crv = ((ActionCurve)scr.ListAction.Last(action => action is ActionCurve)).ListCurve[indexPoints];
+
+                            crv.Keys.Add(point);
+
+                            ((ActionCurve)scr.ListAction.Last()).CalcDuration();
+                        }
+                        else if (reader.Name == "Event")
+                        {
+                            //Entite ent = repository.listEntite.Last();
+                            //Script scr = ent.ListScript.Last();
+
+                            //ActionEvent actionEvent = new ActionEvent(scr, reader["ActionName"], bool.Parse(reader["IsRelative"]), reader["PropertyName"]);
+
+                            //if (actionEvent.PropertyType.Name == "Color")
+                            //{
+                            //    actionEvent.Value = reader["Color"].ToColor();
+                            //}
+                            //else if (actionEvent.PropertyType.Name == "Single")
+                            //{
+                            //    actionEvent.Value = float.Parse(reader["Value"]);
+                            //}
+                            //else if (actionEvent.PropertyType.Name == "Vector2")
+                            //{
+                            //    actionEvent.Value = reader["Value"].ToVector2();
+                            //}
+
+                            ////if (reader["ChangeValue"] != null)
+                            ////{
+                            ////    actionEvent.ChangeValue = reader["ChangeValue"].ToBools();
+                            ////}
+
+                            //scr.ListAction.Add(actionEvent);
+
+                            //indexPoints = -1;
+                        }
+                        else if (reader.Name == "TriggerCollision")
+                        {
+                            TriggerCollision triggerCollision = new TriggerCollision(reader["TriggerName"], currentTriggerHandler, null);
+
+                            triggerCollision.TargetCollisionEntiteName = reader["TargetEntiteName"];
+
+                            currentTriggerHandler.ListTrigger.Add(triggerCollision);
+                        }
+                        else if (reader.Name == "TriggerScript")
+                        {
+                            TriggerBase trigger = currentTriggerHandler.ListTrigger.Last();
+
+                            trigger.ListTargetActionHandlerName.Add(reader["ScriptActionHandlerName"]);
+                            trigger.ListTargetScriptName.Add(reader["ScriptName"]);
+                        }
+                        else if (reader.Name == "TriggerValueChanged")
+                        {
+                            TriggerValueChanged triggerValueChanged = new TriggerValueChanged(reader["TriggerName"], currentTriggerHandler, reader["PropertyName"], null, null, bool.Parse(reader["IsCustomProperty"]));
+
+                            string[] sens = reader["Sens"].Split(new char[] { ' ', '{', '}', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                            TriggerValueChangedSens[] sensTrigger = new TriggerValueChangedSens[sens.Length];
+
+                            for (int i = 0; i < sens.Length; i++)
+                            {
+                                sensTrigger[i] = (TriggerValueChangedSens)int.Parse(sens[i]);
+                            }
+
+                            triggerValueChanged.Sens = sensTrigger;
+
+
+                            if (triggerValueChanged.PropertyType.Name == "Vector2")
+                            {
+
+                                triggerValueChanged.Value = reader["Value"].ToVector2();
+                            }
+                            else if (triggerValueChanged.PropertyType.Name == "Single")
+                            {
+                                triggerValueChanged.Value = float.Parse(reader["Value"]);
+                            }
+                            else if (triggerValueChanged.PropertyType.Name == "Color")
+                            {
+                                triggerValueChanged.Value = reader["Value"].ToColor();
+                            }
+
+                            currentTriggerHandler.ListTrigger.Add(triggerValueChanged);
+                        }
+                        else if (reader.Name == "TriggerMouse")
+                        {
+                            TriggerMouse triggerMouse = new TriggerMouse(reader["TriggerName"], currentTriggerHandler, (TriggerMouseType)int.Parse(reader["TriggerMouseType"]));
+
+                            currentTriggerHandler.ListTrigger.Add(triggerMouse);
+                        }
+                        else if (reader.Name == "TriggerLoad")
+                        {
+                            TriggerLoad triggerLoad = new TriggerLoad(reader["TriggerName"], currentTriggerHandler);
+                            currentTriggerHandler.ListTrigger.Add(triggerLoad);
+                        }
+                        else if (reader.Name == "TriggerTime")
+                        {
+                            TriggerTime triggerTime = new TriggerTime(reader["TriggerName"], currentTriggerHandler);
+                            triggerTime.TimeLoop = (int)float.Parse(reader["TimeLoop"]);
+
+                            currentTriggerHandler.ListTrigger.Add(triggerTime);
+                        }
+                        else if (reader.Name == "ParticleSystem")
+                        {
+                            Entite ent = repository.listEntite.Last();
+
+                            ParticleSystem pSystem = new ParticleSystem(ent);
+                            pSystem.EmmittingAngle = float.Parse(reader["EmmittingAngle"]);
+                            pSystem.EmmittingFromAllSurface = bool.Parse(reader["EmmittingFromAllSurface"]);
+                            pSystem.FieldAngle = float.Parse(reader["FieldAngle"]);
+                            pSystem.ParticleSystemName = reader["ParticleSystemName"];
+                            pSystem.Rate = int.Parse(reader["Rate"]);
+                            pSystem.Velocity = float.Parse(reader["Velocity"]);
+
+                            currentActionHandler = pSystem;
+                            dicActionHandler.Add(currentActionHandler.Name, currentActionHandler);
+
+                            ent.ListParticleSystem.Add(pSystem);
+                        }
+                        else if (reader.Name == "ParticleTemplate")
+                        {
+                            Entite ent = repository.listEntite.Last();
+                            ParticleSystem psSystem = ent.ListParticleSystem.Last();
+
+                            Particle particleTemplate = new Particle(false, reader["TextureName"], reader["Name"], psSystem);
+                            OpenEntity(particleTemplate, true, reader, repository);
+
+                            particleTemplate.LifeTime = int.Parse(reader["LifeTime"]);
+
+                            psSystem.ListParticleTemplate.Add(particleTemplate);
+                        }
                     }
-                    else if (reader.Name == "TriggerMouse")
+                }
+
+                //--- Associe les scripts aux trigger de l'obet World
+                LinkTriggerToScript(repository.World, dicActionHandler);
+                //---
+
+                foreach (Entite ent in repository.listEntite)
+                {
+                    foreach (LinearSpring spring in ent.ListLinearSpring)
                     {
-                        Entite ent = repository.listEntite.Last();
-
-                        TriggerMouse triggerMouse = new TriggerMouse(reader["TriggerName"], ent, (TriggerMouseType)int.Parse(reader["TriggerMouseType"]));
-
-                        ent.ListTrigger.Add(triggerMouse);
+                        spring.Body2 = repository.listEntite.Find(e => e.Name == spring.Tag.ToString()).Body;
                     }
-                    else if (reader.Name == "ParticleSystem")
-                    {
-                        Entite ent = repository.listEntite.Last();
 
-                        ParticleSystem pSystem = new ParticleSystem(ent);
-                        pSystem.EmmittingAngle = float.Parse(reader["EmmittingAngle"]);
-                        pSystem.EmmittingFromAllSurface = bool.Parse(reader["EmmittingFromAllSurface"]);
-                        pSystem.FieldAngle = float.Parse(reader["FieldAngle"]);
-                        pSystem.ParticleSystemName = reader["ParticleSystemName"];
-                        pSystem.Rate = int.Parse(reader["Rate"]);
-                        pSystem.Velocity = float.Parse(reader["Velocity"]);
-
-                        ent.ListParticleSystem.Add(pSystem);
-                    }
-                    else if (reader.Name == "ParticleTemplate")
-                    {
-                        Entite ent = repository.listEntite.Last();
-                        ParticleSystem psSystem = ent.ListParticleSystem.Last();
-
-                        Particle particleTemplate = new Particle(false, reader["TextureName"], reader["Name"], psSystem);
-                        OpenEntity(particleTemplate, true, reader, repository);
-
-                        particleTemplate.LifeTime = int.Parse(reader["LifeTime"]);
-
-                        psSystem.ListParticleTemplate.Add(particleTemplate);
-                    }
+                    //--- Associe les scripts aux triggers de l'entité
+                    LinkTriggerToScript(ent, dicActionHandler);
+                    //---
                 }
             }
+        }
 
-            foreach (Entite ent in repository.listEntite)
+        private static void LinkTriggerToScript(ITriggerHandler triggerHandler, Dictionary<String, IActionHandler> dicActionHandler)
+        {
+            foreach (TriggerBase trigger in triggerHandler.ListTrigger)
             {
-                foreach (LinearSpring spring in ent.ListLinearSpring)
+                for (int i = 0; i < trigger.ListTargetActionHandlerName.Count; i++)
                 {
-                    spring.Body2 = repository.listEntite.Find(e => e.Name == spring.Tag.ToString()).Body;
+                    string scriptName = trigger.ListTargetScriptName[i];
+                    string actionHandlerName = trigger.ListTargetActionHandlerName[i];
+
+                    //Script script = repository.listEntite.Find(ent2 => ent2.Name == entiteName).ListScript.Find(scr => scr.ScriptName == scriptName);
+                    Script script = dicActionHandler[actionHandlerName].ListScript.Find(scr => scr.ScriptName == scriptName);
+
+                    if (script != null)
+                        trigger.ListScript.Add(script);
                 }
 
-                foreach (TriggerBase trigger in ent.ListTrigger)
+                if (trigger is TriggerCollision)
                 {
-                    for (int i = 0; i < trigger.ListTargetScriptEntiteName.Count; i++)
-                    {
-                        string scriptName = trigger.ListTargetScriptName[i];
-                        string entiteName = trigger.ListTargetScriptEntiteName[i];
+                    TriggerCollision triggerCol = (TriggerCollision)trigger;
 
-                        Script script = repository.listEntite.Find(ent2 => ent2.Name == entiteName).ListScript.Find(scr => scr.ScriptName == scriptName);
-
-                        if (script != null)
-                            trigger.ListScript.Add(script);
-                    }
-
-                    if (trigger is TriggerCollision)
-                    {
-                        TriggerCollision triggerCol = (TriggerCollision)trigger;
-
-                        triggerCol.TargetEntite = repository.listEntite.Find(ent2 => ent2.Name == triggerCol.TargetCollisionEntiteName);
-                    }
+                    triggerCol.TargetEntite = (Entite)dicActionHandler.First(ent2 => ent2.Value is Entite && ent2.Value.Name == triggerCol.TargetCollisionEntiteName).Value;
                 }
             }
         }
@@ -458,59 +491,7 @@ namespace Edit2DEngine
             {
                 TriggerBase trigger = entite.ListTrigger[j];
 
-                if (trigger is TriggerCollision)
-                {
-                    TriggerCollision triggerCollision = (TriggerCollision)trigger;
-
-                    writer.WriteStartElement("TriggerCollision");
-
-                    writer.WriteAttributeString("TriggerName", triggerCollision.TriggerName);
-
-                    writer.WriteAttributeString("TargetEntiteName", triggerCollision.TargetEntite.Name);
-                }
-                else if (trigger is TriggerValueChanged)
-                {
-                    TriggerValueChanged triggerValueChanged = (TriggerValueChanged)trigger;
-
-                    writer.WriteStartElement("TriggerValueChanged");
-
-                    writer.WriteAttributeString("TriggerName", triggerValueChanged.TriggerName);
-
-                    string sens = "{";
-                    for (int k = 0; k < triggerValueChanged.Sens.Length; k++)
-                    {
-                        sens += ";" + ((int)triggerValueChanged.Sens[k]).ToString();
-                    }
-                    sens += "}";
-
-                    writer.WriteAttributeString("PropertyName", triggerValueChanged.PropertyName);
-                    writer.WriteAttributeString("Sens", sens);
-                    writer.WriteAttributeString("Value", triggerValueChanged.Value.ToString());
-                    writer.WriteAttributeString("IsCustomProperty", triggerValueChanged.IsCustomProperty.ToString());
-                }
-                else if (trigger is TriggerMouse)
-                {
-                    TriggerMouse triggerMouse = (TriggerMouse)trigger;
-
-                    writer.WriteStartElement("TriggerMouse");
-
-                    writer.WriteAttributeString("TriggerName", triggerMouse.TriggerName);
-
-                    writer.WriteAttributeString("TriggerMouseType", ((int)triggerMouse.TriggerMouseType).ToString());
-                }
-
-                foreach (Script script in trigger.ListScript)
-                {
-                    writer.WriteStartElement("TriggerScript");
-
-                    //TODO : gérer correctement selon l'origine de l'entité (Entite ou ParticleSystem)
-                    //writer.WriteAttributeString("ScriptEntiteName", script.ActionHandler.Name);
-                    writer.WriteAttributeString("ScriptName", script.ScriptName);
-
-                    writer.WriteEndElement();
-                }
-
-                writer.WriteEndElement();
+                SaveTrigger(writer, trigger);
             }
             #endregion
 
@@ -538,6 +519,75 @@ namespace Edit2DEngine
             writer.WriteEndElement();
         }
 
+        private static void SaveTrigger(XmlWriter writer, TriggerBase trigger)
+        {
+            if (trigger is TriggerCollision)
+            {
+                TriggerCollision triggerCollision = (TriggerCollision)trigger;
+
+                writer.WriteStartElement("TriggerCollision");
+
+                writer.WriteAttributeString("TriggerName", triggerCollision.TriggerName);
+
+                writer.WriteAttributeString("TargetEntiteName", triggerCollision.TargetEntite.Name);
+            }
+            else if (trigger is TriggerValueChanged)
+            {
+                TriggerValueChanged triggerValueChanged = (TriggerValueChanged)trigger;
+
+                writer.WriteStartElement("TriggerValueChanged");
+
+                writer.WriteAttributeString("TriggerName", triggerValueChanged.TriggerName);
+
+                string sens = "{";
+                for (int k = 0; k < triggerValueChanged.Sens.Length; k++)
+                {
+                    sens += ";" + ((int)triggerValueChanged.Sens[k]).ToString();
+                }
+                sens += "}";
+
+                writer.WriteAttributeString("PropertyName", triggerValueChanged.PropertyName);
+                writer.WriteAttributeString("Sens", sens);
+                writer.WriteAttributeString("Value", triggerValueChanged.Value.ToString());
+                writer.WriteAttributeString("IsCustomProperty", triggerValueChanged.IsCustomProperty.ToString());
+            }
+            else if (trigger is TriggerMouse)
+            {
+                TriggerMouse triggerMouse = (TriggerMouse)trigger;
+
+                writer.WriteStartElement("TriggerMouse");
+                writer.WriteAttributeString("TriggerName", triggerMouse.TriggerName);
+                writer.WriteAttributeString("TriggerMouseType", ((int)triggerMouse.TriggerMouseType).ToString());
+            }
+            else if (trigger is TriggerLoad)
+            {
+                TriggerLoad triggerLoad = (TriggerLoad)trigger;
+                writer.WriteStartElement("TriggerLoad");
+                writer.WriteAttributeString("TriggerName", triggerLoad.TriggerName);
+            }
+            else if (trigger is TriggerTime)
+            {
+                TriggerTime triggerTime = (TriggerTime)trigger;
+
+                writer.WriteStartElement("TriggerTime");
+                writer.WriteAttributeString("TriggerName", triggerTime.TriggerName);
+                writer.WriteAttributeString("TimeLoop", WriteFloat(triggerTime.TimeLoop));
+            }
+
+            foreach (Script script in trigger.ListScript)
+            {
+                writer.WriteStartElement("TriggerScript");
+
+                //TODO : gérer correctement selon l'origine de l'entité (Entite ou ParticleSystem)
+                writer.WriteAttributeString("ScriptActionHandlerName", script.ActionHandler.Name);
+                writer.WriteAttributeString("ScriptName", script.ScriptName);
+
+                writer.WriteEndElement();
+            }
+
+            writer.WriteEndElement();
+        }
+
         public static void Save(string fileName, Repository repository)
         {
             XmlTextWriter writer = new XmlTextWriter(fileName, Encoding.Default);
@@ -555,6 +605,15 @@ namespace Edit2DEngine
             writer.WriteEndElement();
             //---
 
+            //--- World
+            writer.WriteStartElement("World");
+            for (int i = 0; i < repository.World.ListTrigger.Count; i++)
+			{
+                SaveTrigger(writer, repository.World.ListTrigger[i]);
+			}
+            writer.WriteEndElement();
+            //---
+
             //--- Liste des entités
             for (int i = 0; i < repository.listEntite.Count; i++)
             {
@@ -564,7 +623,7 @@ namespace Edit2DEngine
             }
             //---
 
-            writer.WriteEndElement();
+            //writer.WriteEndElement();
             writer.WriteEndDocument();
 
             writer.Flush();

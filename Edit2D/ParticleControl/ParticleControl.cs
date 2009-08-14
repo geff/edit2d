@@ -146,7 +146,7 @@ namespace Edit2D.ParticleControl
                 Bitmap bmp = (Bitmap)cmbParticleTemplate.SelectedItem;
 
                 //TODO : il faut peut etre supprimer les body précédents
-                particleTemplate.ChangeTexture(bmp.Tag.ToString(), true);
+                particleTemplate.ChangeTexture(bmp.Tag.ToString(), true, true);
 
                 propParticleTemplate.Refresh();
             }

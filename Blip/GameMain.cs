@@ -27,6 +27,7 @@ namespace Blip
         SpriteBatch spriteBatch;
         public GameBase GameCurrent = null;
         public bool Mini = false;
+        public GameTime LastGameTime;
 
         public GameMain()
         {
@@ -93,6 +94,8 @@ namespace Blip
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            LastGameTime = gameTime;
+
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
