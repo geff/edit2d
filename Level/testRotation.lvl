@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <Entite Position="294,83;223,75" Name="Pea-Ghost1" TextureName="Pea-Ghost" AngularSpeed="0,00" IsColisionable="True" IsStatic="False" Size="90;39" Rotation="0,02" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False">
+    <FixedRevoluteJoint Anchor="263,00;216,00" MaxImpulse="340282300000000000000000000000000000000,00" />
+    <Script ScriptName="Script1">
+      <Curve ActionName="Curve0" PropertyName="Rotation" IsRelative="True" IsLoop="True">
+        <Points>
+          <Point X="0,00" Y="0,00" />
+          <Point X="2000,00" Y="6,28" />
+        </Points>
+      </Curve>
+    </Script>
+  </Entite>
+</Root>

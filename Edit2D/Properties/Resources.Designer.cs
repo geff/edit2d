@@ -95,6 +95,20 @@ namespace Edit2D.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap icon_PanelBottom {
+            get {
+                object obj = ResourceManager.GetObject("icon_PanelBottom", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icon_PanelRight {
+            get {
+                object obj = ResourceManager.GetObject("icon_PanelRight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap icon_Pause {
             get {
                 object obj = ResourceManager.GetObject("icon_Pause", resourceCulture);

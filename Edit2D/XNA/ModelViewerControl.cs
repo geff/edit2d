@@ -99,7 +99,7 @@ namespace WinFormsContentLoading
                     //--- Rendu de l'angle d'émission
                     if (entite.Selected)
                     {
-                        this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+                        //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
                         Vector2 vecStart1 = entite.Position;
                         Vector2 vecStart2 = entite.Position;
@@ -114,12 +114,11 @@ namespace WinFormsContentLoading
                         vecEnd1 = vecStart1 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f));
                         vecEnd2 = vecStart2 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f));
 
-                        line.Draw(spriteBatch, GetPos(vecStart1), GetPos(vecEnd1));
-                        line.Draw(spriteBatch, GetPos(vecStart2), GetPos(vecEnd2));
-                        line.Draw(spriteBatch, GetPos(vecEnd1), GetPos(vecEnd2));
+                        line.Draw(spriteBatch, vecStart1, vecEnd1);
+                        line.Draw(spriteBatch, vecStart2, vecEnd2);
+                        line.Draw(spriteBatch, vecEnd1, vecEnd2);
 
-                        this.spriteBatch.End();
-
+                        //this.spriteBatch.End();
                     }
 
                     for (int k = 0; k < pSystem.ListParticle.Count; k++)
@@ -142,12 +141,8 @@ namespace WinFormsContentLoading
             //---
 
             //---
-            //Vector2 vecScale = new Vector2();
 
-            //vecScale.X = entite.Rectangle.Width / recScreen.Width;
-            //vecScale.X = entite.Rectangle.Height / recScreen.Height;
-
-            this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+            //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None, mtx);
 
             //effect.Techniques[idTechnique].Passes[0].Begin();
 
@@ -162,27 +157,31 @@ namespace WinFormsContentLoading
                 texture = TextureManager.LoadTexture2D(entite.TextureName);
             }
 
-            this.spriteBatch.Draw(texture, GetRec(entite.Rectangle), null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 1f);
+            this.spriteBatch.Draw(texture, entite.Rectangle, null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 0f);
             //this.spriteBatch.Draw(TextureManager.LoadTexture2D(entite.TextureName), entite.Position, null, entite.Color, entite.Body.Rotation, entite.Center, 1f, SpriteEffects.None, 1f);
 
             //effect.Techniques[idTechnique].Passes[0].End();
 
-            this.spriteBatch.End();
+            //this.spriteBatch.End();
             //effect.End();
             //---
 
             if (((!repository.pause && repository.IsEntityClickableOnPlay) || repository.pause) && ((repository.showPhysic && entite.IsStatic) || entite.Selected))
             {
-                this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+                //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
                 //--- Pin static
                 if (repository.showPhysic && entite.IsStatic)
                 {
-                    Rectangle recPin = new Rectangle((int)((entite.Position.X + repository.Camera.Position.X) * repository.Camera.Zoom),
-                                                     (int)((entite.Position.Y + repository.Camera.Position.Y) * repository.Camera.Zoom),10,16);
+                    Rectangle recPin = new Rectangle((int)entite.Position.X,
+                                                     (int)entite.Position.Y,
+                                                     (int)(10f),
+                                                     (int)(16f));
+                    //(int)(10f / repository.Camera.Zoom),
+                    //(int)(16f / repository.Camera.Zoom));
 
                     this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pin"), recPin, null, Color.White, entite.Body.Rotation,
-                        (entite.SizeVector / 2 + new Vector2(5, 8)), SpriteEffects.None, 1f);
+                        entite.SizeVector / 2f + new Vector2(5f, 8f), SpriteEffects.None, 0f);
                 }
                 //---
 
@@ -195,12 +194,12 @@ namespace WinFormsContentLoading
                     Vector2 vecCenter = Vector2.Zero;
                     vecCenter.X = 5f * entite.Center.X / (float)entite.Size.Width * ratioX;
                     vecCenter.Y = 5f * entite.Center.Y / (float)entite.Size.Height * ratioY;
-                    
-                    this.spriteBatch.Draw(TextureManager.LoadTexture2D("Anchor"), GetRec(entite.Rectangle), null, new Color(0, 150, 250, 100), entite.Body.Rotation, vecCenter, SpriteEffects.None, 1f);
+
+                    this.spriteBatch.Draw(TextureManager.LoadTexture2D("Anchor"), entite.Rectangle, null, new Color(0, 150, 250, 100), entite.Body.Rotation, vecCenter, SpriteEffects.None, 0f);
                 }
                 //---
 
-                this.spriteBatch.End();
+                //this.spriteBatch.End();
             }
 
             if (entite.Selected && entite.ListParticleSystem.Count > 0)
@@ -210,7 +209,7 @@ namespace WinFormsContentLoading
                 {
                     ParticleSystem pSystem = entite.ListParticleSystem[j];
 
-                    this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+                    //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
                     Vector2 vecStart1 = entite.Position;
                     Vector2 vecStart2 = entite.Position;
@@ -229,62 +228,10 @@ namespace WinFormsContentLoading
                     line.Draw(spriteBatch, vecStart2, vecEnd2);
                     line.Draw(spriteBatch, vecEnd1, vecEnd2);
 
-                    this.spriteBatch.End();
+                    //this.spriteBatch.End();
                 }
                 //---
             }
-        }
-
-        private Rectangle GetRec(Rectangle rec)
-        {
-            // Pg = (P + Pc - Fc) * Zc + Fc
-
-            //Rectangle rec3 = rec;
-            //rec3.Offset((int)repository.Camera.Position.X - (int)repository.Camera.Focal.X,
-            //            (int)repository.Camera.Position.Y - (int)repository.Camera.Focal.Y);
-
-            //Rectangle rec4 = new Rectangle((int)((float)rec3.X * repository.Camera.Zoom),
-            //    (int)((float)rec3.Y * repository.Camera.Zoom),
-            //    (int)((float)rec3.Width * repository.Camera.Zoom),
-            //    (int)((float)rec3.Height * repository.Camera.Zoom));
-
-            Vector2 vecFcZ = repository.Camera.FocalZ;// +new Vector2(5, 5);
-
-            // Pg = (P + Pc - Fc) * Zc + FcZ
-            Rectangle rec3 = rec;
-            rec3.Offset((int)repository.Camera.Position.X - (int)repository.Camera.Focal.X,
-                        (int)repository.Camera.Position.Y - (int)repository.Camera.Focal.Y);
-
-            Rectangle rec4 = new Rectangle((int)((float)rec3.X * repository.Camera.Zoom + vecFcZ.X),
-                (int)((float)rec3.Y * repository.Camera.Zoom + vecFcZ.Y),
-                (int)((float)rec3.Width * repository.Camera.Zoom),
-                (int)((float)rec3.Height * repository.Camera.Zoom));
-
-            //Rectangle rec3 = rec;
-            //rec3.Offset((int)repository.Camera.Position.X - (int)repository.Camera.Focal.X,
-            //            (int)repository.Camera.Position.Y - (int)repository.Camera.Focal.Y);
-
-            //Rectangle rec4 = new Rectangle((int)((float)rec3.X * repository.Camera.Zoom + repository.Camera.Focal.X / repository.Camera.Zoom),
-            //    (int)((float)rec3.Y * repository.Camera.Zoom + repository.Camera.Focal.Y / repository.Camera.Zoom),
-            //    (int)((float)rec3.Width * repository.Camera.Zoom),
-            //    (int)((float)rec3.Height * repository.Camera.Zoom));
-
-
-            //Rectangle rec3 = rec;
-            //rec3.Offset((int)repository.Camera.Position.X ,
-            //            (int)repository.Camera.Position.Y);
-
-            //Rectangle rec4 = new Rectangle((int)((float)rec3.X * repository.Camera.Zoom- repository.Camera.Focal.X),
-            //    (int)((float)rec3.Y * repository.Camera.Zoom - repository.Camera.Focal.Y),
-            //    (int)((float)rec3.Width * repository.Camera.Zoom),
-            //    (int)((float)rec3.Height * repository.Camera.Zoom));
-
-            return rec4;
-        }
-
-        private Vector2 GetPos(Vector2 pos)
-        {
-            return (pos + repository.Camera.Position - repository.Camera.Focal) * repository.Camera.Zoom;
         }
 
         /// <summary>
@@ -301,17 +248,9 @@ namespace WinFormsContentLoading
                 repository.PhysicsSimulatorView.LoadContent(GraphicsDevice, Content);
             }
 
-            LineBrush.CameraPosition = repository.Camera.Position;
-            LineBrush.CameraZoom = repository.Camera.Zoom;
-
-            RectangleBrush.CameraPosition = repository.Camera.Position;
-            RectangleBrush.CameraZoom = repository.Camera.Zoom;
-
-            CircleBrush.CameraPosition = repository.Camera.Position;
-            CircleBrush.CameraZoom = repository.Camera.Zoom;
-
-            // Clear to the default control background color.
             GraphicsDevice.Clear(Color.White);
+
+            this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
 
             //--- Réinitialisation du renderstate - Le SpriteBatch modifie le renderstate
             //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
@@ -325,7 +264,14 @@ namespace WinFormsContentLoading
                 DrawEntite(entite);
             }
 
-            this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+            //--- Cadre physique
+            if (repository.showPhysic)
+                repository.PhysicsSimulatorView.Draw(spriteBatch);
+            //---
+
+            this.spriteBatch.End();
+
+            this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
 
             //--- Pointeur de la souris
             this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.pointerDraw, null, Color.Red);
@@ -334,11 +280,6 @@ namespace WinFormsContentLoading
             //--- Pointeur secondaire
             if (repository.keyCtrlPressed)
                 this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.pointerDraw2, null, Color.Blue);
-            //---
-
-            //--- Cadre physique
-            if (repository.showPhysic)
-                repository.PhysicsSimulatorView.Draw(spriteBatch);
             //---
 
             this.spriteBatch.End();

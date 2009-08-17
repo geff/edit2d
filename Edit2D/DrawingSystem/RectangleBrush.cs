@@ -5,10 +5,7 @@ namespace FarseerGames.GettingStarted.DrawingSystem
 {
     public class RectangleBrush
     {
-        public static Vector2 CameraPosition { get; set; }
-        public static float CameraZoom { get; set; }
-
-        private Color _borderColor;
+         private Color _borderColor;
         private Color _color;
         private int _height;
         private float _layer;
@@ -69,14 +66,9 @@ namespace FarseerGames.GettingStarted.DrawingSystem
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position)
         {
-            spriteBatch.Draw(_rectangleTexture, GetPos(position), null, Color.White, 0,
-                             new Vector2(1 + _rectangleTexture.Width / 2f * CameraZoom, 1 + _rectangleTexture.Height / 2 * CameraZoom), CameraZoom,
+            spriteBatch.Draw(_rectangleTexture, position, null, Color.White, 0,
+                             new Vector2(1 + _rectangleTexture.Width / 2f, 1 + _rectangleTexture.Height / 2), 1f,
                              SpriteEffects.None, _layer);
-        }
-
-        private Vector2 GetPos(Vector2 vec)
-        {
-            return (vec + CameraPosition) * CameraZoom;
         }
     }
 }
