@@ -6,9 +6,6 @@ namespace FarseerGames.GettingStarted.DrawingSystem
 {
     public class LineBrush
     {
-        public static Vector2 CameraPosition { get; set; }
-        public static float CameraZoom { get; set; }
-
         private Color _color = Color.Black;
         private Vector2 _difference;
         private float _layer;
@@ -60,13 +57,8 @@ namespace FarseerGames.GettingStarted.DrawingSystem
             Vector2.Subtract(ref endPoint, ref startPoint, out _difference);
             CalculateRotation(_difference);
             CalculateScale(_difference);
-            spriteBatch.Draw(_lineTexture, GetPos(startPoint), null, _color, _rotation, _origin, _scale * CameraZoom, SpriteEffects.None,
+            spriteBatch.Draw(_lineTexture, startPoint, null, _color, _rotation, _origin, _scale, SpriteEffects.None,
                              _layer);
-        }
-
-        private Vector2 GetPos(Vector2 vec)
-        {
-            return (vec + CameraPosition) * CameraZoom;
         }
 
         private void CalculateRotation(Vector2 difference)
