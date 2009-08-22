@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <World>
+    <TriggerLoad TriggerName="Trigger1" />
+  </World>
+  <Entite Position="584,00;147,00" Name="backgroundFish - Copie1" TextureName="backgroundFish - Copie" IsColisionable="False" IsStatic="True" Size="2048;776" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="171,32;143,98" Name="BigRec1" TextureName="BigRec" IsColisionable="False" IsStatic="True" Size="100;100" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50">
+    <Script ScriptName="Script1" />
+    <ParticleSystem ParticleSystemName="ParticleSystem1" EmmittingAngle="55,73" FieldAngle="0,50" EmmittingFromAllSurface="False" Rate="50" Velocity="1500,00">
+      <ParticleTemplate LifeTime="2000" Position="6,33;6,11" Name="ParticleTemplate1" TextureName="airBubble1" IsColisionable="True" IsStatic="False" Size="13;13" Rotation="0,00" Color="{R:0 G:0 B:0 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+    </ParticleSystem>
+  </Entite>
+  <Entite Position="606,00;403,00" Name="Lettre A1" TextureName="Lettre A" IsColisionable="True" IsStatic="True" Size="258;264" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="864,00;323,00" Name="Lettre B1" TextureName="Lettre B" IsColisionable="True" IsStatic="True" Size="259;265" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="348,00;360,00" Name="Lettre C1" TextureName="Lettre C" IsColisionable="True" IsStatic="True" Size="258;261" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="522,00;259,00" Name="bearPurple1" TextureName="bearPurple" IsColisionable="True" IsStatic="True" Size="37;30" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="696,00;259,00" Name="bearYellow1" TextureName="bearYellow" IsColisionable="True" IsStatic="True" Size="36;30" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="416,00;204,00" Name="Enemy Bug1" TextureName="Enemy Bug" IsColisionable="True" IsStatic="True" Size="98;77" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="837,00;130,00" Name="Blip1" TextureName="Blip" IsColisionable="True" IsStatic="False" Size="24;24" Rotation="0,00" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+</Root>

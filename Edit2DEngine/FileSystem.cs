@@ -12,6 +12,7 @@ using Edit2DEngine.Action;
 using Edit2DEngine.Trigger;
 using Edit2DEngine.Particles;
 using System.Drawing;
+using FarseerGames.FarseerPhysics.Collisions;
 
 namespace Edit2DEngine
 {
@@ -53,15 +54,16 @@ namespace Edit2DEngine
 
             Texture2D texture = TextureManager.LoadTexture2D(entite.TextureName);
 
-            if(!isParticle)
-                repository.ChangeEntitySize(entite, new Size(texture.Width, texture.Height));
+            //if(!isParticle)
+            //    repository.ChangeEntitySize(entite, new Size(texture.Width, texture.Height));
 
             entite.TextureName = reader["TextureName"];
+            
+            bool ist  =entite.geom.Body == entite.Body;
         }
 
         public static void Open(string fileName, Repository repository)
         {
-            unsafe
             {
                 XmlTextReader reader = new XmlTextReader(fileName);
 
@@ -307,6 +309,8 @@ namespace Edit2DEngine
                     }
                 }
 
+                reader.Close();
+
                 //--- Associe les scripts aux trigger de l'obet World
                 LinkTriggerToScript(repository.World, dicActionHandler);
                 //---
@@ -322,6 +326,14 @@ namespace Edit2DEngine
                     LinkTriggerToScript(ent, dicActionHandler);
                     //---
                 }
+
+                //Repository.physicSimulator.Update(0.00002f);
+
+                //for (int i = 0; i < Repository.physicSimulator.GeomList.Count; i++)
+                //{
+                //    //Repository.physicSimulator.GeomList[i].SetBody(repository.listEntite[i].Body);
+                //    //repository.listEntite[i].geom = Repository.physicSimulator.GeomList[i];
+                //}
             }
         }
 

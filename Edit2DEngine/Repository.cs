@@ -16,6 +16,8 @@ namespace Edit2DEngine
         private Random rnd;
         public static int EntityCount = 0;
 
+        public bool Pause = false;
+
         public Entite CurrentEntite
         {
             get
@@ -73,15 +75,6 @@ namespace Edit2DEngine
         public Vector2 pointer2 = new Vector2();
         public Vector2 pointerDraw2 = new Vector2();
 
-        public bool pause = false;
-        public bool showPhysic = true;
-        public bool keyCtrlPressed = false;
-        public bool keyShiftPressed = false;
-        public bool keyAltPressed = false;
-        public bool IsEntityClickableOnPlay = false;
-
-        public MouseMode mouseMode = MouseMode.Move;
-
         public List<Entite> listEntite;
 
         public static PhysicsSimulator physicSimulator;
@@ -105,9 +98,22 @@ namespace Edit2DEngine
 
             if (listGeom != null && listGeom.Count > 0)
             {
-                Entite entite = listEntite.Find(v => v.geom == listGeom[listGeom.Count - 1]);
+                Entite selectedEntite = null;
 
-                return entite;
+                for (int i = 0; i < listGeom.Count; i++)
+                {
+                    Entite curEntite = listEntite.Find(e => e.geom == listGeom[i]);
+
+                    if (selectedEntite == null)
+                        selectedEntite = curEntite;
+                    else
+                    {
+                        if (listEntite.IndexOf(curEntite) < listEntite.IndexOf(selectedEntite))
+                            selectedEntite = curEntite;
+                    }
+                }
+
+                return selectedEntite;
             }
 
             return null;
@@ -238,12 +244,5 @@ namespace Edit2DEngine
 
             return entite;
         }
-    }
-
-    public enum MouseMode : int
-    {
-        Move = 1,
-        Resize = 2,
-        Rotate = 3
     }
 }

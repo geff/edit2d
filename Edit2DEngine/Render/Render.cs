@@ -26,7 +26,7 @@ namespace Edit2DEngine.Render
         {
             UpdateEntityActionPlayer();
 
-            if (!repository.pause)
+            if (!repository.Pause)
             {
                 UpdateEntityTrigger();
                 UpdateEntityParticleSystem();
@@ -37,12 +37,9 @@ namespace Edit2DEngine.Render
 
         public void UpdatePhysic()
         {
-            //for (int i = 0; i < repository.listEntite.Count; i++)
-            //{
-            //    repository.listEntite[i].Update();
-            //}
-
             Repository.physicSimulator.Update(0.2f);
+
+            //bool ist = repository.listEntite[5].geom == Repository.physicSimulator.GeomList[5];
         }
 
         private void UpdateEntityActionPlayer()
@@ -78,8 +75,8 @@ namespace Edit2DEngine.Render
                     {
                         ActionCurve actionCurve = (ActionCurve)action;
 
-                        if ((repository.pause && (actionCurve.playAnimationState == PlayAnimationState.PlayInEditor) ||
-                           (!repository.pause && (actionCurve.playAnimationState == PlayAnimationState.Play))))
+                        if ((repository.Pause && (actionCurve.playAnimationState == PlayAnimationState.PlayInEditor) ||
+                           (!repository.Pause && (actionCurve.playAnimationState == PlayAnimationState.Play))))
                         {
                             //--- Lit la courbe d'animation
                             ((ActionCurve)action).UpdateAnimation();
@@ -90,7 +87,7 @@ namespace Edit2DEngine.Render
                             //---
                         }
                     }
-                    else if (action is ActionEvent && !repository.pause && ((ActionEvent)action).Playing)
+                    else if (action is ActionEvent && !repository.Pause && ((ActionEvent)action).Playing)
                     {
                         ((ActionEvent)action).UpdateValue(repository);
                     }

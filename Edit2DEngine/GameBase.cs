@@ -289,6 +289,8 @@ namespace Edit2DEngine
 
         public virtual void Draw(GameTime gameTime)
         {
+            this.SpriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+
             if (mapTransition != 0)
             {
                 SpriteBatch.Draw(pixel, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), colorCenter);
@@ -312,6 +314,8 @@ namespace Edit2DEngine
 
             SpriteBatch.Draw(pixel, recTop, Color.Black);
             SpriteBatch.Draw(pixel, recBottom, Color.Black);
+
+            SpriteBatch.End();
         }
     }
 }
