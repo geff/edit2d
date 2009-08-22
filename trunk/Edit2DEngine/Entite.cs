@@ -104,7 +104,8 @@ namespace Edit2DEngine
             get { return _size; }
             set
             {
-                ChangeSize(value.Width, value.Height, true);
+                if(value != _size)
+                    ChangeSize(value.Width, value.Height, true);
             }
         }
 
@@ -119,10 +120,7 @@ namespace Edit2DEngine
         {
             get
             {
-                //return new Microsoft.Xna.Framework.Rectangle((int)(this.Position.X - this.Size.Width / 2), (int)(this.Position.Y - this.Size.Height / 2), this.Size.Width, this.Size.Height);
                 Microsoft.Xna.Framework.Rectangle rec = new Microsoft.Xna.Framework.Rectangle((int)(this.Position.X), (int)(this.Position.Y), this.Size.Width, this.Size.Height);
-                //Microsoft.Xna.Framework.Rectangle rec = new Microsoft.Xna.Framework.Rectangle((int)(this.Position.X) - (int)this.center.X, (int)(this.Position.Y)-(int)this.center.Y, this.Size.Width, this.Size.Height);
-                //rec.Inflate(50,50);
                 return rec;
             }
         }
@@ -282,10 +280,6 @@ namespace Edit2DEngine
 
             if (!(this is Particle))
                 UniqueId = ++Repository.EntityCount;
-            //Texture2D texture = this.GetTexture();
-
-            //this.NativeImageSize = new Size(texture.Width, texture.Height);
-            //this.Size = new Size(texture.Width, texture.Height);
 
             Init(addToPhysicSimulator, isCollisionable);
         }
@@ -333,9 +327,6 @@ namespace Edit2DEngine
             //Transfer the texture data to the array
             polygonTexture.GetData(data);
 
-            //Calculate the vertices from the array
-            Vector2 vec;//inutile
-
             //--- Calcul des vertices originaux
             originalVerts = Vertices.CreatePolygon(data, polygonTexture.Width, polygonTexture.Height);//, 1f, 127, true, true);// 2f, out vec);
             //---
@@ -381,18 +372,19 @@ namespace Edit2DEngine
                     prevMass = polygonBody.Mass;
                 }
 
+
                 polygonBody = BodyFactory.Instance.CreatePolygonBody(Repository.physicSimulator, verts, 5);
 
                 polygonGeom = GeomFactory.Instance.CreatePolygonGeom(Repository.physicSimulator, polygonBody, verts, 0f);
 
                 polygonGeom.SetBody(polygonBody);
-                //polygonGeom.ComputeCollisionGrid();
 
                 if (polygonBody != null)
                 {
                     polygonBody.Position = prevBodyPosition;
                     polygonBody.Rotation = prevBodyRotation;
                     polygonBody.IsStatic = prevStatic;
+
                     if (isCollisionable)
                     {
                         polygonGeom.CollisionEnabled = prevCollisionable;
@@ -480,7 +472,8 @@ namespace Edit2DEngine
             //Vector2 deltaCenterLocal = this.Body.GetLocalPosition(position);
             //Vector2 newCenterLocal = (position - this.Position) + oldCenterLocal;
 
-            Vector2 deltaCenterWorld = -(position - this.Position);
+            //Vector2 deltaCenterWorld = -(position - this.Position);
+            Vector2 deltaCenterWorld = (oldCenterLocal - position);
 
             float ratioX = (float)this.Size.Width / (float)this.NativeImageSize.Width;
             float ratioY = (float)this.Size.Height / (float)this.NativeImageSize.Height;
@@ -493,9 +486,9 @@ namespace Edit2DEngine
             //newCenterLocal.X *= ratioX;
             //newCenterLocal.Y *= ratioY;
 
-            this.Center = newCenterLocal;
+            this.Center = position;
             float rotation = this.Rotation;
-
+            
             //deltaCenterWorld.X *= ratioX;
             //deltaCenterWorld.Y *= ratioY;
 
@@ -504,10 +497,10 @@ namespace Edit2DEngine
 
             //this.Position += deltaCenterWorld;
             //this.Position = this.Position + deltaCenterWorld;
-            this.Position = position;
-            this.Rotation = rotation;
+            //this.Position = position;
+            //this.Rotation = rotation;
 
-            this.geom.WorldVertices.Translate(ref deltaCenterLocal);
+            this.geom.WorldVertices.Translate(ref deltaCenterWorld);
 
             //this.geom.ComputeCollisionGrid();
             Repository.physicSimulator.Update(0.000002f);

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <World />
+  <Entite Position="899,92;375,53" Name="Perle111" TextureName="Perle11" IsColisionable="True" IsStatic="True" Size="665;340" Rotation="2,86" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="644,78;110,30" Name="Perle31" TextureName="Perle3" IsColisionable="True" IsStatic="False" Size="227;243" Rotation="0,74" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00">
+    <FixedRevoluteJoint Anchor="646,00;106,00" MaxImpulse="340282300000000000000000000000000000000,00" />
+  </Entite>
+  <Entite Position="325,61;341,67" Name="Perle121" TextureName="Perle12" IsColisionable="True" IsStatic="True" Size="230;236" Rotation="5,85" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="595,60;413,71" Name="Perle21" TextureName="Perle2" IsColisionable="True" IsStatic="True" Size="577;549" Rotation="0,61" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="106,87;449,10" Name="Perle41" TextureName="Perle4" IsColisionable="True" IsStatic="True" Size="403;403" Rotation="6,19" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+  <Entite Position="176,39;196,05" Name="Blip1" TextureName="Blip" IsColisionable="True" IsStatic="False" Size="24;24" Rotation="0,08" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,50" RestitutionCoefficient="0,50" />
+</Root>

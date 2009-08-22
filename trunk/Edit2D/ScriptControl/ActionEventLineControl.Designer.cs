@@ -58,6 +58,9 @@
             this.chkRelative = new System.Windows.Forms.CheckBox();
             this.optActionEventLineMouseY = new System.Windows.Forms.RadioButton();
             this.optActionEventLineMouseX = new System.Windows.Forms.RadioButton();
+            this.numSpeed = new System.Windows.Forms.NumericUpDown();
+            this.optSpeedActivate = new System.Windows.Forms.RadioButton();
+            this.label5 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.pnlDuration.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDuration)).BeginInit();
@@ -68,6 +71,7 @@
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numFixedValue)).BeginInit();
             this.panel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numSpeed)).BeginInit();
             this.SuspendLayout();
             // 
             // optActionEventLineFixedValue
@@ -151,6 +155,9 @@
             // pnlDuration
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.pnlDuration, 3);
+            this.pnlDuration.Controls.Add(this.label5);
+            this.pnlDuration.Controls.Add(this.numSpeed);
+            this.pnlDuration.Controls.Add(this.optSpeedActivate);
             this.pnlDuration.Controls.Add(this.numDuration);
             this.pnlDuration.Controls.Add(this.optDurationActivate);
             this.pnlDuration.Controls.Add(this.optDurationDeactivate);
@@ -165,14 +172,14 @@
             // numDuration
             // 
             this.numDuration.Enabled = false;
-            this.numDuration.Location = new System.Drawing.Point(218, 4);
+            this.numDuration.Location = new System.Drawing.Point(197, 3);
             this.numDuration.Maximum = new decimal(new int[] {
             60000,
             0,
             0,
             0});
             this.numDuration.Name = "numDuration";
-            this.numDuration.Size = new System.Drawing.Size(120, 20);
+            this.numDuration.Size = new System.Drawing.Size(55, 20);
             this.numDuration.TabIndex = 8;
             this.numDuration.Value = new decimal(new int[] {
             1000,
@@ -184,11 +191,11 @@
             // optDurationActivate
             // 
             this.optDurationActivate.AutoSize = true;
-            this.optDurationActivate.Location = new System.Drawing.Point(154, 4);
+            this.optDurationActivate.Location = new System.Drawing.Point(143, 5);
             this.optDurationActivate.Name = "optDurationActivate";
-            this.optDurationActivate.Size = new System.Drawing.Size(58, 17);
+            this.optDurationActivate.Size = new System.Drawing.Size(54, 17);
             this.optDurationActivate.TabIndex = 6;
-            this.optDurationActivate.Text = "Activer";
+            this.optDurationActivate.Text = "Durée";
             this.optDurationActivate.UseVisualStyleBackColor = true;
             this.optDurationActivate.CheckedChanged += new System.EventHandler(this.optDurationActivate_CheckedChanged);
             // 
@@ -211,9 +218,8 @@
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(3, 3);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(52, 17);
+            this.label4.Size = new System.Drawing.Size(0, 17);
             this.label4.TabIndex = 4;
-            this.label4.Text = "Durée";
             // 
             // treeViewProperties
             // 
@@ -441,6 +447,45 @@
             this.optActionEventLineMouseX.UseVisualStyleBackColor = true;
             this.optActionEventLineMouseX.CheckedChanged += new System.EventHandler(this.optActionEventLineMouseX_CheckedChanged);
             // 
+            // numSpeed
+            // 
+            this.numSpeed.Enabled = false;
+            this.numSpeed.Location = new System.Drawing.Point(326, 3);
+            this.numSpeed.Maximum = new decimal(new int[] {
+            60000,
+            0,
+            0,
+            0});
+            this.numSpeed.Name = "numSpeed";
+            this.numSpeed.Size = new System.Drawing.Size(51, 20);
+            this.numSpeed.TabIndex = 10;
+            this.numSpeed.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            // 
+            // optSpeedActivate
+            // 
+            this.optSpeedActivate.AutoSize = true;
+            this.optSpeedActivate.Location = new System.Drawing.Point(261, 3);
+            this.optSpeedActivate.Name = "optSpeedActivate";
+            this.optSpeedActivate.Size = new System.Drawing.Size(59, 17);
+            this.optSpeedActivate.TabIndex = 9;
+            this.optSpeedActivate.Text = "Vitesse";
+            this.optSpeedActivate.UseVisualStyleBackColor = true;
+            this.optSpeedActivate.CheckedChanged += new System.EventHandler(this.optSpeedActivate_CheckedChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(383, 7);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(63, 13);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "unités / sec";
+            // 
             // ActionEventLineControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -464,6 +509,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numFixedValue)).EndInit();
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numSpeed)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -500,6 +546,9 @@
         public System.Windows.Forms.RadioButton optFixedValueTrue;
         public System.Windows.Forms.Panel pnlDuration;
         private System.Windows.Forms.CheckBox chkRelative;
+        public System.Windows.Forms.Label label5;
+        public System.Windows.Forms.NumericUpDown numSpeed;
+        public System.Windows.Forms.RadioButton optSpeedActivate;
 
     }
 }

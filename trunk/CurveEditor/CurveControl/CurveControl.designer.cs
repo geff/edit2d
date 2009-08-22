@@ -94,6 +94,7 @@ namespace Xna.Tools
             this.LeftToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.ContentPanel = new System.Windows.Forms.ToolStripContentPanel();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
+            this.curveView = new Xna.Tools.GridControl();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.selectionButton = new System.Windows.Forms.ToolStripButton();
             this.addZeroKey = new System.Windows.Forms.ToolStripButton();
@@ -109,7 +110,6 @@ namespace Xna.Tools
             this.keyValueTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.smoothButton = new System.Windows.Forms.ToolStripButton();
             this.linearButton = new System.Windows.Forms.ToolStripButton();
-            this.curveView = new Xna.Tools.GridControl();
             this.menuStrip.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -640,6 +640,21 @@ namespace Xna.Tools
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.menuStrip);
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip);
             // 
+            // curveView
+            // 
+            this.curveView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(228)))), ((int)(((byte)(233)))), ((int)(((byte)(240)))));
+            this.curveView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.curveView.Location = new System.Drawing.Point(0, 0);
+            this.curveView.Name = "curveView";
+            this.curveView.Size = new System.Drawing.Size(655, 221);
+            this.curveView.TabIndex = 0;
+            this.curveView.Paint += new System.Windows.Forms.PaintEventHandler(this.curveView_Paint);
+            this.curveView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.curveView_MouseMove);
+            this.curveView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.curveView_KeyUp);
+            this.curveView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.curveView_MouseDown);
+            this.curveView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.curveView_MouseUp);
+            this.curveView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.curveView_KeyDown);
+            // 
             // toolStrip
             // 
             this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
@@ -806,21 +821,6 @@ namespace Xna.Tools
             this.linearButton.Text = "toolStripButton2";
             this.linearButton.Visible = false;
             this.linearButton.Click += new System.EventHandler(this.linearButton_Click);
-            // 
-            // curveView
-            // 
-            this.curveView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(228)))), ((int)(((byte)(233)))), ((int)(((byte)(240)))));
-            this.curveView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.curveView.Location = new System.Drawing.Point(0, 0);
-            this.curveView.Name = "curveView";
-            this.curveView.Size = new System.Drawing.Size(655, 221);
-            this.curveView.TabIndex = 0;
-            this.curveView.Paint += new System.Windows.Forms.PaintEventHandler(this.curveView_Paint);
-            this.curveView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.curveView_MouseMove);
-            this.curveView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.curveView_KeyUp);
-            this.curveView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.curveView_MouseDown);
-            this.curveView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.curveView_MouseUp);
-            this.curveView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.curveView_KeyDown);
             // 
             // CurveControl
             // 

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Root>
+  <Header />
+  <World>
+    <TriggerLoad TriggerName="Trigger1">
+      <TriggerScript ScriptActionHandlerName="Rouage2" ScriptName="Script1" />
+      <TriggerScript ScriptActionHandlerName="Rouage1" ScriptName="Script1" />
+      <TriggerScript ScriptActionHandlerName="Cloud11" ScriptName="Script1" />
+    </TriggerLoad>
+  </World>
+  <Entite Position="396,00;281,00" Name="Background1" TextureName="Background" IsColisionable="False" IsStatic="True" Size="801;601" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="701,00;205,00" Name="Wood Block1" TextureName="Wood Block" IsColisionable="False" IsStatic="True" Size="98;368" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,05" IsInBackground="True" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="783,00;168,00" Name="Rouage2" TextureName="Rouage" IsColisionable="False" IsStatic="True" Size="189;190" Rotation="5,40" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,05" IsInBackground="True" FrictionCoefficient="0,00" RestitutionCoefficient="0,00">
+    <Script ScriptName="Script1">
+      <Curve ActionName="Curve0" PropertyName="Rotation" IsRelative="True" IsLoop="True">
+        <Points>
+          <Point X="0,00" Y="0,00" />
+          <Point X="5000,00" Y="6,28" />
+        </Points>
+      </Curve>
+    </Script>
+  </Entite>
+  <Entite Position="646,74;188,84" Name="Rouage1" TextureName="Rouage" IsColisionable="False" IsStatic="True" Size="101;95" Rotation="3,83" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,05" IsInBackground="True" FrictionCoefficient="0,00" RestitutionCoefficient="0,00">
+    <Script ScriptName="Script1">
+      <Curve ActionName="Curve0" PropertyName="Rotation" IsRelative="True" IsLoop="True">
+        <Points>
+          <Point X="0,00" Y="0,00" />
+          <Point X="3000,00" Y="-6,28" />
+        </Points>
+      </Curve>
+    </Script>
+    <ParticleSystem ParticleSystemName="ParticleSystem1" EmmittingAngle="-0,79" FieldAngle="6,00" EmmittingFromAllSurface="False" Rate="50" Velocity="500,00">
+      <ParticleTemplate LifeTime="20000" Position="-37049,29;106591400,00" Name="ParticleTemplate1" TextureName="Pea-Shadow" IsColisionable="False" IsStatic="False" Size="20;20" Rotation="2,79" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,05" IsInBackground="True" FrictionCoefficient="1,00" RestitutionCoefficient="1,00" />
+    </ParticleSystem>
+  </Entite>
+  <Entite Position="51,85;0,00" Name="Cloud11" TextureName="Cloud1" IsColisionable="False" IsStatic="True" Size="260;180" Rotation="0,00" Color="{R:180 G:180 B:180 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00">
+    <Script ScriptName="Script1">
+      <Curve ActionName="Curve0" PropertyName="Position" IsRelative="False" IsLoop="True">
+        <Points>
+          <Point X="0,00" Y="-150,00" />
+          <Point X="8000,00" Y="950,00" />
+        </Points>
+        <Points />
+      </Curve>
+    </Script>
+    <ParticleSystem ParticleSystemName="ParticleSystem1" EmmittingAngle="1,57" FieldAngle="0,10" EmmittingFromAllSurface="True" Rate="50" Velocity="1,00">
+      <ParticleTemplate LifeTime="20000" Position="4,43;10,97" Name="ParticleTemplate1" TextureName="Goutte" IsColisionable="False" IsStatic="False" Size="10;20" Rotation="0,00" Color="{R:255 G:255 B:255 A:120}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,05" RestitutionCoefficient="0,05" />
+    </ParticleSystem>
+  </Entite>
+  <Entite Position="280,00;24,00" Name="Cloud31" TextureName="Cloud3" IsColisionable="False" IsStatic="True" Size="159;110" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="154,27;236,36" Name="Ramp South1" TextureName="Ramp South" IsColisionable="True" IsStatic="True" Size="101;171" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="47,00;358,00" Name="Grass Block1" TextureName="Grass Block" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="152,00;359,00" Name="Grass Block2" TextureName="Grass Block" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="256,00;370,00" Name="Grass Block3" TextureName="Grass Block" IsColisionable="True" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="362,00;380,00" Name="Grass Block4" TextureName="Grass Block" IsColisionable="False" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="467,00;395,00" Name="Grass Block5" TextureName="Grass Block" IsColisionable="False" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="574,00;371,00" Name="Grass Block6" TextureName="Grass Block" IsColisionable="False" IsStatic="True" Size="101;131" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="679,00;367,00" Name="Stone Block Tall1" TextureName="Stone Block Tall" IsColisionable="True" IsStatic="True" Size="101;163" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="781,00;356,00" Name="Stone Block Tall2" TextureName="Stone Block Tall" IsColisionable="True" IsStatic="True" Size="101;163" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="444,29;164,05" Name="Star1" TextureName="Star" IsColisionable="True" IsStatic="False" Size="99;99" Rotation="6,24" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00">
+    <FixedLinearSpring BodyAttachPoint="1,00;-21,00" RestLength="74,01" WorldAttachPoint="441,00;64,00" />
+    <FixedLinearSpring BodyAttachPoint="1,00;-21,00" RestLength="163,36" WorldAttachPoint="557,00;24,00" />
+  </Entite>
+  <Entite Position="557,77;106,23" Name="Star2" TextureName="Star" IsColisionable="True" IsStatic="False" Size="99;99" Rotation="6,13" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00">
+    <FixedLinearSpring BodyAttachPoint="1,00;-26,00" RestLength="63,20" WorldAttachPoint="551,00;12,00" />
+  </Entite>
+  <Entite Position="49,01;311,00" Name="Rock1" TextureName="Rock" IsColisionable="False" IsStatic="True" Size="99;102" Rotation="6,27" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+  <Entite Position="256,00;196,00" Name="Ramp North1" TextureName="Ramp North" IsColisionable="True" IsStatic="True" Size="101;171" Rotation="6,28" Color="{R:255 G:255 B:255 A:255}" BlurFactor="0,00" IsInBackground="False" FrictionCoefficient="0,00" RestitutionCoefficient="0,00" />
+</Root>

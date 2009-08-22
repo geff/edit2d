@@ -34,12 +34,21 @@ namespace Edit2D.ScriptControl
         private void optDurationDeactivate_CheckedChanged(object sender, EventArgs e)
         {
             numDuration.Enabled = false;
+            numSpeed.Enabled = false;
             UpdateActionEvent();
         }
 
         private void optDurationActivate_CheckedChanged(object sender, EventArgs e)
         {
             numDuration.Enabled = true;
+            numSpeed.Enabled = false;
+            UpdateActionEvent();
+        }
+
+        private void optSpeedActivate_CheckedChanged(object sender, EventArgs e)
+        {
+            numDuration.Enabled = false;
+            numSpeed.Enabled = true;
             UpdateActionEvent();
         }
 
@@ -263,10 +272,17 @@ namespace Edit2D.ScriptControl
                 if (optDurationActivate.Checked)
                 {
                     ActionEvent.Durations[ActionEventIndex] = (int)numDuration.Value;
+                    ActionEvent.Speeds[ActionEventIndex] = 0;
+                }
+                else if (optSpeedActivate.Checked)
+                {
+                    ActionEvent.Durations[ActionEventIndex] = 0;
+                    ActionEvent.Speeds[ActionEventIndex] = (int)numSpeed.Value;
                 }
                 else
                 {
                     ActionEvent.Durations[ActionEventIndex] = 0;
+                    ActionEvent.Speeds[ActionEventIndex] = 0;
                 }
                 //---
             }

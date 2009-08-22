@@ -12,6 +12,19 @@ namespace Edit2D
     {
         public FrmEdit2D FrmEdit2D { get; set; }
         public PhysicsSimulatorView PhysicsSimulatorView;
+        public List<Selection> ListSelection { get; set; }
+        public bool showPhysic = true;
+        public bool keyCtrlPressed = false;
+        public bool keyShiftPressed = false;
+        public bool keyAltPressed = false;
+        public bool IsEntityClickableOnPlay = false;
+
+        public MouseMode mouseMode = MouseMode.Move;
+
+        public Repository()
+        {
+            this.ListSelection = new List<Selection>();
+        }
 
         private Vector2 GetModelViewControlPosition()
         {
@@ -30,5 +43,13 @@ namespace Edit2D
 
             return mousePosition;
         }
+    }
+
+    public enum MouseMode : int
+    {
+        Select = 0,
+        Move = 1,
+        Resize = 2,
+        Rotate = 3
     }
 }

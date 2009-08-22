@@ -166,7 +166,7 @@ namespace WinFormsContentLoading
             //effect.End();
             //---
 
-            if (((!repository.pause && repository.IsEntityClickableOnPlay) || repository.pause) && ((repository.showPhysic && entite.IsStatic) || entite.Selected))
+            if (((!repository.Pause && repository.IsEntityClickableOnPlay) || repository.Pause) && ((repository.showPhysic && entite.IsStatic) || entite.Selected))
             {
                 //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
@@ -277,9 +277,11 @@ namespace WinFormsContentLoading
             this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.pointerDraw, null, Color.Red);
             //---
 
-            //--- Pointeur secondaire
-            if (repository.keyCtrlPressed)
-                this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.pointerDraw2, null, Color.Blue);
+            //--- Pointeurs secondaires
+            for (int i = 0; i < repository.ListSelection.Count; i++)
+            {
+                this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.ListSelection[i].PointerDraw, null, Color.Blue);
+            }
             //---
 
             this.spriteBatch.End();

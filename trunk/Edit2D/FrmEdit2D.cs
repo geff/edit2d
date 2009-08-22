@@ -15,6 +15,8 @@ using Edit2DEngine.Trigger;
 using Edit2DEngine.Particles;
 using Edit2DEngine;
 using Edit2DEngine.Render;
+using Edit2D.Properties;
+using System.Drawing.Imaging;
 
 namespace Edit2D
 {
@@ -45,6 +47,10 @@ namespace Edit2D
         private Vector2 vecFocal = Vector2.Zero;
         private Vector2 vecOldCorner = Vector2.Zero;
         private float oldZoom = 1f;
+
+        Dictionary<MouseMode, Cursor> dicCursors = new Dictionary<MouseMode, Cursor>();
+
+
         #endregion
 
         #region Initialize
@@ -64,9 +70,14 @@ namespace Edit2D
             timer.Interval = 1;
             timer.Enabled = true;
 
-            //Repository.physicSimulator = new FarseerGames.FarseerPhysics.PhysicsSimulator(new Vector2(0, 9.81f));
-
             repository = new Repository();
+
+            //--- Création des curseurs
+            dicCursors.Add(MouseMode.Move, CreateCursor(Resources.MouseMove));
+            dicCursors.Add(MouseMode.Resize, CreateCursor(Resources.MouseScale));
+            dicCursors.Add(MouseMode.Rotate, CreateCursor(Resources.MouseRotate));
+            dicCursors.Add(MouseMode.Select, CreateCursor(Resources.MouseSelect));
+            //---
 
             InitRender();
 
@@ -74,7 +85,7 @@ namespace Edit2D
             repository.pointer2 = new Vector2(100, 10);
             repository.pointer = new Vector2(200, 200);
             repository.FrmEdit2D = this;
-            repository.pause = true;
+            repository.Pause = true;
 
             AddEntity();
             repository.CurrentEntite = repository.listEntite[0];
@@ -88,7 +99,20 @@ namespace Edit2D
 
             particleControl.InitParticleControl();
 
-            //btnTriggerModeBar.PerformClick();
+            btnTriggerModeBar.PerformClick();
+        }
+
+        private Cursor CreateCursor(Icon graphicCursor)
+        {
+            string fileName = Path.GetTempFileName();
+
+            FileStream stream = new FileStream(fileName, FileMode.Create);
+            graphicCursor.Save(stream);
+            stream.Close();
+
+            Cursor cursor = new Cursor(fileName);
+
+            return cursor;
         }
 
         private void InitListViewImage()
@@ -157,6 +181,7 @@ namespace Edit2D
 
                 Entite entite = new Entite(true, false, repository.CurrentTextureName.ToString(), name);
 
+                entite.IsStatic = true;
                 entite.SetPosition(repository.pointer);
                 repository.listEntite.Add(entite);
 
@@ -245,7 +270,7 @@ namespace Edit2D
             {
                 Vector2 vec1 = repository.CurrentEntite.Body.GetLocalPosition(repository.pointer);
 
-                repository.CurrentEntite.AddFixedRevoluteJoint(repository.pointer);
+                repository.CurrentEntite.AddFixedRevoluteJoint(vec1);
 
                 Repository.physicSimulator.Update(0.0001f);
             }
@@ -434,7 +459,7 @@ namespace Edit2D
             Repository.physicSimulator = new FarseerGames.FarseerPhysics.PhysicsSimulator(new Vector2(0, 9.81f));
 
             MouseMode mouseMode = repository.mouseMode;
-            bool pause = repository.pause;
+            bool pause = repository.Pause;
             string textureName = repository.CurrentTextureName;
 
             repository = new Repository();
@@ -448,7 +473,7 @@ namespace Edit2D
 
             repository.pointer = new Vector2(100, 80);
 
-            repository.pause = pause;
+            repository.Pause = pause;
             repository.mouseMode = mouseMode;
             repository.CurrentTextureName = textureName;
             repository.FrmEdit2D = this;
@@ -517,7 +542,7 @@ namespace Edit2D
         {
             this.btnPause.Enabled = true;
             this.btnPlay.Enabled = false;
-            repository.pause = false;
+            repository.Pause = false;
         }
 
         private void btnPause_Click(object sender, EventArgs e)
@@ -525,7 +550,7 @@ namespace Edit2D
             this.btnPause.Enabled = false;
             this.btnPlay.Enabled = true;
 
-            repository.pause = true;
+            repository.Pause = true;
         }
 
         private void btnStop_Click(object sender, EventArgs e)
@@ -533,7 +558,7 @@ namespace Edit2D
             this.btnPause.Enabled = false;
             this.btnPlay.Enabled = true;
 
-            repository.pause = true;
+            repository.Pause = true;
 
             foreach (Entite entite in repository.listEntite)
             {
@@ -560,6 +585,55 @@ namespace Edit2D
         }
 
         private void btnRecObjectStatus_Click(object sender, EventArgs e)
+        {
+            if (repository.CurrentEntite != null)
+            {
+                AddScriptObjectStatus(repository.CurrentEntite.Position, repository.CurrentEntite.Rotation, repository.CurrentEntite.SizeVector);
+            }
+        }
+
+        private void btnRecObjectStatusLoop_Click(object sender, EventArgs e)
+        {
+            if (repository.CurrentEntite != null)
+            {
+                Script script = null;
+
+                if (btnScriptModeBar.Checked && (script = scriptControl.GetSelectedScript()) != null)
+                {
+                    if (script.ListAction.Count > 0)
+                    {
+                        ActionCurve actionCurve = null;
+
+                        if ((actionCurve = (ActionCurve)script.ListAction.Find(a => a.ActionName == "Position")) != null)
+                        {
+                            actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[0].Keys[0].Value));
+                            actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[1].Keys[0].Value));
+                            actionCurve.CalcDuration();
+                        }
+                        if ((actionCurve = (ActionCurve)script.ListAction.Find(a => a.ActionName == "Rotation")) != null)
+                        {
+                            actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[0].Keys[0].Value));
+                            actionCurve.CalcDuration();
+                        }
+                        if ((actionCurve = (ActionCurve)script.ListAction.Find(a => a.ActionName == "Size")) != null)
+                        {
+                            actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[0].Keys[0].Value));
+                            actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[1].Keys[0].Value));
+                            actionCurve.CalcDuration();
+                        }
+                    }
+
+                    short timeLineValueIncrement = 1000;
+                    if (!Int16.TryParse(txtRecTime.Text, out timeLineValueIncrement))
+                        timeLineValueIncrement = 1000;
+
+                    scriptControl.TimeLineValue += timeLineValueIncrement;
+                    scriptControl.RefreshScriptControl();
+                }
+            }
+        }
+
+        private void AddScriptObjectStatus(Vector2 position, float rotation, Vector2 size)
         {
             if (repository.CurrentEntite != null)
             {
@@ -597,26 +671,30 @@ namespace Edit2D
 
                         if (actionCurve.ActionName == "Position")
                         {
-                            actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, repository.CurrentEntite.Position.X));
-                            actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, repository.CurrentEntite.Position.Y));
+                            actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, position.X));
+                            actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, position.Y));
                         }
 
                         if (actionCurve.ActionName == "Rotation")
                         {
-                            actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, repository.CurrentEntite.Rotation));
+                            actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, rotation));
                         }
 
                         if (actionCurve.ActionName == "Size")
                         {
-                            actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, repository.CurrentEntite.SizeVector.X));
-                            actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, repository.CurrentEntite.SizeVector.Y));
+                            actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, size.X));
+                            actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, size.Y));
 
                         }
                         actionCurve.CalcDuration();
                     }
                 }
 
-                scriptControl.TimeLineValue += 200;
+                short timeLineValueIncrement = 1000;
+                if (!Int16.TryParse(txtRecTime.Text, out timeLineValueIncrement))
+                    timeLineValueIncrement = 1000;
+
+                scriptControl.TimeLineValue += timeLineValueIncrement;
                 scriptControl.RefreshScriptControl();
             }
         }
@@ -780,7 +858,6 @@ namespace Edit2D
 
             if ((int)e.State == 17 || (listView.SelectedItems.Count > 0 && e.Item == listView.SelectedItems[0]))
             {
-                //e.Graphics.FillRectangle(Brushes.CornflowerBlue, recBackground);
                 e.Graphics.FillRectangle(Brushes.CornflowerBlue, recBackground);
             }
             else
@@ -808,15 +885,6 @@ namespace Edit2D
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            //UpdateEntityActionPlayer();
-
-            //if (!repository.pause)
-            //{
-            //    UpdateEntityTrigger();
-            //    UpdateEntityParticleSystem();
-
-            //    UpdatePhysic();
-            //}
             render.Update();
         }
 
@@ -828,6 +896,17 @@ namespace Edit2D
                 repository.keyAltPressed = true;
             if (e.Shift)
                 repository.keyShiftPressed = true;
+
+            //--- Change le curseur selon le MouseMode sélectionné
+            if (repository.keyAltPressed)
+            {
+                modelViewerControl.Cursor = dicCursors[repository.mouseMode];
+            }
+            else
+            {
+                modelViewerControl.Cursor = dicCursors[MouseMode.Select];
+            }
+            //---
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
@@ -840,6 +919,17 @@ namespace Edit2D
                     repository.keyAltPressed = false;
                 if (!e.Shift && repository.keyShiftPressed)
                     repository.keyShiftPressed = false;
+
+                //--- Change le curseur selon le MouseMode sélectionné
+                if (repository.keyAltPressed)
+                {
+                    modelViewerControl.Cursor = dicCursors[repository.mouseMode];
+                }
+                else
+                {
+                    modelViewerControl.Cursor = dicCursors[MouseMode.Select];
+                }
+                //---
 
                 if (e.KeyCode == Keys.S && repository.CurrentEntite != null)
                 {
@@ -890,7 +980,7 @@ namespace Edit2D
 
                 if (e.KeyCode == Keys.Space)
                 {
-                    if (repository.pause)
+                    if (repository.Pause)
                         btnPlay.PerformClick();
                     else
                         btnPause.PerformClick();
@@ -904,23 +994,6 @@ namespace Edit2D
             {
                 if (e.ChangedItem.Label == "Name")
                 {
-                    //int countFound = repository.listEntite.FindAll(ent => ent.Name == e.ChangedItem.Value.ToString()).Count;
-
-                    //string nameFound = repository.FoundNewName(((Entite)this.prop.SelectedObject).TextureName);
-
-                    //if (countFound == 2)// && entiteFound != null && entiteFound != ((Entite)this.prop.SelectedObject))
-                    //{
-                    //    if (MessageBox.Show(String.Format("Le nom {0} est déja utilisé pour une entité, voulez-vous utiliser le nom {1} ?", e.ChangedItem.Value, nameFound), "Avertissement", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.OK)
-                    //    {
-                    //        ((Entite)this.prop.SelectedObject).Name = nameFound;
-                    //    }
-                    //    else
-                    //    {
-                    //        ((Entite)this.prop.SelectedObject).Name = e.OldValue.ToString();
-                    //        this.prop.Refresh();
-                    //    }
-                    //}
-
                     if (!ChangeEntityName(((Entite)this.prop.SelectedObject), e.ChangedItem.Value.ToString(), e.OldValue.ToString()))
                     {
                         this.prop.Refresh();
@@ -1044,11 +1117,12 @@ namespace Edit2D
 
         void modelViewerControl_MouseDown(object sender, MouseEventArgs e)
         {
-            if (!repository.pause && !btnGameClickableOnPlay.Checked)
+            if (!repository.Pause && !btnGameClickableOnPlay.Checked)
                 return;
 
             modelViewerControl.Focus();
 
+            //---> Position la caméra
             if (e.Button == MouseButtons.Middle)
             {
                 prevPos = new Vector2(e.Location.X, e.Location.Y);
@@ -1058,9 +1132,6 @@ namespace Edit2D
 
             if (repository.keyCtrlPressed)
             {
-                repository.pointer2 = GetMousePointerLocation(e.Location, ref repository.pointerDraw2);
-
-                repository.currentEntite2 = repository.GetSelectedEntite(repository.pointer2);
             }
             else
             {
@@ -1069,29 +1140,29 @@ namespace Edit2D
                 //--- Si la touche MouseMode n'est pas pressée, change l'entité courante
                 if (!repository.keyAltPressed)
                 {
-                    //Entite selectedEntite = repository.GetSelectedEntite(repository.pointer);
-
-                    //if (selectedEntite != null && repository.currentEntite != selectedEntite && selectedEntite.IsColisionable)
-                    //    EntiteSelectionChange(repository.currentEntite, selectedEntite);
-
-                    //if (repository.currentEntite != null)
-                    //{
-                    //    repository.tempEntite = (Entite)repository.currentEntite.Clone(false);
-                    //    this.btnPinStatic.Checked = repository.currentEntite.IsStatic;
-                    //    this.btnColisionable.Checked = repository.currentEntite.IsColisionable;
-
-
-                    //}
-                    //else
-                    //{
-                    //    repository.tempEntite = null;
-                    //    this.btnPinStatic.Checked = false;
-                    //    this.btnColisionable.Checked = false;
-                    //}
                 }
-                //--- Si la touche MouseMode est pressée
-                else if (repository.CurrentEntite != null)
+                //--- Si la touche MouseMode est pressée et que des entités sont sélectionnées
+                else if (repository.CurrentEntite != null || repository.ListSelection.Count>0)
                 {
+                    for (int i = 0; i < repository.ListSelection.Count; i++)
+                    {
+                        //---> Le body courant devient statique pour tous les MouseMode
+                        repository.ListSelection[i].TempEntite = (Entite)repository.ListSelection[i].Entite.Clone(false);
+                        repository.ListSelection[i].TempPointer = repository.ListSelection[i].Pointer;
+                        repository.ListSelection[i].TempPointerDraw = repository.ListSelection[i].PointerDraw;
+                        repository.ListSelection[i].Entite.IsStatic = true;
+
+                        //--- Suppression du body courant si on est en mode Resize
+                        if (repository.mouseMode == MouseMode.Resize)
+                        {
+                            Repository.physicSimulator.Remove(repository.ListSelection[i].Entite.Body);
+                            Repository.physicSimulator.Remove(repository.ListSelection[i].Entite.geom);
+                        }
+                        //---
+                    }
+
+                    //TODO : unifier la mutlisélection avec la sélection simple
+
                     //---> Le body courant devient statique pour tous les MouseMode
                     repository.tempEntite = (Entite)repository.CurrentEntite.Clone(false);
                     repository.CurrentEntite.Body.IsStatic = true;
@@ -1114,13 +1185,44 @@ namespace Edit2D
 
         private void modelViewerControl_MouseUp(object sender, MouseEventArgs e)
         {
-            if (!repository.pause && !btnGameClickableOnPlay.Checked)
+            if (!repository.Pause && !btnGameClickableOnPlay.Checked)
                 return;
 
             if (repository.keyCtrlPressed)
             {
-                repository.pointer2 = GetMousePointerLocation(e.Location, ref repository.pointerDraw2);
-                repository.currentEntite2 = repository.GetSelectedEntite(repository.pointer2);
+                Vector2 pointerDraw = Vector2.Zero;
+                Vector2 pointer = GetMousePointerLocation(e.Location, ref pointerDraw);
+                Entite selectedEntite = repository.GetSelectedEntite(pointer);
+                
+                //---> La multisélection est possible uniquement sur les entités
+                if (selectedEntite == null)
+                    return;
+
+                //---> Supprime la sélection si la position cliquée est à moins de 10 pixels
+                Selection existSelection = repository.ListSelection.Find(s=> Vector2.Distance(s.Pointer, pointer) <=20);
+                //---> Repositionne le pointeur si l'entité est déja sélectionnée
+                Selection entiteSelection = repository.ListSelection.Find(s=> s.Entite == selectedEntite);
+
+                if(existSelection != null)
+                {
+                    if(existSelection.Entite != null)
+                        existSelection.Entite.Selected = false;
+
+                    repository.ListSelection.Remove(existSelection);
+                }
+                else if (entiteSelection != null)
+                {
+                    entiteSelection.Pointer = pointer;
+                    entiteSelection.PointerDraw = pointerDraw;
+                }
+                else
+                {
+                    if(selectedEntite != null)
+                        selectedEntite.Selected = true;
+
+                    Selection newSelection = new Selection(selectedEntite, pointer, pointerDraw);
+                    repository.ListSelection.Add(newSelection);
+                }
             }
             else
             {
@@ -1148,11 +1250,15 @@ namespace Edit2D
                 //--- Si la touche MouseMode n'est pas pressée, change l'entité courante
                 if (!repository.keyAltPressed)
                 {
-                    //repository.currentEntite = repository.GetSelectedEntite(repository.pointer);
-                    //prop.SelectedObject = repository.currentEntite;
+                    //--- Si la touche Ctrl n'est pas pressée et que la touche MouseMode (Alt) ne
+                    //    l'est pas non plus, vide la liste de multisélection
+                    repository.ListSelection.ForEach(s => s.Entite.Selected = false);
+                    repository.ListSelection = new List<Selection>();
+                    //---
+
                     Entite selectedEntite = repository.GetSelectedEntite(repository.pointer);
 
-                    if (selectedEntite != null)//|| (selectedEntite != null && selectedEntite.IsColisionable))
+                    if (selectedEntite != null)
                         EntiteSelectionChange(repository.CurrentEntite, repository.GetSelectedEntite(repository.pointer));
                 }
                 //--- Si la touche MouseMode est pressée, réinjecte les nouvelles valeurs des propriétés (Size, Rotation)
@@ -1189,7 +1295,7 @@ namespace Edit2D
             toolStripStatusMouse.Text = String.Format("Mouse.X : {0} - Mouse.Y : {1}", e.X, e.Y);
             //---
 
-            if (!repository.pause && !btnGameClickableOnPlay.Checked)
+            if (!repository.Pause && !btnGameClickableOnPlay.Checked)
                 return;
 
             int dimPointer = 10;
@@ -1201,7 +1307,7 @@ namespace Edit2D
             }
             else if (e.Button == MouseButtons.Left)
             {
-                if (repository.keyCtrlPressed)
+                if (repository.keyShiftPressed)
                 {
                     repository.pointer2 = GetMousePointerLocation(e.Location, ref repository.pointerDraw2);
 
@@ -1218,9 +1324,6 @@ namespace Edit2D
                 }
                 else
                 {
-                    //repository.pointer = new Vector2(e.Location.X, e.Location.Y);
-                    //repository.pointerDraw = new Vector2(repository.pointer.X - dimPointer / 2, repository.pointer.Y - dimPointer / 2);
-
                     repository.pointer = GetMousePointerLocation(e.Location, ref repository.pointerDraw);
 
                     //--- Si la touche MouseMode n'est pas pressée, change l'entité courante
@@ -1229,11 +1332,21 @@ namespace Edit2D
                     //---
 
                     //--- MouseMode.Move
-                    if (repository.CurrentEntite != null && repository.keyAltPressed && repository.mouseMode == MouseMode.Move && repository.tempEntite != null)
+                    if ((repository.CurrentEntite != null || repository.ListSelection.Count>0) &&
+                         repository.keyAltPressed && 
+                         repository.mouseMode == MouseMode.Move)// && repository.tempEntite != null)
                     {
-                        repository.CurrentEntite.FixPosition(repository.tempEntite.Position + repository.pointer - prevPos + new Vector2(dimPointer / 2, dimPointer / 2));
+                        Vector2 deltaPosition = repository.pointer - prevPos + new Vector2(dimPointer) / 2f;
 
-                        //Repository.physicSimulator.Update(0.000002f);
+                        if(repository.CurrentEntite != null)
+                            repository.CurrentEntite.FixPosition(repository.tempEntite.Position + deltaPosition);
+
+                        for (int i = 0; i < repository.ListSelection.Count; i++)
+                        {
+                            repository.ListSelection[i].Entite.FixPosition(repository.ListSelection[i].TempEntite.Position + deltaPosition);
+                            repository.ListSelection[i].Pointer = repository.ListSelection[i].TempPointer + deltaPosition;
+                            repository.ListSelection[i].PointerDraw = repository.ListSelection[i].TempPointerDraw + deltaPosition;
+                        }
                     }
                     //---
 
@@ -1382,7 +1495,7 @@ namespace Edit2D
 
         void modelViewerControl_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (!repository.pause && !btnGameClickableOnPlay.Checked)
+            if (!repository.Pause && !btnGameClickableOnPlay.Checked)
                 return;
 
             if (btnParticleSystemModeBar.Checked && repository.keyCtrlPressed && particleControl.GetCurrentParticleSystem() != null)
@@ -1407,615 +1520,6 @@ namespace Edit2D
         {
             modelViewerControl.ChangeViewPortSize();
         }
-        #endregion
-
-        #region Script private methods
-        //private void RefreshScriptView()
-        //{
-        //    listboxScript.Items.Clear();
-
-        //    if (repository.currentEntite != null)
-        //    {
-        //        for (int i = 0; i < repository.currentEntite.ListScript.Count; i++)
-        //        {
-        //            listboxScript.Items.Add(repository.currentEntite.ListScript[i].ScriptName);
-        //        }
-        //    }
-        //}
-
-        //private void RefreshActionView()
-        //{
-        //    treeViewAction.Nodes.Clear();
-
-        //    if (repository.currentEntite != null && currentScript != -1)
-        //    {
-        //        Script script = repository.currentEntite.ListScript[currentScript];
-
-        //        for (int i = 0; i < script.ListAction.Count; i++)
-        //        {
-        //            ActionBase action = script.ListAction[i];
-
-        //            if (action is ActionCurve)
-        //            {
-        //                ActionCurve actionCurve = (ActionCurve)action;
-
-        //                switch (actionCurve.PropertyType.Name)
-        //                {
-        //                    case "Vector2":
-        //                        TreeNode nodeVector2 = treeViewAction.Nodes.Add(String.Format("{0}-{1} ({2})({3})", action.ActionName, actionCurve.PropertyName, "Curve" + (actionCurve.IsLoop ? "(loop)" : ""), actionCurve.IsRelative ? "R" : "A"));
-        //                        nodeVector2.Nodes.Add("X", "X");
-        //                        nodeVector2.Nodes.Add("Y", "Y");
-        //                        break;
-        //                    case "Single":
-        //                        TreeNode nodeAngle = treeViewAction.Nodes.Add(String.Format("{0}-{1} ({2})({3})", action.ActionName, actionCurve.PropertyName, "Curve" + (actionCurve.IsLoop ? "(loop)" : ""), actionCurve.IsRelative ? "R" : "A"));
-        //                        break;
-        //                    case "Color":
-        //                        TreeNode nodeColor = treeViewAction.Nodes.Add(String.Format("{0}-Color ({1})({2})", action.ActionName, actionCurve.PropertyName, "Curve" + (actionCurve.IsLoop ? "(loop)" : ""), actionCurve.IsRelative ? "R" : "A"));
-        //                        nodeColor.Nodes.Add("R", "R");
-        //                        nodeColor.Nodes.Add("G", "G");
-        //                        nodeColor.Nodes.Add("B", "B");
-        //                        nodeColor.Nodes.Add("A", "A");
-        //                        break;
-        //                    default:
-        //                        break;
-        //                }
-        //            }
-        //            else if (action is ActionEvent)
-        //            {
-        //                ActionEvent actionEvent = (ActionEvent)action;
-
-        //                switch (actionEvent.PropertyType.Name)
-        //                {
-        //                    case "Vector2":
-        //                        TreeNode nodeVector2 = treeViewAction.Nodes.Add(String.Format("{0}-{1} ({2})({3})", action.ActionName, actionEvent.PropertyName, "Event", actionEvent.IsRelative ? "R" : "A"));
-        //                        break;
-        //                    case "Single":
-        //                        TreeNode nodeAngle = treeViewAction.Nodes.Add(String.Format("{0}-{1} ({2})({3})", action.ActionName, actionEvent.PropertyName, "Event", actionEvent.IsRelative ? "R" : "A"));
-        //                        break;
-        //                    case "Color":
-        //                        TreeNode nodeColor = treeViewAction.Nodes.Add(String.Format("{0}-Color ({1})({2})", action.ActionName, actionEvent.PropertyName, "Event", actionEvent.IsRelative ? "R" : "A"));
-        //                        break;
-        //                    default:
-        //                        break;
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //}
-
-        //private void ViewActionCurve(ActionCurve actionCurve)
-        //{
-        //    //--- Affiche le contrôle de courbe
-        //    pnlMain.ColumnStyles[3].SizeType = SizeType.Percent;
-        //    pnlMain.ColumnStyles[2].SizeType = SizeType.Absolute;
-        //    pnlMain.ColumnStyles[3].Width = 100;
-        //    pnlMain.ColumnStyles[2].Width = 0;
-
-        //    pnlMain.ColumnStyles[1].SizeType = SizeType.Absolute;
-        //    pnlMain.ColumnStyles[1].Width = 240;
-        //    //---
-
-        //    curveControl.Curves.Clear();
-
-        //    if (actionCurve == null)
-        //    {
-        //        curveControl.TimeLine = 0;
-        //        curveControl.Frame(0, -100, 1000, 100);
-        //    }
-        //    else
-        //    {
-        //        //--- Affiche les caractéristiques de l'action
-        //        chkCurve.Checked = true;
-        //        chkLoop.Checked = actionCurve.IsLoop;
-        //        optRelative.Checked = actionCurve.IsRelative;
-        //        cmbActionType.SelectedText = actionCurve.PropertyName;
-        //        //---
-
-        //        if (currentAction != -1)
-        //        {
-        //            if (currentSubAction != -1)
-        //            {
-        //                ViewActionCurve(actionCurve, currentSubAction);
-        //            }
-        //            else
-        //            {
-        //                for (int i = 0; i < actionCurve.ListCurve.Count; i++)
-        //                {
-        //                    ViewActionCurve(actionCurve, i);
-        //                }
-        //            }
-        //        }
-
-        //        //--- Change la repère selon le type de courbe
-        //        float minX = 0f;
-        //        float minY = 0f;
-        //        float maxX = 0f;
-        //        float maxY = 0f;
-
-        //        maxX = Math.Max(actionCurve.Duration, 1000f); ;
-
-        //        switch (actionCurve.PropertyType.Name)
-        //        {
-        //            case "Vector2":
-        //                minY = -150f;
-        //                maxY = 150f;
-        //                break;
-        //            case "Single":
-        //                minY = -MathHelper.TwoPi - 0.1f;
-        //                maxY = MathHelper.TwoPi + 0.1f;
-        //                break;
-        //            case "Color":
-        //                minY = 0f;
-        //                maxY = 256f;
-        //                break;
-        //            //case ActionType.BlurFactor:
-        //            //    minY = 0f;
-        //            //    maxY = 0.1f;
-        //            //    break;
-        //            default:
-        //                break;
-        //        }
-
-        //        curveControl.Frame(minX, minY, maxX, maxY);
-        //        curveControl.TimeLine = actionCurve.timeLineAnimation;
-        //        //---
-        //    }
-        //}
-
-        //private void ViewActionCurve(ActionCurve actionCurve, int subCurve)
-        //{
-        //    //--- Calcul la couleur de la courbe à afficher
-        //    System.Drawing.Color color = System.Drawing.Color.Blue;
-
-        //    switch (actionCurve.PropertyType.Name)
-        //    {
-        //        case "Vector2":
-        //            if (subCurve == 0)
-        //                color = System.Drawing.Color.Red;
-        //            else
-        //                color = System.Drawing.Color.Blue;
-        //            break;
-        //        case "Single":
-        //            color = System.Drawing.Color.Blue;
-        //            break;
-        //        case "Color":
-        //            if (subCurve == 0)
-        //                color = System.Drawing.Color.Red;
-        //            else if (subCurve == 1)
-        //                color = System.Drawing.Color.Green;
-        //            else if (subCurve == 2)
-        //                color = System.Drawing.Color.Blue;
-        //            else
-        //                color = System.Drawing.Color.Violet;
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //    //---
-
-        //    //--- Curve
-        //    curveControl.Curves.Add(new EditCurve(actionCurve.ActionName + subCurve.ToString(), color, actionCurve.ListCurve[subCurve], null));
-        //    //---
-        //}
-
-        //private void ViewActionEvent(ActionEvent actionEvent)
-        //{
-        //    //--- Affiche le panneau ActionEvent
-        //    pnlMain.ColumnStyles[2].SizeType = SizeType.Percent;
-        //    pnlMain.ColumnStyles[3].SizeType = SizeType.Absolute;
-        //    pnlMain.ColumnStyles[2].Width = 100;
-        //    pnlMain.ColumnStyles[3].Width = 0;
-
-        //    pnlMain.ColumnStyles[1].SizeType = SizeType.Absolute;
-        //    pnlMain.ColumnStyles[1].Width = 240;
-        //    //---
-
-        //    lblActionEventPropertyName.Text = actionEvent.PropertyName;
-
-        //    picActionEventColor.Visible = false;
-        //    btnActionEventChooseColor.Visible = false;
-        //    txtActionEventValue1.Visible = false;
-        //    txtActionEventValue2.Visible = false;
-        //    chkActionEvent1.Visible = false;
-        //    chkActionEvent2.Visible = false;
-        //    txtActionEventValue1.Enabled = true;
-        //    txtActionEventValue2.Enabled = true;
-
-        //    if (actionEvent != null)
-        //    {
-        //        //--- Affiche les caractéristiques de l'action
-        //        chkCurve.Checked = false;
-        //        optRelative.Checked = actionEvent.IsRelative;
-        //        cmbActionType.SelectedText = actionEvent.PropertyName;
-        //        //---
-
-        //        if (actionEvent.PropertyType.Name == "Color")
-        //        {
-        //            picActionEventColor.Visible = true;
-        //            btnActionEventChooseColor.Visible = true;
-
-        //            Microsoft.Xna.Framework.Graphics.Color color = (actionEvent.Value == null ? Microsoft.Xna.Framework.Graphics.Color.White : (Microsoft.Xna.Framework.Graphics.Color)actionEvent.Value);
-        //            picActionEventColor.BackColor = System.Drawing.Color.FromArgb((int)color.PackedValue);
-        //        }
-        //        else if (actionEvent.PropertyType.Name == "Single")
-        //        {
-        //            txtActionEventValue1.Visible = true;
-
-        //            txtActionEventValue1.Mask = "0000.000";
-        //            txtActionEventValue1.Text = String.Format("{0:0000.000}", actionEvent.Value);
-
-        //            //chkActionEvent1.Visible = true;
-        //            //chkActionEvent1.Checked = actionEvent.ChangeValue[0];
-        //        }
-        //        else if (actionEvent.PropertyType.Name == "Vector2")
-        //        {
-        //            txtActionEventValue1.Visible = true;
-        //            txtActionEventValue2.Visible = true;
-
-        //            txtActionEventValue1.Mask = "0000.000";
-        //            txtActionEventValue1.Text = String.Format("{0:0000.000}", ((Vector2)actionEvent.Value).X);
-        //            txtActionEventValue2.Mask = "0000.000";
-        //            txtActionEventValue2.Text = String.Format("{0:0000.000}", ((Vector2)actionEvent.Value).Y);
-
-        //            chkActionEvent1.Visible = true;
-        //            chkActionEvent1.Checked = actionEvent.ChangeValue[0];
-        //            chkActionEvent2.Visible = true;
-        //            chkActionEvent2.Checked = actionEvent.ChangeValue[1];
-
-        //            txtActionEventValue1.Enabled = chkActionEvent1.Checked;
-        //            txtActionEventValue2.Enabled = chkActionEvent2.Checked;
-        //        }
-        //    }
-        //}
-
-        //private ActionCurve GetCurrentActionCurve()
-        //{
-        //    if (currentScript != -1 && currentAction != -1)
-        //        return (ActionCurve)repository.currentEntite.ListScript[currentScript].ListAction[currentAction];
-        //    //GetActionCurveFromScript(repository.currentEntite.ListScript[currentScript], currentCurve);
-        //    else
-        //        return null;
-        //}
-
-        //private ActionEvent GetCurrentActionEvent()
-        //{
-        //    if (currentScript != -1 && currentAction != -1)
-        //        return (ActionEvent)repository.currentEntite.ListScript[currentScript].ListAction[currentAction];
-        //    else
-        //        return null;
-        //}
-
-        //private void UpdateCurve(ActionCurve actionCurve)
-        //{
-        //    //--- Met à jour les points
-        //    if (currentSubAction == -1)
-        //        currentSubAction = 0;
-
-        //    {
-        //        if (curveControl.Curves.Count > 0)
-        //        {
-        //            actionCurve.ListCurve[currentSubAction] = curveControl.Curves[0].OriginalCurve.Clone();
-        //        }
-        //    }
-        //    //---
-
-        //    //--- Calcul et met à jour la durée de l'animation pour chaque courbe
-        //    actionCurve.CalcDuration();
-        //    List<ActionBase> listActionCurve = actionCurve.Script.ListAction.FindAll(action => action is ActionCurve);
-        //    for (int j = 0; j < listActionCurve.Count; j++)
-        //    {
-        //        float maxDuration = 0;
-
-        //        ActionCurve actionCrv = (ActionCurve)listActionCurve[j];
-
-        //        for (int i = 0; i < actionCrv.ListCurve.Count; i++)
-        //        {
-        //            if (actionCrv.ListCurve[i].Keys.Count > 0)
-        //                maxDuration = Math.Max(actionCrv.ListCurve[i].Keys.Max<CurveKey>(key => key.Position), maxDuration);
-        //        }
-
-        //        actionCrv.Duration = (int)maxDuration;
-        //    }
-
-        //    //actionCurve.Script.Duration = (int)maxDuration;
-        //    //---
-        //}
-
-        //private void StopAllScripts()
-        //{
-        //    for (int i = 0; i < repository.listEntite.Count; i++)
-        //    {
-        //        Entite entite = repository.listEntite[i];
-
-        //        for (int j = 0; j < entite.ListScript.Count; j++)
-        //        {
-        //            for (int k = 0; k < entite.ListScript[j].ListAction.Count; k++)
-        //            {
-        //                ActionBase action = entite.ListScript[j].ListAction[k];
-
-        //                if (action is ActionCurve)
-        //                {
-        //                    ((ActionCurve)action).StopAnimation();
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-        #endregion
-
-        #region Script events
-        //private void btnAddScript_Click(object sender, EventArgs e)
-        //{
-        //    if (repository.currentEntite != null)
-        //    {
-        //        Script script = new Script(String.Format("Script{0}", repository.currentEntite.ListScript.Count + 1), repository.currentEntite);
-        //        repository.currentEntite.ListScript.Add(script);
-
-        //        RefreshScriptView();
-
-        //        currentScript = repository.currentEntite.ListScript.Count - 1;
-        //        listboxScript.SelectedIndex = listboxScript.Items.Count - 1;
-
-        //        RefreshActionView();
-        //    }
-        //}
-
-        //private void btnDelScript_Click(object sender, EventArgs e)
-        //{
-        //    if (repository.currentEntite != null && currentScript != -1)
-        //    {
-        //        repository.currentEntite.ListScript.RemoveAt(listboxScript.SelectedIndex);
-        //        currentScript = -1;
-
-        //        RefreshScriptView();
-        //        RefreshActionView();
-        //    }
-        //}
-
-        //private void btnPlayScript_Click(object sender, EventArgs e)
-        //{
-        //    if (currentScript != -1)
-        //    {
-        //        Script script = repository.currentEntite.ListScript[currentScript];
-
-        //        foreach (ActionBase action in script.ListAction)
-        //        {
-        //            if (action is ActionCurve)
-        //            {
-        //                if (((ActionCurve)action).playAnimation != 0)
-        //                    ((ActionCurve)action).playAnimation = 0;
-        //                else
-        //                {
-        //                    ((ActionCurve)action).StartAnimation();
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
-        //private void listboxScript_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    RefreshActionView();
-        //    currentScript = listboxScript.SelectedIndex;
-        //}
-
-        //private void btnAddAction_Click(object sender, EventArgs e)
-        //{
-        //    if (repository.currentEntite != null && currentScript != -1 && cmbActionType.SelectedIndex != -1)
-        //    {
-        //        Script script = repository.currentEntite.ListScript[currentScript];
-
-        //        int curveCount = script.ListAction.Count(action => action is ActionCurve) - 1;
-        //        int eventCount = script.ListAction.Count(action => action is ActionEvent) - 1;
-
-        //        //TODO : ne plus calculer le ActionType selon le SelectedIndex mais selon le SelectedValue (fait en partie)
-        //        ActionBase act = null;
-
-        //        if (chkCurve.Checked)
-        //        {
-        //            act = new ActionCurve(script, String.Format("Curve{0}", curveCount + 1), optRelative.Checked, chkLoop.Checked, cmbActionType.SelectedItem.ToString());
-        //        }
-        //        else
-        //        {
-        //            act = new ActionEvent(script, String.Format("Event{0}", eventCount + 1), optRelative.Checked, cmbActionType.SelectedItem.ToString());
-        //        }
-
-        //        script.ListAction.Add(act);
-
-        //        RefreshScriptView();
-        //        RefreshActionView();
-
-        //        currentAction = curveCount;
-        //        currentSubAction = 0;
-        //        treeViewAction.SelectedNode = treeViewAction.Nodes[treeViewAction.Nodes.Count - 1];
-        //    }
-        //}
-
-        //private void btnDelAction_Click(object sender, EventArgs e)
-        //{
-        //    if (repository.currentEntite != null && currentScript != -1 && currentAction != -1)
-        //    {
-        //        Script script = repository.currentEntite.ListScript[currentScript];
-
-        //        script.ListAction.RemoveAt(currentAction);
-        //        currentAction = -1;
-        //        currentSubAction = -1;
-
-        //        RefreshScriptView();
-        //        RefreshActionView();
-        //    }
-        //}
-
-        //private void btnActionUp_Click(object sender, EventArgs e)
-        //{
-        //    /*if (currentScript != 1 && currentCurve != -1)
-        //    {
-        //        repository.currentEntite.ListScript[currentScript].ListCurve.mo [currentCurve]
-        //    }*/
-        //}
-
-        //private void btnActionDown_Click(object sender, EventArgs e)
-        //{
-
-        //}
-
-        //private void btnPlayScriptAction_Click(object sender, EventArgs e)
-        //{
-        //    ActionCurve actionCurve = GetCurrentActionCurve();
-
-        //    if (actionCurve == null)
-        //        return;
-
-        //    //---> Arrête l'animation si elle est en route
-        //    if (actionCurve.playAnimation != 0)
-        //        actionCurve.playAnimation = 0;
-        //    else
-        //    {
-        //        actionCurve.StartAnimation();
-        //    }
-        //}
-
-        //private void treeViewAction_AfterSelect(object sender, TreeViewEventArgs e)
-        //{
-        //    ActionBase action = null;
-
-        //    if (e.Node.Parent != null)
-        //    {
-        //        currentAction = e.Node.Parent.Index;
-        //        currentSubAction = e.Node.Index;
-        //    }
-        //    else
-        //    {
-        //        currentAction = e.Node.Index;
-        //        currentSubAction = -1;
-        //    }
-
-        //    if (currentAction != -1)
-        //        action = repository.currentEntite.ListScript[currentScript].ListAction[currentAction];
-
-        //    if (action is ActionCurve)
-        //    {
-        //        btnPlayScriptAction.Visible = true;
-        //        ViewActionCurve((ActionCurve)action);
-        //    }
-        //    else if (action is ActionEvent)
-        //    {
-        //        btnPlayScriptAction.Visible = false;
-        //        ViewActionEvent((ActionEvent)action);
-        //    }
-        //}
-
-        //private void curveControl_TimeLineChange(object sender, int value)
-        //{
-        //    ActionCurve actionCurve = GetCurrentActionCurve();
-
-        //    if (actionCurve != null)
-        //    {
-        //        if (value == -1) // StartAnimation
-        //        {
-        //            actionCurve.StartAnimation(true);
-        //        }
-        //        else
-        //        {
-        //            actionCurve.UpdateAnimation(value);
-        //        }
-        //    }
-        //}
-
-        //private void curveControl_CurveChange(object sender, EventArgs e)
-        //{
-        //    ActionCurve curve = GetCurrentActionCurve();
-
-        //    if (curve != null)
-        //    {
-        //        UpdateCurve(curve);
-        //    }
-        //    else
-        //        return;
-        //}
-
-        //private void btnValidateActionEventValue_Click(object sender, EventArgs e)
-        //{
-        //    ActionEvent actionEvent = GetCurrentActionEvent();
-
-        //    if (actionEvent != null)
-        //    {
-        //        if (actionEvent.PropertyType.Name == "Color")
-        //        {
-        //            System.Drawing.Color color = picActionEventColor.BackColor;
-        //            actionEvent.Value = new Microsoft.Xna.Framework.Graphics.Color(color.R, color.G, color.B, color.A);
-        //        }
-        //        else if (actionEvent.PropertyType.Name == "Single")
-        //        {
-        //            actionEvent.Value = float.Parse(txtActionEventValue1.Text);
-        //            actionEvent.ChangeValue[0] = true;// chkActionEvent1.Checked;
-        //        }
-        //        else if (actionEvent.PropertyType.Name == "Vector2")
-        //        {
-        //            Vector2 vector2 = new Vector2();
-
-        //            vector2.X = float.Parse(txtActionEventValue1.Text);
-        //            vector2.Y = float.Parse(txtActionEventValue2.Text);
-        //            actionEvent.ChangeValue[0] = chkActionEvent1.Checked;
-        //            actionEvent.ChangeValue[1] = chkActionEvent2.Checked;
-
-        //            actionEvent.Value = vector2;
-        //        }
-        //    }
-        //}
-
-        //private void btnActionEventChooseColor_Click(object sender, EventArgs e)
-        //{
-        //    ColorDialog dlg = new ColorDialog();
-        //    dlg.Color = picActionEventColor.BackColor;
-
-        //    if (dlg.ShowDialog() == DialogResult.OK)
-        //    {
-        //        picActionEventColor.BackColor = dlg.Color;
-        //    }
-        //}
-
-        //private void chkActionEvent1_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    txtActionEventValue1.Enabled = chkActionEvent1.Checked;
-        //}
-
-        //private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    txtActionEventValue2.Enabled = chkActionEvent2.Checked;
-        //}
-
-        //private void btnModifAction_Click(object sender, EventArgs e)
-        //{
-        //    if (currentAction != -1)
-        //    {
-        //        if (repository.currentEntite.ListScript[currentScript].ListAction[currentAction] is ActionEvent)
-        //        {
-        //            ActionEvent actionEvent = GetCurrentActionEvent();
-
-        //            //--- Enregistrer les paramètrers ActionEvent typiques
-        //            btnValidateActionEventValue.PerformClick();
-        //            //---
-
-        //            actionEvent.IsRelative = optRelative.Checked;
-        //        }
-        //        else
-        //        {
-        //            ActionCurve actionCurve = GetCurrentActionCurve();
-
-        //            actionCurve.IsLoop = chkLoop.Checked;
-        //            actionCurve.IsRelative = optRelative.Checked;
-        //        }
-
-        //        RefreshActionView();
-        //    }
-        //}
-
-        //private void chkCurve_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    chkLoop.Visible = chkCurve.Checked;
-        //}
         #endregion
 
         #region Trigger private methods

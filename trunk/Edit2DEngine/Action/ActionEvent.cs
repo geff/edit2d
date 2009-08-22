@@ -31,6 +31,8 @@ namespace Edit2DEngine.Action
         [Browsable(false)]
         public int[] Durations { get; set; }
         [Browsable(false)]
+        public int[] Speeds { get; set; }
+        [Browsable(false)]
         public bool[] IsRelative { get; set; }
         [Browsable(false)]
         private TimeSpan[] startTimes;
@@ -90,6 +92,7 @@ namespace Edit2DEngine.Action
             this.EntiteBindingPropertyId = new int[count];
             this.EntiteBindingProperties = new PropertyInfo[count];
             this.Durations = new int[count];
+            this.Speeds = new int[count];
             this.IsRelative = new bool[count];
             this.ActionEventTypes = new ActionEventType[count];
             this.startTimes = new TimeSpan[count];
@@ -107,14 +110,25 @@ namespace Edit2DEngine.Action
             }
         }
 
+        //--- Start values
         Vector2 vecStartValue = Vector2.Zero;
         float floatStartValue = 0f;
         Size sizeStartValue = Size.Empty;
         Microsoft.Xna.Framework.Graphics.Color colorStartValue = Microsoft.Xna.Framework.Graphics.Color.Black;
         bool boolStartValue = false;
+        float[] rndStartValue;
+        //---
+
+        //--- Actual values
+        Vector2 vecActualValue = Vector2.Zero;
+        float floatActualValue = 0f;
+        Size sizeActualValue = Size.Empty;
+        Microsoft.Xna.Framework.Graphics.Color colorActualValue = Microsoft.Xna.Framework.Graphics.Color.Black;
+        bool boolActualValue = false;
+        float[] rndActualValue;
+        //---
 
         bool[] initialized;
-        float[] rndStartValue;
         int[] deltaMs;
         float[] pct;
 
@@ -135,7 +149,7 @@ namespace Edit2DEngine.Action
             }
             else if (EntiteBindingProperties[index].PropertyType.Name == "Int32")
             {
-                    value = (Int32)EntiteBindingProperties[index].GetValue(EntiteBindings[index], null);
+                value = (Int32)EntiteBindingProperties[index].GetValue(EntiteBindings[index], null);
             }
             else if (EntiteBindingProperties[index].PropertyType.Name == "Color")
             {
@@ -158,6 +172,52 @@ namespace Edit2DEngine.Action
             return value;
         }
 
+        private void GetPropertyValue(Repository repository, ref Vector2 vecValue, ref float floatValue, ref Size sizeValue, ref Microsoft.Xna.Framework.Graphics.Color colorValue, ref bool boolValue, ref float rndValue, int index)
+        {
+            if (this.PropertyType.Name == "Vector2")
+            {
+                if (index == 0)
+                    vecValue.X = ((Vector2)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).X;
+                else if (index == 1)
+                    vecValue.Y = ((Vector2)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).Y;
+            }
+            else if (this.PropertyType.Name == "Size")
+            {
+                if (index == 0)
+                    sizeValue.Width = ((Size)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).Width;
+                if (index == 1)
+                    sizeValue.Height = ((Size)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).Height;
+            }
+            else if (this.PropertyType.Name == "Single")
+            {
+                floatValue = (float)this.ActionProperty.GetValue(this.Script.ActionHandler, null);
+            }
+            else if (this.PropertyType.Name == "Int32")
+            {
+                floatValue = (float)this.ActionProperty.GetValue(this.Script.ActionHandler, null);
+            }
+            else if (this.PropertyType.Name == "Color")
+            {
+                if (index == 0)
+                    colorValue.R = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).R;
+                else if (index == 1)
+                    colorValue.G = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).G;
+                else if (index == 2)
+                    colorValue.B = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).B;
+                else if (index == 3)
+                    colorValue.A = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).A;
+            }
+            else if (this.PropertyType.Name == "Boolean")
+            {
+                boolValue = (bool)this.ActionProperty.GetValue(this.Script.ActionHandler, null);
+            }
+
+            //--- Initialisation des valeurs aléatoires
+            if (this.ActionEventTypes[index] == ActionEventType.Random)
+                rndValue = repository.GetRandomValue(RndMinValues[index], RndMaxValues[index]);
+            //---
+        }
+
         public void UpdateValue(Repository repository)
         {
             Vector2 vecValue = Vector2.Zero;
@@ -173,50 +233,16 @@ namespace Edit2DEngine.Action
             for (int i = 0; i < this.ActionEventTypes.Length; i++)
             {
                 #region Initialization
+                GetPropertyValue(repository, ref vecActualValue, ref floatActualValue, ref sizeActualValue, ref colorActualValue, ref boolActualValue, ref rndActualValue[i], i);
+
                 if (!initialized[i])
                 {
-                    if (this.PropertyType.Name == "Vector2")
-                    {
-                        if (i == 0)
-                            vecStartValue.X = ((Vector2)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).X;
-                        else if (i == 1)
-                            vecStartValue.Y = ((Vector2)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).Y;
-                    }
-                    else if (this.PropertyType.Name == "Size")
-                    {
-                        if (i == 0)
-                            sizeStartValue.Width = ((Size)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).Width;
-                        if (i == 1)
-                            sizeStartValue.Height = ((Size)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).Height;
-                    }
-                    else if (this.PropertyType.Name == "Single")
-                    {
-                        floatStartValue = (float)this.ActionProperty.GetValue(this.Script.ActionHandler, null);
-                    }
-                    else if (this.PropertyType.Name == "Int32")
-                    {
-                        floatStartValue = (float)this.ActionProperty.GetValue(this.Script.ActionHandler, null);
-                    }
-                    else if (this.PropertyType.Name == "Color")
-                    {
-                        if (i == 0)
-                            colorStartValue.R = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).R;
-                        else if (i == 1)
-                            colorStartValue.G = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).G;
-                        else if (i == 2)
-                            colorStartValue.B = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).B;
-                        else if (i == 3)
-                            colorStartValue.A = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).A;
-                    }
-                    else if (this.PropertyType.Name == "Boolean")
-                    {
-                        boolStartValue = (bool)this.ActionProperty.GetValue(this.Script.ActionHandler, null);
-                    }
-
-                    //--- Initialisation des valeurs aléatoires
-                    if (this.ActionEventTypes[i] == ActionEventType.Random)
-                        rndStartValue[i] = repository.GetRandomValue(RndMinValues[i], RndMaxValues[i]);
-                    //---
+                    vecStartValue = vecActualValue;
+                    floatActualValue = floatStartValue;
+                    sizeActualValue = sizeStartValue;
+                    colorActualValue = colorStartValue;
+                    boolActualValue = boolStartValue;
+                    rndActualValue[i] = rndStartValue[i];
 
                     initialized[i] = true;
                 }
@@ -242,7 +268,9 @@ namespace Edit2DEngine.Action
                 }
                 else
                 {
-                    deltaMs[i] = 0;
+                    if(Speeds[i] == 0)
+                        deltaMs[i] = 0;
+
                     initialized[i] = true;
                 }
                 //---
@@ -285,7 +313,7 @@ namespace Edit2DEngine.Action
                                     else if (i == 1)
                                         vecValue.Y = MathHelper.Lerp(0f, this.FloatValues[i], pct[i]);
                                 }
-                                else
+                                  else
                                 {
                                     if (i == 0)
                                         vecValue.X = this.FloatValues[i];
@@ -320,6 +348,13 @@ namespace Edit2DEngine.Action
                                         vecValue.X = MathHelper.Lerp(0f, repository.GetMousePosition().X, pct[i]);
                                     else if (i == 1)
                                         vecValue.Y = MathHelper.Lerp(0f, repository.GetMousePosition().X, pct[i]);
+                                }
+                                else if (Speeds[i] != 0)
+                                {
+                                    if (i == 0)
+                                        vecValue.X = vecActualValue.X += Speeds[i] * deltaMs[i];
+                                    else if (i == 1)
+                                        vecValue.Y = vecActualValue.Y += Speeds[i] * deltaMs[i];
                                 }
                                 else
                                 {
@@ -356,6 +391,13 @@ namespace Edit2DEngine.Action
                                         vecValue.X = MathHelper.Lerp(0f, repository.GetMousePosition().Y, pct[i]);
                                     else if (i == 1)
                                         vecValue.Y = MathHelper.Lerp(0f, repository.GetMousePosition().Y, pct[i]);
+                                }
+                                else if (Speeds[i] != 0)
+                                {
+                                    if (i == 0)
+                                        vecValue.X = vecActualValue.X + Speeds[i] * deltaMs[i];
+                                    else if (i == 1)
+                                        vecValue.Y = vecActualValue.Y + Speeds[i] * deltaMs[i];
                                 }
                                 else
                                 {

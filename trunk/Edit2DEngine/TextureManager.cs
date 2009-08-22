@@ -31,9 +31,8 @@ namespace Edit2DEngine
 
             foreach (String file in files)
             {
-                FileInfo fileInfo = new FileInfo(file);
                 Texture2D texture = Texture2D.FromFile(graphicsDevice, file);
-                listTexture.Add(fileInfo.Name.Remove(fileInfo.Name.Length - fileInfo.Extension.Length), texture);
+                listTexture.Add(Path.GetFileNameWithoutExtension(file), texture);
             }
         }
 

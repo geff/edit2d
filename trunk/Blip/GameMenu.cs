@@ -92,9 +92,9 @@ namespace Blip
 
             SpriteBatch.Draw(texMenu, new Vector2(0, 0), null, new Color(210,180,150));
 
-            base.Draw(gameTime);
-
             SpriteBatch.End();
+
+            base.Draw(gameTime);
         }
 
         #region Evènements
