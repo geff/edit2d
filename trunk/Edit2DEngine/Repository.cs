@@ -90,6 +90,8 @@ namespace Edit2DEngine
             this.Camera = new Camera();
 
             Repository.physicSimulator = new PhysicsSimulator(new Vector2(0, 9.81f));
+            //Repository.physicSimulator.NarrowPhaseCollisionTime
+            //PhysicsSimulator.NarrowPhaseCollider = NarrowPhaseCollider.SAT;  
         }
 
         public Entite GetSelectedEntite(Vector2 point)
@@ -99,17 +101,17 @@ namespace Edit2DEngine
             if (listGeom != null && listGeom.Count > 0)
             {
                 Entite selectedEntite = null;
+                int minIndex = 0;
 
                 for (int i = 0; i < listGeom.Count; i++)
                 {
                     Entite curEntite = listEntite.Find(e => e.geom == listGeom[i]);
+                    int index = listEntite.IndexOf(curEntite);
 
-                    if (selectedEntite == null)
-                        selectedEntite = curEntite;
-                    else
+                    if (selectedEntite == null || (index > minIndex))
                     {
-                        if (listEntite.IndexOf(curEntite) < listEntite.IndexOf(selectedEntite))
-                            selectedEntite = curEntite;
+                        selectedEntite = curEntite;
+                        minIndex = index;
                     }
                 }
 

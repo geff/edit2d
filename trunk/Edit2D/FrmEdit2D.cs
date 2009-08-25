@@ -17,6 +17,7 @@ using Edit2DEngine;
 using Edit2DEngine.Render;
 using Edit2D.Properties;
 using System.Drawing.Imaging;
+using FarseerGames.FarseerPhysics.Collisions;
 
 namespace Edit2D
 {
@@ -235,6 +236,26 @@ namespace Edit2D
                 Repository.physicSimulator.Update(0.0001f);
             }
         }
+
+        private void AddFixedAngleSpring()
+        {
+            if (repository.CurrentEntite != null)
+            {
+                repository.CurrentEntite.AddFixedAngleSpring();
+
+                Repository.physicSimulator.Update(0.0001f);
+            }
+        }
+
+        private void AddAngleSpring()
+        {
+            if (repository.CurrentEntite != null && repository.ListSelection.Count > 0)
+            {
+                repository.CurrentEntite.AddAngleSpring(repository.ListSelection[0].Entite);
+
+                Repository.physicSimulator.Update(0.0001f);
+            }
+        }
         #endregion
 
         #region Joint
@@ -268,9 +289,10 @@ namespace Edit2D
         {
             if (repository.CurrentEntite != null)
             {
-                Vector2 vec1 = repository.CurrentEntite.Body.GetLocalPosition(repository.pointer);
+                //Vector2 vec1 = repository.CurrentEntite.Body.GetLocalPosition(repository.pointer);
 
-                repository.CurrentEntite.AddFixedRevoluteJoint(vec1);
+                //repository.CurrentEntite.AddFixedRevoluteJoint(vec1);
+                repository.CurrentEntite.AddFixedRevoluteJoint(repository.pointer);
 
                 Repository.physicSimulator.Update(0.0001f);
             }
@@ -735,39 +757,43 @@ namespace Edit2D
 
         private void btnPinStatic_Click(object sender, EventArgs e)
         {
+            btnPinStatic.Checked = !btnPinStatic.Checked;
+
             if (repository.CurrentEntite != null)
             {
-                repository.CurrentEntite.IsStatic = !repository.CurrentEntite.IsStatic;
+                repository.CurrentEntite.IsStatic = btnPinStatic.Checked;
 
                 if (repository.tempEntite != null)
-                    repository.tempEntite.IsStatic = repository.CurrentEntite.IsStatic;
+                    repository.tempEntite.IsStatic = btnPinStatic.Checked;
+            }
 
-                btnPinStatic.Checked = repository.CurrentEntite.IsStatic;
+            for (int i = 0; i < repository.ListSelection.Count; i++)
+            {
+                repository.ListSelection[i].Entite.IsStatic = btnPinStatic.Checked;
+
+                if (repository.ListSelection[i].TempEntite != null)
+                    repository.ListSelection[i].TempEntite.IsStatic = btnPinStatic.Checked;
             }
         }
 
         private void btnColisionable_Click(object sender, EventArgs e)
         {
+            btnColisionable.Checked = !btnColisionable.Checked;
+
             if (repository.CurrentEntite != null)
             {
-                repository.CurrentEntite.IsColisionable = !repository.CurrentEntite.IsColisionable;
+                repository.CurrentEntite.IsColisionable = btnColisionable.Checked;
 
                 if (repository.tempEntite != null)
-                    repository.tempEntite.IsColisionable = repository.CurrentEntite.IsColisionable;
-
-                btnColisionable.Checked = repository.CurrentEntite.IsColisionable;
+                    repository.tempEntite.IsColisionable = btnColisionable.Checked;
             }
-        }
 
-        private void btnCursorToEntityCenter_Click(object sender, EventArgs e)
-        {
-            if (repository.CurrentEntite != null)
+            for (int i = 0; i < repository.ListSelection.Count; i++)
             {
-                int dimPointer = 10;
+                repository.ListSelection[i].Entite.IsColisionable = btnColisionable.Checked;
 
-                Vector2 position = repository.CurrentEntite.Position;
-                repository.pointer = position;
-                repository.pointerDraw = new Vector2(repository.pointer.X - dimPointer / 2, repository.pointer.Y - dimPointer / 2);
+                if (repository.ListSelection[i].TempEntite != null)
+                    repository.ListSelection[i].TempEntite.IsColisionable = btnColisionable.Checked;
             }
         }
 
@@ -784,13 +810,105 @@ namespace Edit2D
             }
         }
 
+        private void btnCursorToEntityCenter_Click(object sender, EventArgs e)
+        {
+            if (repository.CurrentEntite != null)
+            {
+                int dimPointer = 10;
+
+                Vector2 position = repository.CurrentEntite.Position;
+                repository.pointer = position;
+                repository.pointerDraw = new Vector2(repository.pointer.X - dimPointer / 2, repository.pointer.Y - dimPointer / 2);
+            }
+        }
+
         private void btnSetCenterEntity_Click(object sender, EventArgs e)
         {
             if (repository.CurrentEntite != null)
             {
-                repository.CurrentEntite.SetCenterFromWorldPosition(repository.pointer2);
+                Vector2 localPosition = repository.CurrentEntite.Body.GetLocalPosition(repository.pointer);
+                //Geom gg = Repository.physicSimulator.GeomList.Find(g => g == repository.CurrentEntite.geom);
+                repository.CurrentEntite.SetCenterFromWorldPosition(localPosition, true);
+
+                repository.tempEntite = (Entite)repository.CurrentEntite.Clone(false);
 
                 Repository.physicSimulator.Update(0.000002f);
+            }
+        }
+
+        private void btnOrderUp_Click(object sender, EventArgs e)
+        {
+            if (repository.CurrentEntite != null && repository.ListSelection.Count > 0)
+            {
+                int entiteIndex = repository.listEntite.IndexOf(repository.CurrentEntite);
+                int minIndex = repository.listEntite.Count - 1;
+
+                for (int i = 0; i < repository.ListSelection.Count; i++)
+                {
+                    int index = repository.listEntite.IndexOf(repository.ListSelection[i].Entite);
+
+                    if (index < minIndex)
+                        minIndex = index;
+                }
+
+                if (entiteIndex < minIndex)
+                {
+                    for (int j = entiteIndex; j < minIndex - 1; j++)
+                    {
+                        repository.listEntite[j] = repository.listEntite[j + 1];
+                    }
+
+                    repository.listEntite[minIndex - 1] = repository.CurrentEntite;
+                }
+                else if (entiteIndex > minIndex)
+                {
+                    for (int j = entiteIndex; j >= minIndex; j--)
+                    {
+                        repository.listEntite[j] = repository.listEntite[j - 1];
+                    }
+
+                    repository.listEntite[minIndex] = repository.CurrentEntite;
+                }
+
+                RefreshTreeView();
+            }
+        }
+
+        private void btnOrderDown_Click(object sender, EventArgs e)
+        {
+            if (repository.CurrentEntite != null && repository.ListSelection.Count > 0)
+            {
+                int entiteIndex = repository.listEntite.IndexOf(repository.CurrentEntite);
+                int maxIndex = 0;
+
+                for (int i = 0; i < repository.ListSelection.Count; i++)
+                {
+                    int index = repository.listEntite.IndexOf(repository.ListSelection[i].Entite);
+
+                    if (index > maxIndex)
+                        maxIndex = index;
+                }
+
+                if (entiteIndex < maxIndex)
+                {
+                    for (int j = entiteIndex; j < maxIndex + 1; j++)
+                    {
+                        repository.listEntite[j] = repository.listEntite[j + 1];
+                    }
+
+                    repository.listEntite[maxIndex] = repository.CurrentEntite;
+                }
+                else if (entiteIndex > maxIndex)
+                {
+                    for (int j = entiteIndex; j > maxIndex; j--)
+                    {
+                        repository.listEntite[j] = repository.listEntite[j - 1];
+                    }
+
+                    repository.listEntite[maxIndex + 1] = repository.CurrentEntite;
+                }
+
+                RefreshTreeView();
             }
         }
 
@@ -890,6 +1008,13 @@ namespace Edit2D
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
+            //---> Si la touche Alt (MouseMode) vient d'être préssée
+            //     les entités sélectionnées sont clonées
+            if (e.Alt && !repository.keyAltPressed)
+            {
+                CloneSelectedEntite();
+            }
+
             if (e.Control)
                 repository.keyCtrlPressed = true;
             if (e.Alt)
@@ -1083,6 +1208,20 @@ namespace Edit2D
 
             RefreshTreeView();
         }
+
+        private void btnFixedAngleSpring_Click(object sender, EventArgs e)
+        {
+            AddFixedAngleSpring();
+
+            RefreshTreeView();
+        }
+
+        private void btnAngleSpring_Click(object sender, EventArgs e)
+        {
+            AddAngleSpring();
+
+            RefreshTreeView();
+        }
         #endregion
 
         #region Joint events
@@ -1122,7 +1261,7 @@ namespace Edit2D
 
             modelViewerControl.Focus();
 
-            //---> Position la caméra
+            //---> Positionne la caméra
             if (e.Button == MouseButtons.Middle)
             {
                 prevPos = new Vector2(e.Location.X, e.Location.Y);
@@ -1132,48 +1271,51 @@ namespace Edit2D
 
             if (repository.keyCtrlPressed)
             {
+                repository.pointer2 = GetMousePointerLocation(e.Location, ref repository.pointerDraw2);
             }
             else
             {
                 repository.pointer = GetMousePointerLocation(e.Location, ref repository.pointerDraw);
-
+                //repository.CurrentEntite = repository.GetSelectedEntite(repository.pointer);
+                
                 //--- Si la touche MouseMode n'est pas pressée, change l'entité courante
-                if (!repository.keyAltPressed)
-                {
-                }
+                //if (!repository.keyAltPressed)
+                //{
+
+                //}
                 //--- Si la touche MouseMode est pressée et que des entités sont sélectionnées
-                else if (repository.CurrentEntite != null || repository.ListSelection.Count>0)
+                if (repository.keyAltPressed && (repository.CurrentEntite != null || repository.ListSelection.Count > 0))
                 {
-                    for (int i = 0; i < repository.ListSelection.Count; i++)
-                    {
-                        //---> Le body courant devient statique pour tous les MouseMode
-                        repository.ListSelection[i].TempEntite = (Entite)repository.ListSelection[i].Entite.Clone(false);
-                        repository.ListSelection[i].TempPointer = repository.ListSelection[i].Pointer;
-                        repository.ListSelection[i].TempPointerDraw = repository.ListSelection[i].PointerDraw;
-                        repository.ListSelection[i].Entite.IsStatic = true;
+                    //for (int i = 0; i < repository.ListSelection.Count; i++)
+                    //{
+                    //    //---> Le body courant devient statique pour tous les MouseMode
+                    //    repository.ListSelection[i].TempEntite = (Entite)repository.ListSelection[i].Entite.Clone(false);
+                    //    repository.ListSelection[i].TempPointer = repository.ListSelection[i].Pointer;
+                    //    repository.ListSelection[i].TempPointerDraw = repository.ListSelection[i].PointerDraw;
+                    //    repository.ListSelection[i].Entite.IsStatic = true;
 
-                        //--- Suppression du body courant si on est en mode Resize
-                        if (repository.mouseMode == MouseMode.Resize)
-                        {
-                            Repository.physicSimulator.Remove(repository.ListSelection[i].Entite.Body);
-                            Repository.physicSimulator.Remove(repository.ListSelection[i].Entite.geom);
-                        }
-                        //---
-                    }
+                    //    //--- Suppression du body courant si on est en mode Resize
+                    //    if (repository.mouseMode == MouseMode.Resize)
+                    //    {
+                    //        Repository.physicSimulator.Remove(repository.ListSelection[i].Entite.Body);
+                    //        Repository.physicSimulator.Remove(repository.ListSelection[i].Entite.geom);
+                    //    }
+                    //    //---
+                    //}
 
-                    //TODO : unifier la mutlisélection avec la sélection simple
+                    ////TODO : unifier la mutlisélection avec la sélection simple
 
-                    //---> Le body courant devient statique pour tous les MouseMode
-                    repository.tempEntite = (Entite)repository.CurrentEntite.Clone(false);
-                    repository.CurrentEntite.Body.IsStatic = true;
+                    ////---> Le body courant devient statique pour tous les MouseMode
+                    //repository.tempEntite = (Entite)repository.CurrentEntite.Clone(false);
+                    //repository.CurrentEntite.Body.IsStatic = true;
 
-                    //--- Suppression du body courant si on est en mode Resize
-                    if (repository.mouseMode == MouseMode.Resize)
-                    {
-                        Repository.physicSimulator.Remove(repository.CurrentEntite.Body);
-                        Repository.physicSimulator.Remove(repository.CurrentEntite.geom);
-                    }
-                    //---
+                    ////--- Suppression du body courant si on est en mode Resize
+                    //if (repository.mouseMode == MouseMode.Resize)
+                    //{
+                    //    Repository.physicSimulator.Remove(repository.CurrentEntite.Body);
+                    //    Repository.physicSimulator.Remove(repository.CurrentEntite.geom);
+                    //}
+                    ////---
 
                     //---> enregistre la position du pointeur clické
                     prevPos = repository.pointer;
@@ -1193,19 +1335,19 @@ namespace Edit2D
                 Vector2 pointerDraw = Vector2.Zero;
                 Vector2 pointer = GetMousePointerLocation(e.Location, ref pointerDraw);
                 Entite selectedEntite = repository.GetSelectedEntite(pointer);
-                
+
                 //---> La multisélection est possible uniquement sur les entités
                 if (selectedEntite == null)
                     return;
 
                 //---> Supprime la sélection si la position cliquée est à moins de 10 pixels
-                Selection existSelection = repository.ListSelection.Find(s=> Vector2.Distance(s.Pointer, pointer) <=20);
+                Selection existSelection = repository.ListSelection.Find(s => Vector2.Distance(s.Pointer, pointer) <= 20);
                 //---> Repositionne le pointeur si l'entité est déja sélectionnée
-                Selection entiteSelection = repository.ListSelection.Find(s=> s.Entite == selectedEntite);
+                Selection entiteSelection = repository.ListSelection.Find(s => s.Entite == selectedEntite);
 
-                if(existSelection != null)
+                if (existSelection != null)
                 {
-                    if(existSelection.Entite != null)
+                    if (existSelection.Entite != null)
                         existSelection.Entite.Selected = false;
 
                     repository.ListSelection.Remove(existSelection);
@@ -1217,12 +1359,23 @@ namespace Edit2D
                 }
                 else
                 {
-                    if(selectedEntite != null)
+                    if (selectedEntite != null)
                         selectedEntite.Selected = true;
 
                     Selection newSelection = new Selection(selectedEntite, pointer, pointerDraw);
                     repository.ListSelection.Add(newSelection);
                 }
+
+                //--- Affecte les entités sélectionnées au property grid
+                List<Entite> listEntiteSelected = new List<Entite>();
+
+                listEntiteSelected.AddRange(repository.ListSelection.Select<Selection, Entite>(s => s.Entite));
+
+                if (repository.CurrentEntite != null)
+                    listEntiteSelected.Add(repository.CurrentEntite);
+
+                prop.SelectedObjects = listEntiteSelected.ToArray();
+                //---
             }
             else
             {
@@ -1264,6 +1417,7 @@ namespace Edit2D
                 //--- Si la touche MouseMode est pressée, réinjecte les nouvelles valeurs des propriétés (Size, Rotation)
                 else
                 {
+                    //TODO : mettrer cela en place pour la mutli sélection
                     if (repository.CurrentEntite != null && repository.tempEntite != null)
                     {
                         if (repository.mouseMode == MouseMode.Move)
@@ -1284,6 +1438,11 @@ namespace Edit2D
 
                         repository.tempEntite = null;
                     }
+
+                    //---> Si la touche Alt (MouseMode) est préssée alors que la souris est relâchée
+                    //     alors il faut clôner les entités sélectionnées
+                    CloneSelectedEntite();
+                    prevPos = repository.pointer;
                 }
                 //---
             }
@@ -1302,11 +1461,11 @@ namespace Edit2D
 
             if (e.Button == MouseButtons.Middle)
             {
-                //repository.pointer = GetMousePointerLocation(e.Location, ref repository.pointerDraw);
                 repository.Camera.Position = prevPosCamera + new Vector2(e.Location.X, e.Location.Y) - prevPos;
             }
             else if (e.Button == MouseButtons.Left)
             {
+                //---> Modification des propriétés du système de particules
                 if (repository.keyShiftPressed)
                 {
                     repository.pointer2 = GetMousePointerLocation(e.Location, ref repository.pointerDraw2);
@@ -1318,27 +1477,30 @@ namespace Edit2D
                             Vector2 vec1 = repository.CurrentEntite.Position - repository.pointer2;
                             float angle = vec1.GetAngle(Vector2.UnitX);
 
+                            //TODO : ajouter un prevpos2 lors du MouseDown pour le pointer2
                             repository.CurrentEntite.ListParticleSystem[0].EmmittingAngle = -angle + MathHelper.PiOver2;
                         }
                     }
+                }
+                //---> Modification de la position du second pointeur (vert)
+                else if (repository.keyCtrlPressed)
+                {
+                    repository.pointer2 = GetMousePointerLocation(e.Location, ref repository.pointerDraw2);
                 }
                 else
                 {
                     repository.pointer = GetMousePointerLocation(e.Location, ref repository.pointerDraw);
 
-                    //--- Si la touche MouseMode n'est pas pressée, change l'entité courante
-                    //if (!repository.keyAltPressed)
-                    //    EntiteSelectionChange(repository.currentEntite, repository.GetSelectedEntite(repository.pointer));
-                    //---
-
                     //--- MouseMode.Move
-                    if ((repository.CurrentEntite != null || repository.ListSelection.Count>0) &&
-                         repository.keyAltPressed && 
-                         repository.mouseMode == MouseMode.Move)// && repository.tempEntite != null)
+                    if ((repository.CurrentEntite != null || repository.ListSelection.Count > 0) &&
+                         repository.keyAltPressed &&
+                         repository.mouseMode == MouseMode.Move)
                     {
+                        //this.Text = prevPos.ToString();
+
                         Vector2 deltaPosition = repository.pointer - prevPos + new Vector2(dimPointer) / 2f;
 
-                        if(repository.CurrentEntite != null)
+                        if (repository.CurrentEntite != null)
                             repository.CurrentEntite.FixPosition(repository.tempEntite.Position + deltaPosition);
 
                         for (int i = 0; i < repository.ListSelection.Count; i++)
@@ -1498,7 +1660,7 @@ namespace Edit2D
             if (!repository.Pause && !btnGameClickableOnPlay.Checked)
                 return;
 
-            if (btnParticleSystemModeBar.Checked && repository.keyCtrlPressed && particleControl.GetCurrentParticleSystem() != null)
+            if (btnParticleSystemModeBar.Checked && repository.keyShiftPressed && particleControl.GetCurrentParticleSystem() != null)
             {
                 ParticleSystem pSystem = particleControl.GetCurrentParticleSystem();
 
@@ -1506,13 +1668,75 @@ namespace Edit2D
             }
             else
             {
-                repository.Camera.Zoom += (float)e.Delta / 2000f;
+                float deltaZoom = 0f;
+
+                if (repository.Camera.Zoom <= 0.12f)
+                    deltaZoom = (float)e.Delta / 10000f;
+                else if (repository.Camera.Zoom >= 1.3f)
+                    deltaZoom = (float)e.Delta / 1000f;
+                else
+                    deltaZoom = (float)e.Delta / 2000f;
+
+                repository.Camera.Zoom += deltaZoom;
+
+                if (repository.Camera.Zoom < 0.01f)
+                    repository.Camera.Zoom = 0.01f;
 
                 repository.Camera.Focal = vecFocal - repository.Camera.Position;
                 repository.Camera.OldCorner = vecOldCorner;
                 repository.Camera.OldZoom = oldZoom;
 
+                //for (int i = 0; i < repository.ListSelection.Count; i++)
+                //{
+                //    System.Drawing.Point location = new System.Drawing.Point((int)repository.ListSelection[i].Pointer.X, (int)repository.ListSelection[i].Pointer.Y);
+                //    Vector2 pointerDraw = repository.ListSelection[i].PointerDraw;
+
+                //    GetMousePointerLocation(location, ref pointerDraw);
+
+                //    repository.ListSelection[i].PointerDraw = pointerDraw;
+                //}
+
                 repository.Camera.NewCorner = repository.Camera.Focal - (repository.Camera.Zoom / repository.Camera.OldZoom) * (repository.Camera.Focal - repository.Camera.OldCorner);
+            }
+        }
+
+        private void CloneSelectedEntite()
+        {
+            //---> Création des clones lorsque la touche de modification est pressée
+            if (repository.CurrentEntite != null || repository.ListSelection.Count > 0)
+            {
+                for (int i = 0; i < repository.ListSelection.Count; i++)
+                {
+                    //---> Le body courant devient statique pour tous les MouseMode
+                    repository.ListSelection[i].TempEntite = (Entite)repository.ListSelection[i].Entite.Clone(false);
+                    repository.ListSelection[i].TempPointer = repository.ListSelection[i].Pointer;
+                    repository.ListSelection[i].TempPointerDraw = repository.ListSelection[i].PointerDraw;
+                    repository.ListSelection[i].Entite.IsStatic = true;
+
+                    //--- Suppression du body courant si on est en mode Resize
+                    if (repository.mouseMode == MouseMode.Resize)
+                    {
+                        Repository.physicSimulator.Remove(repository.ListSelection[i].Entite.Body);
+                        Repository.physicSimulator.Remove(repository.ListSelection[i].Entite.geom);
+                    }
+                    //---
+                }
+
+                //TODO : unifier la mutlisélection avec la sélection simple
+                if (repository.CurrentEntite != null)
+                {
+                    //---> Le body courant devient statique pour tous les MouseMode
+                    repository.tempEntite = (Entite)repository.CurrentEntite.Clone(false);
+                    repository.CurrentEntite.Body.IsStatic = true;
+
+                    //--- Suppression du body courant si on est en mode Resize
+                    if (repository.mouseMode == MouseMode.Resize)
+                    {
+                        Repository.physicSimulator.Remove(repository.CurrentEntite.Body);
+                        Repository.physicSimulator.Remove(repository.CurrentEntite.geom);
+                    }
+                    //---
+                }
             }
         }
 
