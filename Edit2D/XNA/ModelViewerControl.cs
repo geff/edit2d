@@ -273,18 +273,20 @@ namespace WinFormsContentLoading
 
             this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
 
+            Vector2 vecPointerMidSize = new Vector2(5,5);
+
             //--- Pointeur de la souris
-            this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.pointerDraw, null, Color.Red);
+            this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.CurrentPointer.ScreenPosition - vecPointerMidSize, null, Color.Red);
             //---
 
             //--- Pointeur secondaire de la souris
-            this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.pointerDraw2, null, Color.Green);
+            this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.CurrentPointer2.ScreenPosition - vecPointerMidSize, null, Color.Green);
             //---
 
             //--- Pointeurs multi
             for (int i = 0; i < repository.ListSelection.Count; i++)
             {
-                this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.ListSelection[i].PointerDraw, null, Color.Blue);
+                this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.ListSelection[i].Pointer.ScreenPosition -vecPointerMidSize, null, Color.Blue);
             }
             //---
 

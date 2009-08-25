@@ -70,6 +70,7 @@
     <Compile Include="ParticleControl\ParticleControl.Designer.cs">
       <DependentUpon>ParticleControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Pointer.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="ScriptControl\ActionEventLineControl.cs">
       <SubType>UserControl</SubType>
