@@ -29,6 +29,10 @@ namespace Edit2DEngine
         public List<LinearSpring> ListLinearSpring { get; set; }
         [Category("Spring")]
         public List<FixedLinearSpring> ListFixedLinearSpring { get; set; }
+        [Category("Spring")]
+        public List<FixedAngleSpring> ListFixedAngleSpring { get; set; }
+        [Category("Spring")]
+        public List<AngleSpring> ListAngleSpring { get; set; }
 
         [Category("Joint")]
         public List<PinJoint> ListPinJoint { get; set; }
@@ -104,7 +108,7 @@ namespace Edit2DEngine
             get { return _size; }
             set
             {
-                if(value != _size)
+                if (value != _size)
                     ChangeSize(value.Width, value.Height, true);
             }
         }
@@ -266,6 +270,8 @@ namespace Edit2DEngine
         {
             ListFixedLinearSpring = new List<FixedLinearSpring>();
             ListLinearSpring = new List<LinearSpring>();
+            ListFixedAngleSpring = new List<FixedAngleSpring>();
+            ListAngleSpring = new List<AngleSpring>();
             ListPinJoint = new List<PinJoint>();
             ListRevoluteJointJoint = new List<RevoluteJoint>();
             ListFixedRevoluteJoint = new List<FixedRevoluteJoint>();
@@ -437,6 +443,21 @@ namespace Edit2DEngine
             ListFixedLinearSpring.Add(fixedLinearSpring);
         }
 
+
+        public void AddAngleSpring(Entite entite)
+        {
+            AngleSpring angleSpring = SpringFactory.Instance.CreateAngleSpring(Repository.physicSimulator, body, entite.body, 1000f, 500f);
+
+            ListAngleSpring.Add(angleSpring);
+        }
+
+        public void AddFixedAngleSpring()
+        {
+            FixedAngleSpring fixedAngleSpring = SpringFactory.Instance.CreateFixedAngleSpring(Repository.physicSimulator, body, 100000f, 50000f);
+
+            ListFixedAngleSpring.Add(fixedAngleSpring);
+        }
+
         public void AddPinJoint(Entite entite, Microsoft.Xna.Framework.Vector2 vec1, Microsoft.Xna.Framework.Vector2 vec2)
         {
             PinJoint pinJoint = JointFactory.Instance.CreatePinJoint(Repository.physicSimulator, this.body, vec1, entite.body, vec2);
@@ -464,46 +485,24 @@ namespace Edit2DEngine
             body.Position = position;
         }
 
-        public void SetCenterFromWorldPosition(Vector2 position)
+        public void SetCenterFromWorldPosition(Vector2 deltaPosition, bool addToPhysicSimulator)
         {
-            Vector2 oldCenterLocal = this.Center;
-            Vector2 deltaCenterLocal = this.Body.GetLocalPosition(position);
-            Vector2 newCenterLocal = deltaCenterLocal + oldCenterLocal;
-            //Vector2 deltaCenterLocal = this.Body.GetLocalPosition(position);
-            //Vector2 newCenterLocal = (position - this.Position) + oldCenterLocal;
-
-            //Vector2 deltaCenterWorld = -(position - this.Position);
-            Vector2 deltaCenterWorld = (oldCenterLocal - position);
-
-            float ratioX = (float)this.Size.Width / (float)this.NativeImageSize.Width;
-            float ratioY = (float)this.Size.Height / (float)this.NativeImageSize.Height;
-
-            //ratioX = 1f;
-            //ratioX = 1f;
-
-            //newCenterLocal.X /= ratioX;
-            //newCenterLocal.Y /= ratioY;
-            //newCenterLocal.X *= ratioX;
-            //newCenterLocal.Y *= ratioY;
-
-            this.Center = position;
             float rotation = this.Rotation;
-            
-            //deltaCenterWorld.X *= ratioX;
-            //deltaCenterWorld.Y *= ratioY;
 
-            //deltaCenterLocal.X *= ratioX;
-            //deltaCenterLocal.Y *= ratioY;
+            deltaPosition = -deltaPosition;
 
-            //this.Position += deltaCenterWorld;
-            //this.Position = this.Position + deltaCenterWorld;
-            //this.Position = position;
-            //this.Rotation = rotation;
+            this.geom.LocalVertices.Translate(ref deltaPosition);
 
-            this.geom.WorldVertices.Translate(ref deltaCenterWorld);
+            DistanceGrid.Instance.RemoveDistanceGrid(this.geom);
+            DistanceGrid.Instance.CreateDistanceGrid(this.geom);
 
-            //this.geom.ComputeCollisionGrid();
-            Repository.physicSimulator.Update(0.000002f);
+            deltaPosition = -deltaPosition;
+
+            Vector2 worldPosition = this.body.GetWorldPosition(deltaPosition);
+
+            this.Center += deltaPosition;
+            this.Position = worldPosition;
+            this.Rotation = rotation;
         }
 
         #region ICloneable Membres
@@ -517,8 +516,6 @@ namespace Edit2DEngine
         {
             Entite clone = new Entite(addToPhysicSimulator, this.TextureName, this.Name);
 
-            //clone.SetSize(this.Size.Width, this.Size.Height);
-            //clone.ChangeTexture(this.TextureName
             clone.ChangeSize(this.Size.Width, this.Size.Height, addToPhysicSimulator);
 
             if (clone.body != null && this.body != null)
@@ -538,6 +535,12 @@ namespace Edit2DEngine
             clone.Color = this.Color;
             clone.FrictionCoefficient = this.FrictionCoefficient;
             clone.RestitutionCoefficient = this.RestitutionCoefficient;
+
+            //--- Centre de l'entité
+            Vector2 deltaPosition = this.Center - clone.Center;
+            if (deltaPosition != Vector2.Zero)
+                clone.SetCenterFromWorldPosition(deltaPosition, false);
+            //---
 
             //--- Scripts & Curves
             for (int j = 0; j < this.ListScript.Count; j++)

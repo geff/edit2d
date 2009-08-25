@@ -277,7 +277,11 @@ namespace WinFormsContentLoading
             this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.pointerDraw, null, Color.Red);
             //---
 
-            //--- Pointeurs secondaires
+            //--- Pointeur secondaire de la souris
+            this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.pointerDraw2, null, Color.Green);
+            //---
+
+            //--- Pointeurs multi
             for (int i = 0; i < repository.ListSelection.Count; i++)
             {
                 this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.ListSelection[i].PointerDraw, null, Color.Blue);
