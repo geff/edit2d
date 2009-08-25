@@ -69,11 +69,11 @@ namespace Edit2DEngine
 
         public Entite currentEntite2;
 
-        public Vector2 pointer = new Vector2();
-        public Vector2 pointerDraw = new Vector2();
+        //public Vector2 pointer = new Vector2();
+        //public Vector2 pointerDraw = new Vector2();
 
-        public Vector2 pointer2 = new Vector2();
-        public Vector2 pointerDraw2 = new Vector2();
+        //public Vector2 pointer2 = new Vector2();
+        //public Vector2 pointerDraw2 = new Vector2();
 
         public List<Entite> listEntite;
 
@@ -94,9 +94,9 @@ namespace Edit2DEngine
             //PhysicsSimulator.NarrowPhaseCollider = NarrowPhaseCollider.SAT;  
         }
 
-        public Entite GetSelectedEntite(Vector2 point)
+        public Entite GetSelectedEntiteFromLocation(Vector2 location)
         {
-            List<Geom> listGeom = Repository.physicSimulator.CollideAll(point);
+            List<Geom> listGeom = Repository.physicSimulator.CollideAll(location);
 
             if (listGeom != null && listGeom.Count > 0)
             {

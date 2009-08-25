@@ -485,7 +485,7 @@ namespace Edit2DEngine
             body.Position = position;
         }
 
-        public void SetCenterFromWorldPosition(Vector2 deltaPosition, bool addToPhysicSimulator)
+        public void SetNewCenter(Vector2 deltaPosition, bool addToPhysicSimulator)
         {
             float rotation = this.Rotation;
 
@@ -503,6 +503,11 @@ namespace Edit2DEngine
             this.Center += deltaPosition;
             this.Position = worldPosition;
             this.Rotation = rotation;
+        }
+
+        public void SetCenterFromWorldPosition(Vector2 worldPosition, bool addToPhysicSimulator)
+        {
+            this.SetNewCenter(this.body.GetLocalPosition(worldPosition), addToPhysicSimulator);
         }
 
         #region ICloneable Membres
@@ -539,7 +544,7 @@ namespace Edit2DEngine
             //--- Centre de l'entité
             Vector2 deltaPosition = this.Center - clone.Center;
             if (deltaPosition != Vector2.Zero)
-                clone.SetCenterFromWorldPosition(deltaPosition, false);
+                clone.SetNewCenter(deltaPosition, false);
             //---
 
             //--- Scripts & Curves

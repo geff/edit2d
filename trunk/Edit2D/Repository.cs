@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using FarseerGames.GettingStarted;
+using Edit2DEngine;
 
 namespace Edit2D
 {
@@ -19,11 +20,16 @@ namespace Edit2D
         public bool keyAltPressed = false;
         public bool IsEntityClickableOnPlay = false;
 
+        public Pointer CurrentPointer { get; set; }
+        public Pointer CurrentPointer2 { get; set; }
+
         public MouseMode mouseMode = MouseMode.Move;
 
         public Repository()
         {
             this.ListSelection = new List<Selection>();
+            this.CurrentPointer = new Pointer();
+            this.CurrentPointer2 = new Pointer();
         }
 
         private Vector2 GetModelViewControlPosition()
@@ -42,6 +48,18 @@ namespace Edit2D
             Vector2 mousePosition = new Vector2(mouseState.X, mouseState.Y) - GetModelViewControlPosition();
 
             return mousePosition;
+        }
+
+        public List<Entite> GetSelectedEntite()
+        {
+            List<Entite> listSelectedEntite = new List<Entite>();
+
+            listSelectedEntite.AddRange(ListSelection.Select<Selection, Entite>(s => s.Entite));
+
+            if (CurrentEntite != null)
+                listSelectedEntite.Add(CurrentEntite);
+
+            return listSelectedEntite;
         }
     }
 
