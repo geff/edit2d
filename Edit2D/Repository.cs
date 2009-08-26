@@ -14,7 +14,7 @@ namespace Edit2D
         public FrmEdit2D FrmEdit2D { get; set; }
         public PhysicsSimulatorView PhysicsSimulatorView;
         public List<Selection> ListSelection { get; set; }
-        public bool showPhysic = true;
+        public bool ShowDebugMode = true;
         public bool keyCtrlPressed = false;
         public bool keyShiftPressed = false;
         public bool keyAltPressed = false;
