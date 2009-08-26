@@ -129,6 +129,27 @@ namespace Edit2DEngine
             }
         }
 
+        private int _layer;
+        [Browsable(true)]
+        public int Layer
+        {
+            get
+            {
+                return _layer;
+            }
+            set
+            {
+                _layer = value;
+
+                if (geom != null)
+                {
+                    //---> 17 car il s'agit du milieu de l'ensemble des valeurs possible pour l'enum CollisionCategory
+                    geom.CollisionCategories = (CollisionCategory)(2^(17 + _layer));
+                    geom.CollidesWith = geom.CollisionCategories;
+                }
+            }
+        }
+
         [Browsable(true), AttributeAction]
         public Microsoft.Xna.Framework.Vector2 Position
         {
@@ -288,6 +309,8 @@ namespace Edit2DEngine
                 UniqueId = ++Repository.EntityCount;
 
             Init(addToPhysicSimulator, isCollisionable);
+
+            this.Layer = 0;
         }
 
         public void Init(bool addToPhysicSimulator, bool isCollisionable)

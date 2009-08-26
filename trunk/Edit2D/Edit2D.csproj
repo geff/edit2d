@@ -234,6 +234,9 @@
     <None Include="Resources\icon_OrderDown.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="spritefont.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\icon_OrderUp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

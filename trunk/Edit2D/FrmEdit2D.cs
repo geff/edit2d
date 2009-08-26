@@ -26,6 +26,7 @@ namespace Edit2D
         #region Attributs
         Random rnd;
         Pointer pointer = new Pointer();
+        Pointer pointerCamera = new Pointer();
 
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
         public Repository repository = new Repository();
@@ -623,17 +624,28 @@ namespace Edit2D
                         {
                             actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[0].Keys[0].Value));
                             actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[1].Keys[0].Value));
+
+                            actionCurve.ListCurve[0].ComputeTangents(CurveTangent.Smooth);
+                            actionCurve.ListCurve[1].ComputeTangents(CurveTangent.Smooth);
+
                             actionCurve.CalcDuration();
                         }
                         if ((actionCurve = (ActionCurve)script.ListAction.Find(a => a.ActionName == "Rotation")) != null)
                         {
                             actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[0].Keys[0].Value));
+
+                            actionCurve.ListCurve[0].ComputeTangents(CurveTangent.Smooth);
+
                             actionCurve.CalcDuration();
                         }
                         if ((actionCurve = (ActionCurve)script.ListAction.Find(a => a.ActionName == "Size")) != null)
                         {
                             actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[0].Keys[0].Value));
                             actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[1].Keys[0].Value));
+
+                            actionCurve.ListCurve[0].ComputeTangents(CurveTangent.Smooth);
+                            actionCurve.ListCurve[1].ComputeTangents(CurveTangent.Smooth);
+
                             actionCurve.CalcDuration();
                         }
                     }
@@ -688,18 +700,25 @@ namespace Edit2D
                         {
                             actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, position.X));
                             actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, position.Y));
+
+                            actionCurve.ListCurve[0].ComputeTangents(CurveTangent.Smooth);
+                            actionCurve.ListCurve[1].ComputeTangents(CurveTangent.Smooth);
                         }
 
                         if (actionCurve.ActionName == "Rotation")
                         {
                             actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, rotation));
+
+                            actionCurve.ListCurve[0].ComputeTangents(CurveTangent.Smooth);
                         }
 
                         if (actionCurve.ActionName == "Size")
                         {
                             actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, size.X));
                             actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, size.Y));
-
+                            
+                            actionCurve.ListCurve[0].ComputeTangents(CurveTangent.Smooth);
+                            actionCurve.ListCurve[1].ComputeTangents(CurveTangent.Smooth);
                         }
                         actionCurve.CalcDuration();
                     }
@@ -716,9 +735,9 @@ namespace Edit2D
 
         private void btnShowPhysic_Click(object sender, EventArgs e)
         {
-            repository.showPhysic = !repository.showPhysic;
+            repository.ShowDebugMode = !repository.ShowDebugMode;
 
-            this.btnShowDebugMode.Checked = repository.showPhysic;
+            this.btnShowDebugMode.Checked = repository.ShowDebugMode;
         }
 
         private void btnMove_Click(object sender, EventArgs e)
@@ -1099,6 +1118,18 @@ namespace Edit2D
                     else
                         btnPause.PerformClick();
                 }
+
+                //--- Incrémente le layer des entités sélectionnées
+                if (e.KeyCode == Keys.Add)
+                {
+                    repository.GetSelectedEntite().ForEach(ent => ent.Layer += 1);
+                }
+
+                //---> Décrémente le layer des entités sélectionnées
+                if (e.KeyCode == Keys.Subtract)
+                {
+                    repository.GetSelectedEntite().ForEach(ent => ent.Layer -= 1);
+                }
             }
         }
 
@@ -1230,6 +1261,8 @@ namespace Edit2D
         }
         #endregion
 
+        private Vector2 prevVecFocal = Vector2.Zero;
+
         #region ModelViewerControl events
         void modelViewerControl_MouseDown(object sender, MouseEventArgs e)
         {
@@ -1241,8 +1274,12 @@ namespace Edit2D
             //---> Positionne la caméra
             if (e.Button == MouseButtons.Middle)
             {
-                repository.CurrentPointer.CalcMousePointerLocation(e.Location, repository.Camera);
-                repository.CurrentPointer.SaveState();
+                //repository.CurrentPointer.CalcMousePointerLocation(e.Location, repository.Camera);
+                //repository.CurrentPointer.SaveState();
+                pointerCamera.CalcMousePointerLocation(e.Location, repository.Camera);
+                pointerCamera.SaveState();
+
+                prevVecFocal = vecFocal;
                 prevPosCamera = repository.Camera.Position;
                 return;
             }
@@ -1251,7 +1288,7 @@ namespace Edit2D
             {
                 repository.CurrentPointer2.CalcMousePointerLocation(e.Location, repository.Camera);
             }
-            if (repository.keyShiftPressed && btnParticleSystemModeBar.Checked && repository.CurrentEntite != null && repository.CurrentEntite.ListParticleSystem.Count > 0)
+            else if (repository.keyShiftPressed && btnParticleSystemModeBar.Checked && repository.CurrentEntite != null && repository.CurrentEntite.ListParticleSystem.Count > 0)
             {
                 CloneSelectedEntite(false);
                 repository.CurrentPointer2.CalcMousePointerLocation(e.Location, repository.Camera);
@@ -1433,8 +1470,8 @@ namespace Edit2D
 
             if (e.Button == MouseButtons.Middle)
             {
-                repository.CurrentPointer.CalcMousePointerLocation(e.Location, repository.Camera);
-                repository.Camera.Position = prevPosCamera + repository.CurrentPointer.ScreenPosition - repository.CurrentPointer.PrevScreenPosition;
+                pointerCamera.CalcMousePointerLocation(e.Location, repository.Camera);
+                repository.Camera.Position = prevPosCamera + pointerCamera.ScreenPosition - pointerCamera.PrevScreenPosition;
 
                 //--- Calcul de la nouvelle position des pointeurs à l'écran
                 for (int i = 0; i < repository.ListSelection.Count; i++)
@@ -1442,6 +1479,8 @@ namespace Edit2D
                     repository.ListSelection[i].Pointer.CalcScreenPositionFromWorldPosition(repository.Camera);
                 }
 
+                vecFocal = prevVecFocal + pointerCamera.ScreenPosition - pointerCamera.PrevScreenPosition;
+ 
                 repository.CurrentPointer.CalcScreenPositionFromWorldPosition(repository.Camera);
                 repository.CurrentPointer2.CalcScreenPositionFromWorldPosition(repository.Camera);
                 //----
@@ -1702,7 +1741,7 @@ namespace Edit2D
                     repository.ListSelection[i].Pointer.CalcScreenPositionFromWorldPosition(repository.Camera);
                 }
 
-                //Note : Pas besoin de recalculer la position à l'écran du pointeur principal car il est le centrer du zoom
+                //Note : Pas besoin de recalculer la position à l'écran du pointeur principal car il est le centre du zoom
                 repository.CurrentPointer2.CalcScreenPositionFromWorldPosition(repository.Camera);
                 //----
             }

@@ -21,6 +21,7 @@ using FarseerGames.GettingStarted.DrawingSystem;
 using Edit2DEngine.Particles;
 using Edit2DEngine.Particles;
 using Edit2DEngine;
+using Edit2D.Properties;
 #endregion
 
 namespace WinFormsContentLoading
@@ -45,9 +46,7 @@ namespace WinFormsContentLoading
         Edit2D.Repository repository;
         Effect effect;
 
-        //public Vector2 scenePosition;
-        //public int scenePositionX;
-        //public int scenePositionY;
+        SpriteFont spriteFont;
 
         /// <summary>
         /// Initializes the control.
@@ -70,6 +69,8 @@ namespace WinFormsContentLoading
             ChangeViewPortSize();
             //---
 
+            spriteFont = content.Load<SpriteFont>("spriteFont");
+            
             line.Load(GraphicsDevice);
 
             InitListModels();
@@ -166,12 +167,12 @@ namespace WinFormsContentLoading
             //effect.End();
             //---
 
-            if (((!repository.Pause && repository.IsEntityClickableOnPlay) || repository.Pause) && ((repository.showPhysic && entite.IsStatic) || entite.Selected))
+            if (((!repository.Pause && repository.IsEntityClickableOnPlay) || repository.Pause) && ((repository.ShowDebugMode && entite.IsStatic) || entite.Selected))
             {
                 //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
                 //--- Pin static
-                if (repository.showPhysic && entite.IsStatic)
+                if (repository.ShowDebugMode && entite.IsStatic)
                 {
                     Rectangle recPin = new Rectangle((int)entite.Position.X,
                                                      (int)entite.Position.Y,
@@ -180,8 +181,15 @@ namespace WinFormsContentLoading
                     //(int)(10f / repository.Camera.Zoom),
                     //(int)(16f / repository.Camera.Zoom));
 
-                    this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pin"), recPin, null, Color.White, entite.Body.Rotation,
+                    this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pin"), recPin, null, Color.White, entite.Rotation,
                         entite.SizeVector / 2f + new Vector2(5f, 8f), SpriteEffects.None, 0f);
+                }
+                //---
+
+                //--- Couche du layer
+                if (repository.ShowDebugMode)
+                {
+                    spriteBatch.DrawString(spriteFont, entite.Layer.ToString(), entite.Position + new Vector2(10f, -10f), Color.Red, entite.Rotation, entite.SizeVector / 2f + new Vector2(5f, 8f), 1f, SpriteEffects.None, 0);
                 }
                 //---
 
@@ -265,7 +273,7 @@ namespace WinFormsContentLoading
             }
 
             //--- Cadre physique
-            if (repository.showPhysic)
+            if (repository.ShowDebugMode)
                 repository.PhysicsSimulatorView.Draw(spriteBatch);
             //---
 
