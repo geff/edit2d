@@ -52,6 +52,9 @@ namespace Edit2DEngine
             if (reader["RestitutionCoefficient"] != null)
                 entite.RestitutionCoefficient = float.Parse(reader["RestitutionCoefficient"]);
 
+            if (reader["Layer"] != null)
+                entite.Layer = int.Parse(reader["Layer"]);
+
             Texture2D texture = TextureManager.LoadTexture2D(entite.TextureName);
 
             //if(!isParticle)
@@ -334,6 +337,8 @@ namespace Edit2DEngine
                 //    //Repository.physicSimulator.GeomList[i].SetBody(repository.listEntite[i].Body);
                 //    //repository.listEntite[i].geom = Repository.physicSimulator.GeomList[i];
                 //}
+
+                repository.OrderEntite();
             }
         }
 
@@ -389,6 +394,7 @@ namespace Edit2DEngine
 
             writer.WriteAttributeString("FrictionCoefficient", WriteFloat(entite.FrictionCoefficient));
             writer.WriteAttributeString("RestitutionCoefficient", WriteFloat(entite.RestitutionCoefficient));
+            writer.WriteAttributeString("Layer", entite.Layer.ToString());
 
             #region Springs
             for (int j = 0; j < entite.ListFixedLinearSpring.Count; j++)

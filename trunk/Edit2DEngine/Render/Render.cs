@@ -266,7 +266,19 @@ namespace Edit2DEngine.Render
                 texture = TextureManager.LoadTexture2D(entite.TextureName);
             }
 
-            this.SpriteBatch.Draw(texture, entite.Rectangle, null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 1f);
+            Rectangle recDraw = new Rectangle(entite.Rectangle.X, entite.Rectangle.Y, entite.Rectangle.Width, entite.Rectangle.Height);
+
+            float PerspectiveFactor = 20f;
+            Vector2 drawPosition = (entite.Position - repository.Camera.Position) / PerspectiveFactor * (float)entite.Layer;
+
+            //if (entite.Layer != 0)
+            //{
+            //    int a = 0;
+            //}
+
+            recDraw.X += (int)drawPosition.X;
+
+            this.SpriteBatch.Draw(texture, recDraw, null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 1f);
             //this.spriteBatch.Draw(TextureManager.LoadTexture2D(entite.TextureName), entite.Position, null, entite.Color, entite.Body.Rotation, entite.Center, 1f, SpriteEffects.None, 1f);
 
             //effect.Techniques[idTechnique].Passes[0].End();
