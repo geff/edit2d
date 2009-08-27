@@ -1123,12 +1123,16 @@ namespace Edit2D
                 if (e.KeyCode == Keys.Add)
                 {
                     repository.GetSelectedEntite().ForEach(ent => ent.Layer += 1);
+                    repository.OrderEntite();
+                    RefreshTreeView();
                 }
 
                 //---> Décrémente le layer des entités sélectionnées
                 if (e.KeyCode == Keys.Subtract)
                 {
                     repository.GetSelectedEntite().ForEach(ent => ent.Layer -= 1);
+                    repository.OrderEntite();
+                    RefreshTreeView();
                 }
             }
         }
@@ -1144,6 +1148,7 @@ namespace Edit2D
                         this.prop.Refresh();
                     }
                 }
+
             }
 
             RefreshTreeView();

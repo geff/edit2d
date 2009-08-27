@@ -6,6 +6,7 @@ using FarseerGames.FarseerPhysics.Collisions;
 using Microsoft.Xna.Framework.Input;
 using Edit2DEngine.Particles;
 using System.Drawing;
+using System.Linq;
 
 namespace Edit2DEngine
 {
@@ -245,6 +246,35 @@ namespace Edit2DEngine
             //---
 
             return entite;
+        }
+
+        public void OrderEntite()
+        {
+            Dictionary<int, List<Entite>> dicEntite = new Dictionary<int, List<Entite>>();
+
+            for (int i = 0; i < listEntite.Count; i++)
+            {
+                Entite entite = listEntite[i];
+
+                if (!dicEntite.ContainsKey(entite.Layer))
+                {
+                    dicEntite.Add(entite.Layer, new List<Entite>());
+                }
+
+                dicEntite[entite.Layer].Add(entite);
+            }
+
+            List<Entite> listEntite2 = new List<Entite>();
+
+            foreach (int key in dicEntite.Keys.OrderBy(key => key))
+            {
+                for (int j = 0; j < dicEntite[key].Count; j++)
+                {
+                    listEntite2.Add(dicEntite[key][j]);
+                }
+            }
+
+            listEntite = listEntite2;
         }
     }
 }
