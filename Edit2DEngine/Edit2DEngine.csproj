@@ -110,6 +110,7 @@
     <Compile Include="Tools\ClickableImage.cs" />
     <Compile Include="Tools\ClickableText.cs" />
     <Compile Include="Tools\Extensions.cs" />
+    <Compile Include="Tools\FrameRateCounter.cs" />
     <Compile Include="Tools\KeyManager.cs" />
     <Compile Include="Tools\Lerp.cs" />
     <Compile Include="Tools\Math.cs" />
