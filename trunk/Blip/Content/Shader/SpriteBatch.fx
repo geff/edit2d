@@ -44,66 +44,123 @@ float GetEdgeValue(float2 texCoord : TEXCOORD0)
 {
 	float edgeValue = 100;
 	
-	float2 fullTexCoord = texCoord * myTextureSize;
-		
-	for(float x = -5; x <= 5; x++)
+	if(tex2D(TextureSampler, texCoord).a != 0)
 	{
-		for(float y = -5; y <= 5; y++)
+		float2 fullTexCoord = texCoord * myTextureSize;
+		
+		float length =5;
+		
+		for(float x = -length; x <=length; x++)
 		{
-			
-			float2 newTexCoord;
-			
-			newTexCoord.x = fullTexCoord.x + x;
-			newTexCoord.y = fullTexCoord.y + y;
-			 //= fullTexCoord + float2(x,y);
-			bool calcDist = false;
-			
-			if(newTexCoord.x > 0 && newTexCoord.y > 0 && newTexCoord.x < myTextureSize.x-0 && newTexCoord.y < myTextureSize.y-0)
+			for(float y = -length; y <= length; y++)
 			{
-				float2 neewCoord = newTexCoord / myTextureSize;
 				
-				if(tex2D(TextureSampler, neewCoord).a == 1)
+				float2 newTexCoord = fullTexCoord +float2(x,y);
+				
+				bool calcDist = false;
+				
+				if(newTexCoord.x > 0 && newTexCoord.y > 0 && newTexCoord.x < myTextureSize.x-0 && newTexCoord.y < myTextureSize.y-0)
+				{
+					float2 neewCoord = newTexCoord / myTextureSize;
+					
+					if(tex2D(TextureSampler, neewCoord).a ==0)
+						calcDist = true;
+						
+					//edgeValue = 1;
+				}
+				else
+				{
 					calcDist = true;
-					
-				//edgeValue = 1;
-			}
-			else
-			{
-				calcDist = true;
-			}
-			
-			if(calcDist)
-			{
-				float dist = distance(fullTexCoord, newTexCoord);
+				}
 				
-				if(dist < edgeValue)
-					edgeValue = dist;
+				if(calcDist)
+				{
+					float dist = distance(fullTexCoord, newTexCoord);
 					
-				//edgeValue = min(edgeValue, dist);
+					if(dist < edgeValue)
+						edgeValue = dist;
+						
+					//edgeValue = min(edgeValue, dist);
+				}
 			}
 		}
 	}
-	
+
 	if(edgeValue == 100)
 		edgeValue = 0;
 	
 	return edgeValue;
 }
 
+float4 GetColorSobel(float2 texCoord : TEXCOORD0)
+{
+	float4 OUT;
+
+	 const int NUM = 9;
+    const float threshold = 0.05;
+
+    const float2 c[NUM] = {
+            float2(-0.07287, 0.07287), 
+            float2( 0.00 ,     0.07287),
+            float2( 0.07287, 0.07287),
+            float2(-0.07287, 0.00 ),
+            float2( 0.0,       0.0),
+            float2( 0.07287, 0.07287 ),
+            float2(-0.07287,-0.07287),
+            float2( 0.00 ,    -0.07287),
+            float2( 0.07287,-0.07287),
+    };
+
+    float4 col[NUM];    
+    int i;
+
+	// it stores the samples of texture to col array.
+    for (i=0; i < NUM; i++) 
+	{
+     	float2 newTexCoord =  texCoord + c[i];
+		col[i] = tex2D(TextureSampler, newTexCoord);
+	}
+	
+	float3 rgb2lum = float3(0.30, 0.9, 0.5);
+    
+    float lum[NUM];
+    for (i = 0; i < NUM; i++) {
+      lum[i] = dot(col[i].xyz, rgb2lum);
+    }
+
+	//Sobel filter computes new value at the central position by sum the weighted neighbors.
+    float x = lum[2]+  lum[8]+2*lum[5]-lum[0]-2*lum[3]-lum[6];
+    float y = lum[6]+2*lum[7]+  lum[8]-lum[0]-2*lum[1]-lum[2];
+
+	//show the points which values are over the threshold and hide others. Final result is the product of col[5] and edge detector value. Brightness adjusts the brightness of the image.
+    float edge =(x*x + y*y < threshold)? 1.0:0.0;
+
+		float Brightness = 1.5;
+	//final output
+    OUT.xyz = Brightness * col[5].xyz * edge.xxx;
+    OUT.w = 1.0;
+	
+	return OUT;
+}
+
 // Pixel shader for rendering sprites (shared between Windows and Xbox).
 void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 {
-    color *= tex2D(TextureSampler, texCoord);
+    //color *= tex2D(TextureSampler, texCoord);
     
     //texCoord.y = texCoord.y  + (sin(texCoord.y*100)*0.03*(1+cos(6.28/500*timeMS))/2); 
 	//color = tex2D( TextureSampler , texCoord);
 
-	if(GetEdgeValue(texCoord) >0)
-	{
-		color.r = 0;
-		color.g = 0;
-		color.b = 0;
-	}
+	color = GetColorSobel(texCoord);
+	color.a = tex2D(TextureSampler, texCoord).a;
+	
+	if(GetEdgeValue(texCoord) > 0 )
+	 {
+		 color.r = 0;
+		 color.g = 1;
+		 color.b = 1;
+		 color.a = 1;
+	 }
 
 	if(isSelected)
 	{

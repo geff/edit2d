@@ -22,6 +22,8 @@ using Edit2DEngine.Particles;
 using Edit2DEngine.Particles;
 using Edit2DEngine;
 using Edit2D.Properties;
+using System.Threading;
+using Edit2DEngine.Tools;
 #endregion
 
 namespace WinFormsContentLoading
@@ -53,6 +55,7 @@ namespace WinFormsContentLoading
     {
         LineBrush line;
 
+        FrameRateCounter frameRateCounter;
 
         // Timer controls the rotation speed.
         Stopwatch timer;
@@ -63,8 +66,13 @@ namespace WinFormsContentLoading
         public SpriteBatch spriteBatch;
         Edit2D.Repository repository;
         Effect effect;
-
+        EffectPool effectPool;
+        CompiledEffect compiledEffect;
         SpriteFont spriteFont;
+        private bool loadNewShader = false;
+
+        string effectPath = @"D:\Log\Edit2D\Blip\Content\Shader";
+        string effectFileName = "SpriteBatch.fx";
 
         /// <summary>
         /// Initializes the control.
@@ -83,8 +91,15 @@ namespace WinFormsContentLoading
             Application.Idle += delegate { Invalidate(); };
 
             //--- Chargement de l'effet
-            effect = content.Load<Effect>("SpriteBatch");
-            //effect = content.Load<Effect>("Effect1");
+            effectPool = new EffectPool();
+            //effect = content.Load<Effect>("SpriteBatch");
+
+            LoadShader();
+
+            FileSystemWatcher watcher = new FileSystemWatcher(effectPath, effectFileName);
+            watcher.EnableRaisingEvents = true;
+            watcher.Changed += new FileSystemEventHandler(watcher_Changed);
+
             ChangeViewPortSize();
             //---
 
@@ -93,6 +108,25 @@ namespace WinFormsContentLoading
             line.Load(GraphicsDevice);
 
             InitListModels();
+        }
+
+        void watcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            loadNewShader = true;
+        }
+
+        private void LoadShader()
+        {
+            compiledEffect = Effect.CompileEffectFromFile(Path.Combine(effectPath, effectFileName), null, null, CompilerOptions.None, TargetPlatform.Windows);
+
+            if (!compiledEffect.Success)
+            {
+                MessageBox.Show(compiledEffect.ErrorsAndWarnings);
+            }
+            else
+            {
+                effect = new Effect(GraphicsDevice, compiledEffect.GetEffectCode(), CompilerOptions.None, effectPool);
+            }
         }
 
         public void RefreshView()
@@ -364,7 +398,7 @@ namespace WinFormsContentLoading
             pass.End();
             effect.End();
             //---
-            
+
             if (((!repository.Pause && repository.IsEntityClickableOnPlay) || repository.Pause) && ((repository.ShowDebugMode && entite.IsStatic) || entite.Selected))
             {
                 this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
@@ -406,9 +440,9 @@ namespace WinFormsContentLoading
                 //---
 
                 this.spriteBatch.End();
-             
+
             }
-             
+
             //if (entite.Selected && entite.ListParticleSystem.Count > 0)
             //{
             //    //--- Rendu du système de particule
@@ -441,6 +475,8 @@ namespace WinFormsContentLoading
             //}
         }
 
+        TimeSpan elapsedTime = TimeSpan.Zero;
+        Stopwatch stopWatch = new Stopwatch();
         /// <summary>
         /// Draws the control.
         /// </summary>
@@ -457,23 +493,42 @@ namespace WinFormsContentLoading
 
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            if (loadNewShader)
+            {
+                LoadShader();
+            }
+            if (!compiledEffect.Success)
+                return;
+
             //--- Fond
             this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
             effect.CurrentTechnique = effect.Techniques["Gradient"];
             effect.Parameters["gradientColor1"].SetValue(repository.World.GradientColor1.ToVector4());
             effect.Parameters["gradientColor2"].SetValue(repository.World.GradientColor2.ToVector4());
-            
+
             effect.Begin();
             effect.CurrentTechnique.Passes[0].Begin();
             GraphicsDevice.SetVertexShaderConstant(0, new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height));
 
             //spriteBatch.Begin();
-            spriteBatch.Draw(new Texture2D(GraphicsDevice, 1,1), new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+            spriteBatch.Draw(new Texture2D(GraphicsDevice, 1, 1), new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
             spriteBatch.End();
 
             effect.CurrentTechnique.Passes[0].End();
             effect.End();
             //---
+
+            //--- Frame rate
+            
+
+            spriteBatch.Begin();
+            spriteBatch.DrawString(spriteFont, String.Format("{0:00.0} FPS", 1000f / stopWatch.ElapsedMilliseconds), new Vector2(20,20), Color.White);
+            spriteBatch.End();
+
+            stopWatch.Reset();
+            stopWatch.Start();
+            //---
+
 
             //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
             //---> Begin pour le shader
@@ -500,7 +555,7 @@ namespace WinFormsContentLoading
 
             this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
 
-            Vector2 vecPointerMidSize = new Vector2(5,5);
+            Vector2 vecPointerMidSize = new Vector2(5, 5);
 
             //--- Pointeur de la souris
             this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.CurrentPointer.ScreenPosition - vecPointerMidSize, null, Color.Red);
@@ -513,7 +568,7 @@ namespace WinFormsContentLoading
             //--- Pointeurs multi
             for (int i = 0; i < repository.ListSelection.Count; i++)
             {
-                this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.ListSelection[i].Pointer.ScreenPosition -vecPointerMidSize, null, Color.Blue);
+                this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.ListSelection[i].Pointer.ScreenPosition - vecPointerMidSize, null, Color.Blue);
             }
             //---
 
