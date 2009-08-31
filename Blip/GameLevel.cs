@@ -31,7 +31,7 @@ namespace Blip
             Init();
 
             this.repository = new Repository();
-            this.render = new Render(SpriteBatch, GraphicsDevice, repository);
+            this.render = new Render(SpriteBatch, GraphicsDevice, repository, contentManager);
             this.currentLevelFileName = levelFilename;
 
             LoadLevel(levelFilename);
@@ -77,24 +77,7 @@ namespace Blip
         {
             if (key == Keys.Up)
             {
-                bool canJump = false;
-
-                for (float i = 1; i < 4 && !canJump; i++)
-                {
-                    float angle = i * MathHelper.PiOver4;
-
-                    List<Vector2> listIntersections = new List<Vector2>();
-                    Vector2 startPoint = blip.Position + new Vector2(0, 0f);
-                    Vector2 endPoint = blip.Position + new Vector2(blip.SizeVector.Length() / 2f * (float)Math.Cos(angle), blip.SizeVector.Length() / 2f * (float)Math.Sin(angle));
-
-                    FarseerGames.FarseerPhysics.Collisions.CollisionHelper.LineSegmentAllGeomsIntersect(ref startPoint, ref endPoint, Repository.physicSimulator, false, ref listIntersections);
-
-                    if (listIntersections.Count > 1)
-                        canJump = true;
-                }
-
-                if (canJump)
-                    blip.Body.ApplyImpulse(new Vector2(0f, -30f * speed));
+                
             }
         }
 
@@ -169,6 +152,10 @@ namespace Blip
                 blip.Body.ApplyForce(new Vector2(0f, speed));
 
             }
+            if(keyBoardState.IsKeyDown(Keys.Up))
+            {
+                Jump();
+            }
             //---
 
             repository.Camera.Position = blip.Position;
@@ -189,6 +176,28 @@ namespace Blip
             this.SpriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void Jump()
+        {
+            bool canJump = false;
+
+            for (float i = 1; i < 4 && !canJump; i++)
+            {
+                float angle = i * MathHelper.PiOver4;
+
+                List<Vector2> listIntersections = new List<Vector2>();
+                Vector2 startPoint = blip.Position + new Vector2(0, 0f);
+                Vector2 endPoint = blip.Position + new Vector2(blip.SizeVector.Length() / 2f * (float)Math.Cos(angle), blip.SizeVector.Length() / 2f * (float)Math.Sin(angle));
+
+                List<Geom> listGeomCollide = FarseerGames.FarseerPhysics.Collisions.CollisionHelper.LineSegmentAllGeomsIntersect(ref startPoint, ref endPoint, Repository.physicSimulator, false, ref listIntersections);
+
+                if (listGeomCollide.FindAll(g=> g.CollisionEnabled).Count > 1)
+                    canJump = true;
+            }
+
+            if (canJump)
+                blip.Body.ApplyImpulse(new Vector2(0f, -30f * speed));
         }
     }
 }

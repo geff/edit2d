@@ -35,18 +35,21 @@ namespace Blip
             //Content.RootDirectory = "Content/Pic";
 
             this.IsMouseVisible = true;
-            if (Mini)
-            {
-                graphics.PreferredBackBufferWidth = 150;
-                graphics.PreferredBackBufferHeight = 300;
-            }
-            else
-            {
-                graphics.PreferredBackBufferWidth = 1280;
-                graphics.PreferredBackBufferHeight = 800;
-            }
+            //if (Mini)
+            //{
+            //    graphics.PreferredBackBufferWidth = 150;
+            //    graphics.PreferredBackBufferHeight = 300;
+            //}
+            //else
+            //{
+            //    graphics.PreferredBackBufferWidth = 1680;
+            //    graphics.PreferredBackBufferHeight = 1050;
+            //}
 
-            //graphics.IsFullScreen = true;
+            graphics.PreferredBackBufferWidth = 1360;
+            graphics.PreferredBackBufferHeight = 768;
+
+            graphics.IsFullScreen = true;
             graphics.ApplyChanges();
         }
 

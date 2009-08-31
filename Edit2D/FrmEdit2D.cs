@@ -141,7 +141,7 @@ namespace Edit2D
             modelViewerControl.Initialize(repository, contentManager, contentBuilder);
             //TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice);
             TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice, @"..\..\..");
-            render = new Render(modelViewerControl.spriteBatch, modelViewerControl.GraphicsDevice, repository);
+            render = new Render(modelViewerControl.spriteBatch, modelViewerControl.GraphicsDevice, repository, null);
 
             InitPhysicSimulatorView();
         }
@@ -352,6 +352,10 @@ namespace Edit2D
             else if (repository.CurrentParticleSystem != null)
             {
                 prop.SelectedObject = repository.CurrentParticleSystem;
+            }
+            else if (newSelection is World)
+            {
+                prop.SelectedObject = (World)newSelection;
             }
 
             //--- Rafraichi le contrôle du mode courant
@@ -1169,6 +1173,10 @@ namespace Edit2D
             {
                 EntiteSelectionChange(false, repository.CurrentEntite, e.Node.Tag);
             }
+            //else if (e.Node != null && e.Node.Tag is World)
+            //{
+            //    EntiteSelectionChange(false, repository.CurrentEntite, e.Node.Tag);
+            //}
         }
 
         private void btnUpEntity_Click(object sender, EventArgs e)
@@ -1329,6 +1337,9 @@ namespace Edit2D
         private void modelViewerControl_MouseUp(object sender, MouseEventArgs e)
         {
             if (!repository.Pause && !btnGameClickableOnPlay.Checked)
+                return;
+
+            if (e.Button == MouseButtons.Middle)
                 return;
 
             if (repository.keyCtrlPressed)
