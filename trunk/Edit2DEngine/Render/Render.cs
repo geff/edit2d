@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Edit2DEngine.Particles;
 using Microsoft.Xna.Framework;
 using Edit2DEngine.Action;
+using Microsoft.Xna.Framework.Content;
 
 namespace Edit2DEngine.Render
 {
@@ -15,11 +16,16 @@ namespace Edit2DEngine.Render
         public GraphicsDevice GraphicsDevice { get; set; }
         public Repository repository { get; set; }
 
-        public Render(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Repository repository)
+        private Effect effect;
+
+        public Render(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Repository repository, ContentManager contentManager)
         {
             this.SpriteBatch = spriteBatch;
             this.GraphicsDevice = graphicsDevice;
             this.repository = repository;
+
+            if(contentManager != null)
+                effect = contentManager.Load<Effect>(@"Content\Shader\SpriteBatch");
         }
 
         public void Update()
@@ -159,7 +165,7 @@ namespace Edit2DEngine.Render
             // Clear to the default control background color.
 
             //--- Réinitialisation du renderstate - Le SpriteBatch modifie le renderstate
-            //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+            //this.SpriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None, repository.Camera.MatrixTransformation);
             //effect.Begin();
 
             //            Rectangle recScreen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
@@ -171,6 +177,8 @@ namespace Edit2DEngine.Render
 
                 DrawEntite(entite);
             }
+
+            //this.SpriteBatch.End();
 
             //this.SpriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
@@ -243,6 +251,8 @@ namespace Edit2DEngine.Render
 
             //if (entite.BlurFactor > 0f)
             //    idTechnique = 1;
+            //if(entite.IsInBackground)
+            //    effect
             //---
 
             //---
@@ -255,6 +265,61 @@ namespace Edit2DEngine.Render
             //effect.Techniques[idTechnique].Passes[0].Begin();
 
 
+            //Texture2D texture = null;
+
+            //if (entite is Particle)
+            //{
+            //    texture = TextureManager.LoadParticleTexture2D(entite.TextureName);
+            //}
+            //else
+            //{
+            //    texture = TextureManager.LoadTexture2D(entite.TextureName);
+            //}
+
+            //Rectangle recDraw = new Rectangle(entite.Rectangle.X, entite.Rectangle.Y, entite.Rectangle.Width, entite.Rectangle.Height);
+
+            //float PerspectiveFactor = 20f;
+            //Vector2 drawPosition = (entite.Position - repository.Camera.Position) / PerspectiveFactor * (float)entite.Layer;
+
+            ////if (entite.Layer != 0)
+            ////{
+            ////    int a = 0;
+            ////}
+
+            //recDraw.X += (int)drawPosition.X;
+
+            //this.SpriteBatch.Draw(texture, recDraw, null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 1f);
+            //this.spriteBatch.Draw(TextureManager.LoadTexture2D(entite.TextureName), entite.Position, null, entite.Color, entite.Body.Rotation, entite.Center, 1f, SpriteEffects.None, 1f);
+
+            //effect.Techniques[idTechnique].Passes[0].End();
+
+            //effect.End();
+            //---
+
+            //-------------------------------------------------------
+            EffectPass pass = null;
+
+            if (entite.BlurFactor != 0f)
+            {
+                effect.CurrentTechnique = effect.Techniques["Blur"];
+                pass = effect.Techniques["Blur"].Passes[0];
+            }
+            else
+            {
+                effect.CurrentTechnique = effect.Techniques["SpriteBatch"];
+                pass = effect.Techniques["SpriteBatch"].Passes[0];
+            }
+            //---
+
+            //---
+
+            effect.Parameters["isInBackground"].SetValue(entite.IsInBackground);
+            effect.Parameters["blurFactor"].SetValue(entite.BlurFactor);
+            effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
+
+            effect.Begin();
+            pass.Begin();
+
             Texture2D texture = null;
 
             if (entite is Particle)
@@ -266,25 +331,17 @@ namespace Edit2DEngine.Render
                 texture = TextureManager.LoadTexture2D(entite.TextureName);
             }
 
+            
             Rectangle recDraw = new Rectangle(entite.Rectangle.X, entite.Rectangle.Y, entite.Rectangle.Width, entite.Rectangle.Height);
-
             float PerspectiveFactor = 20f;
             Vector2 drawPosition = (entite.Position - repository.Camera.Position) / PerspectiveFactor * (float)entite.Layer;
-
-            //if (entite.Layer != 0)
-            //{
-            //    int a = 0;
-            //}
-
             recDraw.X += (int)drawPosition.X;
 
             this.SpriteBatch.Draw(texture, recDraw, null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 1f);
-            //this.spriteBatch.Draw(TextureManager.LoadTexture2D(entite.TextureName), entite.Position, null, entite.Color, entite.Body.Rotation, entite.Center, 1f, SpriteEffects.None, 1f);
 
-            //effect.Techniques[idTechnique].Passes[0].End();
-
-            //effect.End();
-            //---
+            pass.End();
+            effect.End();
+            //---------------------------------------
 
             //if (((!repository.pause && repository.IsEntityClickableOnPlay) || repository.pause) && ((repository.showPhysic && entite.IsStatic) || entite.Selected))
             //{

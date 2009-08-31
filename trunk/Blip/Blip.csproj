@@ -156,4 +156,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)\Content\Shader\*.* $(SolutionDir)\Edit2D\*.*</PostBuildEvent>
+  </PropertyGroup>
 </Project>
