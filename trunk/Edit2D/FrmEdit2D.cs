@@ -1015,7 +1015,8 @@ namespace Edit2D
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            render.Update();
+            if(render != null)
+                render.Update();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
