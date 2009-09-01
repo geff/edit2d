@@ -1,16 +1,10 @@
-//-----------------------------------------------------------------------------
-// SpriteBatch.fx
-//
-// Microsoft XNA Community Game Platform
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//-----------------------------------------------------------------------------
-
-
-// Input parameters.
+//-----------------------------------------------------------
 float2   ViewportSize    : register(c0);
 float2   TextureSize     : register(c1);
 float4x4 MatrixTransform : register(c2);
 sampler  TextureSampler  : register(s0);
+//-----------------------------------------------------------
+
 float timeMS;
 float4 gradientColor1;
 float4 gradientColor2;
@@ -18,8 +12,28 @@ bool isSelected;
 
 float2   myEntiteSize;
 float2   myTextureSize;
+float2 blipPos;
+bool isInBackground = false;
+float blurFactor = 0.0f; 
+const float2 offsets[12] = {
+   -0.326212, -0.405805,
+   -0.840144, -0.073580,
+   -0.695914,  0.457137,
+   -0.203345,  0.620716,
+    0.962340, -0.194983,
+    0.473434, -0.480026,
+    0.519456,  0.767022,
+    0.185461, -0.893124,
+    0.507431,  0.064425,
+    0.896420,  0.412458,
+   -0.321940, -0.932615,
+   -0.791559, -0.597705,
+};
 
-// Vertex shader for rendering sprites on Windows.
+
+//-----------------------------------------------------------
+//			VERTEX SHADER
+//-----------------------------------------------------------
 void SpriteVertexShader(inout float4 position : POSITION0,
 		  				inout float4 color    : COLOR0,
 						inout float2 texCoord : TEXCOORD0)
@@ -40,7 +54,9 @@ void SpriteVertexShader(inout float4 position : POSITION0,
 	texCoord /= TextureSize;
 }
 
-float GetEdgeValue(float2 texCoord : TEXCOORD0)
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+float GetEdgeValue(float2 texCoord : TEXCOORD0, float length)
 {
 	float edgeValue = 100;
 	
@@ -48,11 +64,11 @@ float GetEdgeValue(float2 texCoord : TEXCOORD0)
 	{
 		float2 fullTexCoord = texCoord * myTextureSize;
 		
-		float length =5;
+		//float length =5;
 		
-		for(float x = -length; x <=length; x++)
+		for(float x = -length; x <=length; x+=2)
 		{
-			for(float y = -length; y <= length; y++)
+			for(float y = -length; y <= length; y+=2)
 			{
 				
 				float2 newTexCoord = fullTexCoord +float2(x,y);
@@ -65,8 +81,6 @@ float GetEdgeValue(float2 texCoord : TEXCOORD0)
 					
 					if(tex2D(TextureSampler, neewCoord).a ==0)
 						calcDist = true;
-						
-					//edgeValue = 1;
 				}
 				else
 				{
@@ -79,8 +93,6 @@ float GetEdgeValue(float2 texCoord : TEXCOORD0)
 					
 					if(dist < edgeValue)
 						edgeValue = dist;
-						
-					//edgeValue = min(edgeValue, dist);
 				}
 			}
 		}
@@ -92,7 +104,9 @@ float GetEdgeValue(float2 texCoord : TEXCOORD0)
 	return edgeValue;
 }
 
-float4 GetColorSobel(float2 texCoord : TEXCOORD0)
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+float4 GetColorSobel(float2 texCoord : TEXCOORD0 )
 {
 	float4 OUT;
 
@@ -143,25 +157,19 @@ float4 GetColorSobel(float2 texCoord : TEXCOORD0)
 	return OUT;
 }
 
-// Pixel shader for rendering sprites (shared between Windows and Xbox).
-void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+float4 ConvertToGray(float4 color)
 {
-    //color *= tex2D(TextureSampler, texCoord);
-    
-    //texCoord.y = texCoord.y  + (sin(texCoord.y*100)*0.03*(1+cos(6.28/500*timeMS))/2); 
-	//color = tex2D( TextureSampler , texCoord);
-
-	color = GetColorSobel(texCoord);
-	color.a = tex2D(TextureSampler, texCoord).a;
+	//return (float4)((color.r+color.g+color.b) / (768));
 	
-	if(GetEdgeValue(texCoord) > 0 )
-	 {
-		 color.r = 0;
-		 color.g = 1;
-		 color.b = 1;
-		 color.a = 1;
-	 }
+	return float4(0,0,0,color.a);
+}
 
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+void SelectColor(inout float4 color)
+{
 	if(isSelected)
 	{
 		float4 clr1 =lerp(color, float4(0,0.3,1,1), 0.35);
@@ -170,11 +178,39 @@ void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 	}
 }
 
-// Pixel shader for rendering sprites (shared between Windows and Xbox).
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+void EdgePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
+{
+	float edgeValue = GetEdgeValue(texCoord, 5);
+	if(edgeValue > 0 )
+	 {
+		color.r = 0;
+		color.g = 1;
+		color.b =  0;
+	 }
+	 
+	 color.a = tex2D(TextureSampler, texCoord).a;
+	 
+	SelectColor(color);
+}
+
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+void SobelPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
+{
+	color = GetColorSobel(texCoord);
+	 
+	 //color.a = tex2D(TextureSampler, texCoord).a;
+	 
+	SelectColor(color);
+}
+
+//-----------------------------------------------------------
+//-----------------------------------------------------------
 void BackgroundPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 {
 	color = tex2D(TextureSampler, texCoord);
-
 
 	if(color.a == 1)
 	{
@@ -184,34 +220,13 @@ void BackgroundPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOO
 	}
 	else
 		color=(0.5,0.5,0.5,0.0);
+		
+	SelectColor(color);
 }
 
-bool isInBackground = false;
-float blurFactor = 0.0015; 
-const float2 offsets[12] = {
-   -0.326212, -0.405805,
-   -0.840144, -0.073580,
-   -0.695914,  0.457137,
-   -0.203345,  0.620716,
-    0.962340, -0.194983,
-    0.473434, -0.480026,
-    0.519456,  0.767022,
-    0.185461, -0.893124,
-    0.507431,  0.064425,
-    0.896420,  0.412458,
-   -0.321940, -0.932615,
-   -0.791559, -0.597705,
-};
-
-float4 ConvertToGray(float4 color)
-{
-	//return (float4)((color.r+color.g+color.b) / (768));
-	
-	return float4(0,0,0,color.a);
-}
-
-
-void SpritePixelShaderBlur(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+void BlurPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 {
 
 	float4 clr = color;
@@ -234,41 +249,108 @@ void SpritePixelShaderBlur(inout float4 color : COLOR0, float2 texCoord : TEXCOO
     
     if(!isInBackground)
 		color *= clr;
+		
+	SelectColor(color);
 }
 
-
-
+//-----------------------------------------------------------
+//-----------------------------------------------------------
 void GradientPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 {
 	color = lerp(gradientColor1, gradientColor2, texCoord.y);
 }
 
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+void NightPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
+{
+	float maxEdgeValue =6;
+	float edgeValue = GetEdgeValue(texCoord, maxEdgeValue);
+	
+	color = (0,0,0,0);
+	
+	if(edgeValue > 0 )
+	 {
+		color+=dot(float2(0.5-texCoord.x,0.5-texCoord.y), float2(edgeValue, edgeValue));
+	 }
+	 
+	 color.a = tex2D(TextureSampler, texCoord).a;
+	 
+	SelectColor(color);
+}
+
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
+{
+
+	NightPixelShader(color, texCoord);
+	//texCoord.y = texCoord.y  + (sin(texCoord.y*100)*0.03*(1+cos(6.28/500*timeMS))/2); 
+	/*
+	if(isInBackground)
+	{
+		BackgroundPixelShader(color, texCoord);
+	}
+	else
+	{
+		color *= tex2D(TextureSampler, texCoord);
+	}
+	/*
+	if(blurFactor>0.0f)
+	{
+		BlurPixelShader(color, texCoord);
+		//color = float4(0,0,0,0);
+	}
+	
+    
+    //color *= tex2D(TextureSampler, texCoord);
+    
+	//color = tex2D( TextureSampler , texCoord);
+	SelectColor(color);*/
+}
+
+//-----------------------------------------------------------
+//			TECHNIQUES
+//-----------------------------------------------------------
 technique Gradient
 {
     pass
     {
-        PixelShader = compile ps_1_1 GradientPixelShader();
+        PixelShader = compile ps_3_0 GradientPixelShader();
     }
 }
- 
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+technique Night
+{
+    pass
+    {
+        //VertexShader = compile vs_1_1 SpriteVertexShader();
+        PixelShader = compile ps_3_0 NightPixelShader();
+    }
+}
+//-----------------------------------------------------------
+//-----------------------------------------------------------
 technique Background
 {
     pass
     {
         //VertexShader = compile vs_1_1 SpriteVertexShader();
-        PixelShader = compile ps_1_1 BackgroundPixelShader();
+        PixelShader = compile ps_3_0 BackgroundPixelShader();
     }
 }
-
+//-----------------------------------------------------------
+//-----------------------------------------------------------
 technique Blur
 {
     pass
     {
         //VertexShader = compile vs_2_0 SpriteVertexShader();
-        PixelShader = compile ps_3_0 SpritePixelShaderBlur();
+        PixelShader = compile ps_3_0 BlurPixelShader();
     }
 }
-
+//-----------------------------------------------------------
+//-----------------------------------------------------------
 technique SpriteBatch
 {
 	pass

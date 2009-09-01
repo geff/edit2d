@@ -55,7 +55,7 @@ namespace WinFormsContentLoading
     {
         LineBrush line;
 
-        FrameRateCounter frameRateCounter;
+        //FrameRateCounter frameRateCounter;
 
         // Timer controls the rotation speed.
         Stopwatch timer;
@@ -351,16 +351,16 @@ namespace WinFormsContentLoading
             EffectPass pass = null;
 
             //--- Texture de l'entité
-            if (entite.BlurFactor != 0f)
-            {
-                effect.CurrentTechnique = effect.Techniques["Blur"];
-                pass = effect.Techniques["Blur"].Passes[0];
-            }
-            else
-            {
+            //if (entite.BlurFactor != 0f)
+            //{
+            //    effect.CurrentTechnique = effect.Techniques["Blur"];
+            //    pass = effect.Techniques["Blur"].Passes[0];
+            //}
+            //else
+            //{
                 effect.CurrentTechnique = effect.Techniques["SpriteBatch"];
                 pass = effect.Techniques["SpriteBatch"].Passes[0];
-            }
+            //}
             //---
 
             //---
@@ -518,18 +518,6 @@ namespace WinFormsContentLoading
             effect.End();
             //---
 
-            //--- Frame rate
-            
-
-            spriteBatch.Begin();
-            spriteBatch.DrawString(spriteFont, String.Format("{0:00.0} FPS", 1000f / stopWatch.ElapsedMilliseconds), new Vector2(20,20), Color.White);
-            spriteBatch.End();
-
-            stopWatch.Reset();
-            stopWatch.Start();
-            //---
-
-
             //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
             //---> Begin pour le shader
             //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);//, repository.Camera.MatrixTransformation);
@@ -570,6 +558,12 @@ namespace WinFormsContentLoading
             {
                 this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.ListSelection[i].Pointer.ScreenPosition - vecPointerMidSize, null, Color.Blue);
             }
+            //---
+
+            //--- Frame rate
+            spriteBatch.DrawString(spriteFont, String.Format("{0:00.0} FPS", 1000f / stopWatch.ElapsedMilliseconds), new Vector2(20, 20), Color.White);
+            stopWatch.Reset();
+            stopWatch.Start();
             //---
 
             this.spriteBatch.End();
