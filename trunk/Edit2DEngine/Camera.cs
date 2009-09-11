@@ -33,5 +33,23 @@ namespace Edit2DEngine
                 return mtx;
             }
         }
+
+        public Matrix MatrixScale
+        {
+            get
+            {
+                Matrix mtx = Matrix.CreateScale(Zoom);
+                return mtx;
+            }
+        }
+
+        public Matrix MatrixTranslation
+        {
+            get
+            {
+                Matrix mtx = Matrix.CreateTranslation(Position.X + NewCorner.X, Position.Y + NewCorner.Y, 0f);
+                return mtx;
+            }
+        }
     }
 }

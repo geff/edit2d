@@ -47,6 +47,9 @@ namespace Edit2DEngine.Action
         [Browsable(false)]
         public Boolean Playing { get; set; }
 
+        float[] updateValues;
+        float[] startValues;
+
         public ActionEvent(Script script, string actionName, Type typeEntite, string propertyName)
         {
             this.Script = script;
@@ -84,6 +87,9 @@ namespace Edit2DEngine.Action
 
         private void InitVar(int count)
         {
+            updateValues = new float[count];
+            startValues = new float[count];
+
             this.FloatValues = new float[count];
             this.RndMinValues = new float[count];
             this.RndMaxValues = new float[count];
@@ -110,23 +116,23 @@ namespace Edit2DEngine.Action
             }
         }
 
-        //--- Start values
-        Vector2 vecStartValue = Vector2.Zero;
-        float floatStartValue = 0f;
-        Size sizeStartValue = Size.Empty;
-        Microsoft.Xna.Framework.Graphics.Color colorStartValue = Microsoft.Xna.Framework.Graphics.Color.Black;
-        bool boolStartValue = false;
+        ////--- Start values
+        //Vector2 vecStartValue = Vector2.Zero;
+        //float floatStartValue = 0f;
+        //Size sizeStartValue = Size.Empty;
+        //Microsoft.Xna.Framework.Graphics.Color colorStartValue = Microsoft.Xna.Framework.Graphics.Color.Black;
+        //bool boolStartValue = false;
         float[] rndStartValue;
-        //---
+        ////---
 
-        //--- Actual values
-        Vector2 vecActualValue = Vector2.Zero;
-        float floatActualValue = 0f;
-        Size sizeActualValue = Size.Empty;
-        Microsoft.Xna.Framework.Graphics.Color colorActualValue = Microsoft.Xna.Framework.Graphics.Color.Black;
-        bool boolActualValue = false;
-        float[] rndActualValue;
-        //---
+        ////--- Actual values
+        //Vector2 vecActualValue = Vector2.Zero;
+        //float floatActualValue = 0f;
+        //Size sizeActualValue = Size.Empty;
+        //Microsoft.Xna.Framework.Graphics.Color colorActualValue = Microsoft.Xna.Framework.Graphics.Color.Black;
+        //bool boolActualValue = false;
+        //float[] rndActualValue;
+        ////---
 
         bool[] initialized;
         int[] deltaMs;
@@ -172,81 +178,63 @@ namespace Edit2DEngine.Action
             return value;
         }
 
-        private void GetPropertyValue(Repository repository, ref Vector2 vecValue, ref float floatValue, ref Size sizeValue, ref Microsoft.Xna.Framework.Graphics.Color colorValue, ref bool boolValue, ref float rndValue, int index)
+        private void GetPropertyValue(Repository repository, int i)
         {
             if (this.PropertyType.Name == "Vector2")
             {
-                if (index == 0)
-                    vecValue.X = ((Vector2)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).X;
-                else if (index == 1)
-                    vecValue.Y = ((Vector2)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).Y;
+                if (i == 0)
+                    startValues[i] = ((Vector2)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).X;
+                else if (i == 1)
+                    startValues[i] = ((Vector2)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).Y;
             }
             else if (this.PropertyType.Name == "Size")
             {
-                if (index == 0)
-                    sizeValue.Width = ((Size)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).Width;
-                if (index == 1)
-                    sizeValue.Height = ((Size)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).Height;
+                if (i == 0)
+                    startValues[i] = (float)((Size)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).Width;
+                if (i == 1)
+                    startValues[i] = (float)((Size)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).Height;
             }
             else if (this.PropertyType.Name == "Single")
             {
-                floatValue = (float)this.ActionProperty.GetValue(this.Script.ActionHandler, null);
+                startValues[i] = (float)this.ActionProperty.GetValue(this.Script.ActionHandler, null);
             }
             else if (this.PropertyType.Name == "Int32")
             {
-                floatValue = (float)this.ActionProperty.GetValue(this.Script.ActionHandler, null);
+                startValues[i] = (float)this.ActionProperty.GetValue(this.Script.ActionHandler, null);
             }
             else if (this.PropertyType.Name == "Color")
             {
-                if (index == 0)
-                    colorValue.R = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).R;
-                else if (index == 1)
-                    colorValue.G = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).G;
-                else if (index == 2)
-                    colorValue.B = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).B;
-                else if (index == 3)
-                    colorValue.A = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).A;
+                if (i == 0)
+                    startValues[i] = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).R;
+                else if (i == 1)
+                    startValues[i] = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).G;
+                else if (i == 2)
+                    startValues[i] = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).B;
+                else if (i == 3)
+                    startValues[i] = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.ActionHandler, null)).A;
             }
             else if (this.PropertyType.Name == "Boolean")
             {
-                boolValue = (bool)this.ActionProperty.GetValue(this.Script.ActionHandler, null);
+                startValues[i] = (float)this.ActionProperty.GetValue(this.Script.ActionHandler, null);
             }
 
             //--- Initialisation des valeurs aléatoires
-            if (this.ActionEventTypes[index] == ActionEventType.Random)
-                rndValue = repository.GetRandomValue(RndMinValues[index], RndMaxValues[index]);
+            if (this.ActionEventTypes[i] == ActionEventType.Random)
+                rndStartValue[i] = repository.GetRandomValue(RndMinValues[i], RndMaxValues[i]);
             //---
+
+            initialized[i] = true;
         }
 
         public void UpdateValue(Repository repository)
         {
-            Vector2 vecValue = Vector2.Zero;
-            float floatValue = 0f;
-            Size sizeValue = Size.Empty;
-            Microsoft.Xna.Framework.Graphics.Color colorValue = Microsoft.Xna.Framework.Graphics.Color.Black;
-            bool boolValue = false;
-
             TimeSpan timeNow = DateTime.Now.TimeOfDay;
 
             bool playing = true;
 
             for (int i = 0; i < this.ActionEventTypes.Length; i++)
             {
-                #region Initialization
-                GetPropertyValue(repository, ref vecActualValue, ref floatActualValue, ref sizeActualValue, ref colorActualValue, ref boolActualValue, ref rndActualValue[i], i);
-
-                if (!initialized[i])
-                {
-                    vecStartValue = vecActualValue;
-                    floatActualValue = floatStartValue;
-                    sizeActualValue = sizeStartValue;
-                    colorActualValue = colorStartValue;
-                    boolActualValue = boolStartValue;
-                    rndActualValue[i] = rndStartValue[i];
-
-                    initialized[i] = true;
-                }
-                #endregion
+                updateValues[i] = 0;
 
                 //--- Durée
                 if (Durations[i] != 0)
@@ -275,669 +263,49 @@ namespace Edit2DEngine.Action
                 }
                 //---
 
-                if (this.PropertyType.Name == "Vector2")
-                {
-                    #region Vector2
-                    switch (this.ActionEventTypes[i])
-                    {
-                        case ActionEventType.Deactivated:
-                            if (i == 0)
-                                vecValue.X = vecStartValue.X;
-                            else if (i == 1)
-                                vecValue.Y = vecStartValue.Y;
-                            break;
-                        case ActionEventType.FixedValue:
-                            if (this.IsRelative[i])
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    if (i == 0)
-                                        vecValue.X = vecStartValue.X + MathHelper.Lerp(0f, this.FloatValues[i], pct[i]);
-                                    else if (i == 1)
-                                        vecValue.Y = vecStartValue.Y + MathHelper.Lerp(0f, this.FloatValues[i], pct[i]);
-                                }
-                                else
-                                {
-                                    if (i == 0)
-                                        vecValue.X = vecStartValue.X + this.FloatValues[i];
-                                    else if (i == 1)
-                                        vecValue.Y = vecStartValue.Y + this.FloatValues[i];
-                                }
-                            }
-                            else
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    if (i == 0)
-                                        vecValue.X = MathHelper.Lerp(0f, this.FloatValues[i], pct[i]);
-                                    else if (i == 1)
-                                        vecValue.Y = MathHelper.Lerp(0f, this.FloatValues[i], pct[i]);
-                                }
-                                  else
-                                {
-                                    if (i == 0)
-                                        vecValue.X = this.FloatValues[i];
-                                    else if (i == 1)
-                                        vecValue.Y = this.FloatValues[i];
-                                }
-                            }
-                            break;
-                        case ActionEventType.MouseX:
-                            if (this.IsRelative[i])
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    if (i == 0)
-                                        vecValue.X = vecStartValue.X + MathHelper.Lerp(0f, repository.GetMousePosition().X - vecStartValue.X, pct[i]);
-                                    else if (i == 1)
-                                        vecValue.Y = vecStartValue.Y + MathHelper.Lerp(0f, repository.GetMousePosition().X - vecStartValue.X, pct[i]);
-                                }
-                                else
-                                {
-                                    if (i == 0)
-                                        vecValue.X = repository.GetMousePosition().X;
-                                    else if (i == 1)
-                                        vecValue.Y = repository.GetMousePosition().X;
-                                }
-                            }
-                            else
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    if (i == 0)
-                                        vecValue.X = MathHelper.Lerp(0f, repository.GetMousePosition().X, pct[i]);
-                                    else if (i == 1)
-                                        vecValue.Y = MathHelper.Lerp(0f, repository.GetMousePosition().X, pct[i]);
-                                }
-                                else if (Speeds[i] != 0)
-                                {
-                                    if (i == 0)
-                                        vecValue.X = vecActualValue.X += Speeds[i] * deltaMs[i];
-                                    else if (i == 1)
-                                        vecValue.Y = vecActualValue.Y += Speeds[i] * deltaMs[i];
-                                }
-                                else
-                                {
-                                    if (i == 0)
-                                        vecValue.X = repository.GetMousePosition().X;
-                                    else if (i == 1)
-                                        vecValue.Y = repository.GetMousePosition().X;
-                                }
-                            }
-                            break;
-                        case ActionEventType.MouseY:
-                            if (this.IsRelative[i])
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    if (i == 0)
-                                        vecValue.X = vecStartValue.X + MathHelper.Lerp(0f, repository.GetMousePosition().Y - vecStartValue.Y, pct[i]);
-                                    else if (i == 1)
-                                        vecValue.Y = vecStartValue.Y + MathHelper.Lerp(0f, repository.GetMousePosition().Y - vecStartValue.Y, pct[i]);
-                                }
-                                else
-                                {
-                                    if (i == 0)
-                                        vecValue.X = repository.GetMousePosition().Y;
-                                    else if (i == 1)
-                                        vecValue.Y = repository.GetMousePosition().Y;
-                                }
-                            }
-                            else
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    if (i == 0)
-                                        vecValue.X = MathHelper.Lerp(0f, repository.GetMousePosition().Y, pct[i]);
-                                    else if (i == 1)
-                                        vecValue.Y = MathHelper.Lerp(0f, repository.GetMousePosition().Y, pct[i]);
-                                }
-                                else if (Speeds[i] != 0)
-                                {
-                                    if (i == 0)
-                                        vecValue.X = vecActualValue.X + Speeds[i] * deltaMs[i];
-                                    else if (i == 1)
-                                        vecValue.Y = vecActualValue.Y + Speeds[i] * deltaMs[i];
-                                }
-                                else
-                                {
-                                    if (i == 0)
-                                        vecValue.X = repository.GetMousePosition().Y;
-                                    else if (i == 1)
-                                        vecValue.Y = repository.GetMousePosition().Y;
-                                }
-                            }
-                            break;
-                        case ActionEventType.EntityBinding:
-                            if (this.IsRelative[i])
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    if (i == 0)
-                                        vecValue.X = vecStartValue.X + MathHelper.Lerp(0f, GetPropertyValue(i), pct[i]);
-                                    else if (i == 1)
-                                        vecValue.Y = vecStartValue.Y + MathHelper.Lerp(0f, GetPropertyValue(i), pct[i]);
-                                }
-                                else
-                                {
-                                    if (i == 0)
-                                        vecValue.X = vecStartValue.X + GetPropertyValue(i);
-                                    else if (i == 1)
-                                        vecValue.Y = vecStartValue.Y + GetPropertyValue(i);
-                                }
-                            }
-                            else
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    if (i == 0)
-                                        vecValue.X = MathHelper.Lerp(0f, GetPropertyValue(i), pct[i]);
-                                    else if (i == 1)
-                                        vecValue.Y = MathHelper.Lerp(0f, GetPropertyValue(i), pct[i]);
-                                }
-                                else
-                                {
-                                    if (i == 0)
-                                        vecValue.X = GetPropertyValue(i);
-                                    else if (i == 1)
-                                        vecValue.Y = GetPropertyValue(i);
-                                }
-                            }
-                            break;
-                        case ActionEventType.Random:
-                            //if (this.IsRelative[i])
-                            //{
-                            //    if (Durations[i] != 0)
-                            //    {
-                            //        if (i == 0)
-                            //            vecValue.X = vecStartValue.X + MathHelper.Lerp(0f, rndStartValue[i], pct[i]);
-                            //        else if (i == 1)
-                            //            vecValue.Y = vecStartValue.Y + MathHelper.Lerp(0f, rndStartValue[i], pct[i]);
-                            //    }
-                            //    else
-                            //    {
-                            //        if (i == 0)
-                            //            vecValue.X = vecStartValue.X + rndStartValue[i];
-                            //        else if (i == 1)
-                            //            vecValue.Y = vecStartValue.Y + rndStartValue[i];
-                            //    }
-                            //}
-                            //else
-                            //{
-                            //    if (Durations[i] != 0)
-                            //    {
-                            //        if (i == 0)
-                            //            vecValue.X = MathHelper.Lerp(0f, rndStartValue[i], pct[i]);
-                            //        else if (i == 1)
-                            //            vecValue.Y = MathHelper.Lerp(0f, rndStartValue[i], pct[i]);
-                            //    }
-                            //    else
-                            //    {
-                            //        if (i == 0)
-                            //            vecValue.X = rndStartValue[i];
-                            //        else if (i == 1)
-                            //            vecValue.Y = rndStartValue[i];
-                            //    }
-                            //}
+                float calcValue = 0f;
 
-                            if (this.IsRelative[i])
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    if (i == 0)
-                                        vecValue.X = MathHelper.Lerp(vecStartValue.X, rndStartValue[i], pct[i]);
-                                    else if (i == 1)
-                                        vecValue.Y = MathHelper.Lerp(vecStartValue.Y, rndStartValue[i], pct[i]);
-                                }
-                                else
-                                {
-                                    if (i == 0)
-                                        vecValue.X = vecStartValue.X + rndStartValue[i];
-                                    else if (i == 1)
-                                        vecValue.Y = vecStartValue.Y + rndStartValue[i];
-                                }
-                            }
-                            else
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    if (i == 0)
-                                        vecValue.X = MathHelper.Lerp(0, rndStartValue[i], pct[i]);
-                                    else if (i == 1)
-                                        vecValue.Y = MathHelper.Lerp(0, rndStartValue[i], pct[i]);
-                                }
-                                else
-                                {
-                                    if (i == 0)
-                                        vecValue.X = rndStartValue[i];
-                                    else if (i == 1)
-                                        vecValue.Y = rndStartValue[i];
-                                }
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    #endregion
-                }
-                else if (this.PropertyType.Name == "Single")
+                #region Vector2
+                switch (this.ActionEventTypes[i])
                 {
-                    #region Float
-                    switch (this.ActionEventTypes[i])
-                    {
-                        case ActionEventType.Deactivated:
-                            floatValue = floatStartValue;
-                            break;
-                        case ActionEventType.FixedValue:
-                            if (this.IsRelative[i])
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = floatStartValue + MathHelper.Lerp(0f, this.FloatValues[i], pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = floatStartValue + this.FloatValues[i];
-                                }
-                            }
-                            else
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = MathHelper.Lerp(0f, this.FloatValues[i], pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = this.FloatValues[i];
-                                }
-                            }
-                            break;
-                        case ActionEventType.MouseX:
-                            if (this.IsRelative[i])
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = floatStartValue + MathHelper.Lerp(0f, repository.GetMousePosition().X - floatStartValue, pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = repository.GetMousePosition().X;
-                                }
-                            }
-                            else
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = MathHelper.Lerp(0f, repository.GetMousePosition().X, pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = repository.GetMousePosition().X;
-                                }
-                            }
-                            break;
-                        case ActionEventType.MouseY:
-                            if (this.IsRelative[i])
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = floatStartValue + MathHelper.Lerp(0f, repository.GetMousePosition().Y - floatStartValue, pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = repository.GetMousePosition().Y;
-                                }
-                            }
-                            else
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = MathHelper.Lerp(0f, repository.GetMousePosition().Y, pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = repository.GetMousePosition().Y;
-                                }
-                            }
-                            break;
-                        case ActionEventType.EntityBinding:
-                            break;
-                        case ActionEventType.Random:
-                            if (this.IsRelative[i])
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = MathHelper.Lerp(floatStartValue, rndStartValue[i], pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = floatStartValue + rndStartValue[i];
-                                }
-                            }
-                            else
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = MathHelper.Lerp(0f, rndStartValue[i], pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = rndStartValue[i];
-                                }
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    #endregion
+                    case ActionEventType.Deactivated:
+                        calcValue = startValues[i];
+                        break;
+                    case ActionEventType.FixedValue:
+                        calcValue = this.FloatValues[i];
+                        break;
+                    case ActionEventType.MouseX:
+                        calcValue = repository.GetMousePosition().X - startValues[i];
+                        break;
+                    case ActionEventType.MouseY:
+                        calcValue = repository.GetMousePosition().Y - startValues[i];
+                        break;
+                    case ActionEventType.EntityBinding:
+                        calcValue = GetPropertyValue(i);
+                        break;
+                    case ActionEventType.Random:
+                        calcValue = rndStartValue[i];
+                        break;
+                    default:
+                        break;
                 }
-                else if (this.PropertyType.Name == "Int32")
+                #endregion
+
+                //--- Relatives & Durations
+                if (this.IsRelative[i])
                 {
-                    #region Int32
-                    switch (this.ActionEventTypes[i])
-                    {
-                        case ActionEventType.Deactivated:
-                            floatValue = floatStartValue;
-                            break;
-                        case ActionEventType.FixedValue:
-                            if (this.IsRelative[i])
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = floatStartValue + MathHelper.Lerp(0f, this.FloatValues[i], pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = floatStartValue + this.FloatValues[i];
-                                }
-                            }
-                            else
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = MathHelper.Lerp(0f, this.FloatValues[i], pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = this.FloatValues[i];
-                                }
-                            }
-                            break;
-                        case ActionEventType.MouseX:
-                            if (this.IsRelative[i])
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = floatStartValue + MathHelper.Lerp(0f, repository.GetMousePosition().X - floatStartValue, pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = repository.GetMousePosition().X;
-                                }
-                            }
-                            else
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = MathHelper.Lerp(0f, repository.GetMousePosition().X, pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = repository.GetMousePosition().X;
-                                }
-                            }
-                            break;
-                        case ActionEventType.MouseY:
-                            if (this.IsRelative[i])
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = floatStartValue + MathHelper.Lerp(0f, repository.GetMousePosition().Y - floatStartValue, pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = repository.GetMousePosition().Y;
-                                }
-                            }
-                            else
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = MathHelper.Lerp(0f, repository.GetMousePosition().Y, pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = repository.GetMousePosition().Y;
-                                }
-                            }
-                            break;
-                        case ActionEventType.EntityBinding:
-                            break;
-                        case ActionEventType.Random:
-                            if (this.IsRelative[i])
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = MathHelper.Lerp(floatStartValue, rndStartValue[i], pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = floatStartValue + rndStartValue[i];
-                                }
-                            }
-                            else
-                            {
-                                if (Durations[i] != 0)
-                                {
-                                    floatValue = MathHelper.Lerp(0f, rndStartValue[i], pct[i]);
-                                }
-                                else
-                                {
-                                    floatValue = rndStartValue[i];
-                                }
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    #endregion
+                    updateValues[i] = startValues[i];
                 }
-                else if (this.PropertyType.Name == "Size")
+
+                if (Durations[i] != 0)
                 {
-                    #region Size
-                    //switch (this.ActionEventTypes[i])
-                    //{
-                    //    case ActionEventType.Deactivated:
-                    //        if (i == 0)
-                    //            vecValue.X = vecStartValue.X;
-                    //        else if (i == 1)
-                    //            vecValue.Y = vecStartValue.Y;
-                    //        break;
-                    //    case ActionEventType.FixedValue:
-                    //        if (this.IsRelative[i])
-                    //        {
-                    //            if (Durations[i] != 0)
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = vecStartValue.X + MathHelper.Lerp(0f, this.FloatValues[i], pct[i]);
-                    //                else if (i == 1)
-                    //                    vecValue.Y = vecStartValue.Y + MathHelper.Lerp(0f, this.FloatValues[i], pct[i]);
-                    //            }
-                    //            else
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = vecStartValue.X + this.FloatValues[i];
-                    //                else if (i == 1)
-                    //                    vecValue.Y = vecStartValue.Y + this.FloatValues[i];
-                    //            }
-                    //        }
-                    //        else
-                    //        {
-                    //            if (Durations[i] != 0)
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = MathHelper.Lerp(0f, this.FloatValues[i], pct[i]);
-                    //                else if (i == 1)
-                    //                    vecValue.Y = MathHelper.Lerp(0f, this.FloatValues[i], pct[i]);
-                    //            }
-                    //            else
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = this.FloatValues[i];
-                    //                else if (i == 1)
-                    //                    vecValue.Y = this.FloatValues[i];
-                    //            }
-                    //        }
-                    //        break;
-                    //    case ActionEventType.MouseX:
-                    //        if (this.IsRelative[i])
-                    //        {
-                    //            if (Durations[i] != 0)
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = vecStartValue.X + MathHelper.Lerp(0f, repository.GetMousePosition().X - vecStartValue.X, pct[i]);
-                    //                else if (i == 1)
-                    //                    vecValue.Y = vecStartValue.Y + MathHelper.Lerp(0f, repository.GetMousePosition().X - vecStartValue.X, pct[i]);
-                    //            }
-                    //            else
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = repository.GetMousePosition().X;
-                    //                else if (i == 1)
-                    //                    vecValue.Y = repository.GetMousePosition().X;
-                    //            }
-                    //        }
-                    //        else
-                    //        {
-                    //            if (Durations[i] != 0)
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = MathHelper.Lerp(0f, repository.GetMousePosition().X, pct[i]);
-                    //                else if (i == 1)
-                    //                    vecValue.Y = MathHelper.Lerp(0f, repository.GetMousePosition().X, pct[i]);
-                    //            }
-                    //            else
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = repository.GetMousePosition().X;
-                    //                else if (i == 1)
-                    //                    vecValue.Y = repository.GetMousePosition().X;
-                    //            }
-                    //        }
-                    //        break;
-                    //    case ActionEventType.MouseY:
-                    //        if (this.IsRelative[i])
-                    //        {
-                    //            if (Durations[i] != 0)
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = vecStartValue.X + MathHelper.Lerp(0f, repository.GetMousePosition().Y - vecStartValue.Y, pct[i]);
-                    //                else if (i == 1)
-                    //                    vecValue.Y = vecStartValue.Y + MathHelper.Lerp(0f, repository.GetMousePosition().Y - vecStartValue.Y, pct[i]);
-                    //            }
-                    //            else
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = repository.GetMousePosition().Y;
-                    //                else if (i == 1)
-                    //                    vecValue.Y = repository.GetMousePosition().Y;
-                    //            }
-                    //        }
-                    //        else
-                    //        {
-                    //            if (Durations[i] != 0)
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = MathHelper.Lerp(0f, repository.GetMousePosition().Y, pct[i]);
-                    //                else if (i == 1)
-                    //                    vecValue.Y = MathHelper.Lerp(0f, repository.GetMousePosition().Y, pct[i]);
-                    //            }
-                    //            else
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = repository.GetMousePosition().Y;
-                    //                else if (i == 1)
-                    //                    vecValue.Y = repository.GetMousePosition().Y;
-                    //            }
-                    //        }
-                    //        break;
-                    //    case ActionEventType.EntityBinding:
-                    //        break;
-                    //    case ActionEventType.Random:
-                    //        if (this.IsRelative[i])
-                    //        {
-                    //            if (Durations[i] != 0)
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = vecStartValue.X + MathHelper.Lerp(0f, rndStartValue[i], pct[i]);
-                    //                else if (i == 1)
-                    //                    vecValue.Y = vecStartValue.Y + MathHelper.Lerp(0f, rndStartValue[i], pct[i]);
-                    //            }
-                    //            else
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = vecStartValue.X + rndStartValue[i];
-                    //                else if (i == 1)
-                    //                    vecValue.Y = vecStartValue.Y + rndStartValue[i];
-                    //            }
-                    //        }
-                    //        else
-                    //        {
-                    //            if (Durations[i] != 0)
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = MathHelper.Lerp(0f, rndStartValue[i], pct[i]);
-                    //                else if (i == 1)
-                    //                    vecValue.Y = MathHelper.Lerp(0f, rndStartValue[i], pct[i]);
-                    //            }
-                    //            else
-                    //            {
-                    //                if (i == 0)
-                    //                    vecValue.X = rndStartValue[i];
-                    //                else if (i == 1)
-                    //                    vecValue.Y = rndStartValue[i];
-                    //            }
-                    //        }
-                    //        break;
-                    //    default:
-                    //        break;
-                    //}
-                    #endregion
+                    updateValues[i] += MathHelper.Lerp(0f, calcValue, pct[i]);
                 }
-                else if (this.PropertyType.Name == "Color")
+                else
                 {
-                    #region Color
-                    //if (this.IsRelative[i])
-                    //{
-                    //    if (i == 0)
-                    //        colorValue.R = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.Entite, null)).R;
-                    //    else if (i == 1)
-                    //        colorValue.G = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.Entite, null)).G;
-                    //    else if (i == 2)
-                    //        colorValue.B = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.Entite, null)).B;
-                    //    else if (i == 3)
-                    //        colorValue.A = ((Microsoft.Xna.Framework.Graphics.Color)this.ActionProperty.GetValue(this.Script.Entite, null)).A;
-                    //} 
-                    #endregion
+                    updateValues[i] += calcValue;
                 }
-                else if (this.PropertyType.Name == "Boolean")
-                {
-                    #region Boolean
-                    switch (this.ActionEventTypes[i])
-                    {
-                        case ActionEventType.Deactivated:
-                            boolValue = boolStartValue;
-                            break;
-                        case ActionEventType.FixedValue:
-                            boolValue = this.BoolValue;
-                            break;
-                        case ActionEventType.EntityBinding:
-                            break;
-                        default:
-                            break;
-                    }
-                    #endregion
-                }
+                //----
 
                 //--- Durée
                 if (Durations[i] != 0)
@@ -963,17 +331,34 @@ namespace Edit2DEngine.Action
             this.Playing = playing;
 
             if (this.PropertyType.Name == "Vector2")
+            {
+                Vector2 vecValue = new Vector2(updateValues[0], updateValues[1]);
                 this.ActionProperty.SetValue(this.Script.ActionHandler, vecValue, null);
+            }
             else if (this.PropertyType.Name == "Size")
+            {
+                Size sizeValue = new Size((int)updateValues[0], (int)updateValues[1]);
                 this.ActionProperty.SetValue(this.Script.ActionHandler, sizeValue, null);
+            }
             else if (this.PropertyType.Name == "Single")
-                this.ActionProperty.SetValue(this.Script.ActionHandler, floatValue, null);
+            {
+                this.ActionProperty.SetValue(this.Script.ActionHandler, updateValues[0], null);
+            }
             else if (this.PropertyType.Name == "Int32")
-                this.ActionProperty.SetValue(this.Script.ActionHandler, (int)floatValue, null);
+            {
+                this.ActionProperty.SetValue(this.Script.ActionHandler, (int)updateValues[0], null);
+            }
             else if (this.PropertyType.Name == "Color")
+            {
+                Microsoft.Xna.Framework.Graphics.Color colorValue = new Microsoft.Xna.Framework.Graphics.Color((byte)updateValues[0], (byte)updateValues[1], (byte)updateValues[2]);//, updateValues[3]);
                 this.ActionProperty.SetValue(this.Script.ActionHandler, colorValue, null);
+            }
             else if (this.PropertyType.Name == "Boolean")
+            {
+                Boolean boolValue = false;
+                Boolean.TryParse(updateValues[0].ToString(), out boolValue);
                 this.ActionProperty.SetValue(this.Script.ActionHandler, boolValue, null);
+            }
         }
     }
 

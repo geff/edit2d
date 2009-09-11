@@ -5,10 +5,22 @@ float4x4 MatrixTransform : register(c2);
 sampler  TextureSampler  : register(s0);
 //-----------------------------------------------------------
 
+Texture EdgePassTexture;
+sampler EdgePassSampler = sampler_state
+{
+    Texture = <EdgePassTexture>;    
+};
+
+
+//--- Selection
 float timeMS;
+bool isSelected;
+//---
+
+//--- Background
 float4 gradientColor1;
 float4 gradientColor2;
-bool isSelected;
+//---
 
 float2   myEntiteSize;
 float2   myTextureSize;
@@ -29,6 +41,10 @@ const float2 offsets[12] = {
    -0.321940, -0.932615,
    -0.791559, -0.597705,
 };
+
+//--- Edge pass
+bool initEdgePass = false;
+//---
 
 
 //-----------------------------------------------------------
@@ -52,6 +68,55 @@ void SpriteVertexShader(inout float4 position : POSITION0,
 
 	// Compute the texture coordinate.
 	texCoord /= TextureSize;
+}
+
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+float GetEdgeValuePass(float2 texCoord : TEXCOORD0)
+{
+	float edgeValue = 1;
+	float2 fullTexCoord = texCoord * myTextureSize;
+	float4 color = tex2D(TextureSampler, fullTexCoord);
+	
+	if(color.a  != 1)
+	{
+		// n init : élimination de toutes les couleurs alpha
+		if(initEdgePass)
+			edgeValue = 0;
+		else
+			edgeValue = color.a ;
+	}
+	else
+	{
+		const float2 neighbours[8] = {
+			float2(-1,-1),
+			float2(0,-1),
+			float2(1,-1),
+			float2(-1,0),
+			float2(1,0),
+			float2(-1,1),
+			float2(0,1),
+			float2(1,1),
+		};
+		
+		int j = 0;
+		for(j = 0; j < 8; j++)
+		{
+			if(edgeValue != 0.1)
+			{
+				float2 newTexCoord = fullTexCoord + neighbours[j];
+				float4 clr = tex2D(TextureSampler, newTexCoord);
+				
+				if(clr.a  != 1)
+				{
+					if(edgeValue > clr.a+0.1)
+						edgeValue = clr.a+0.1;
+				}
+			}
+		}
+	}
+	
+	return edgeValue;
 }
 
 //-----------------------------------------------------------
@@ -182,17 +247,50 @@ void SelectColor(inout float4 color)
 //-----------------------------------------------------------
 void EdgePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 {
-	float edgeValue = GetEdgeValue(texCoord, 5);
-	if(edgeValue > 0 )
-	 {
-		color.r = 0;
-		color.g = 1;
-		color.b =  0;
-	 }
-	 
-	 color.a = tex2D(TextureSampler, texCoord).a;
-	 
+	float4 edgeValue = tex2D(EdgePassSampler, texCoord);
+	float4 spriteColor =tex2D(TextureSampler, texCoord);
+
+	//color*=spriteColor;
+	
+	if(edgeValue.a<1)
+	{
+		color*= float4(edgeValue.a,edgeValue.a,edgeValue.a,1);
+	}
+	else
+	{
+		color*=spriteColor;
+	}
+	
 	SelectColor(color);
+}
+
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+void EdgePassPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
+{
+	float4 colorTex = tex2D(TextureSampler, texCoord);
+	float4 colorTexEdge = tex2D(EdgePassSampler, texCoord);
+	float edgeValue = GetEdgeValuePass(texCoord);
+	
+	/*
+	if(edgeValue < 1)
+	 {
+		color.r = edgeValue;
+		color.g = edgeValue;
+		color.b = edgeValue;
+		color.a = edgeValue;
+	 }
+	 else
+	 {
+		color = float4(0,0,0,1);
+	 }
+	 	 
+	 color.a = tex2D(TextureSampler, texCoord).a;
+	 */
+	 
+	 color = float4(edgeValue,edgeValue,edgeValue, 1);
+	 
+	 //color*=colorTex;
 }
 
 //-----------------------------------------------------------
@@ -284,7 +382,7 @@ void NightPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 {
 
-	NightPixelShader(color, texCoord);
+	//NightPixelShader(color, texCoord);
 	//texCoord.y = texCoord.y  + (sin(texCoord.y*100)*0.03*(1+cos(6.28/500*timeMS))/2); 
 	/*
 	if(isInBackground)
@@ -301,16 +399,34 @@ void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 		BlurPixelShader(color, texCoord);
 		//color = float4(0,0,0,0);
 	}
-	
+	*/
     
-    //color *= tex2D(TextureSampler, texCoord);
+    color *= tex2D(TextureSampler, texCoord);
     
 	//color = tex2D( TextureSampler , texCoord);
-	SelectColor(color);*/
+	SelectColor(color);
 }
 
 //-----------------------------------------------------------
 //			TECHNIQUES
+//-----------------------------------------------------------
+technique EdgePass
+{
+    pass
+    {
+        PixelShader = compile ps_3_0 EdgePassPixelShader();
+    }
+}
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+technique Edge
+{
+    pass
+    {
+        PixelShader = compile ps_3_0 EdgePixelShader();
+    }
+}
+//-----------------------------------------------------------
 //-----------------------------------------------------------
 technique Gradient
 {
@@ -325,7 +441,6 @@ technique Night
 {
     pass
     {
-        //VertexShader = compile vs_1_1 SpriteVertexShader();
         PixelShader = compile ps_3_0 NightPixelShader();
     }
 }
