@@ -141,167 +141,151 @@ namespace WinFormsContentLoading
             //effect.Parameters["ViewportSize"].SetValue(viewportSize);
         }
 
-
-        //VPPT[] quad = new VPPT[10];
-        VertexPositionColorTexture[] quad = new VertexPositionColorTexture[10];
-        VertexDeclaration vdec;
-
-        /// <summary>
-        /// Draw texture to given position and angle, and informs shader of lastPosition and lastAngle
-        /// </summary>
-        /// <param name="texture">Texture to draw</param>
-        /// <param name="position">Current position</param>
-        /// <param name="lastPosition">Previous position</param>
-        /// <param name="angle">Current rotation angle</param>
-        /// <param name="lastAngle">Previous rotatino angle</param>
-        public void DrawTexture(Texture2D texture, Vector2 position, Vector2 center, Vector2 size, Vector2 lastPosition, float angle, float lastAngle)
+        private void DrawEntiteBasic(Entite entite, string technique)
         {
-            //vdec = new VertexDeclaration(GraphicsDevice, VPPT.VertexElements);
-            vdec = new VertexDeclaration(GraphicsDevice, VertexPositionColorTexture.VertexElements);
+            EffectPass pass = null;
+            //GraphicsDevice.Clear(Color.White);
+            //--- Pass
+            effect.CurrentTechnique = effect.Techniques[technique];
 
-            #region Setup quadrilater with the size of the texture, and centered at (0,0)
-            //float halfW = texture.Width / 2;
-            //float halfH = texture.Height / 2;
-
-            float halfW = size.X / 2f;
-            float halfH = size.Y / 2f;
-
-            float left = -halfW;
-            float right = +halfW;
-            float top = -halfH;
-            float bottom = +halfH;
-
-            center.X = 0; //(float)Math.Round((double)center.X, MidpointRounding.AwayFromZero);
-            center.Y = 0;// (float)Math.Round((double)center.Y, MidpointRounding.AwayFromZero);
-
-            //float left = -halfW - center.X + halfW;
-            //float right = +halfW + center.X - halfW;
-            //float top = -halfH - center.Y + halfH;
-            //float bottom = +halfH + center.Y - halfH;
-
-            //--- VPPT
-            //quad[0].Position0 = new Vector3(0, 0, 0);
-
-            //quad[1].Position0 = new Vector3(left, top, 0);
-            //quad[2].Position0 = new Vector3(0, top, 0);
-            //quad[3].Position0 = new Vector3(right, top, 0);
-
-            //quad[4].Position0 = new Vector3(right, 0, 0);
-            //quad[5].Position0 = new Vector3(right, bottom, 0);
-            //quad[6].Position0 = new Vector3(0, bottom, 0);
-
-            //quad[7].Position0 = new Vector3(left, bottom, 0);
-            //quad[8].Position0 = new Vector3(left, 0, 0);
-            //quad[9].Position0 = new Vector3(left, top, 0);
-
-            //quad[0].TextureCoordinate = new Vector2(.5f, .5f);
-
-            //quad[1].TextureCoordinate = new Vector2(0f, 0f);
-            //quad[2].TextureCoordinate = new Vector2(.5f, 0f);
-            //quad[3].TextureCoordinate = new Vector2(1f, 0f);
-
-            //quad[4].TextureCoordinate = new Vector2(1f, .5f);
-            //quad[5].TextureCoordinate = new Vector2(1f, 1f);
-            //quad[6].TextureCoordinate = new Vector2(.5f, 1f);
-
-            //quad[7].TextureCoordinate = new Vector2(0f, 1f);
-            //quad[8].TextureCoordinate = new Vector2(0f, .5f);
-            //quad[9].TextureCoordinate = new Vector2(0f, 0f);
+            //pass = effect.Techniques[technique].Passes[0];
             //---
 
-            quad[0].Position = new Vector3(0, 0, 0);
+            //---
+            this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None, repository.Camera.MatrixTransformation);
 
-            quad[1].Position = new Vector3(left, top, 0);
-            quad[2].Position = new Vector3(0, top, 0);
-            quad[3].Position = new Vector3(right, top, 0);
+            //effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
+            //effect.Parameters["myEntiteSize"].SetValue(entite.SizeVector);
+            //effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
+            //effect.Parameters["isSelected"].SetValue(entite.Selected);
 
-            quad[4].Position = new Vector3(right, 0, 0);
-            quad[5].Position = new Vector3(right, bottom, 0);
-            quad[6].Position = new Vector3(0, bottom, 0);
+            effect.Begin();
+            effect.CurrentTechnique.Passes[0].Begin();
 
-            quad[7].Position = new Vector3(left, bottom, 0);
-            quad[8].Position = new Vector3(left, 0, 0);
-            quad[9].Position = new Vector3(left, top, 0);
+            Texture2D texture = null;
 
-            quad[0].TextureCoordinate = new Vector2(.5f, .5f);
+            if (entite is Particle)
+                texture = TextureManager.LoadParticleTexture2D(entite.TextureName);
+            else
+                texture = TextureManager.LoadTexture2D(entite.TextureName);
 
-            quad[1].TextureCoordinate = new Vector2(0f, 0f);
-            quad[2].TextureCoordinate = new Vector2(.5f, 0f);
-            quad[3].TextureCoordinate = new Vector2(1f, 0f);
+            Rectangle rectSrc = entite.Rectangle;
+            Rectangle rectDst = entite.Rectangle;
 
-            quad[4].TextureCoordinate = new Vector2(1f, .5f);
-            quad[5].TextureCoordinate = new Vector2(1f, 1f);
-            quad[6].TextureCoordinate = new Vector2(.5f, 1f);
+            this.spriteBatch.Draw(texture, rectDst, null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 0f);
+            this.spriteBatch.End();
 
-            quad[7].TextureCoordinate = new Vector2(0f, 1f);
-            quad[8].TextureCoordinate = new Vector2(0f, .5f);
-            quad[9].TextureCoordinate = new Vector2(0f, 0f);
-
-            #endregion
-
-            //Translate and Rotate quadrilater
-
-            float sin = (float)Math.Sin(angle);
-            float cos = (float)Math.Cos(angle);
-            float sin2 = (float)Math.Sin(lastAngle);
-            float cos2 = (float)Math.Cos(lastAngle);
-
-            for (int ii = 0; ii < quad.Length; ++ii)
-            {
-                //The following code is the equivalent of inlining the follwing 2 lines of code(exepept the rotation matrix is only created once)
-                //quad[ii].Position0 = new Vector3(Vector2.Transform(quad[ii].Position0, Matrix.CreateRotationZ(angle) * Matrix.CreateTranslation(new Vector3(position,0));
-                //and 
-                //quad[ii].Position0 = new Vector3(Vector2.Transform(quad[ii].Position0, Matrix.CreateRotationZ(lastAngle) * Matrix.CreateTranslation(new Vector3(lastPosition,0)); 
-
-                //float tmpX = quad[ii].Position.X + center.X;
-                //float tmpY = quad[ii].Position.Y + center.Y;
-                //quad[ii].Position.X = (tmpX * cos) + (tmpY * -sin) + position.X + center.X;
-                //quad[ii].Position.Y = (tmpX * sin) + (tmpY * cos) + position.Y + center.Y;
-
-                //quad[ii].Position.X = (tmpX * cos2) + (tmpY * -sin2) + lastPosition.X + center.X;
-                //quad[ii].Position.Y = (tmpX * sin2) + (tmpY * cos2) + lastPosition.Y + center.Y;
-
-            }
-
-            GraphicsDevice.Textures[0] = texture;
-
-            GraphicsDevice.VertexDeclaration = vdec;
-
-            //GraphicsDevice.DrawUserPrimitives<VPPT>(PrimitiveType.TriangleFan, quad, 0, 8);
-            GraphicsDevice.DrawUserPrimitives<VertexPositionColorTexture>(PrimitiveType.TriangleFan, quad, 0, 8);
+            effect.CurrentTechnique.Passes[0].End();
+            effect.End();
+            //---
         }
 
-        private void DrawSprite(Texture2D texture, Vector2 position, Vector2 center, Vector2 size, Vector2 lastPosition, float angle, float lastAngle)
+        private void DrawEntiteEdge(Entite entite)
         {
-            effect.Begin();
+            int nbPass = 5;
+            Texture2D edgeTexture = null;
+            Vector3 spriteScale = Vector3.Transform(new Vector3(entite.SizeVector, 0f), repository.Camera.MatrixScale);
+            //RenderTarget2D edgeRenderTarget1 = new RenderTarget2D(GraphicsDevice, (int)spriteScale.X, (int)spriteScale.Y, 1, SurfaceFormat.Color);
+            RenderTarget2D edgeRenderTarget1 = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 1, SurfaceFormat.Color);
 
-            //GraphicsDevice.SetRenderTarget(0, mbColor);
+            //--- [1] Récupère le RenderTarget principal 
+            //RenderTarget firstRenderTarget = GraphicsDevice.GetRenderTarget(0);
+            //---
+            
+            //--- [2] Affecte le nouveau RenderTarget
+            GraphicsDevice.SetRenderTarget(0, null);
+            GraphicsDevice.SetRenderTarget(0, edgeRenderTarget1);
+            //---
+
+            //====== [3] Affecte la texture du sprite
+            //--- Texture
+            Texture2D texture = null;
+            if (entite is Particle)
+                texture = TextureManager.LoadParticleTexture2D(entite.TextureName);
+            else
+                texture = TextureManager.LoadTexture2D(entite.TextureName);
+            //---
+
+            //--- Paramètres shader
+            effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
+            effect.Parameters["myEntiteSize"].SetValue(entite.SizeVector);
+            effect.Parameters["EdgePassTexture"].SetValue(texture);
+            effect.Parameters["initEdgePass"].SetValue(true);
+            //---
+            //======
+
+            //--- [4] Affichage du sprite pass
+            DrawEntiteBasic(entite, "EdgePass");
+            //---
+
             GraphicsDevice.SetRenderTarget(0, null);
 
 
-            effect.CurrentTechnique.Passes[0].Begin();
+            edgeTexture = edgeRenderTarget1.GetTexture();
+            edgeTexture.Save(@"c:\testRT.png", ImageFileFormat.Png);
 
-            //A compléter
+            
 
-            //--- DrawBlurred
-            Viewport port = GraphicsDevice.Viewport;
-            //Vector2 viewport = new Vector2(port.Width / 2, port.Height / 2);
-            Vector2 viewport = new Vector2(port.Width, port.Height);
+            /*
+            for (int i = 0; i < nbPass; i++)
+            {
+                edgeTexture = edgeRenderTarget1.GetTexture();
+                edgeTexture.Save(String.Format(@"c:\testRT{0}.png", i), ImageFileFormat.Png);
 
-            GraphicsDevice.SetVertexShaderConstant(0, viewport);
-            GraphicsDevice.SetVertexShaderConstant(1, size);
-            GraphicsDevice.SetVertexShaderConstant(2, repository.Camera.MatrixTransformation);
+                //--- [6] Affecte le nouveau RenderTarget
+                //RenderTarget2D edgeRenderTarget2 = new RenderTarget2D(GraphicsDevice, (int)spriteScale.X, (int)spriteScale.Y, 1, SurfaceFormat.Color);
+                //ResolveTexture2D tex = new ResolveTexture2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height,1, SurfaceFormat.Color);
+                
+                GraphicsDevice.SetRenderTarget(0, edgeRenderTarget1);
+                //---
+
+                //--- [7] Affecte la texture
+                effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
+                effect.Parameters["myEntiteSize"].SetValue(entite.SizeVector);
+                effect.Parameters["EdgePassTexture"].SetValue(edgeTexture);
+                //---
 
 
+                //--- [8] Affichage du sprite pass
+                DrawEntiteBasic(entite, "EdgePass");
+                //---
 
-            //--- DrawHelper
-            //draw.Draw(color, position, lastp, angle, lastangle);
-            DrawTexture(texture, position, center, size, lastPosition, angle, lastAngle);
+                GraphicsDevice.SetRenderTarget(0, null);
+            }
+
+            edgeTexture = edgeRenderTarget1.GetTexture();
+            edgeTexture.Save(String.Format(@"c:\testRT{0}.png", nbPass), ImageFileFormat.Png);
+
+            //RenderTarget2D prevRT2 = ((RenderTarget2D)GraphicsDevice.GetRenderTarget(0));
+            //GraphicsDevice.SetRenderTarget(0, null);
+
+            //--- [10] Affecte l'ancien RenderTarget
+            GraphicsDevice.SetRenderTarget(0, firstRenderTarget as RenderTarget2D);
             //---
 
-            effect.CurrentTechnique.Passes[0].End();
+            //--- [9] Récupère la texture
+            //edgeTexture = prevRT2.GetTexture();
+            //---
 
-            effect.End();
+            //edgeTexture.Save(String.Format(@"c:\testRT{0}.png", nbPass), ImageFileFormat.Png);
+
+            //--- [11] Affecte la texture
+            effect.Parameters["EdgePassTexture"].SetValue(edgeTexture);
+            //---
+
+            //====== Shader Edge
+            //--- [12] Affecte les paramètrers du shader
+            effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
+            effect.Parameters["isSelected"].SetValue(entite.Selected);
+            //---
+
+            //--- [13] Affichage du sprite pass
+            DrawEntiteBasic(entite, "Edge");
+            //---
+            //======
+
+            GraphicsDevice.SetRenderTarget(0, null);
+            */
         }
 
         private void DrawEntite(Entite entite)
@@ -347,7 +331,13 @@ namespace WinFormsContentLoading
                 //---
             }
             */
+            //effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
+            //effect.Parameters["isSelected"].SetValue(entite.Selected);
 
+            DrawEntiteEdge(entite);
+            //DrawEntiteBasic(entite, "EdgePass");
+
+            /*
             EffectPass pass = null;
 
             //--- Texture de l'entité
@@ -358,8 +348,8 @@ namespace WinFormsContentLoading
             //}
             //else
             //{
-                effect.CurrentTechnique = effect.Techniques["SpriteBatch"];
-                pass = effect.Techniques["SpriteBatch"].Passes[0];
+            effect.CurrentTechnique = effect.Techniques["SpriteBatch"];
+            pass = effect.Techniques["SpriteBatch"].Passes[0];
             //}
             //---
 
@@ -396,7 +386,7 @@ namespace WinFormsContentLoading
             this.spriteBatch.End();
 
             pass.End();
-            effect.End();
+            effect.End();*/
             //---
 
             if (((!repository.Pause && repository.IsEntityClickableOnPlay) || repository.Pause) && ((repository.ShowDebugMode && entite.IsStatic) || entite.Selected))
@@ -410,8 +400,6 @@ namespace WinFormsContentLoading
                                                      (int)entite.Position.Y,
                                                      (int)(10f),
                                                      (int)(16f));
-                    //(int)(10f / repository.Camera.Zoom),
-                    //(int)(16f / repository.Camera.Zoom));
 
                     this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pin"), recPin, null, Color.White, entite.Rotation,
                         entite.SizeVector / 2f + new Vector2(5f, 8f), SpriteEffects.None, 0f);
@@ -425,22 +413,7 @@ namespace WinFormsContentLoading
                 }
                 //---
 
-                //--- Cadre de sélection
-                //if (entite.Selected)
-                //{
-                //    float ratioX = (float)entite.Size.Width / (float)entite.NativeImageSize.Width;
-                //    float ratioY = (float)entite.Size.Height / (float)entite.NativeImageSize.Height;
-
-                //    Vector2 vecCenter = Vector2.Zero;
-                //    vecCenter.X = 5f * entite.Center.X / (float)entite.Size.Width * ratioX;
-                //    vecCenter.Y = 5f * entite.Center.Y / (float)entite.Size.Height * ratioY;
-
-                //    this.spriteBatch.Draw(TextureManager.LoadTexture2D("Anchor"), entite.Rectangle, null, new Color(0, 150, 250, 100), entite.Body.Rotation, vecCenter, SpriteEffects.None, 0f);
-                //}
-                //---
-
                 this.spriteBatch.End();
-
             }
 
             //if (entite.Selected && entite.ListParticleSystem.Count > 0)
@@ -528,11 +501,41 @@ namespace WinFormsContentLoading
 
             //            Rectangle recScreen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
+
+            List<Entite> listEntiteToDraw = new List<Entite>();
+            Rectangle recScreen = new Rectangle(GraphicsDevice.Viewport.X + 0, GraphicsDevice.Viewport.Y + 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+
             for (int i = 0; i < repository.listEntite.Count; i++)
             {
                 Entite entite = repository.listEntite[i];
-                DrawEntite(entite);
+
+                Rectangle recEntite = Rectangle.Empty;
+                Vector3 vecPosEntite = new Vector3(entite.Position - entite.Center, 0f);
+                Vector3 vecSizeEntite = new Vector3(entite.geom.AABB.Width, entite.geom.AABB.Height, 0);
+
+                vecPosEntite = Vector3.Transform(vecPosEntite, repository.Camera.MatrixTransformation);
+                vecSizeEntite = Vector3.Transform(vecSizeEntite, repository.Camera.MatrixScale);
+
+                recEntite = new Rectangle((int)vecPosEntite.X, (int)vecPosEntite.Y, (int)vecSizeEntite.X, (int)vecSizeEntite.Y);
+
+                if (recScreen.Intersects(recEntite))
+                {
+                    listEntiteToDraw.Add(entite);
+                }
             }
+
+            for (int i = 0; i < listEntiteToDraw.Count; i++)
+            {
+                DrawEntite(listEntiteToDraw[i]);
+            }
+
+            repository.FrmEdit2D.Text = listEntiteToDraw.Count.ToString();
+
+            //for (int i = 0; i < repository.listEntite.Count; i++)
+            //{
+            //    DrawEntite(repository.listEntite[i]);
+            //}
+
 
             this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
             //--- Cadre physique

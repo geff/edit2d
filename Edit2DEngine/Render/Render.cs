@@ -28,6 +28,7 @@ namespace Edit2DEngine.Render
                 effect = contentManager.Load<Effect>(@"Content\Shader\SpriteBatch");
         }
 
+        #region Update
         public void Update()
         {
             UpdateEntityActionPlayer();
@@ -152,49 +153,17 @@ namespace Edit2DEngine.Render
                 }
                 //---
             }
-        }
+        } 
+        #endregion
 
         public void Draw()
         {
-            //if (this.spriteBatch == null)
-            //{
-            //    this.spriteBatch = new SpriteBatch(GraphicsDevice);
-            //    repository.PhysicsSimulatorView.LoadContent(GraphicsDevice, Content);
-            //}
-
-            // Clear to the default control background color.
-
-            //--- Réinitialisation du renderstate - Le SpriteBatch modifie le renderstate
-            //this.SpriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None, repository.Camera.MatrixTransformation);
-            //effect.Begin();
-
-            //            Rectangle recScreen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-
             for (int i = 0; i < repository.listEntite.Count; i++)
             {
                 Entite entite = repository.listEntite[i];
 
-
                 DrawEntite(entite);
             }
-
-            //this.SpriteBatch.End();
-
-            //this.SpriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
-
-            //--- Pointeur de la souris
-            //this.SpriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.pointerDraw, null, Color.Red);
-            //---
-
-            //--- Pointeur secondaire
-            //if (repository.keyCtrlPressed)
-            //    this.SpriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.pointerDraw2, null, Color.Blue);
-            //---
-
-            //--- Cadre physique
-            //if (repository.showPhysic)
-            //    repository.PhysicsSimulatorView.Draw(spriteBatch);
-            //---
         }
 
         private void DrawEntite(Entite entite)
