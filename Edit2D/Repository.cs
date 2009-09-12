@@ -25,6 +25,8 @@ namespace Edit2D
 
         public MouseMode mouseMode = MouseMode.Move;
 
+        public bool Screenshot = false;
+
         public Repository()
         {
             this.ListSelection = new List<Selection>();

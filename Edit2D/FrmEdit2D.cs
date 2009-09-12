@@ -1139,6 +1139,11 @@ namespace Edit2D
                     repository.OrderEntite();
                     RefreshTreeView();
                 }
+
+                if (e.KeyCode == Keys.P)
+                {
+                    repository.Screenshot = true;
+                }
             }
         }
 
