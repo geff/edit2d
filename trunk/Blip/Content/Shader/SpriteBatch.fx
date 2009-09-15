@@ -48,6 +48,17 @@ const float2 offsets[12] = {
    -0.791559, -0.597705,
 };
 
+const float2 neighbours[8] = {
+	-1,-1,
+	0,-1,
+	1,-1,
+	-1,0,
+	1,0,
+	-1,1,
+	0,1,
+	1,1
+};
+
 //--- Edge pass
 bool initEdgePass = false;
 //---
@@ -81,54 +92,47 @@ void SpriteVertexShader(inout float4 position : POSITION0,
 float GetEdgeValuePass(float2 texCoord : TEXCOORD0)
 {
 	float edgeValue = 1;
-	float2 fullTexCoord = texCoord;// * myTextureSize;
-	float4 color = tex2D(EdgePassSampler, fullTexCoord);
-	
-	if(color.a   < 1)
+	float4 color = tex2D(EdgePassSampler, texCoord);
+
+	if(initEdgePass)
 	{
-		// n init : ?limination de toutes les couleurs alpha
-		if(initEdgePass)
+		if(color.a   < 1)
 			edgeValue = 0;
-		else
-			edgeValue = color.a ;
 	}
-	
-	//if(edgeValue = 0)
-	//	return edgeValue;
-		
+	else if(color.b   < 1)
+	{
+			//edgeValue = color.a;
+			edgeValue = color.b;
+			//edgeValue = 0.33;
+	}
 	else
 	{
-		const float2 neighbours[8] = {
-			float2(-1,-1),
-			float2(0,-1),
-			float2(1,-1),
-			float2(-1,0),
-			float2(1,0),
-			float2(-1,1),
-			float2(0,1),
-			float2(1,1),
-		};
+		//edgeValue = 0.66;
+		
 		
 		int j = 0;
 		for(j = 0; j < 8; j++)
 		{
-			if(edgeValue > 0.1)
+			//if(edgeValue != 1)
 			{
-				float2 newTexCoord = fullTexCoord + neighbours[j]/ myTextureSize;
+				float2 newTexCoord = texCoord + neighbours[j]/ myTextureSize;
 				
-				//if(newTexCoord.x>= 0 && newTexCoord.x <= 1 && newTexCoord.y >= 0 && newTexCoord.y<= 1)
+				if(newTexCoord.x>= 0 && newTexCoord.x <= 1 && newTexCoord.y >= 0 && newTexCoord.y<= 1)
 				{
 					float4 clr = tex2D(EdgePassSampler, newTexCoord);
 					
-					if(clr.a  != 1)
+					//if(clr.a+0.1  < edgeValue)
+					if(clr.b+0.1 < edgeValue)
 					{
 						//if(edgeValue > clr.a-0.1)
-							edgeValue = clr.a-0.2;
+							//edgeValue = clr.a-0.2;
+							edgeValue = clr.b+0.1;
+							//edgeValue = min(clr.a+0.1, edgeValue);
 					}
 				}
-				//else
+				else
 				{
-					//edgeValue = 0.1;
+					edgeValue = 0;
 				}
 			}
 		}
@@ -136,7 +140,8 @@ float GetEdgeValuePass(float2 texCoord : TEXCOORD0)
 
 	if(edgeValue < 0)
 		edgeValue = 0;
-		
+	
+	//edgeValue = texCoord.x;
 	return edgeValue;
 }
 
@@ -264,26 +269,33 @@ void SelectColor(inout float4 color)
 	}
 }
 
+/*
 //-----------------------------------------------------------
 //-----------------------------------------------------------
 void EdgePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 {
-	float4 edgeValue = tex2D(EdgePassSampler, texCoord);
+	//float4 edgeValue = tex2D(EdgePassSampler, texCoord);
 	float4 spriteColor =tex2D(TextureSampler, texCoord);
 
 	//color*=spriteColor;
-	
-	if(edgeValue.a<-1)
+	if(spriteColor.a = 1)
 	{
-		color*= float4(edgeValue.a,edgeValue.a,edgeValue.a,1);
+		if(edgeValue.a<-1)
+		{
+			color*= float4(edgeValue.a,edgeValue.a,edgeValue.a,1);
+		}
+		else
+		{
+			color*=spriteColor;
+		}
 	}
 	else
 	{
-		color*=spriteColor;
+		color = float4(0,0,0,0);
 	}
 	
 	SelectColor(color);
-}
+}*/
 
 //-----------------------------------------------------------
 //-----------------------------------------------------------
@@ -293,26 +305,31 @@ void EdgePassPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD
 	//float4 colorTexEdge = tex2D(EdgePassSampler, texCoord);
 	
 	
-	if(colorTex.a >0)
+	//if(colorTex.a  = 1)
 	{
 		float edgeValue = GetEdgeValuePass(texCoord);
 		
 		if(edgeValue < 1)
 		 {
+			//color.r = edgeValue;
+			//color.g =edgeValue;
+			//color.b = 1;
+			//color.a = edgeValue;
+			
 			color.r = 0;
 			color.g = edgeValue;
 			color.b = edgeValue;
-			color.a = edgeValue;
+			color.a = 1;
 		 }
 		 else
 		 {
-			color = float4(1,0,0,1);
+			color = float4(1,0,1,1);
 		 }
-	 }
-	 else
-	 {
-		color = float4(1,0,0,1);
-	 }
+	}
+	//else
+	//{
+	//	color = float4(1,0,1,0);
+	//}
 	 	 
 	 //color.a = tex2D(TextureSampler, texCoord).a;
 	 
@@ -427,7 +444,7 @@ void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 	{
 		color *= tex2D(TextureSampler, texCoord);
 	}
-	/*
+	
 	if(blurFactor>0.0f)
 	{
 		BlurPixelShader(color, texCoord);
@@ -439,6 +456,27 @@ void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
     color=float4(1,1,1,0);
 	//color = tex2D( TextureSampler , texCoord);
 	//SelectColor(color);
+}
+
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+void EdgePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
+{
+	float4 clr =  tex2D( TextureSampler , texCoord);
+	
+	if(clr.a  != 1)
+	{
+		color = float4(1,0,0,0);
+		
+	}
+	else
+	{
+	float nbPass = 30;
+		float edgeValue = GetEdgeValue(texCoord,nbPass) / nbPass;
+	
+		color=float4(edgeValue,edgeValue,edgeValue, 1);
+		//color=float4(0,0,1, 1);
+	}
 }
 
 //-----------------------------------------------------------
