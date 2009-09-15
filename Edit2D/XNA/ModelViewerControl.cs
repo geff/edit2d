@@ -143,7 +143,6 @@ namespace WinFormsContentLoading
 
         private void DrawEntiteBasic(Entite entite, bool noPosition, string technique)
         {
-            EffectPass pass = null;
             //GraphicsDevice.Clear(Color.White);
             //--- Pass
             effect.CurrentTechnique = effect.Techniques[technique];
@@ -169,12 +168,13 @@ namespace WinFormsContentLoading
             else
                 texture = TextureManager.LoadTexture2D(entite.TextureName);
 
-            Rectangle rectSrc = entite.Rectangle;
             Rectangle rectDst = entite.Rectangle;
 
             if (noPosition)
             {
                 rectDst.Location = new Point((int)entite.Center.X+0, (int)entite.Center.Y+0);
+                //rectDst.Width += 10;
+                //rectDst.Height += 10;
             }
 
             this.spriteBatch.Draw(texture, rectDst, null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 0f);
@@ -187,21 +187,22 @@ namespace WinFormsContentLoading
 
         private void DrawEntiteEdge(Entite entite)
         {
-            int nbPass = 10;
+            int nbPass = 20;
+            Color clearColor = Color.TransparentBlack;
+
             Texture2D edgeTexture = null;
             Vector3 spriteScale = Vector3.Transform(new Vector3(entite.SizeVector, 0f), repository.Camera.MatrixScale);
-            RenderTarget2D edgeRenderTarget1 = new RenderTarget2D(GraphicsDevice, (int)spriteScale.X, (int)spriteScale.Y, 1, SurfaceFormat.Color);
-            //RenderTarget2D edgeRenderTarget1 = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 1, SurfaceFormat.Color);
+            RenderTarget2D edgeRenderTarget1 = new RenderTarget2D(GraphicsDevice, (int)spriteScale.X-2, (int)spriteScale.Y-2, 1, SurfaceFormat.Color);
 
             //--- [1] Récupère le RenderTarget principal 
             RenderTarget firstRenderTarget = GraphicsDevice.GetRenderTarget(0);
             //---
-            
+
             //--- [2] Affecte le nouveau RenderTarget
-            GraphicsDevice.SetRenderTarget(0, null);
+            //GraphicsDevice.SetRenderTarget(0, null);
             GraphicsDevice.SetRenderTarget(0, edgeRenderTarget1);
+            GraphicsDevice.Clear(clearColor);
             //---
-            GraphicsDevice.Clear(Color.White);
 
             //====== [3] Affecte la texture du sprite
             //--- Texture
@@ -224,32 +225,21 @@ namespace WinFormsContentLoading
             DrawEntiteBasic(entite, true, "EdgePass");
             //---
 
+            //--- Désaffecte le RenderTarget
             GraphicsDevice.SetRenderTarget(0, null);
-            GraphicsDevice.Clear(Color.White);
+            //---
 
 
-            //edgeTexture = edgeRenderTarget1.GetTexture();
-
-            //if (repository.Screenshot)
-            //{
-            //    edgeTexture.Save(@"c:\scr\testRT.png", ImageFileFormat.Png);
-            //}
-            
-
-            
             for (int i = 0; i < nbPass; i++)
             {
                 edgeTexture = edgeRenderTarget1.GetTexture();
-                if(repository.Screenshot)
+                if (repository.Screenshot)
                     edgeTexture.Save(String.Format(@"c:\scr\testRT{0}.png", i), ImageFileFormat.Png);
 
                 //--- [6] Affecte le nouveau RenderTarget
-                //RenderTarget2D edgeRenderTarget2 = new RenderTarget2D(GraphicsDevice, (int)spriteScale.X, (int)spriteScale.Y, 1, SurfaceFormat.Color);
-                //ResolveTexture2D tex = new ResolveTexture2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height,1, SurfaceFormat.Color);
-
                 GraphicsDevice.SetRenderTarget(0, edgeRenderTarget1);
+                GraphicsDevice.Clear(clearColor);
                 //---
-                GraphicsDevice.Clear(Color.White);
 
                 //--- [7] Affecte la texture
                 effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
@@ -263,26 +253,21 @@ namespace WinFormsContentLoading
                 DrawEntiteBasic(entite, true, "EdgePass");
                 //---
 
+                //--- Désaffecte le RenderTarget
                 GraphicsDevice.SetRenderTarget(0, null);
+                //---
             }
 
             edgeTexture = edgeRenderTarget1.GetTexture();
-            
-            if(repository.Screenshot)
+
+            if (repository.Screenshot)
                 edgeTexture.Save(String.Format(@"c:\scr\testRT{0}.png", nbPass), ImageFileFormat.Png);
 
-            //RenderTarget2D prevRT2 = ((RenderTarget2D)GraphicsDevice.GetRenderTarget(0));
-            //GraphicsDevice.SetRenderTarget(0, null);
 
             //--- [10] Affecte l'ancien RenderTarget
-            GraphicsDevice.SetRenderTarget(0, firstRenderTarget as RenderTarget2D);
+            //GraphicsDevice.SetRenderTarget(0, firstRenderTarget as RenderTarget2D);
+            GraphicsDevice.SetRenderTarget(0, null);
             //---
-
-            //--- [9] Récupère la texture
-            //edgeTexture = prevRT2.GetTexture();
-            //---
-
-            //edgeTexture.Save(String.Format(@"c:\testRT{0}.png", nbPass), ImageFileFormat.Png);
 
             //--- [11] Affecte la texture
             effect.Parameters["EdgePassTexture"].SetValue(edgeTexture);
@@ -307,65 +292,8 @@ namespace WinFormsContentLoading
             //    edgeTexture.Save(String.Format(@"c:\scr\final.png", nbPass), ImageFileFormat.Png);
 
             //}
-            //firstRenderTarget = GraphicsDevice.GetRenderTarget(0);
 
             GraphicsDevice.SetRenderTarget(0, null);
-
-
-            //Texture2D tex1 = new Texture2D(GraphicsDevice, 100, 100);
-            //RenderTarget2D oldRenderTarget = null;
-            //RenderTarget2D newRenderTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 1, SurfaceFormat.Color);
-
-            //oldRenderTarget = (RenderTarget2D)GraphicsDevice.GetRenderTarget(0);
-            //GraphicsDevice.SetRenderTarget(0, newRenderTarget);
-
-            //for (int i = 0; i < nbPass; i++)
-            //{
-                
-            //}
-
-            //-------------------
-            /*
-            const int MaxTexSize = 512;
-
-            IDirect3DTexture9* tex1 = 0;
-            IDirect3DTexture9* tex2 = 0;
-            //This part should be done once at initialization so as to avoid creating textures every frame
-            D3DDevice->CreateTexture(MaxTexSize, MaxTexSize, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A32B32G32R32F, D3DPOOL_DEFAULT, &tex1, 0);
-            D3DDevice->CreateTexture(MaxTexSize, MaxTexSize, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A32B32G32R32F, D3DPOOL_DEFAULT, &tex2, 0);
-
-
-
-            IDirect3DSurface9* oldRenderTarget = 0;
-            IDirect3DSurface9* newRenderTarget = 0;
-            D3DDevice->GetRenderTarget(0, &oldRenderTarget);
-
-            tex1->GetSurfaceLevel(0, &newRenderTarget);
-            D3DDevice->SetRenderTarget(0, newRenderTarget);
-            mainWindow.Render_ResetViewport(MaxTexSize, MaxTexSize);
-            mainWindow.MatOrtho(0, MaxTexSize - 1.0f, MaxTexSize - 1.0f, 0);
-            //Do the first pass here
-            IDirect3DTexture9* currentDst = tex2;
-            IDirect3DTexture9* currentSrc = tex1;
-            for (int i = 0; i < iterations; i++)
-            {
-                currentDst->GetSurfaceLevel(0, &newRenderTarget);
-                D3DDevice->SetRenderTarget(0, newRenderTarget);
-                D3DDevice->SetTexture(0, currentSrc);
-                //Do other passes here
-                IDirect3DTexture9* temp = currentDst;
-                currentDst = currentSrc;
-                currentSrc = temp;
-            }
-
-            D3DDevice->SetRenderTarget(0, oldRenderTarget);
-            int x, y;
-            mainWindow.GetClientSize(x, y);
-            mainWindow.Render_ResetViewport(x, y);
-            mainWindow.MatOrtho();
-            D3DDevice->SetTexture(0, currentDst);
-            //Use currentDst texture to draw the last pass onto the screen
-            */
         }
 
         private void DrawEntite(Entite entite)
@@ -411,11 +339,13 @@ namespace WinFormsContentLoading
                 //---
             }
             */
+
             //effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
             //effect.Parameters["isSelected"].SetValue(entite.Selected);
+            effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
 
-            DrawEntiteEdge(entite);
-            //DrawEntiteBasic(entite, "EdgePass");
+            //DrawEntiteEdge(entite);
+            DrawEntiteBasic(entite, false, "Edge");
 
             /*
             EffectPass pass = null;
