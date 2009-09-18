@@ -8,7 +8,18 @@ sampler  TextureSampler  : register(s0);
 Texture EdgePassTexture;
 sampler EdgePassSampler = sampler_state
 {
-    Texture = <EdgePassTexture>;    
+    Texture = <EdgePassTexture>;   
+	MaxAnisotropy = 16;
+	MinFilter = Anisotropic;
+	MagFilter = Anisotropic;
+	MipFilter = Anisotropic;
+};
+
+Texture NormalMapTexture;
+sampler NormalMapSampler = sampler_state
+{
+    Texture = <NormalMapTexture>;    
+	MaxAnisotropy = 16;
 };
 
 
@@ -29,6 +40,7 @@ float4 gradientColor2;
 //---
 
 float2   myEntiteSize;
+float2   myEntitePosition;
 float2   myTextureSize;
 float2 blipPos;
 bool isInBackground = false;
@@ -149,7 +161,8 @@ float GetEdgeValuePass(float2 texCoord : TEXCOORD0)
 //-----------------------------------------------------------
 float GetEdgeValue(float2 texCoord : TEXCOORD0, float length)
 {
-	float edgeValue = 100;
+	float edgeValue = 0;
+	float nbValue = 0;
 	
 	if(tex2D(TextureSampler, texCoord).a != 0)
 	{
@@ -170,7 +183,7 @@ float GetEdgeValue(float2 texCoord : TEXCOORD0, float length)
 				{
 					float2 neewCoord = newTexCoord / myTextureSize;
 					
-					if(tex2D(TextureSampler, neewCoord).a ==0)
+					if(tex2D(TextureSampler, neewCoord).a < 1)
 						calcDist = true;
 				}
 				else
@@ -182,15 +195,19 @@ float GetEdgeValue(float2 texCoord : TEXCOORD0, float length)
 				{
 					float dist = distance(fullTexCoord, newTexCoord);
 					
-					if(dist < edgeValue)
-						edgeValue = dist;
+					nbValue++;
+					//if(dist < edgeValue)
+					edgeValue += dist;
 				}
 			}
 		}
 	}
 
-	if(edgeValue == 100)
-		edgeValue = 0;
+	//if(edgeValue == 100)
+	//	edgeValue = 0;
+	//else
+	if(nbValue >0)
+		edgeValue /= nbValue;
 	
 	return edgeValue;
 }
@@ -282,16 +299,16 @@ void EdgePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 	{
 		if(edgeValue.a<-1)
 		{
-			color*= float4(edgeValue.a,edgeValue.a,edgeValue.a,1);
+			color= float4(edgeValue.a,edgeValue.a,edgeValue.a,1);
 		}
 		else
 		{
-			color*=spriteColor;
+			//color*=spriteColor;
 		}
 	}
 	else
 	{
-		color = float4(0,0,0,0);
+		color = float4(1,1,1,1);
 	}
 	
 	SelectColor(color);
@@ -355,6 +372,42 @@ void SobelPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 	SelectColor(color);
 }
 
+
+ 
+float4 NormalMapPixelShader(in float2 uv:TEXCOORD0) : COLOR
+{
+	//float textureSize = 256.0f;
+	float texelSize =  1.0f / myTextureSize.x ; //size of one texel;
+	float normalStrength = 8;
+
+    float tl = abs(tex2D (EdgePassSampler, uv + texelSize * float2(-1, -1)).x);   // top left
+    float  l = abs(tex2D (EdgePassSampler, uv + texelSize * float2(-1,  0)).x);   // left
+    float bl = abs(tex2D (EdgePassSampler, uv + texelSize * float2(-1,  1)).x);   // bottom left
+    float  t = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 0, -1)).x);   // top
+    float  b = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 0,  1)).x);   // bottom
+    float tr = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 1, -1)).x);   // top right
+    float  r = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 1,  0)).x);   // right
+    float br = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 1,  1)).x);   // bottom right
+ 
+    // Compute dx using Sobel:
+    //           -1 0 1 
+    //           -2 0 2
+    //           -1 0 1
+    float dX = tr + 2*r + br -tl - 2*l - bl;
+ 
+    // Compute dy using Sobel:
+    //           -1 -2 -1 
+    //            0  0  0
+    //            1  2  1
+    float dY = bl + 2*b + br -tl - 2*t - tr;
+ 
+    // Build the normalized normal
+    float4 N = float4(normalize(float3(dX, 1.0f / normalStrength, dY)), 1.0f);
+ 
+    //convert (-1.0 , 1.0) to (0.0 , 1.0), if needed
+    return N * 0.5f + 0.5f;
+}
+
 //-----------------------------------------------------------
 //-----------------------------------------------------------
 void BackgroundPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
@@ -413,6 +466,7 @@ void GradientPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD
 //-----------------------------------------------------------
 void NightPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 {
+	/*
 	float maxEdgeValue =6;
 	float edgeValue = GetEdgeValue(texCoord, maxEdgeValue);
 	
@@ -424,7 +478,23 @@ void NightPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 	 }
 	 
 	 color.a = tex2D(TextureSampler, texCoord).a;
-	 
+	*/
+
+	float4 colorTex = tex2D(TextureSampler, texCoord);
+	float4 colorNormalMap = normalize(2*tex2D(NormalMapSampler, texCoord)-1);
+	
+	float l = 150;
+	float angle = 6.28/2000 * timeMS;
+	float2 lightPos = float2(l*cos(angle), l*sin(angle));
+	float2 texelPos = myTextureSize * (texCoord - 0.5);
+	float2 vec = normalize(-lightPos + texelPos);
+
+	float dt = saturate(dot(colorNormalMap.xz, vec));
+	
+	color*=colorTex*0.75+0.25*saturate(dot(colorNormalMap.xz, vec));
+	
+	//color = float4(dt,dt,dt,1);
+	
 	SelectColor(color);
 }
 
@@ -466,21 +536,35 @@ void EdgePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 	
 	if(clr.a  != 1)
 	{
-		color = float4(1,0,0,0);
-		
+		color = float4(1,1,1,1);
 	}
 	else
 	{
-	float nbPass = 30;
+		float nbPass = 15;
 		float edgeValue = GetEdgeValue(texCoord,nbPass) / nbPass;
 	
+		if(edgeValue <= 0)
+			edgeValue = 1;
+			
 		color=float4(edgeValue,edgeValue,edgeValue, 1);
-		//color=float4(0,0,1, 1);
 	}
 }
 
 //-----------------------------------------------------------
 //			TECHNIQUES
+//-----------------------------------------------------------
+technique NormalMap
+{
+    pass HeightMap
+    {
+        PixelShader = compile ps_3_0 EdgePixelShader();
+    }
+    pass NormalMap
+    {
+        PixelShader = compile ps_3_0 NormalMapPixelShader();
+    }
+}
+//-----------------------------------------------------------
 //-----------------------------------------------------------
 technique EdgePass
 {

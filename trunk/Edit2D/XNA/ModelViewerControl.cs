@@ -143,6 +143,11 @@ namespace WinFormsContentLoading
 
         private void DrawEntiteBasic(Entite entite, bool noPosition, string technique)
         {
+            DrawEntiteBasic(entite, noPosition, technique, 0);
+        }
+
+        private void DrawEntiteBasic(Entite entite, bool noPosition, string technique, int pass)
+        {
             //GraphicsDevice.Clear(Color.White);
             //--- Pass
             effect.CurrentTechnique = effect.Techniques[technique];
@@ -151,7 +156,10 @@ namespace WinFormsContentLoading
             //---
 
             //---
-            this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None, repository.Camera.MatrixTransformation);
+            if(noPosition)
+                this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+            else
+                this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None, repository.Camera.MatrixTransformation);
 
             //effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
             //effect.Parameters["myEntiteSize"].SetValue(entite.SizeVector);
@@ -159,7 +167,7 @@ namespace WinFormsContentLoading
             //effect.Parameters["isSelected"].SetValue(entite.Selected);
 
             effect.Begin();
-            effect.CurrentTechnique.Passes[0].Begin();
+            effect.CurrentTechnique.Passes[pass].Begin();
 
             Texture2D texture = null;
 
@@ -172,15 +180,20 @@ namespace WinFormsContentLoading
 
             if (noPosition)
             {
-                rectDst.Location = new Point((int)entite.Center.X+0, (int)entite.Center.Y+0);
+                rectDst.Location = new Point((int)entite.Center.X + 0, (int)entite.Center.Y + 0);
                 //rectDst.Width += 10;
                 //rectDst.Height += 10;
+                //GraphicsDevice.DepthStencilBuffer = new DepthStencilBuffer(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, DepthFormat.Depth16);
+            }
+            else
+            {
+                //GraphicsDevice.DepthStencilBuffer = new DepthStencilBuffer(GraphicsDevice, rectDst.Width, rectDst.Height, DepthFormat.Depth16);
             }
 
             this.spriteBatch.Draw(texture, rectDst, null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 0f);
             this.spriteBatch.End();
 
-            effect.CurrentTechnique.Passes[0].End();
+            effect.CurrentTechnique.Passes[pass].End();
             effect.End();
             //---
         }
@@ -192,7 +205,7 @@ namespace WinFormsContentLoading
 
             Texture2D edgeTexture = null;
             Vector3 spriteScale = Vector3.Transform(new Vector3(entite.SizeVector, 0f), repository.Camera.MatrixScale);
-            RenderTarget2D edgeRenderTarget1 = new RenderTarget2D(GraphicsDevice, (int)spriteScale.X-2, (int)spriteScale.Y-2, 1, SurfaceFormat.Color);
+            RenderTarget2D edgeRenderTarget1 = new RenderTarget2D(GraphicsDevice, (int)spriteScale.X - 2, (int)spriteScale.Y - 2, 1, SurfaceFormat.Color);
 
             //--- [1] Récupère le RenderTarget principal 
             RenderTarget firstRenderTarget = GraphicsDevice.GetRenderTarget(0);
@@ -296,6 +309,158 @@ namespace WinFormsContentLoading
             GraphicsDevice.SetRenderTarget(0, null);
         }
 
+        private void DrawEntiteNight(Entite entite)
+        {
+            Texture2D texture = null;
+            Texture2D normalMapTexture = null;
+
+            //--- Calcul la normal Map si elle n'existe pas
+            if (entite is Particle)
+                normalMapTexture = TextureManager.LoadParticleTexture2D(String.Format("{0}NormalMap", entite.TextureName));
+            else
+                normalMapTexture = TextureManager.LoadTexture2D(String.Format("{0}NormalMap", entite.TextureName));
+
+            if (normalMapTexture == null || repository.Screenshot)
+            {
+                CalcNormalMap(entite);
+
+                if (entite is Particle)
+                    normalMapTexture = TextureManager.LoadParticleTexture2D(String.Format("{0}NormalMap", entite.TextureName));
+                else
+                    normalMapTexture = TextureManager.LoadTexture2D(String.Format("{0}NormalMap", entite.TextureName));
+            }
+            //---
+
+            //====== [3] Affecte la texture du sprite
+            //--- Texture
+            if (entite is Particle)
+                texture = TextureManager.LoadParticleTexture2D(entite.TextureName);
+            else
+                texture = TextureManager.LoadTexture2D(entite.TextureName);
+            //---
+
+            //--- Paramètres shader
+            effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
+            //effect.Parameters["myEntiteSize"].SetValue(entite.SizeVector);
+            effect.Parameters["myEntitePosition"].SetValue(entite.Position);
+            effect.Parameters["timeMS"].SetValue((int)DateTime.Now.TimeOfDay.TotalMilliseconds);
+            effect.Parameters["NormalMapTexture"].SetValue(normalMapTexture);
+            //---
+            //======
+
+            //--- [4] Affichage du sprite pass
+            DrawEntiteBasic(entite, false, "Night");
+            //---
+
+
+            if (repository.Screenshot)
+            {
+                normalMapTexture.Save(@"c:\scr\NormalMap.png", ImageFileFormat.Png);
+            }
+            //--- Désaffecte le RenderTarget
+            //GraphicsDevice.SetRenderTarget(0, null);
+            //---
+        }
+
+        private void CalcNormalMap(Entite entite)
+        {
+            //--> 1 : Calcul de la HeightMap
+            //--> 2 : Calcul de la normal map
+
+            Texture2D heightMapTexture = null;
+            Texture2D normalMapTexture = null;
+            Vector3 spriteScale = Vector3.Transform(new Vector3(entite.SizeVector, 0f), repository.Camera.MatrixScale);
+            RenderTarget2D renderTarget = new RenderTarget2D(GraphicsDevice, (int)entite.SizeVector.X, (int)entite.SizeVector.Y, 1, SurfaceFormat.Color);
+
+            //---------------------------------------
+            //-------------- HeightMap --------------
+            //---------------------------------------
+
+            //--- [2] Affecte le nouveau RenderTarget
+            //GraphicsDevice.DepthStencilBuffer.MultiSampleType = renderTarget.MultiSampleType;
+            //GraphicsDevice.DepthStencilBuffer = new DepthStencilBuffer(GraphicsDevice, renderTarget.Width, renderTarget.Height, DepthFormat.Depth16);
+
+            GraphicsDevice.SetRenderTarget(0, null);
+            GraphicsDevice.SetRenderTarget(0, renderTarget);
+            GraphicsDevice.Clear(Color.Black);
+            //---
+
+            //====== [3] Affecte la texture du sprite
+            //--- Texture
+            Texture2D texture = null;
+            if (entite is Particle)
+                texture = TextureManager.LoadParticleTexture2D(entite.TextureName);
+            else
+                texture = TextureManager.LoadTexture2D(entite.TextureName);
+            //---
+
+            //--- Paramètres shader
+            effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
+            effect.Parameters["EdgePassTexture"].SetValue(texture);
+            //---
+            //======
+
+            //--- [4] Affichage du sprite pass
+            DrawEntiteBasic(entite, true, "NormalMap", 0);
+            //---
+
+            //--- Désaffecte le RenderTarget
+            GraphicsDevice.SetRenderTarget(0, null);
+            //---
+
+            heightMapTexture = renderTarget.GetTexture();
+
+            //if (repository.Screenshot)
+            heightMapTexture.Save(@"c:\scr\HeightMap.png", ImageFileFormat.Png);
+            //---------------------------------------
+            //---------------------------------------
+
+            //---------------------------------------
+            //-------------- NormalMap --------------
+            //---------------------------------------
+
+            //--- [2] Affecte le nouveau RenderTarget
+            GraphicsDevice.SetRenderTarget(0, renderTarget);
+            GraphicsDevice.Clear(Color.Violet);
+            //---
+
+            //GraphicsDevice.SamplerStates[0].MaxAnisotropy = 4;
+
+            //====== [3] Affecte la texture du sprite
+            //--- Paramètres shader
+            //effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
+            effect.Parameters["EdgePassTexture"].SetValue(heightMapTexture);
+            //---
+            //======
+            
+            //--- [4] Affichage du sprite pass
+            DrawEntiteBasic(entite, true, "NormalMap", 1);
+            //---
+
+            //--- Désaffecte le RenderTarget
+            GraphicsDevice.SetRenderTarget(0, null);
+            //---
+
+            normalMapTexture = renderTarget.GetTexture();
+
+            //if (repository.Screenshot)
+            heightMapTexture.Save(@"c:\scr\NormalMap.png", ImageFileFormat.Png);
+
+            //--- Enregistrer la normal Map
+            if (entite is Particle)
+            {
+
+            }
+            else
+            {
+                if (TextureManager.ListTexture2D.ContainsKey(String.Format("{0}NormalMap", entite.TextureName)))
+                    TextureManager.ListTexture2D[String.Format("{0}NormalMap", entite.TextureName)] = normalMapTexture;
+                else
+                    TextureManager.AddTexture2D(String.Format("{0}NormalMap", entite.TextureName), normalMapTexture);
+            }
+            //---
+        }
+
         private void DrawEntite(Entite entite)
         {
             /*
@@ -345,7 +510,9 @@ namespace WinFormsContentLoading
             effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
 
             //DrawEntiteEdge(entite);
-            DrawEntiteBasic(entite, false, "Edge");
+            //DrawEntiteBasic(entite, false, "Edge");
+
+            DrawEntiteNight(entite);
 
             /*
             EffectPass pass = null;
@@ -479,6 +646,7 @@ namespace WinFormsContentLoading
             if (loadNewShader)
             {
                 LoadShader();
+                loadNewShader = false;
             }
             if (!compiledEffect.Success)
                 return;

@@ -73,6 +73,21 @@ namespace Edit2DEngine
             return null;
         }
 
+        public static void AddTexture2D(string name, Texture2D texture)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(name))
+                    return;
+
+                if (!ListTexture2D.ContainsKey(name))
+                    ListTexture2D.Add(name, texture);
+            }
+            catch
+            {
+            }
+        }
+
         public static Bitmap GetBitmapFromTexture2D(Texture2D texture)
         {
             byte[] textureData = new byte[4 * texture.Width * texture.Height];
