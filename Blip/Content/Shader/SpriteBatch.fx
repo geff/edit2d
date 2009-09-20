@@ -376,36 +376,46 @@ void SobelPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
  
 float4 NormalMapPixelShader(in float2 uv:TEXCOORD0) : COLOR
 {
-	//float textureSize = 256.0f;
-	float texelSize =  1.0f / myTextureSize.x ; //size of one texel;
-	float normalStrength = 8;
+	float4 color = tex2D(TextureSampler,  uv);
+	
+	if(color.a>0)
+	{
+		//float textureSize = 256.0f;
+		float texelSize =  1.0f / myTextureSize.x ; //size of one texel;
+		float normalStrength = 15;
 
-    float tl = abs(tex2D (EdgePassSampler, uv + texelSize * float2(-1, -1)).x);   // top left
-    float  l = abs(tex2D (EdgePassSampler, uv + texelSize * float2(-1,  0)).x);   // left
-    float bl = abs(tex2D (EdgePassSampler, uv + texelSize * float2(-1,  1)).x);   // bottom left
-    float  t = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 0, -1)).x);   // top
-    float  b = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 0,  1)).x);   // bottom
-    float tr = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 1, -1)).x);   // top right
-    float  r = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 1,  0)).x);   // right
-    float br = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 1,  1)).x);   // bottom right
- 
-    // Compute dx using Sobel:
-    //           -1 0 1 
-    //           -2 0 2
-    //           -1 0 1
-    float dX = tr + 2*r + br -tl - 2*l - bl;
- 
-    // Compute dy using Sobel:
-    //           -1 -2 -1 
-    //            0  0  0
-    //            1  2  1
-    float dY = bl + 2*b + br -tl - 2*t - tr;
- 
-    // Build the normalized normal
-    float4 N = float4(normalize(float3(dX, 1.0f / normalStrength, dY)), 1.0f);
- 
-    //convert (-1.0 , 1.0) to (0.0 , 1.0), if needed
-    return N * 0.5f + 0.5f;
+		float tl = abs(tex2D (EdgePassSampler, uv + texelSize * float2(-1, -1)).x);   // top left
+		float  l = abs(tex2D (EdgePassSampler, uv + texelSize * float2(-1,  0)).x);   // left
+		float bl = abs(tex2D (EdgePassSampler, uv + texelSize * float2(-1,  1)).x);   // bottom left
+		float  t = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 0, -1)).x);   // top
+		float  b = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 0,  1)).x);   // bottom
+		float tr = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 1, -1)).x);   // top right
+		float  r = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 1,  0)).x);   // right
+		float br = abs(tex2D (EdgePassSampler, uv + texelSize * float2( 1,  1)).x);   // bottom right
+	 
+		// Compute dx using Sobel:
+		//           -1 0 1 
+		//           -2 0 2
+		//           -1 0 1
+		float dX = tr + 2*r + br -tl - 2*l - bl;
+	 
+		// Compute dy using Sobel:
+		//           -1 -2 -1 
+		//            0  0  0
+		//            1  2  1
+		float dY = bl + 2*b + br -tl - 2*t - tr;
+	 
+		// Build the normalized normal
+		float4 N = float4(normalize(float3(dX, 1.0f / normalStrength, dY)), 1.0f);
+	 
+		//convert (-1.0 , 1.0) to (0.0 , 1.0), if needed
+		return N * 0.5f + 0.5f;
+	}
+	else
+	{
+		return  float4(0.5,1,0.5,1);
+	}
+	
 }
 
 //-----------------------------------------------------------
@@ -491,8 +501,10 @@ void NightPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 
 	float dt = saturate(dot(colorNormalMap.xz, vec));
 	
-	color*=colorTex*0.75+0.25*saturate(dot(colorNormalMap.xz, vec));
+	color*=colorTex;
 	
+	if(colorTex.a > 0)
+		color*=0.75+0.25* dt;
 	//color = float4(dt,dt,dt,1);
 	
 	SelectColor(color);
@@ -547,6 +559,8 @@ void EdgePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 			edgeValue = 1;
 			
 		color=float4(edgeValue,edgeValue,edgeValue, 1);
+		
+		//color=float4(1,1,1,1);
 	}
 }
 

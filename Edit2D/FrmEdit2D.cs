@@ -1823,7 +1823,7 @@ namespace Edit2D
 
         private void modelViewerControl_Resize(object sender, EventArgs e)
         {
-            modelViewerControl.ChangeViewPortSize();
+            modelViewerControl.ChangeViewPortSize = true;
         }
         #endregion
 
