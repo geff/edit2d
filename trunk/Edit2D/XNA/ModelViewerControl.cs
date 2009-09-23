@@ -143,6 +143,35 @@ namespace WinFormsContentLoading
             //effect.Parameters["ViewportSize"].SetValue(viewportSize);
         }
 
+        private void DrawRadialBlur()
+        {
+            //---
+            ResolveTexture2D textureScene = new ResolveTexture2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 1, SurfaceFormat.Color);
+            GraphicsDevice.ResolveBackBuffer(textureScene);
+            //---
+
+            //---
+            effect.CurrentTechnique = effect.Techniques["RadialBlur"];
+            //---
+
+            //--- Paramètres shader
+            effect.Parameters["timeMS"].SetValue((int)DateTime.Now.TimeOfDay.TotalMilliseconds);
+            //---
+
+            //---
+            this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+
+            effect.Begin();
+            effect.CurrentTechnique.Passes[0].Begin();
+            Vector2 center = new Vector2((float)textureScene.Width / 2f, (float)textureScene.Height / 2f);
+            this.spriteBatch.Draw((Texture2D)textureScene, center, null, Color.Black, 0f, center, 1f, SpriteEffects.None, 0);
+            this.spriteBatch.End();
+
+            effect.CurrentTechnique.Passes[0].End();
+            effect.End();
+            //---
+        }
+
         private void CalcNormalMap(Entite entite)
         {
             //--> 1 : Calcul de la HeightMap
@@ -260,7 +289,7 @@ namespace WinFormsContentLoading
             //---
 
             //---
-            if(noPosition)
+            if (noPosition)
                 this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
             else
                 this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None, repository.Camera.MatrixTransformation);
@@ -539,12 +568,13 @@ namespace WinFormsContentLoading
             }
             */
 
-            //effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
-            //effect.Parameters["isSelected"].SetValue(entite.Selected);
+            effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
+            effect.Parameters["isSelected"].SetValue(entite.Selected);
             effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
 
             //DrawEntiteEdge(entite);
             //DrawEntiteBasic(entite, false, "Edge");
+            DrawEntiteBasic(entite, false, "SpriteBatch");
 
             //--- Night
             //DrawEntiteNight(entite);
@@ -753,10 +783,17 @@ namespace WinFormsContentLoading
 
             repository.FrmEdit2D.Text = listEntiteToDraw.Count.ToString();
 
-            //for (int i = 0; i < repository.listEntite.Count; i++)
-            //{
-            //    DrawEntite(repository.listEntite[i]);
-            //}
+
+            if (repository.Screenshot)
+            {
+                ResolveTexture2D tx = new ResolveTexture2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 1, SurfaceFormat.Color);
+                GraphicsDevice.ResolveBackBuffer(tx);
+                tx.Save(@"c:\scr\fullscreen.png", ImageFileFormat.Png);
+            }
+
+            //--- Affichage de la scène avec le radila blur
+            DrawRadialBlur();
+            //---
 
 
             this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
