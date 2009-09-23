@@ -534,10 +534,10 @@ void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 	}
 	*/
     
-    //color *= tex2D(SpriteBatchSampler, texCoord);
-    color=float4(1,1,1,0);
+    color *= tex2D(TextureSampler, texCoord);
+    //color=float4(1,1,1,0);
 	//color = tex2D( TextureSampler , texCoord);
-	//SelectColor(color);
+	SelectColor(color);
 }
 
 //-----------------------------------------------------------
@@ -564,8 +564,81 @@ void EdgePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 	}
 }
 
+float BlurStart <
+    string UIName = "Blur Start";
+    string UIWidget = "slider";
+    float UIMin = 0.0f;
+    float UIMax = 1.0f;
+    float UIStep = 0.01f;
+> = 1.0f;
+
+float BlurWidth <
+    string UIName = "Blur Width";
+    string UIWidget = "slider";
+    float UIMin = -1.0f;
+    float UIMax = 1.0f;
+    float UIStep = 0.01f;
+> = -0.1f;
+
+float CX <
+    string UIName = "X Center";
+    string UIWidget = "slider";
+    float UIMin = -1.0f;
+    float UIMax = 2.0f;
+    float UIStep = 0.01f;
+> = 0.5f;
+
+float CY <
+    string UIName = "Y Center";
+    string UIWidget = "slider";
+    float UIMin = -1.0f;
+    float UIMax = 2.0f;
+    float UIStep = 0.01f;
+> = 0.5f;
+
+#define NSAMPLES 16
+
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+void RadialBlurPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
+{
+	//float4 clr =  tex2D( TextureSampler , texCoord);
+	
+	color = float4(0,1,0,1);
+    //half4 c = 0;
+    float2 Center = float2(CX,CY);
+    // this loop will be unrolled by compiler and the constants precalculated:
+	float nb = 0;
+    for(int i=0; i<NSAMPLES; i++) {
+    	float scale = BlurStart + BlurWidth*(i/(float) (NSAMPLES-1.0));
+    	float2 uv = texCoord.xy*scale;
+		
+		//if(uv.x>= 0 && uv.x <= 1 && uv.y >= 0 && uv.y<= 1)
+		{
+			color += tex2D(TextureSampler, uv);
+			nb++;
+		}
+    }
+	
+	if(nb>0)
+		color /= nb;
+	else
+		color = float4(0,0,0,1);
+}
+
+
 //-----------------------------------------------------------
 //			TECHNIQUES
+//-----------------------------------------------------------
+
+technique RadialBlur
+{
+    pass
+    {
+        PixelShader = compile ps_3_0 RadialBlurPixelShader();
+    }
+}
+//-----------------------------------------------------------
 //-----------------------------------------------------------
 technique NormalMap
 {

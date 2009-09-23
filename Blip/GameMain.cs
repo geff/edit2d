@@ -46,8 +46,11 @@ namespace Blip
             //    graphics.PreferredBackBufferHeight = 1050;
             //}
 
-            graphics.PreferredBackBufferWidth = 1360;
-            graphics.PreferredBackBufferHeight = 768;
+            //graphics.PreferredBackBufferWidth = 1360;
+            //graphics.PreferredBackBufferHeight = 768;
+
+            graphics.PreferredBackBufferWidth = 1680;
+            graphics.PreferredBackBufferHeight = 1050;
 
             graphics.IsFullScreen = true;
             graphics.ApplyChanges();
