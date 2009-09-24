@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using Edit2DEngine.Particles;
 using System.Drawing;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Edit2DEngine
 {
@@ -83,12 +84,15 @@ namespace Edit2DEngine
 
         public Camera Camera;
 
+        public Stopwatch WatchLoading;
+
         public Repository()
         {
             listEntite = new List<Entite>();
             rnd = new Random();
             World = new World();
             this.Camera = new Camera();
+            this.WatchLoading = new Stopwatch();
 
             Repository.physicSimulator = new PhysicsSimulator(new Vector2(0, 9.81f));
             //Repository.physicSimulator.NarrowPhaseCollisionTime
