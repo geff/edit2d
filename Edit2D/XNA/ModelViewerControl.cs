@@ -143,7 +143,7 @@ namespace WinFormsContentLoading
             //effect.Parameters["ViewportSize"].SetValue(viewportSize);
         }
 
-        private void DrawRadialBlur()
+        private void DrawRadialBlur(float radialBlurWidth)
         {
             //---
             ResolveTexture2D textureScene = new ResolveTexture2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 1, SurfaceFormat.Color);
@@ -156,6 +156,7 @@ namespace WinFormsContentLoading
 
             //--- Paramètres shader
             effect.Parameters["timeMS"].SetValue((int)DateTime.Now.TimeOfDay.TotalMilliseconds);
+            effect.Parameters["BlurWidth"].SetValue(radialBlurWidth);
             //---
 
             //---
@@ -163,8 +164,8 @@ namespace WinFormsContentLoading
 
             effect.Begin();
             effect.CurrentTechnique.Passes[0].Begin();
-            Vector2 center = new Vector2((float)textureScene.Width / 2f, (float)textureScene.Height / 2f);
-            this.spriteBatch.Draw((Texture2D)textureScene, center, null, Color.Black, 0f, center, 1f, SpriteEffects.None, 0);
+            Vector2 center = Vector2.Zero;// new Vector2((float)textureScene.Width / 2f, (float)textureScene.Height / 2f);
+            this.spriteBatch.Draw((Texture2D)textureScene, Vector2.Zero, null, Color.Black, 0f, center, 1f, SpriteEffects.None, 0);
             this.spriteBatch.End();
 
             effect.CurrentTechnique.Passes[0].End();
@@ -791,8 +792,18 @@ namespace WinFormsContentLoading
                 tx.Save(@"c:\scr\fullscreen.png", ImageFileFormat.Png);
             }
 
-            //--- Affichage de la scène avec le radila blur
-            DrawRadialBlur();
+            //--- Affichage de la scène avec le radial blur
+            float durationRadialBlurLoading = 1500f;
+            float maxRadialBlurWidth = -0.2f;
+            if (repository.WatchLoading.IsRunning && repository.WatchLoading.ElapsedMilliseconds < durationRadialBlurLoading)
+            {
+                float radialBlurWidth = maxRadialBlurWidth * (1f-(float)repository.WatchLoading.ElapsedMilliseconds / durationRadialBlurLoading);
+                DrawRadialBlur(radialBlurWidth);
+            }
+            else if (repository.WatchLoading.IsRunning && repository.WatchLoading.ElapsedMilliseconds >= durationRadialBlurLoading)
+            {
+                repository.WatchLoading.Stop();
+            }
             //---
 
 

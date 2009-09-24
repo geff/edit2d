@@ -512,6 +512,7 @@ namespace Edit2D
             dlg.Filter = "Niveau *.lvl |*.lvl";
 
             Repository.physicSimulator.Enabled = false;
+            bool showDebugMode = repository.ShowDebugMode;
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
@@ -521,9 +522,12 @@ namespace Edit2D
 
                 triggerControl.repository = repository;
                 render.repository = repository;
+                repository.ShowDebugMode = showDebugMode;
             }
 
             Repository.physicSimulator.Enabled = true;
+
+            repository.WatchLoading.Start();
 
             RefreshTreeView();
             render.UpdatePhysic();
