@@ -473,12 +473,12 @@ namespace Edit2D
         {
             Repository.physicSimulator = new FarseerGames.FarseerPhysics.PhysicsSimulator(new Vector2(0, 9.81f));
 
-            MouseMode mouseMode = repository.mouseMode;
+            MouseMode mouseMode = repository.MouseMode;
             bool pause = repository.Pause;
             string textureName = repository.CurrentTextureName;
 
             repository = new Repository();
-            repository.mouseMode = mouseMode;
+            repository.MouseMode = mouseMode;
 
             modelViewerControl.Initialize(repository, contentManager, contentBuilder);
 
@@ -494,7 +494,7 @@ namespace Edit2D
             repository.Camera.Focal = new Vector2(0, 0);
 
             repository.Pause = pause;
-            repository.mouseMode = mouseMode;
+            repository.MouseMode = mouseMode;
             repository.CurrentTextureName = textureName;
             repository.FrmEdit2D = this;
 
@@ -754,7 +754,7 @@ namespace Edit2D
             btnResize.CheckState = CheckState.Unchecked;
             btnRotate.CheckState = CheckState.Unchecked;
 
-            repository.mouseMode = MouseMode.Move;
+            repository.MouseMode = MouseMode.Move;
         }
 
         private void btnResize_Click(object sender, EventArgs e)
@@ -763,7 +763,7 @@ namespace Edit2D
             btnResize.CheckState = CheckState.Checked;
             btnRotate.CheckState = CheckState.Unchecked;
 
-            repository.mouseMode = MouseMode.Resize;
+            repository.MouseMode = MouseMode.Resize;
         }
 
         private void btnRotate_Click(object sender, EventArgs e)
@@ -772,7 +772,7 @@ namespace Edit2D
             btnResize.CheckState = CheckState.Unchecked;
             btnRotate.CheckState = CheckState.Checked;
 
-            repository.mouseMode = MouseMode.Rotate;
+            repository.MouseMode = MouseMode.Rotate;
         }
 
         private void btnPinStatic_Click(object sender, EventArgs e)
@@ -1042,7 +1042,7 @@ namespace Edit2D
             //--- Change le curseur selon le MouseMode sélectionné
             if (repository.keyAltPressed)
             {
-                modelViewerControl.Cursor = dicCursors[repository.mouseMode];
+                modelViewerControl.Cursor = dicCursors[repository.MouseMode];
             }
             else
             {
@@ -1065,7 +1065,7 @@ namespace Edit2D
                 //--- Change le curseur selon le MouseMode sélectionné
                 if (repository.keyAltPressed)
                 {
-                    modelViewerControl.Cursor = dicCursors[repository.mouseMode];
+                    modelViewerControl.Cursor = dicCursors[repository.MouseMode];
                 }
                 else
                 {
@@ -1080,15 +1080,15 @@ namespace Edit2D
 
                 if (e.KeyCode == Keys.Oem7)
                 {
-                    if (repository.mouseMode == MouseMode.Move)
+                    if (repository.MouseMode == MouseMode.Move)
                     {
                         btnRotate.PerformClick();
                     }
-                    else if (repository.mouseMode == MouseMode.Resize)
+                    else if (repository.MouseMode == MouseMode.Resize)
                     {
                         btnMove.PerformClick();
                     }
-                    else if (repository.mouseMode == MouseMode.Rotate)
+                    else if (repository.MouseMode == MouseMode.Rotate)
                     {
                         btnResize.PerformClick();
                     }
@@ -1096,15 +1096,15 @@ namespace Edit2D
 
                 if (e.KeyCode == Keys.D1)
                 {
-                    if (repository.mouseMode == MouseMode.Move)
+                    if (repository.MouseMode == MouseMode.Move)
                     {
                         btnResize.PerformClick();
                     }
-                    else if (repository.mouseMode == MouseMode.Resize)
+                    else if (repository.MouseMode == MouseMode.Resize)
                     {
                         btnRotate.PerformClick();
                     }
-                    else if (repository.mouseMode == MouseMode.Rotate)
+                    else if (repository.MouseMode == MouseMode.Rotate)
                     {
                         btnMove.PerformClick();
                     }
@@ -1327,7 +1327,7 @@ namespace Edit2D
 
                     //---> Si le MouseMode courant est Rotate ou scale et qu'il y'a sélection multiple
                     //     Placer le centre des entités sur le curseur
-                    if ((repository.mouseMode == MouseMode.Rotate || repository.mouseMode == MouseMode.Resize) && repository.ListSelection.Count > 0)
+                    if ((repository.MouseMode == MouseMode.Rotate || repository.MouseMode == MouseMode.Resize) && repository.ListSelection.Count > 0)
                     {
                         repository.GetSelectedEntite().ForEach(ent => ent.SetCenterFromWorldPosition(repository.CurrentPointer2.WorldPosition, true));
                     }
@@ -1419,7 +1419,7 @@ namespace Edit2D
 
                 //--- Si il y'a sélection multiple et que le MouseMode est Resize ou Rotate
                 //    Redéfinir le centre des entités
-                if (repository.ListSelection.Count > 0 && (repository.mouseMode == MouseMode.Resize || repository.mouseMode == MouseMode.Rotate) && clonedSelectedEntite.Count>0)
+                if (repository.ListSelection.Count > 0 && (repository.MouseMode == MouseMode.Resize || repository.MouseMode == MouseMode.Rotate) && clonedSelectedEntite.Count>0)
                 {
                     for (int i = 0; i < repository.ListSelection.Count; i++)
                     {
@@ -1455,7 +1455,7 @@ namespace Edit2D
                     //TODO : mettrer cela en place pour la mutli sélection
                     if (repository.CurrentEntite != null && repository.tempEntite != null)
                     {
-                        if (repository.mouseMode == MouseMode.Move)
+                        if (repository.MouseMode == MouseMode.Move)
                         {
                             for (int i = 0; i < repository.CurrentEntite.ListFixedRevoluteJoint.Count; i++)
                             {
@@ -1463,7 +1463,7 @@ namespace Edit2D
                             }
                         }
 
-                        if (repository.mouseMode == MouseMode.Resize)
+                        if (repository.MouseMode == MouseMode.Resize)
                         {
                             Entite newEntite = repository.ChangeEntitySize(repository.CurrentEntite, repository.tempEntite.Size);
                             EntiteSelectionChange(repository.CurrentEntite, newEntite);
@@ -1546,7 +1546,7 @@ namespace Edit2D
                     //--- MouseMode.Move
                     if ((repository.CurrentEntite != null || repository.ListSelection.Count > 0) &&
                          repository.keyAltPressed &&
-                         repository.mouseMode == MouseMode.Move)
+                         repository.MouseMode == MouseMode.Move)
                     {
                         Vector2 deltaPosition = repository.CurrentPointer.WorldPosition - repository.CurrentPointer.PrevWorldPosition;
 
@@ -1565,7 +1565,7 @@ namespace Edit2D
 
                     //--- MouseMode.Resize
                     #region Resize
-                    if (repository.CurrentEntite != null && repository.tempEntite != null && repository.keyAltPressed && repository.mouseMode == MouseMode.Resize)
+                    if (repository.CurrentEntite != null && repository.tempEntite != null && repository.keyAltPressed && repository.MouseMode == MouseMode.Resize)
                     {
                         float width = 0;
                         float height = 0;
@@ -1689,7 +1689,7 @@ namespace Edit2D
                     //---
 
                     //--- MouseMode.Rotate
-                    if ((repository.CurrentEntite != null || repository.ListSelection.Count > 0) && repository.keyAltPressed && repository.mouseMode == MouseMode.Rotate)
+                    if ((repository.CurrentEntite != null || repository.ListSelection.Count > 0) && repository.keyAltPressed && repository.MouseMode == MouseMode.Rotate)
                     {
                         List<Entite> listSelectedEntite = repository.GetSelectedEntite();
 
@@ -1795,7 +1795,7 @@ namespace Edit2D
                     repository.ListSelection[i].Entite.IsStatic = true;
 
                     //--- Suppression du body courant si on est en mode Resize
-                    if (repository.mouseMode == MouseMode.Resize)
+                    if (repository.MouseMode == MouseMode.Resize)
                     {
                         Repository.physicSimulator.Remove(repository.ListSelection[i].Entite.Body);
                         Repository.physicSimulator.Remove(repository.ListSelection[i].Entite.geom);
@@ -1815,7 +1815,7 @@ namespace Edit2D
                     repository.CurrentEntite.Body.IsStatic = true;
 
                     //--- Suppression du body courant si on est en mode Resize
-                    if (repository.mouseMode == MouseMode.Resize)
+                    if (repository.MouseMode == MouseMode.Resize)
                     {
                         Repository.physicSimulator.Remove(repository.CurrentEntite.Body);
                         Repository.physicSimulator.Remove(repository.CurrentEntite.geom);
@@ -1844,6 +1844,8 @@ namespace Edit2D
 
             pnlModes.SetCellPosition(scriptControl, new TableLayoutPanelCellPosition(0, 1));
 
+            repository.ViewingMode = ViewingMode.Script;
+
             //---
             IActionHandler actionHandler = null;
 
@@ -1868,6 +1870,8 @@ namespace Edit2D
 
             pnlModes.SetCellPosition(triggerControl, new TableLayoutPanelCellPosition(0, 1));
 
+            repository.ViewingMode = ViewingMode.Trigger;
+
             //---
             ITriggerHandler triggerHandler = null;
 
@@ -1891,6 +1895,8 @@ namespace Edit2D
             btnParticleSystemModeBar.Checked = true;
 
             pnlModes.SetCellPosition(particleControl, new TableLayoutPanelCellPosition(0, 1));
+
+            repository.ViewingMode = ViewingMode.ParticleSystem;
 
             EntiteSelectionChange(true, repository.CurrentEntite, repository.CurrentEntite);
         }

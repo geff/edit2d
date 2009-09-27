@@ -673,6 +673,7 @@ namespace Edit2D.ScriptControl
         {
             RefreshActionView();
             currentScript = listboxScript.SelectedIndex;
+            repository.CurrentScript = GetSelectedScript();
         }
 
         private void btnAddAction_Click(object sender, EventArgs e)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Edit2DEngine;
 using Microsoft.Xna.Framework;
+using Edit2DEngine.Action;
 
 namespace Edit2D
 {
@@ -25,6 +26,7 @@ namespace Edit2D
             this.Pointer = new Pointer();
             this.Pointer.WorldPosition = worldPointer;
             this.Pointer.ScreenPosition = screePointer;
+
         }
     }
 }

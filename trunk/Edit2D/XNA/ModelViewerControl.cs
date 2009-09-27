@@ -53,7 +53,9 @@ namespace WinFormsContentLoading
     /// </summary>
     public class ModelViewerControl : GraphicsDeviceControl
     {
-        LineBrush line;
+        LineBrush lineBrush;
+        RectangleBrush rectangleBrush;
+
         public bool ChangeViewPortSize = false;
 
         //FrameRateCounter frameRateCounter;
@@ -83,7 +85,8 @@ namespace WinFormsContentLoading
             this.Content = content;
             this.contentBuilder = contentBuilder;
             this.repository = repository;
-            this.line = new LineBrush(1, Color.Red);
+            this.lineBrush = new LineBrush(1, Color.Red);
+            this.rectangleBrush = new RectangleBrush(10, 10, Color.DarkGreen, Color.DarkKhaki);
 
             // Start the animation timer.
             timer = Stopwatch.StartNew();
@@ -106,7 +109,8 @@ namespace WinFormsContentLoading
 
             spriteFont = content.Load<SpriteFont>("spriteFont");
 
-            line.Load(GraphicsDevice);
+            lineBrush.Load(GraphicsDevice);
+            rectangleBrush.Load(GraphicsDevice);
 
             InitListModels();
         }
@@ -145,12 +149,12 @@ namespace WinFormsContentLoading
 
         private void DrawRadialBlur(float radialBlurWidth)
         {
-            //---
+            //--- Initialisation RenderTarget
             ResolveTexture2D textureScene = new ResolveTexture2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 1, SurfaceFormat.Color);
             GraphicsDevice.ResolveBackBuffer(textureScene);
             //---
 
-            //---
+            //--- Affectionat de la technique graphique
             effect.CurrentTechnique = effect.Techniques["RadialBlur"];
             //---
 
@@ -159,7 +163,7 @@ namespace WinFormsContentLoading
             effect.Parameters["BlurWidth"].SetValue(radialBlurWidth);
             //---
 
-            //---
+            //--- Affichage
             this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
             effect.Begin();
@@ -282,11 +286,8 @@ namespace WinFormsContentLoading
 
         private void DrawEntiteBasic(Entite entite, bool noPosition, string technique, int pass)
         {
-            //GraphicsDevice.Clear(Color.White);
             //--- Pass
             effect.CurrentTechnique = effect.Techniques[technique];
-
-            //pass = effect.Techniques[technique].Passes[0];
             //---
 
             //---
@@ -294,11 +295,6 @@ namespace WinFormsContentLoading
                 this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
             else
                 this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None, repository.Camera.MatrixTransformation);
-
-            //effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
-            //effect.Parameters["myEntiteSize"].SetValue(entite.SizeVector);
-            //effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
-            //effect.Parameters["isSelected"].SetValue(entite.Selected);
 
             effect.Begin();
             effect.CurrentTechnique.Passes[pass].Begin();
@@ -527,38 +523,13 @@ namespace WinFormsContentLoading
 
         private void DrawEntite(Entite entite)
         {
-            /*
+            //--- Affichage des particules
             if (entite.ListParticleSystem.Count > 0)
             {
                 //--- Rendu du système de particule
                 for (int j = 0; j < entite.ListParticleSystem.Count; j++)
                 {
                     ParticleSystem pSystem = entite.ListParticleSystem[j];
-
-                    //--- Rendu de l'angle d'émission
-                    if (entite.Selected)
-                    {
-                        this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
-
-                        Vector2 vecStart1 = entite.Position;
-                        Vector2 vecStart2 = entite.Position;
-
-                        Vector2 vecEnd1 = new Vector2();
-                        Vector2 vecEnd2 = new Vector2();
-
-                        //float angle = Vector2.UnitX.GetAngle(pSystem.EmittingVector);
-
-                        float rayon = 30f;
-
-                        vecEnd1 = vecStart1 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f));
-                        vecEnd2 = vecStart2 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f));
-
-                        line.Draw(spriteBatch, vecStart1, vecEnd1);
-                        line.Draw(spriteBatch, vecStart2, vecEnd2);
-                        line.Draw(spriteBatch, vecEnd1, vecEnd2);
-
-                        this.spriteBatch.End();
-                    }
 
                     for (int k = 0; k < pSystem.ListParticle.Count; k++)
                     {
@@ -567,7 +538,7 @@ namespace WinFormsContentLoading
                 }
                 //---
             }
-            */
+            //---
 
             effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
             effect.Parameters["isSelected"].SetValue(entite.Selected);
@@ -584,57 +555,6 @@ namespace WinFormsContentLoading
             //--- Blur
             //---
 
-            /*
-            EffectPass pass = null;
-
-            //--- Texture de l'entité
-            //if (entite.BlurFactor != 0f)
-            //{
-            //    effect.CurrentTechnique = effect.Techniques["Blur"];
-            //    pass = effect.Techniques["Blur"].Passes[0];
-            //}
-            //else
-            //{
-            effect.CurrentTechnique = effect.Techniques["SpriteBatch"];
-            pass = effect.Techniques["SpriteBatch"].Passes[0];
-            //}
-            //---
-
-            //---
-
-            this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None, repository.Camera.MatrixTransformation);
-
-            effect.Parameters["isInBackground"].SetValue(entite.IsInBackground);
-            effect.Parameters["blurFactor"].SetValue(entite.BlurFactor);
-            effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
-            effect.Parameters["isSelected"].SetValue(entite.Selected);
-
-            effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
-            effect.Parameters["myEntiteSize"].SetValue(entite.SizeVector);
-
-            effect.Begin();
-            pass.Begin();
-
-            Texture2D texture = null;
-
-            if (entite is Particle)
-            {
-                texture = TextureManager.LoadParticleTexture2D(entite.TextureName);
-            }
-            else
-            {
-                texture = TextureManager.LoadTexture2D(entite.TextureName);
-            }
-
-            Rectangle rectSrc = entite.Rectangle;
-            Rectangle rectDst = entite.Rectangle;
-
-            this.spriteBatch.Draw(texture, rectDst, null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 0f);
-            this.spriteBatch.End();
-
-            pass.End();
-            effect.End();*/
-            //---
 
             if (((!repository.Pause && repository.IsEntityClickableOnPlay) || repository.Pause) && ((repository.ShowDebugMode && entite.IsStatic) || entite.Selected))
             {
@@ -663,36 +583,70 @@ namespace WinFormsContentLoading
                 this.spriteBatch.End();
             }
 
-            //if (entite.Selected && entite.ListParticleSystem.Count > 0)
-            //{
-            //    //--- Rendu du système de particule
-            //    for (int j = 0; j < entite.ListParticleSystem.Count; j++)
-            //    {
-            //        ParticleSystem pSystem = entite.ListParticleSystem[j];
+            if (entite.Selected && entite.ListParticleSystem.Count > 0)
+            {
+                lineBrush.Color = Color.Red;
+                //--- Rendu du système de particule
+                for (int j = 0; j < entite.ListParticleSystem.Count; j++)
+                {
+                    ParticleSystem pSystem = entite.ListParticleSystem[j];
 
-            //        this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
+                    this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
 
-            //        Vector2 vecStart1 = entite.Position;
-            //        Vector2 vecStart2 = entite.Position;
+                    Vector2 vecStart1 = entite.Position;
+                    Vector2 vecStart2 = entite.Position;
 
-            //        Vector2 vecEnd1 = new Vector2();
-            //        Vector2 vecEnd2 = new Vector2();
+                    Vector2 vecEnd1 = new Vector2();
+                    Vector2 vecEnd2 = new Vector2();
 
-            //        //float angle = Vector2.UnitX.GetAngle(pSystem.EmittingVector);
+                    //float angle = Vector2.UnitX.GetAngle(pSystem.EmittingVector);
 
-            //        float rayon = 30f;
+                    float rayon = 30f;
 
-            //        vecEnd1 = vecStart1 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f));
-            //        vecEnd2 = vecStart2 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f));
+                    vecEnd1 = vecStart1 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f));
+                    vecEnd2 = vecStart2 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f));
 
-            //        line.Draw(spriteBatch, vecStart1, vecEnd1);
-            //        line.Draw(spriteBatch, vecStart2, vecEnd2);
-            //        line.Draw(spriteBatch, vecEnd1, vecEnd2);
+                    lineBrush.Draw(spriteBatch, vecStart1, vecEnd1);
+                    lineBrush.Draw(spriteBatch, vecStart2, vecEnd2);
+                    lineBrush.Draw(spriteBatch, vecEnd1, vecEnd2);
 
-            //        this.spriteBatch.End();
-            //    }
-            //    //---
-            //}
+                    this.spriteBatch.End();
+                }
+                //---
+            }
+
+            //--- Affichage de la courbe active
+            if (repository.ShowDebugMode && repository.ViewingMode == ViewingMode.Script && entite.Selected && repository.CurrentEntite == entite)
+            {
+                lineBrush.Color = Color.Green;
+                this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
+                
+                for (int i = 0; i < repository.ListCurveLine.Count-1; i++)
+                {
+                    Vector2 vecStart = repository.ListCurveLine[i];
+                    Vector2 vecEnd = repository.ListCurveLine[i + 1];
+
+                    /*if (i < repository.ListCurveLine.Count - 1)
+                    {
+                        vecEnd = repository.ListCurveLine[i + 1];
+                    }
+                    else
+                    {
+                        vecEnd = repository.ListCurveLine[0];
+                    }*/
+
+
+                    lineBrush.Draw(spriteBatch, vecStart, vecEnd);
+                }
+
+                for (int i = 0; i < repository.ListCurvePoint.Count; i++)
+                {
+                    rectangleBrush.Draw(spriteBatch, repository.ListCurvePoint[i]);
+                }
+
+                this.spriteBatch.End();
+            }
+            //---
         }
 
         TimeSpan elapsedTime = TimeSpan.Zero;
@@ -744,17 +698,6 @@ namespace WinFormsContentLoading
             effect.End();
             //---
 
-            //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
-            //---> Begin pour le shader
-            //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);//, repository.Camera.MatrixTransformation);
-
-            //--- Réinitialisation du renderstate - Le SpriteBatch modifie le renderstate
-            //this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
-            //effect.Begin();
-
-            //            Rectangle recScreen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-
-
             List<Entite> listEntiteToDraw = new List<Entite>();
             Rectangle recScreen = new Rectangle(GraphicsDevice.Viewport.X + 0, GraphicsDevice.Viewport.Y + 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
@@ -797,7 +740,7 @@ namespace WinFormsContentLoading
             float maxRadialBlurWidth = -0.2f;
             if (repository.WatchLoading.IsRunning && repository.WatchLoading.ElapsedMilliseconds < durationRadialBlurLoading)
             {
-                float radialBlurWidth = maxRadialBlurWidth * (1f-(float)repository.WatchLoading.ElapsedMilliseconds / durationRadialBlurLoading);
+                float radialBlurWidth = maxRadialBlurWidth * (1f - (float)repository.WatchLoading.ElapsedMilliseconds / durationRadialBlurLoading);
                 DrawRadialBlur(radialBlurWidth);
             }
             else if (repository.WatchLoading.IsRunning && repository.WatchLoading.ElapsedMilliseconds >= durationRadialBlurLoading)
