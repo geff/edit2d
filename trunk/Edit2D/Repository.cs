@@ -93,6 +93,9 @@ namespace Edit2D
             if (this.CurrentScript == null)
                 return;
 
+            this.ListCurveLine = new List<Vector2>();
+            this.ListCurvePoint = new List<Vector2>();
+
             for (int j = 0; j < this.CurrentScript.ListAction.Count; j++)
             {
                 ActionBase actionBase = this.CurrentScript.ListAction[j];

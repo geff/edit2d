@@ -633,8 +633,19 @@ namespace Edit2D
                             actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[0].Keys[0].Value));
                             actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[1].Keys[0].Value));
 
+
+
                             actionCurve.ListCurve[0].ComputeTangents(CurveTangent.Smooth);
                             actionCurve.ListCurve[1].ComputeTangents(CurveTangent.Smooth);
+
+
+                            LoopTangentCurve(actionCurve.ListCurve[0]);
+                            LoopTangentCurve(actionCurve.ListCurve[1]);
+                            //actionCurve.ListCurve[0].Keys.Last().TangentOut = actionCurve.ListCurve[0].Keys[0].TangentOut;
+                            //actionCurve.ListCurve[0].Keys[0].TangentIn = actionCurve.ListCurve[0].Keys.Last().TangentIn;
+
+                            //actionCurve.ListCurve[1].Keys.Last().TangentOut = actionCurve.ListCurve[1].Keys[0].TangentOut;
+                            //actionCurve.ListCurve[1].Keys[0].TangentIn = actionCurve.ListCurve[1].Keys.Last().TangentIn;
 
                             actionCurve.CalcDuration();
                         }
@@ -665,6 +676,53 @@ namespace Edit2D
                     scriptControl.TimeLineValue += timeLineValueIncrement;
                     scriptControl.RefreshScriptControl();
                 }
+            }
+        }
+
+        private void LoopTangentCurve(Curve curve)
+        {
+            CurveKey keyA = curve.Keys[0];
+            CurveKey keyN = curve.Keys[1];
+            CurveKey keyP = curve.Keys[curve.Keys.Count - 2];
+            CurveKey keyB = curve.Keys[curve.Keys.Count - 1];
+
+            float tangentIn = 0f;
+            float tangentOut = 0f;
+
+
+            float dt = keyB.Position  + keyN.Position  - keyA.Position - keyP.Position;
+            float dv = keyN.Value - keyP.Value;
+            if (Math.Abs(dv) < float.Epsilon)
+            {
+                tangentIn = 0;
+                tangentOut = 0;
+            }
+            else
+            {
+                tangentIn = dv * (keyB.Position - keyP.Position) / dt;
+                tangentOut = dv * (keyN.Position - keyA.Position) / dt;
+            }
+
+            keyA.TangentIn = tangentIn;
+            keyA.TangentOut = tangentOut;
+
+            keyB.TangentIn = tangentIn;
+            keyB.TangentOut = tangentOut;
+        }
+
+        static void SetCurveKeyTangent(ref CurveKey prev, ref CurveKey cur, ref CurveKey next)
+        {
+            float dt = next.Position - prev.Position;
+            float dv = next.Value - prev.Value;
+            if (Math.Abs(dv) < float.Epsilon)
+            {
+                cur.TangentIn = 0;
+                cur.TangentOut = 0;
+            }
+            else
+            {
+                cur.TangentIn = dv * (cur.Position - prev.Position) / dt;
+                cur.TangentOut = dv * (next.Position - cur.Position) / dt;
             }
         }
 
@@ -724,7 +782,7 @@ namespace Edit2D
                         {
                             actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, size.X));
                             actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, size.Y));
-                            
+
                             actionCurve.ListCurve[0].ComputeTangents(CurveTangent.Smooth);
                             actionCurve.ListCurve[1].ComputeTangents(CurveTangent.Smooth);
                         }
@@ -1019,7 +1077,7 @@ namespace Edit2D
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            if(render != null)
+            if (render != null)
                 render.Update();
         }
 
@@ -1419,7 +1477,7 @@ namespace Edit2D
 
                 //--- Si il y'a sélection multiple et que le MouseMode est Resize ou Rotate
                 //    Redéfinir le centre des entités
-                if (repository.ListSelection.Count > 0 && (repository.MouseMode == MouseMode.Resize || repository.MouseMode == MouseMode.Rotate) && clonedSelectedEntite.Count>0)
+                if (repository.ListSelection.Count > 0 && (repository.MouseMode == MouseMode.Resize || repository.MouseMode == MouseMode.Rotate) && clonedSelectedEntite.Count > 0)
                 {
                     for (int i = 0; i < repository.ListSelection.Count; i++)
                     {
@@ -1506,7 +1564,7 @@ namespace Edit2D
                 }
 
                 vecFocal = prevVecFocal + pointerCamera.ScreenPosition - pointerCamera.PrevScreenPosition;
- 
+
                 repository.CurrentPointer.CalcScreenPositionFromWorldPosition(repository.Camera);
                 repository.CurrentPointer2.CalcScreenPositionFromWorldPosition(repository.Camera);
                 //----
@@ -1522,8 +1580,8 @@ namespace Edit2D
                     {
                         if (repository.CurrentEntite != null && repository.CurrentEntite.ListParticleSystem.Count > 0)
                         {
-                            Vector2 vec1 =  repository.CurrentPointer2.PrevWorldPosition - repository.CurrentEntite.Position;
-                            Vector2 vec2 = repository.CurrentPointer2.WorldPosition  - repository.CurrentEntite.Position;
+                            Vector2 vec1 = repository.CurrentPointer2.PrevWorldPosition - repository.CurrentEntite.Position;
+                            Vector2 vec2 = repository.CurrentPointer2.WorldPosition - repository.CurrentEntite.Position;
 
                             vec1.Normalize();
                             vec2.Normalize();
