@@ -714,7 +714,11 @@ namespace WinFormsContentLoading
 
                 recEntite = new Rectangle((int)vecPosEntite.X, (int)vecPosEntite.Y, (int)vecSizeEntite.X, (int)vecSizeEntite.Y);
 
-                if (recScreen.Intersects(recEntite))
+
+
+
+                if (recScreen.Intersects(recEntite) ||
+                    repository.ShowDebugMode && repository.ViewingMode == ViewingMode.Script && entite.Selected && repository.CurrentEntite == entite)
                 {
                     listEntiteToDraw.Add(entite);
                 }
