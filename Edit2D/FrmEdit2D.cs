@@ -80,6 +80,25 @@ namespace Edit2D
             repository.FrmEdit2D = this;
             repository.Pause = true;
 
+            //--- Mode simplifié
+            if (repository.IsSimpleMode)
+            {
+                repository.World.GradientColor1 = Microsoft.Xna.Framework.Graphics.Color.White;
+                repository.World.GradientColor2 = Microsoft.Xna.Framework.Graphics.Color.White;
+
+                pnlViewerModes.Panel2Collapsed = true;
+                pnlMain.Panel2Collapsed = true;
+
+                this.Size = new Size(200, 200);
+                this.Left = Screen.PrimaryScreen.WorkingArea.Width - this.Size.Width;
+                this.Top = Screen.PrimaryScreen.WorkingArea.Height - this.Size.Height;
+                this.ShowIcon = false;
+
+                repository.CurrentPointer2.WorldPosition = new Vector2(10, 10);
+                repository.CurrentPointer.WorldPosition = new Vector2(100, 100);
+            }
+            //---
+
             AddEntity();
             repository.CurrentEntite = repository.listEntite[0];
 
@@ -140,9 +159,9 @@ namespace Edit2D
 
             modelViewerControl.Initialize(repository, contentManager, contentBuilder);
             //TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice);
-            TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice, @"..\..\..");
+            TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice, @"..\..\..", "*.PNG" );
             render = new Render(modelViewerControl.spriteBatch, modelViewerControl.GraphicsDevice, repository, null);
-
+            
             InitPhysicSimulatorView();
         }
 

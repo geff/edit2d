@@ -452,9 +452,9 @@ void BlurPixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
         tex = tex2D(TextureSampler, texCoord + blurFactor * offsets[i]);
         
         if(isInBackground)
-			tex = ConvertToGray(tex);
+			color += ConvertToGray(tex);
       
-        color += tex;
+        //color += tex;
     }
     
     color /= 13;
@@ -533,11 +533,12 @@ void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 		//color = float4(0,0,0,0);
 	}
 	*/
-    
-    color *= tex2D(TextureSampler, texCoord);
+    color = float4(0,0,0,1);
+	
+    //color *= tex2D(TextureSampler, texCoord);
     //color=float4(1,1,1,0);
 	//color = tex2D( TextureSampler , texCoord);
-	SelectColor(color);
+	//SelectColor(color);
 }
 
 //-----------------------------------------------------------
@@ -552,7 +553,7 @@ void EdgePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 	}
 	else
 	{
-		float nbPass = 15;
+		float nbPass = 5;
 		float edgeValue = GetEdgeValue(texCoord,nbPass) / nbPass;
 	
 		if(edgeValue <= 0)
@@ -637,6 +638,7 @@ technique RadialBlur
 {
     pass
     {
+		VertexShader = compile vs_2_0 SpriteVertexShader();
         PixelShader = compile ps_3_0 RadialBlurPixelShader();
     }
 }
@@ -646,10 +648,12 @@ technique NormalMap
 {
     pass HeightMap
     {
+		VertexShader = compile vs_2_0 SpriteVertexShader();
         PixelShader = compile ps_3_0 EdgePixelShader();
     }
     pass NormalMap
     {
+		VertexShader = compile vs_2_0 SpriteVertexShader();
         PixelShader = compile ps_3_0 NormalMapPixelShader();
     }
 }
@@ -659,6 +663,7 @@ technique EdgePass
 {
     pass
     {
+		VertexShader = compile vs_2_0 SpriteVertexShader();
         PixelShader = compile ps_3_0 EdgePassPixelShader();
     }
 }
@@ -668,6 +673,7 @@ technique Edge
 {
     pass
     {
+		VertexShader = compile vs_2_0 SpriteVertexShader();
         PixelShader = compile ps_3_0 EdgePixelShader();
     }
 }
@@ -677,7 +683,8 @@ technique Gradient
 {
     pass
     {
-        PixelShader = compile ps_3_0 GradientPixelShader();
+		VertexShader = compile vs_2_0 SpriteVertexShader();
+        PixelShader = compile ps_2_0 GradientPixelShader();
     }
 }
 //-----------------------------------------------------------
@@ -686,7 +693,8 @@ technique Night
 {
     pass
     {
-        PixelShader = compile ps_3_0 NightPixelShader();
+		VertexShader = compile vs_2_0 SpriteVertexShader();
+        PixelShader = compile ps_2_0 NightPixelShader();
     }
 }
 //-----------------------------------------------------------
@@ -695,8 +703,8 @@ technique Background
 {
     pass
     {
-        //VertexShader = compile vs_1_1 SpriteVertexShader();
-        PixelShader = compile ps_3_0 BackgroundPixelShader();
+        VertexShader = compile vs_2_0 SpriteVertexShader();
+        PixelShader = compile ps_2_0 BackgroundPixelShader();
     }
 }
 //-----------------------------------------------------------
@@ -705,8 +713,8 @@ technique Blur
 {
     pass
     {
-        //VertexShader = compile vs_2_0 SpriteVertexShader();
-        PixelShader = compile ps_3_0 BlurPixelShader();
+        VertexShader = compile vs_2_0 SpriteVertexShader();
+        PixelShader = compile ps_2_0 BlurPixelShader();
     }
 }
 //-----------------------------------------------------------
@@ -715,7 +723,7 @@ technique SpriteBatch
 {
 	pass
 	{
-		//VertexShader = compile vs_3_0 SpriteVertexShader();
-		PixelShader  = compile ps_3_0 SpritePixelShader();
+		VertexShader = compile vs_1_1 SpriteVertexShader();
+		PixelShader  = compile ps_1_1 SpritePixelShader();
 	}
 }

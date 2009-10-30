@@ -69,12 +69,14 @@ namespace WinFormsContentLoading
         public SpriteBatch spriteBatch;
         Edit2D.Repository repository;
         Effect effect;
+        BasicEffect basicEffect;
         EffectPool effectPool;
         CompiledEffect compiledEffect;
         SpriteFont spriteFont;
         private bool loadNewShader = false;
 
-        string effectPath = @"D:\Log\Edit2D\Blip\Content\Shader";
+        //string effectPath = @"D:\Log\Edit2D\Blip\Content\Shader";
+        string effectPath = @"D:\GDD\Log\Log\Edit2D\Blip\Content\Shader";
         string effectFileName = "SpriteBatch.fx";
 
         /// <summary>
@@ -99,6 +101,8 @@ namespace WinFormsContentLoading
             //effect = content.Load<Effect>("SpriteBatch");
 
             LoadShader();
+
+            basicEffect = new BasicEffect(GraphicsDevice, effectPool);
 
             FileSystemWatcher watcher = new FileSystemWatcher(effectPath, effectFileName);
             watcher.EnableRaisingEvents = true;
@@ -282,6 +286,34 @@ namespace WinFormsContentLoading
         private void DrawEntiteBasic(Entite entite, bool noPosition, string technique)
         {
             DrawEntiteBasic(entite, noPosition, technique, 0);
+        }
+
+        private void DrawEntiteBasicVertices(Entite entite, bool noPosition, string technique, int pass)
+        {
+            Texture2D texture = null;
+
+            if (entite is Particle)
+                texture = TextureManager.LoadParticleTexture2D(entite.TextureName);
+            else
+                texture = TextureManager.LoadTexture2D(entite.TextureName);
+
+            //-- Test drawing element
+            GraphicsDevice.VertexDeclaration = new VertexDeclaration(GraphicsDevice, VertexPositionTexture.VertexElements);
+            GraphicsDevice.Textures[0] = texture;
+            //GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, entite.TexVertices, 0, entite.NumberTriangles);
+            
+            //--- Pass
+            
+            effect.CurrentTechnique = effect.Techniques[technique];
+            //---
+            effect.Begin();
+            effect.CurrentTechnique.Passes[pass].Begin();
+
+            GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, entite.TexVertices, 0, entite.TexVertices.Length, entite.TexIndices, 0, entite.NumberTriangles);
+            
+            effect.CurrentTechnique.Passes[pass].End();
+            effect.End();
+            //---
         }
 
         private void DrawEntiteBasic(Entite entite, bool noPosition, string technique, int pass)
@@ -539,15 +571,15 @@ namespace WinFormsContentLoading
                 //---
             }
             //---
-
+            
             effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
             effect.Parameters["isSelected"].SetValue(entite.Selected);
             effect.Parameters["myTextureSize"].SetValue(new Vector2(entite.NativeImageSize.Width, entite.NativeImageSize.Height));
 
             //DrawEntiteEdge(entite);
             //DrawEntiteBasic(entite, false, "Edge");
-            DrawEntiteBasic(entite, false, "SpriteBatch");
-
+            //DrawEntiteBasic(entite, false, "SpriteBatch");
+            DrawEntiteBasicVertices(entite, false, "SpriteBatch", 0);
             //--- Night
             //DrawEntiteNight(entite);
             //---
@@ -556,7 +588,7 @@ namespace WinFormsContentLoading
             //---
 
 
-            if (((!repository.Pause && repository.IsEntityClickableOnPlay) || repository.Pause) && ((repository.ShowDebugMode && entite.IsStatic) || entite.Selected))
+            if (!repository.IsSimpleMode && ((!repository.Pause && repository.IsEntityClickableOnPlay) || repository.Pause) && ((repository.ShowDebugMode && entite.IsStatic) || entite.Selected))
             {
                 this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
 
@@ -781,9 +813,9 @@ namespace WinFormsContentLoading
             //---
 
             //--- Frame rate
-            spriteBatch.DrawString(spriteFont, String.Format("{0:00.0} FPS", 1000f / stopWatch.ElapsedMilliseconds), new Vector2(20, 20), Color.White);
-            stopWatch.Reset();
-            stopWatch.Start();
+            //spriteBatch.DrawString(spriteFont, String.Format("{0:00.0} FPS", 1000f / stopWatch.ElapsedMilliseconds), new Vector2(20, 20), Color.White);
+            //stopWatch.Reset();
+            //stopWatch.Start();
             //---
 
             repository.Screenshot = false;

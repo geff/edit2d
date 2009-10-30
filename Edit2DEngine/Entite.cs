@@ -277,6 +277,27 @@ namespace Edit2DEngine
             }
         }
 
+        [Browsable(false)]
+        public VertexPositionTexture[] TexVertices
+        {
+            get;
+            set;
+        }
+
+        [Browsable(false)]
+        public Int16[] TexIndices
+        {
+            get;
+            set;
+        }
+
+        [Browsable(false)]
+        public Int16 NumberTriangles
+        {
+            get;
+            set;
+        }
+        
         public Entite(bool linkToPhysiSimulator, bool isCollisionable, string textureName, string name)
         {
             Constructor(linkToPhysiSimulator, isCollisionable, textureName, name);
@@ -376,6 +397,10 @@ namespace Edit2DEngine
             this._center = originalVerts.GetCentroid();
             //---
 
+            //--- Calcul des Vertices pour l'affichage
+            CreateVerticesForRendering();
+            //---
+
             //Use the body factory to create the physics body
             if (addToPhysicSimulator)
             {
@@ -435,6 +460,38 @@ namespace Edit2DEngine
                 //polygonGeom = null;
                 //---
             }
+        }
+
+        private void CreateVerticesForRendering()
+        {
+            TexVertices = new VertexPositionTexture[4];
+
+            TexVertices[0].Position.X = this.Position.X + this.Center.X - this.SizeVector.X / 2f;
+            TexVertices[0].Position.Y = this.Position.Y + this.Center.Y - this.SizeVector.Y / 2f;
+            TexVertices[0].TextureCoordinate = new Vector2(0, 0);
+
+            TexVertices[1].Position.X = this.Position.X + this.Center.X + this.SizeVector.X / 2f;
+            TexVertices[1].Position.Y = this.Position.Y + this.Center.Y - this.SizeVector.Y / 2f;
+            TexVertices[1].TextureCoordinate = new Vector2(1, 0);
+
+            TexVertices[2].Position.X = this.Position.X + this.Center.X - this.SizeVector.X / 2f;
+            TexVertices[2].Position.Y = this.Position.Y + this.Center.Y + this.SizeVector.Y / 2f;
+            TexVertices[2].TextureCoordinate = new Vector2(0, 1);
+
+            TexVertices[3].Position.X = this.Position.X + this.Center.X + this.SizeVector.X / 2f;
+            TexVertices[3].Position.Y = this.Position.Y + this.Center.Y + this.SizeVector.Y / 2f;
+            TexVertices[3].TextureCoordinate = new Vector2(1, 1);
+
+            this.NumberTriangles = 2;
+            this.TexIndices = new short[6];
+
+            this.TexIndices[0] = 0;
+            this.TexIndices[1] = 1;
+            this.TexIndices[2] = 2;
+
+            this.TexIndices[3] = 1;
+            this.TexIndices[4] = 2;
+            this.TexIndices[5] = 3;
         }
 
         protected virtual Texture2D GetTexture()

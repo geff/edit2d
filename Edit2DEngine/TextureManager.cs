@@ -14,20 +14,20 @@ namespace Edit2DEngine
 
         public static void InitTextureManager(GraphicsDevice graphicsDevice)
         {
-            InitTextureManager(graphicsDevice, String.Empty);
+            InitTextureManager(graphicsDevice, String.Empty, "*.PNG");
         }
 
-        public static void InitTextureManager(GraphicsDevice graphicsDevice, string dataPath)
+        public static void InitTextureManager(GraphicsDevice graphicsDevice, string dataPath, string patternFile)
         {
             //LoadTextures(graphicsDevice, Path.Combine(dataPath, @"\Data\Pics\"), ref ListTexture2D);
-            LoadTextures(graphicsDevice, dataPath + @"\Data\Pics\", ref ListTexture2D);
-            LoadTextures(graphicsDevice, dataPath + @"\Data\Pics\Particles\", ref ListParticleTexture2D);
+            LoadTextures(graphicsDevice, dataPath + @"\Data\Pics\", patternFile, ref ListTexture2D);
+            LoadTextures(graphicsDevice, dataPath + @"\Data\Pics\Particles\", patternFile, ref ListParticleTexture2D);
         }
 
-        private static void LoadTextures(GraphicsDevice graphicsDevice, string path, ref Dictionary<String, Texture2D> listTexture)
+        private static void LoadTextures(GraphicsDevice graphicsDevice, string path, string patternFile, ref Dictionary<String, Texture2D> listTexture)
         {
             listTexture = new Dictionary<String, Texture2D>();
-            string[] files = Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, path), "*.PNG");
+            string[] files = Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, path), patternFile);
 
             foreach (String file in files)
             {

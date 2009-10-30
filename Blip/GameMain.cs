@@ -68,7 +68,7 @@ namespace Blip
 
             GameCurrent = new GameMenu(this, spriteBatch, graphics.GraphicsDevice, Content);
 
-            TextureManager.InitTextureManager(graphics.GraphicsDevice, @"..\..\..\..");
+            TextureManager.InitTextureManager(graphics.GraphicsDevice, @"..\..\..\..", "*.PNG");
             base.Initialize();
         }
 
