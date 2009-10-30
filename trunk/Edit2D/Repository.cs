@@ -88,6 +88,14 @@ namespace Edit2D
             return listSelectedEntite;
         }
 
+        public bool IsSimpleMode
+        {
+            get
+            {
+                return System.Environment.MachineName == "P64VBIBIAB2";
+            }
+        }
+
         private void CalcDrawingCurve()
         {
             if (this.CurrentScript == null)
