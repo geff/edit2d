@@ -102,7 +102,12 @@ namespace WinFormsContentLoading
 
             LoadShader();
 
-            basicEffect = new BasicEffect(GraphicsDevice, effectPool);
+            //--- Basic Effect
+            basicEffect = new BasicEffect(GraphicsDevice, null);
+            
+            basicEffect.View = Matrix.CreateLookAt(new Vector3(repository.Camera.Position, 1f), new Vector3(repository.Camera.Position, 0f), Vector3.Up);
+            ViewPortSizeChanged();
+            //---
 
             FileSystemWatcher watcher = new FileSystemWatcher(effectPath, effectFileName);
             watcher.EnableRaisingEvents = true;
@@ -148,6 +153,8 @@ namespace WinFormsContentLoading
             //Viewport viewport = GraphicsDevice.Viewport;
             Vector2 viewportSize = new Vector2(ClientSize.Width, ClientSize.Height);
             ChangeViewPortSize = false;
+            basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0f, viewportSize.X, viewportSize.Y, 0f, 0.01f, 1000f);
+
             //effect.Parameters["ViewportSize"].SetValue(viewportSize);
         }
 
@@ -297,22 +304,36 @@ namespace WinFormsContentLoading
             else
                 texture = TextureManager.LoadTexture2D(entite.TextureName);
 
+            GraphicsDevice.RenderState.CullMode = CullMode.None;
             //-- Test drawing element
-            GraphicsDevice.VertexDeclaration = new VertexDeclaration(GraphicsDevice, VertexPositionTexture.VertexElements);
-            GraphicsDevice.Textures[0] = texture;
+            //GraphicsDevice.VertexDeclaration = new VertexDeclaration(GraphicsDevice, VertexPositionTexture.VertexElements);
+            //GraphicsDevice.Textures[0] = texture;
             //GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, entite.TexVertices, 0, entite.NumberTriangles);
             
             //--- Pass
-            
-            effect.CurrentTechnique = effect.Techniques[technique];
-            //---
-            effect.Begin();
-            effect.CurrentTechnique.Passes[pass].Begin();
+            //basicEffect.VertexColorEnabled = true;
+            basicEffect.TextureEnabled = true;
+            basicEffect.GraphicsDevice.VertexDeclaration = new VertexDeclaration(GraphicsDevice, VertexPositionTexture.VertexElements);
+            basicEffect.Texture = texture;
 
-            GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, entite.TexVertices, 0, entite.TexVertices.Length, entite.TexIndices, 0, entite.NumberTriangles);
+            basicEffect.World = repository.Camera.MatrixScale * Matrix.CreateTranslation(new Vector3(entite.Center, 0)) *Matrix.CreateRotationZ(entite.Rotation) * Matrix.CreateTranslation(new Vector3(repository.Camera.Position + entite.Position, 0));
+            //basicEffect.World = repository.Camera.MatrixScale * repository.Camera.MatrixTranslation *  Matrix.CreateTranslation(new Vector3(entite.Position, 0));
+
+            //Matrix.CreateWorld(new Vector3(entite.Position, 0f), Vector3.UnitZ, -Vector3.Up);
+            //---
+
+            basicEffect.Begin();
             
-            effect.CurrentTechnique.Passes[pass].End();
-            effect.End();
+            //basicEffect.CurrentTechnique.Passes[pass].Begin();
+            foreach (EffectPass effectPass in basicEffect.CurrentTechnique.Passes)
+            {
+                effectPass.Begin();
+                GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, entite.TexVertices, 0, entite.TexVertices.Length, entite.TexIndices, 0, entite.NumberTriangles);
+                effectPass.End();
+            }
+
+            //basicEffect.CurrentTechnique.Passes[pass].End();
+            basicEffect.End();
             //---
         }
 
@@ -832,6 +853,11 @@ namespace WinFormsContentLoading
 
         protected override void Initialize()
         {
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            this.ChangeViewPortSize = true;
         }
     }
 }

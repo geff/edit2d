@@ -18,6 +18,8 @@ using Edit2DEngine.Render;
 using Edit2D.Properties;
 using System.Drawing.Imaging;
 using FarseerGames.FarseerPhysics.Collisions;
+using Edit2DEngine.Tools;
+using Microsoft.Xna.Framework.Input;
 
 namespace Edit2D
 {
@@ -44,6 +46,7 @@ namespace Edit2D
 
         Dictionary<MouseMode, Cursor> dicCursors = new Dictionary<MouseMode, Cursor>();
 
+        List<InputHandler> listInputHandler;
         #endregion
 
         #region Initialize
@@ -93,7 +96,7 @@ namespace Edit2D
                 this.Left = Screen.PrimaryScreen.WorkingArea.Width - this.Size.Width;
                 this.Top = Screen.PrimaryScreen.WorkingArea.Height - this.Size.Height;
                 this.ShowIcon = false;
-
+                modelViewerControl.ChangeViewPortSize = true;
                 repository.CurrentPointer2.WorldPosition = new Vector2(10, 10);
                 repository.CurrentPointer.WorldPosition = new Vector2(100, 100);
             }
@@ -112,8 +115,88 @@ namespace Edit2D
             particleControl.InitParticleControl();
 
             btnTriggerModeBar.PerformClick();
+
+            InitInputHandler();
         }
 
+        #region Input Handler
+        private void InitInputHandler()
+        {
+            //--- Input Handler
+            listInputHandler = new List<InputHandler>();
+            //---
+
+            //--- Sélection des entités
+            //InputHandler ihSelectEntite = new InputHandler("SelectEntite");
+            //ihSelectEntite.LeftMouseButtonPressed = true;
+            //ihSelectEntite.ContextCondition = new InputHandlerDelegate(IHContextCondition_SelectEntite);
+            //ihSelectEntite.Actions.Add(new InputHandlerDelegate(IHActions_SelectEntite));
+
+            //listInputHandler.Add(ihSelectEntite);
+            //---
+
+            //--- Déplacement de la caméra des entités
+            InputHandler ihMoveCamera = new InputHandler("MoveCamera");
+            ihMoveCamera.MiddleMouseButtonPressed = true;
+            ihMoveCamera.KeysNotPressed.Add(Microsoft.Xna.Framework.Input.Keys.LeftControl);
+            //ihMoveCamera.ContextCondition = new InputHandlerDelegate(IHContextCondition_MoveCamera);
+            ihMoveCamera.Actions.Add(new InputHandlerDelegate(IHActions_MoveCamera));
+
+            listInputHandler.Add(ihMoveCamera);
+            //---
+        }
+
+        private bool IHContextCondition_SelectEntite(KeyboardState keyboarState, MouseState mouseState, GameTime gameTime)
+        {
+            return false;
+        }
+
+        private bool IHActions_SelectEntite(KeyboardState keyboarState, MouseState mouseState, GameTime gameTime)
+        {
+            return false;
+        }
+
+        private bool IHContextCondition_MoveCamera(KeyboardState keyboarState, MouseState mouseState, GameTime gameTime)
+        {
+            return true;
+        }
+
+        private bool IHActions_MoveCamera(KeyboardState keyboarState, MouseState mouseState, GameTime gameTime)
+        {
+            System.Drawing.Point mouseLocation = new System.Drawing.Point(mouseState.X, mouseState.Y);
+
+            pointerCamera.CalcMousePointerLocation(mouseLocation, repository.Camera);
+            repository.Camera.Position = prevPosCamera + pointerCamera.ScreenPosition - pointerCamera.PrevScreenPosition;
+
+            //--- Calcul de la nouvelle position des pointeurs à l'écran
+            for (int i = 0; i < repository.ListSelection.Count; i++)
+            {
+                repository.ListSelection[i].Pointer.CalcScreenPositionFromWorldPosition(repository.Camera);
+            }
+
+            vecFocal = prevVecFocal + pointerCamera.ScreenPosition - pointerCamera.PrevScreenPosition;
+
+            repository.CurrentPointer.CalcScreenPositionFromWorldPosition(repository.Camera);
+            repository.CurrentPointer2.CalcScreenPositionFromWorldPosition(repository.Camera);
+            //----
+
+            return true;
+        }
+
+        private void EvaluateInput()
+        {
+            KeyboardState keyboardState = new KeyboardState();
+
+            MouseState mouseState = Mouse.GetState();
+            GameTime gameTime = new GameTime(DateTime.Now.TimeOfDay, TimeSpan.Zero, TimeSpan.Zero, TimeSpan.Zero, false);
+
+            for (int i = 0; i < listInputHandler.Count; i++)
+            {
+                listInputHandler[i].Evaluate(keyboardState, mouseState, gameTime);
+            }
+        }
+
+        #endregion
         private Cursor CreateCursor(Icon graphicCursor)
         {
             string fileName = Path.GetTempFileName();
@@ -1150,12 +1233,12 @@ namespace Edit2D
                 }
                 //---
 
-                if (e.KeyCode == Keys.S && repository.CurrentEntite != null)
+                if (e.KeyCode == System.Windows.Forms.Keys.S && repository.CurrentEntite != null)
                 {
                     btnPinStatic.PerformClick();
                 }
 
-                if (e.KeyCode == Keys.Oem7)
+                if (e.KeyCode == System.Windows.Forms.Keys.Oem7)
                 {
                     if (repository.MouseMode == MouseMode.Move)
                     {
@@ -1171,7 +1254,7 @@ namespace Edit2D
                     }
                 }
 
-                if (e.KeyCode == Keys.D1)
+                if (e.KeyCode == System.Windows.Forms.Keys.D1)
                 {
                     if (repository.MouseMode == MouseMode.Move)
                     {
@@ -1187,17 +1270,17 @@ namespace Edit2D
                     }
                 }
 
-                if (e.KeyCode == Keys.A)
+                if (e.KeyCode == System.Windows.Forms.Keys.A)
                 {
                     btnAddEntity.PerformClick();
                 }
 
-                if (e.KeyCode == Keys.Delete)
+                if (e.KeyCode == System.Windows.Forms.Keys.Delete)
                 {
                     DeleteEntity();
                 }
 
-                if (e.KeyCode == Keys.Space)
+                if (e.KeyCode == System.Windows.Forms.Keys.Space)
                 {
                     if (repository.Pause)
                         btnPlay.PerformClick();
@@ -1206,7 +1289,7 @@ namespace Edit2D
                 }
 
                 //--- Incrémente le layer des entités sélectionnées
-                if (e.KeyCode == Keys.Add)
+                if (e.KeyCode == System.Windows.Forms.Keys.Add)
                 {
                     repository.GetSelectedEntite().ForEach(ent => ent.Layer += 1);
                     repository.OrderEntite();
@@ -1214,14 +1297,14 @@ namespace Edit2D
                 }
 
                 //---> Décrémente le layer des entités sélectionnées
-                if (e.KeyCode == Keys.Subtract)
+                if (e.KeyCode == System.Windows.Forms.Keys.Subtract)
                 {
                     repository.GetSelectedEntite().ForEach(ent => ent.Layer -= 1);
                     repository.OrderEntite();
                     RefreshTreeView();
                 }
 
-                if (e.KeyCode == Keys.P)
+                if (e.KeyCode == System.Windows.Forms.Keys.P)
                 {
                     repository.Screenshot = true;
                 }
@@ -1423,6 +1506,9 @@ namespace Edit2D
 
         private void modelViewerControl_MouseUp(object sender, MouseEventArgs e)
         {
+
+            //EvaluateInput();
+
             if (!repository.Pause && !btnGameClickableOnPlay.Checked)
                 return;
 
@@ -1563,6 +1649,8 @@ namespace Edit2D
 
         private void modelViewerControl_MouseMove(object sender, MouseEventArgs e)
         {
+            //EvaluateInput();
+
             //--- Affichage de la position de la souris
             pointer.CalcMousePointerLocation(e.Location, repository.Camera);
             toolStripStatusMouse.Text = String.Format("Mouse.X : {0} - Mouse.Y : {1}", pointer.WorldPosition.X, pointer.WorldPosition.Y);
