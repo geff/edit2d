@@ -96,6 +96,7 @@ namespace Edit2DEngine
             set
             {
                 _center = value;
+                CreateVerticesForRendering();
             }
         }
 
@@ -144,7 +145,7 @@ namespace Edit2DEngine
                 if (geom != null)
                 {
                     //---> 17 car il s'agit du milieu de l'ensemble des valeurs possible pour l'enum CollisionCategory
-                    geom.CollisionCategories = (CollisionCategory)(2^(17 + _layer));
+                    geom.CollisionCategories = (CollisionCategory)(2 ^ (17 + _layer));
                     geom.CollidesWith = geom.CollisionCategories;
                 }
             }
@@ -297,7 +298,7 @@ namespace Edit2DEngine
             get;
             set;
         }
-        
+
         public Entite(bool linkToPhysiSimulator, bool isCollisionable, string textureName, string name)
         {
             Constructor(linkToPhysiSimulator, isCollisionable, textureName, name);
@@ -464,34 +465,75 @@ namespace Edit2DEngine
 
         private void CreateVerticesForRendering()
         {
-            TexVertices = new VertexPositionTexture[4];
+            if (TexVertices == null)
+            {
+                TexVertices = new VertexPositionTexture[4];
+                this.NumberTriangles = 2;
+                this.TexIndices = new short[6];
 
-            TexVertices[0].Position.X = this.Position.X + this.Center.X - this.SizeVector.X / 2f;
-            TexVertices[0].Position.Y = this.Position.Y + this.Center.Y - this.SizeVector.Y / 2f;
+                this.TexIndices[0] = 0;
+                this.TexIndices[1] = 1;
+                this.TexIndices[2] = 2;
+
+                this.TexIndices[3] = 1;
+                this.TexIndices[4] = 2;
+                this.TexIndices[5] = 3;
+            }
+
+            //TexVertices[0].Position.X = this.Center.X - this.SizeVector.X / 2f;
+            //TexVertices[0].Position.Y = this.Center.Y - this.SizeVector.Y / 2f;
+            //TexVertices[0].TextureCoordinate = new Vector2(0, 0);
+
+            //TexVertices[1].Position.X = this.Center.X + this.SizeVector.X / 2f;
+            //TexVertices[1].Position.Y = this.Center.Y - this.SizeVector.Y / 2f;
+            //TexVertices[1].TextureCoordinate = new Vector2(1, 0);
+
+            //TexVertices[2].Position.X = this.Center.X - this.SizeVector.X / 2f;
+            //TexVertices[2].Position.Y = this.Center.Y + this.SizeVector.Y / 2f;
+            //TexVertices[2].TextureCoordinate = new Vector2(0, 1);
+
+            //TexVertices[3].Position.X = this.Center.X + this.SizeVector.X / 2f;
+            //TexVertices[3].Position.Y = this.Center.Y + this.SizeVector.Y / 2f;
+            //TexVertices[3].TextureCoordinate = new Vector2(1, 1);
+
+            //-----------
+
+            //TexVertices[0].Position.X = -this.SizeVector.X / 2f;
+            //TexVertices[0].Position.Y = -this.SizeVector.Y / 2f;
+            //TexVertices[0].TextureCoordinate = new Vector2(0, 0);
+
+            //TexVertices[1].Position.X = this.SizeVector.X / 2f;
+            //TexVertices[1].Position.Y = -this.SizeVector.Y / 2f;
+            //TexVertices[1].TextureCoordinate = new Vector2(1, 0);
+
+            //TexVertices[2].Position.X = -this.SizeVector.X / 2f;
+            //TexVertices[2].Position.Y = this.SizeVector.Y / 2f;
+            //TexVertices[2].TextureCoordinate = new Vector2(0, 1);
+
+            //TexVertices[3].Position.X = this.SizeVector.X / 2f;
+            //TexVertices[3].Position.Y = this.SizeVector.Y / 2f;
+            //TexVertices[3].TextureCoordinate = new Vector2(1, 1);
+
+            float midWidth = this.SizeVector.X / 2f;
+            float midHeight = this.SizeVector.Y / 2f;
+            float flt = -1f;
+            float flt2 = 1f;
+
+            TexVertices[0].Position.X = this.Center.X * flt2 - midWidth + midWidth * flt;
+            TexVertices[0].Position.Y = this.Center.Y * flt2 - midHeight + midHeight * flt;
             TexVertices[0].TextureCoordinate = new Vector2(0, 0);
 
-            TexVertices[1].Position.X = this.Position.X + this.Center.X + this.SizeVector.X / 2f;
-            TexVertices[1].Position.Y = this.Position.Y + this.Center.Y - this.SizeVector.Y / 2f;
+            TexVertices[1].Position.X = this.Center.X * flt2 + midWidth + midWidth * flt;
+            TexVertices[1].Position.Y = this.Center.Y * flt2 - midHeight + midHeight * flt;
             TexVertices[1].TextureCoordinate = new Vector2(1, 0);
 
-            TexVertices[2].Position.X = this.Position.X + this.Center.X - this.SizeVector.X / 2f;
-            TexVertices[2].Position.Y = this.Position.Y + this.Center.Y + this.SizeVector.Y / 2f;
+            TexVertices[2].Position.X = this.Center.X * flt2 - midWidth + midWidth * flt;
+            TexVertices[2].Position.Y = this.Center.Y * flt2 + midHeight + midHeight * flt;
             TexVertices[2].TextureCoordinate = new Vector2(0, 1);
 
-            TexVertices[3].Position.X = this.Position.X + this.Center.X + this.SizeVector.X / 2f;
-            TexVertices[3].Position.Y = this.Position.Y + this.Center.Y + this.SizeVector.Y / 2f;
+            TexVertices[3].Position.X = this.Center.X * flt2 + midWidth + midWidth * flt;
+            TexVertices[3].Position.Y = this.Center.Y * flt2 + midHeight + midHeight * flt;
             TexVertices[3].TextureCoordinate = new Vector2(1, 1);
-
-            this.NumberTriangles = 2;
-            this.TexIndices = new short[6];
-
-            this.TexIndices[0] = 0;
-            this.TexIndices[1] = 1;
-            this.TexIndices[2] = 2;
-
-            this.TexIndices[3] = 1;
-            this.TexIndices[4] = 2;
-            this.TexIndices[5] = 3;
         }
 
         protected virtual Texture2D GetTexture()
@@ -505,6 +547,7 @@ namespace Edit2DEngine
             {
                 body.ResetDynamics();
                 body.Position = new Vector2(position.X, position.Y);
+                //CreateVerticesForRendering();
             }
         }
 
