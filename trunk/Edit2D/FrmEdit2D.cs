@@ -46,7 +46,7 @@ namespace Edit2D
 
         Dictionary<MouseMode, Cursor> dicCursors = new Dictionary<MouseMode, Cursor>();
 
-        List<InputHandler> listInputHandler;
+        //List<InputHandler> listInputHandler;
         #endregion
 
         #region Initialize
@@ -116,10 +116,12 @@ namespace Edit2D
 
             btnTriggerModeBar.PerformClick();
 
-            InitInputHandler();
+            //InitInputHandler();
         }
 
+        /*
         #region Input Handler
+
         private void InitInputHandler()
         {
             //--- Input Handler
@@ -197,6 +199,8 @@ namespace Edit2D
         }
 
         #endregion
+        */
+
         private Cursor CreateCursor(Icon graphicCursor)
         {
             string fileName = Path.GetTempFileName();
@@ -242,9 +246,9 @@ namespace Edit2D
 
             modelViewerControl.Initialize(repository, contentManager, contentBuilder);
             //TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice);
-            TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice, @"..\..\..", "*.PNG" );
+            TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice, @"..\..\..", "*.PNG");
             render = new Render(modelViewerControl.spriteBatch, modelViewerControl.GraphicsDevice, repository, null);
-            
+
             InitPhysicSimulatorView();
         }
 
@@ -792,7 +796,7 @@ namespace Edit2D
             float tangentOut = 0f;
 
 
-            float dt = keyB.Position  + keyN.Position  - keyA.Position - keyP.Position;
+            float dt = keyB.Position + keyN.Position - keyA.Position - keyP.Position;
             float dv = keyN.Value - keyP.Value;
             if (Math.Abs(dv) < float.Epsilon)
             {

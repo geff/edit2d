@@ -96,7 +96,7 @@ namespace Edit2DEngine
             set
             {
                 _center = value;
-                CreateVerticesForRendering();
+                //CreateVerticesForRendering();
             }
         }
 
@@ -465,6 +465,11 @@ namespace Edit2DEngine
 
         private void CreateVerticesForRendering()
         {
+            CreateVerticesForRendering(this.Center);
+        }
+
+        private void CreateVerticesForRendering(Vector2 delta)
+        {
             if (TexVertices == null)
             {
                 TexVertices = new VertexPositionTexture[4];
@@ -516,7 +521,7 @@ namespace Edit2DEngine
 
             float midWidth = this.SizeVector.X / 2f;
             float midHeight = this.SizeVector.Y / 2f;
-            float flt = -1f;
+            float flt = 0f;
             float flt2 = 1f;
 
             TexVertices[0].Position.X = this.Center.X * flt2 - midWidth + midWidth * flt;
@@ -616,6 +621,15 @@ namespace Edit2DEngine
 
             this.geom.LocalVertices.Translate(ref deltaPosition);
 
+            ////---
+            //TexVertices[0].Position += new Vector3(deltaPosition+new Vector2(50f), 0f);
+            //TexVertices[1].Position += new Vector3(deltaPosition + new Vector2(50f), 0f);
+            //TexVertices[2].Position += new Vector3(deltaPosition + new Vector2(50f), 0f);
+            //TexVertices[3].Position += new Vector3(deltaPosition + new Vector2(50f), 0f);
+            ////---
+
+
+
             DistanceGrid.Instance.RemoveDistanceGrid(this.geom);
             DistanceGrid.Instance.CreateDistanceGrid(this.geom);
 
@@ -626,6 +640,8 @@ namespace Edit2DEngine
             this.Center += deltaPosition;
             this.Position = worldPosition;
             this.Rotation = rotation;
+
+            //CreateVerticesForRendering(
         }
 
         public void SetCenterFromWorldPosition(Vector2 worldPosition, bool addToPhysicSimulator)

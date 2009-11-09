@@ -25,6 +25,14 @@ namespace Edit2DEngine
             this.NewCorner = Vector2.Zero;
         }
 
+        public Vector2 AbsolutePosition
+        {
+            get
+            {
+                return Position + NewCorner;
+            }
+        }
+
         public Matrix MatrixTransformation
         {
             get
