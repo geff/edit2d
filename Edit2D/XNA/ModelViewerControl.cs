@@ -75,8 +75,8 @@ namespace WinFormsContentLoading
         SpriteFont spriteFont;
         private bool loadNewShader = false;
 
-        //string effectPath = @"D:\Log\Edit2D\Blip\Content\Shader";
-        string effectPath = @"D:\GDD\Log\Log\Edit2D\Blip\Content\Shader";
+        string effectPath = @"D:\Log\Edit2D\Blip\Content\Shader";
+        //string effectPath = @"D:\GDD\Log\Log\Edit2D\Blip\Content\Shader";
         string effectFileName = "SpriteBatch.fx";
 
         /// <summary>
@@ -108,6 +108,11 @@ namespace WinFormsContentLoading
             basicEffect.View = Matrix.CreateLookAt(new Vector3(repository.Camera.Position, 1f), new Vector3(repository.Camera.Position, 0f), Vector3.Up);
             ViewPortSizeChanged();
             //---
+
+            if (repository.IsSimpleMode)
+            {
+                effectPath = @"D:\GDD\Log\Log\Edit2D\Blip\Content\Shader";
+            }
 
             FileSystemWatcher watcher = new FileSystemWatcher(effectPath, effectFileName);
             watcher.EnableRaisingEvents = true;
@@ -310,16 +315,20 @@ namespace WinFormsContentLoading
             //GraphicsDevice.Textures[0] = texture;
             //GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, entite.TexVertices, 0, entite.NumberTriangles);
             
+            
             //--- Pass
             //basicEffect.VertexColorEnabled = true;
             basicEffect.TextureEnabled = true;
             basicEffect.GraphicsDevice.VertexDeclaration = new VertexDeclaration(GraphicsDevice, VertexPositionTexture.VertexElements);
             basicEffect.Texture = texture;
 
-            basicEffect.World = repository.Camera.MatrixScale * Matrix.CreateTranslation(new Vector3(entite.Center, 0)) *Matrix.CreateRotationZ(entite.Rotation) * Matrix.CreateTranslation(new Vector3(repository.Camera.Position + entite.Position, 0));
-            //basicEffect.World = repository.Camera.MatrixScale * repository.Camera.MatrixTranslation *  Matrix.CreateTranslation(new Vector3(entite.Position, 0));
 
-            //Matrix.CreateWorld(new Vector3(entite.Position, 0f), Vector3.UnitZ, -Vector3.Up);
+            //---> Rendu avec centre
+            basicEffect.World =
+                Matrix.CreateTranslation(new Vector3(-entite.Center, 0)) *
+                Matrix.CreateRotationZ(entite.Rotation) *
+                Matrix.CreateTranslation(new Vector3(entite.Position, 0)) *
+                repository.Camera.MatrixTransformation;
             //---
 
             basicEffect.Begin();
