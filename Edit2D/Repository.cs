@@ -93,6 +93,7 @@ namespace Edit2D
             get
             {
                 return System.Environment.MachineName == "P64VBIBIAB2";
+                //return false;
             }
         }
 

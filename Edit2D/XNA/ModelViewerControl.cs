@@ -96,6 +96,11 @@ namespace WinFormsContentLoading
             // Hook the idle event to constantly redraw our animation.
             Application.Idle += delegate { Invalidate(); };
 
+            if (repository.IsSimpleMode)
+            {
+                effectPath = @"D:\GDD\Log\Log\Edit2D\Blip\Content\Shader";
+            }
+
             //--- Chargement de l'effet
             effectPool = new EffectPool();
             //effect = content.Load<Effect>("SpriteBatch");
@@ -108,11 +113,6 @@ namespace WinFormsContentLoading
             basicEffect.View = Matrix.CreateLookAt(new Vector3(repository.Camera.Position, 1f), new Vector3(repository.Camera.Position, 0f), Vector3.Up);
             ViewPortSizeChanged();
             //---
-
-            if (repository.IsSimpleMode)
-            {
-                effectPath = @"D:\GDD\Log\Log\Edit2D\Blip\Content\Shader";
-            }
 
             FileSystemWatcher watcher = new FileSystemWatcher(effectPath, effectFileName);
             watcher.EnableRaisingEvents = true;
@@ -317,11 +317,20 @@ namespace WinFormsContentLoading
             
             
             //--- Pass
+            //GraphicsDevice.RenderState.AlphaBlendEnable = false;
+            //GraphicsDevice.RenderState.AlphaTestEnable = true;
+            //GraphicsDevice.RenderState.ReferenceAlpha = 255; 
+            //GraphicsDevice.RenderState.DepthBufferWriteEnable = true;
+            //GraphicsDevice.RenderState.DepthBufferEnable = true;
+            GraphicsDevice.RenderState.AlphaBlendEnable = true;
+            GraphicsDevice.RenderState.SourceBlend = Blend.SourceAlpha;
+            GraphicsDevice.RenderState.DestinationBlend = Blend.InverseSourceAlpha;
+
             //basicEffect.VertexColorEnabled = true;
             basicEffect.TextureEnabled = true;
             basicEffect.GraphicsDevice.VertexDeclaration = new VertexDeclaration(GraphicsDevice, VertexPositionTexture.VertexElements);
             basicEffect.Texture = texture;
-
+            //basicEffect.Alpha = 0f;
 
             //---> Rendu avec centre
             basicEffect.World =
