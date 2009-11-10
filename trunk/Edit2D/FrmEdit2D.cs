@@ -77,7 +77,7 @@ namespace Edit2D
 
             InitRender();
 
-            repository.CurrentTextureName = "BigRec";
+            repository.CurrentTextureName = "BigRec2";
             repository.CurrentPointer2.WorldPosition = new Vector2(100, 10);
             repository.CurrentPointer.WorldPosition = new Vector2(200, 200);
             repository.FrmEdit2D = this;
@@ -99,6 +99,14 @@ namespace Edit2D
                 modelViewerControl.ChangeViewPortSize = true;
                 repository.CurrentPointer2.WorldPosition = new Vector2(10, 10);
                 repository.CurrentPointer.WorldPosition = new Vector2(100, 100);
+
+                foreach (ToolStripItem item in toolStripMenu.Items)
+                {
+                    item.Image = null;
+
+                    if (item.Name != "btnSetCenterEntity")
+                        item.Visible = false;
+                }
             }
             //---
 
