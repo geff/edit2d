@@ -109,7 +109,7 @@ namespace Edit2D
             {
                 ActionBase actionBase = this.CurrentScript.ListAction[j];
 
-                if (actionBase != null)
+                if (actionBase != null && actionBase is ActionCurve)
                 {
                     ActionCurve actionCurve = (ActionCurve)actionBase;
 

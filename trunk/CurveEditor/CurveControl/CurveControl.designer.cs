@@ -676,7 +676,7 @@ namespace Xna.Tools
             this.linearButton});
             this.toolStrip.Location = new System.Drawing.Point(3, 24);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(554, 25);
+            this.toolStrip.Size = new System.Drawing.Size(477, 25);
             this.toolStrip.TabIndex = 1;
             // 
             // selectionButton

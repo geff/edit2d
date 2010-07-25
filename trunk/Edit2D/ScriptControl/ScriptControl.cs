@@ -56,7 +56,7 @@ namespace Edit2D.ScriptControl
         {
             cmbActionType.SelectedIndex = 0;
 
-            ViewActionCurve(null);
+            //ViewActionCurve(null);
         }
 
         private void RefreshScriptView()
@@ -77,6 +77,9 @@ namespace Edit2D.ScriptControl
         {
             treeViewAction.Nodes.Clear();
             IActionHandler actionHandler = GetCurrentActionHandler();
+
+            if (repository.CurrentScript != null)
+                pnlAction.Enabled = true;
 
             if (actionHandler != null && currentScript != -1)
             {
@@ -163,15 +166,17 @@ namespace Edit2D.ScriptControl
         private void ViewActionCurve(ActionCurve actionCurve)
         {
             //--- Affiche le contrôle de courbe
-            pnlMain.ColumnStyles[2].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[1].SizeType = SizeType.Absolute;
-            pnlMain.ColumnStyles[3].SizeType = SizeType.Absolute;
-            pnlMain.ColumnStyles[2].Width = 100;
-            pnlMain.ColumnStyles[1].Width = 0;
-            pnlMain.ColumnStyles[3].Width = 0;
+            pnlMain.ColumnStyles[2 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[2 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[2 + ID_ACTION_SOUND].SizeType = SizeType.Percent;
 
-            pnlMain.ColumnStyles[0].SizeType = SizeType.Absolute;
-            pnlMain.ColumnStyles[0].Width = 240;
+            pnlMain.ColumnStyles[2 + ID_ACTION_CURVE].Width = 100;
+            pnlMain.ColumnStyles[2 + ID_ACTION_EVENT].Width = 0;
+            pnlMain.ColumnStyles[2 + ID_ACTION_SOUND].Width = 0;
+
+            curveControl.Visible = true;
+            pnlActionEvent.Visible = false;
+            actionSoundControl.Visible = false;
             //---
 
             curveControl.Curves.Clear();
@@ -349,15 +354,17 @@ namespace Edit2D.ScriptControl
         private void ViewActionEvent(ActionEvent actionEvent)
         {
             //--- Affiche le panneau ActionEvent
-            pnlMain.ColumnStyles[1].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[2].SizeType = SizeType.Absolute;
-            pnlMain.ColumnStyles[3].SizeType = SizeType.Absolute;
-            pnlMain.ColumnStyles[1].Width = 100;
-            pnlMain.ColumnStyles[2].Width = 0;
-            pnlMain.ColumnStyles[2].Width = 0;
+            pnlMain.ColumnStyles[2 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[2 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[2 + ID_ACTION_SOUND].SizeType = SizeType.Percent;
 
-            pnlMain.ColumnStyles[0].SizeType = SizeType.Absolute;
-            pnlMain.ColumnStyles[0].Width = 240;
+            pnlMain.ColumnStyles[2 + ID_ACTION_CURVE].Width = 0;
+            pnlMain.ColumnStyles[2 + ID_ACTION_EVENT].Width = 100;
+            pnlMain.ColumnStyles[2 + ID_ACTION_SOUND].Width = 0;
+
+            curveControl.Visible = false;
+            pnlActionEvent.Visible = true;
+            actionSoundControl.Visible = false;
             //---
 
             if (actionEvent.PropertyType.Name == "Color")
@@ -450,15 +457,16 @@ namespace Edit2D.ScriptControl
         private void ViewActionSound(ActionSound actionSound)
         {
             //--- Affiche le panneau ActionEvent
-            pnlMain.ColumnStyles[3].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[1].SizeType = SizeType.Absolute;
-            pnlMain.ColumnStyles[2].SizeType = SizeType.Absolute;
-            pnlMain.ColumnStyles[2].Width = 100;
-            pnlMain.ColumnStyles[1].Width = 0;
-            pnlMain.ColumnStyles[2].Width = 0;
+            pnlMain.ColumnStyles[2 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[2 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[2 + ID_ACTION_SOUND].SizeType = SizeType.AutoSize;
 
-            pnlMain.ColumnStyles[0].SizeType = SizeType.Absolute;
-            pnlMain.ColumnStyles[0].Width = 240;
+            pnlMain.ColumnStyles[2 + ID_ACTION_CURVE].SizeType = 0;
+            pnlMain.ColumnStyles[2 + ID_ACTION_EVENT].SizeType = 0;
+
+            curveControl.Visible = false;
+            pnlActionEvent.Visible = false;
+            actionSoundControl.Visible = true;
             //---
         }
 
@@ -671,9 +679,9 @@ namespace Edit2D.ScriptControl
 
         private void listboxScript_SelectedIndexChanged(object sender, EventArgs e)
         {
-            RefreshActionView();
             currentScript = listboxScript.SelectedIndex;
             repository.CurrentScript = GetSelectedScript();
+            RefreshActionView();
         }
 
         private void btnAddAction_Click(object sender, EventArgs e)
@@ -944,7 +952,7 @@ namespace Edit2D.ScriptControl
                 InitComboProperties();
             }
 
-            if (action is ActionCurve || action == null)
+            if (action is ActionCurve)
                 ViewActionCurve((ActionCurve)action);
             else if (action is ActionEvent)
                 ViewActionEvent((ActionEvent)action);
