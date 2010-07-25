@@ -167,7 +167,7 @@ namespace Blip
         {
             this.GraphicsDevice.Clear(Color.White);
 
-            Matrix mtxCamera = Matrix.Invert(repository.Camera.MatrixTransformation) * Matrix.CreateTranslation((float)this.GraphicsDevice.Viewport.Width / 2f - blip.SizeVector.X/2f, (float)this.GraphicsDevice.Viewport.Height / 2f - blip.SizeVector.Y/2f, 0f);
+        Matrix mtxCamera = Matrix.Invert(repository.Camera.MatrixTransformation) * Matrix.CreateTranslation((float)this.GraphicsDevice.Viewport.Width / 2f - blip.SizeVector.X/2f, (float)this.GraphicsDevice.Viewport.Height / 2f - blip.SizeVector.Y/2f, 0f);
 
             this.SpriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, mtxCamera);
 

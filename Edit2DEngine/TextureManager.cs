@@ -20,8 +20,8 @@ namespace Edit2DEngine
         public static void InitTextureManager(GraphicsDevice graphicsDevice, string dataPath, string patternFile)
         {
             //LoadTextures(graphicsDevice, Path.Combine(dataPath, @"\Data\Pics\"), ref ListTexture2D);
-            LoadTextures(graphicsDevice, dataPath + @"\Data\Pics\", patternFile, ref ListTexture2D);
-            LoadTextures(graphicsDevice, dataPath + @"\Data\Pics\Particles\", patternFile, ref ListParticleTexture2D);
+            LoadTextures(graphicsDevice, dataPath + @"Data\Pics\", patternFile, ref ListTexture2D);
+            LoadTextures(graphicsDevice, dataPath + @"Data\Pics\Particles\", patternFile, ref ListParticleTexture2D);
         }
 
         private static void LoadTextures(GraphicsDevice graphicsDevice, string path, string patternFile, ref Dictionary<String, Texture2D> listTexture)

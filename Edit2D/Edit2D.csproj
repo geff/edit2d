@@ -33,6 +33,22 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="FarseerPhysics, Version=2.1.1.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -143,6 +159,13 @@
     <Compile Include="TriggerControl\TriggerControl.Designer.cs">
       <DependentUpon>TriggerControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="UC\ComboBoxLocal.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UC\ComboBoxLocal.Designer.cs">
+      <DependentUpon>ComboBoxLocal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WinformVisualStyle.cs" />
     <Compile Include="XNA\ContentBuilder.cs" />
     <Compile Include="XNA\ErrorLogger.cs" />
     <Compile Include="XNA\GraphicsDeviceControl.cs">
@@ -240,6 +263,21 @@
     <None Include="Resources\icon_OrderUp.png" />
     <Content Include="SpriteBatch.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VisualStyle\AlmostDarkGrayBlue.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VisualStyle\Fillette.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VisualStyle\EloBlue.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VisualStyle\GrayBlue.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VisualStyle\DarkBlue.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

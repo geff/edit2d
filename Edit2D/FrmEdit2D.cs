@@ -77,7 +77,7 @@ namespace Edit2D
 
             InitRender();
 
-            repository.CurrentTextureName = "BigRec2";
+            repository.CurrentTextureName = "BigRec";
             repository.CurrentPointer2.WorldPosition = new Vector2(100, 10);
             repository.CurrentPointer.WorldPosition = new Vector2(200, 200);
             repository.FrmEdit2D = this;
@@ -122,7 +122,9 @@ namespace Edit2D
 
             particleControl.InitParticleControl();
 
-            btnTriggerModeBar.PerformClick();
+            btnScriptModeBar.PerformClick();
+
+            //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             //InitInputHandler();
         }
@@ -254,7 +256,8 @@ namespace Edit2D
 
             modelViewerControl.Initialize(repository, contentManager, contentBuilder);
             //TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice);
-            TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice, @"..\..\..", "*.PNG");
+            //TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice, @"..\..\..", "*.PNG");
+            TextureManager.InitTextureManager(modelViewerControl.GraphicsDevice, "", "*.PNG");
             render = new Render(modelViewerControl.spriteBatch, modelViewerControl.GraphicsDevice, repository, null);
 
             InitPhysicSimulatorView();
@@ -1143,6 +1146,40 @@ namespace Edit2D
         private void btnPanelRight_Click(object sender, EventArgs e)
         {
             pnlMain.Panel2Collapsed = !btnPanelRight.Checked;
+        }
+        #endregion
+
+        #region RightBar Events
+        private void optRightBarEntities_CheckedChanged(object sender, EventArgs e)
+        {
+            pnlEntites.Visible = true;
+            pnlSpring.Visible = false;
+            pnlJoint.Visible = false;
+            prop.Visible = false;
+        }
+
+        private void optRightBarSpring_CheckedChanged(object sender, EventArgs e)
+        {
+            pnlEntites.Visible = false;
+            pnlSpring.Visible = true;
+            pnlJoint.Visible = false;
+            prop.Visible = false;
+        }
+
+        private void optRightBarJoint_CheckedChanged(object sender, EventArgs e)
+        {
+            pnlEntites.Visible = false;
+            pnlSpring.Visible = false;
+            pnlJoint.Visible = true;
+            prop.Visible = false;
+        }
+
+        private void optRightBarProperties_CheckedChanged(object sender, EventArgs e)
+        {
+            pnlEntites.Visible = false;
+            pnlSpring.Visible = false;
+            pnlJoint.Visible = false;
+            prop.Visible = true;
         }
         #endregion
 
