@@ -77,10 +77,38 @@ namespace Edit2D
             {
                 ApplyStyleTabPage((TabPage)ctrl);
             }
+            else if (ctrl is TreeView)
+            {
+                ApplyStyleTreeview((TreeView)ctrl);
+            }
+            else if (ctrl is Label)
+            {
+                ApplyStyleLabel((Label)ctrl);
+            }
 
             if (ctrl is TableLayoutPanel && ctrlParent is ActionEventLineControl)
             {
                 ApplyStyleActionEventLine((TableLayoutPanel)ctrl);
+            }
+
+            ApplyStyleSpecific(ctrl);
+        }
+
+        private static void ApplyStyleSpecific(Control ctrl)
+        {
+            if (ctrl.Tag != null)
+            {
+                if (ctrl.Tag.ToString() == "B")
+                    ctrl.BackColor = BorderColor;
+                if (ctrl.Tag.ToString() == "BG1")
+                    ctrl.BackColor = BackColorDark;
+                if (ctrl.Tag.ToString() == "BG2")
+                    ctrl.BackColor = BackColorLight;
+
+                if (ctrl.Tag.ToString() == "F1")
+                    ctrl.ForeColor = ForeColor1;
+                if (ctrl.Tag.ToString() == "F2")
+                    ctrl.ForeColor = ForeColor2;
             }
         }
 
@@ -100,7 +128,8 @@ namespace Edit2D
             button.BackColor = BackColorLight;
             
             Color borderColorLight = BackColorLight;
-            borderColorLight =  Color.FromArgb(BackColorLight.R + 5, BackColorLight.G + 5, BackColorLight.B + 5);
+            int offset = 7;
+            borderColorLight = Color.FromArgb(BackColorLight.R + offset, BackColorLight.G + offset, BackColorLight.B + offset);
 
             button.FlatAppearance.BorderColor = borderColorLight;
 
@@ -161,6 +190,27 @@ namespace Edit2D
             tabPage.BorderStyle = BorderStyle.None;
         }
 
+        private static void ApplyStyleTreeview(TreeView treeView)
+        {
+            treeView.Margin = new Padding(0);
+            treeView.BackColor = BackColorLight;
+            treeView.ForeColor = ForeColor1;
+            treeView.BorderStyle = BorderStyle.None;
+            treeView.FullRowSelect = true;
+            treeView.ShowLines = false;
+            treeView.HideSelection = false;
+            treeView.LineColor = SelectedColor;
+        }
+
+        private static void ApplyStyleLabel(Label lbl)
+        {
+            lbl.BackColor = BackColorLight;
+            lbl.ForeColor = ForeColor1;
+
+            if (lbl.Parent != null)
+                lbl.BackColor = lbl.Parent.BackColor;
+        }
+
         private static void OpenVisualStyle(string visualStyleName)
         {
             //===========================================================================================//
@@ -170,14 +220,15 @@ namespace Edit2D
             XPathDocument doc = new XPathDocument(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"VisualStyle\" + visualStyleName + ".xml"));
             XPathNavigator xPath = doc.CreateNavigator();
 
-            BackColorDark = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-3']");
             BackColorLight = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-1']");
             BorderColor = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-2']");
+            BackColorDark = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-3']");
 
-            ForeColor1 = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-5']");
-            ForeColor2 = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-4']");
+            MouseOverColor = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-4']");
 
-            MouseOverColor = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-2']");
+            ForeColor1 = ReadColor(xPath, "palette/colorset[@id='complement']/color[@id='complement-2']");
+            ForeColor2 = ReadColor(xPath, "palette/colorset[@id='complement']/color[@id='complement-3']");
+
             SelectedColor = ReadColor(xPath, "palette/colorset[@id='complement']/color[@id='complement-4']");
         }
 

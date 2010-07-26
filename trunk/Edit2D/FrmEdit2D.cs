@@ -79,20 +79,20 @@ namespace Edit2D
 
             repository.CurrentTextureName = "BigRec";
             repository.CurrentPointer2.WorldPosition = new Vector2(100, 10);
-            repository.CurrentPointer.WorldPosition = new Vector2(200, 200);
+            repository.CurrentPointer.WorldPosition = new Vector2(2000, 200);
             repository.FrmEdit2D = this;
             repository.Pause = true;
 
             //--- Mode simplifié
-            if (repository.IsSimpleMode)
+            //if (repository.IsSimpleMode)
             {
                 repository.World.GradientColor1 = Microsoft.Xna.Framework.Graphics.Color.White;
                 repository.World.GradientColor2 = Microsoft.Xna.Framework.Graphics.Color.White;
 
-                pnlViewerModes.Panel2Collapsed = true;
+                pnlViewerModes.Panel2Collapsed = false;
                 pnlMain.Panel2Collapsed = true;
 
-                this.Size = new Size(200, 200);
+                //this.Size = new Size(500, 300);
                 this.Left = Screen.PrimaryScreen.WorkingArea.Width - this.Size.Width;
                 this.Top = Screen.PrimaryScreen.WorkingArea.Height - this.Size.Height;
                 this.ShowIcon = false;
@@ -124,7 +124,7 @@ namespace Edit2D
 
             btnScriptModeBar.PerformClick();
 
-            //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
+            WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             //InitInputHandler();
         }

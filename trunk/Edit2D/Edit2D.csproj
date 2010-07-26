@@ -260,6 +260,7 @@
     <Content Include="Effect1.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\icon_Combo.png" />
     <None Include="Resources\icon_OrderUp.png" />
     <Content Include="SpriteBatch.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

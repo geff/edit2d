@@ -101,6 +101,7 @@ namespace WinFormsContentLoading
                 effectPath = @"D:\GDD\Log\Log\Edit2D\Blip\Content\Shader";
             }
 
+            effectPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Content\Shader");
             //--- Chargement de l'effet
             effectPool = new EffectPool();
             //effect = content.Load<Effect>("SpriteBatch");

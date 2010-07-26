@@ -78,8 +78,10 @@ namespace Edit2D.ScriptControl
             treeViewAction.Nodes.Clear();
             IActionHandler actionHandler = GetCurrentActionHandler();
 
-            if (repository.CurrentScript != null)
-                pnlAction.Enabled = true;
+            //TODO : à remplacer par l'ensemble des contrôles
+            //       action
+            //if (repository.CurrentScript != null)
+            //    pnlAction.Enabled = true;
 
             if (actionHandler != null && currentScript != -1)
             {
@@ -166,13 +168,13 @@ namespace Edit2D.ScriptControl
         private void ViewActionCurve(ActionCurve actionCurve)
         {
             //--- Affiche le contrôle de courbe
-            pnlMain.ColumnStyles[2 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[2 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[2 + ID_ACTION_SOUND].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].SizeType = SizeType.Percent;
 
-            pnlMain.ColumnStyles[2 + ID_ACTION_CURVE].Width = 100;
-            pnlMain.ColumnStyles[2 + ID_ACTION_EVENT].Width = 0;
-            pnlMain.ColumnStyles[2 + ID_ACTION_SOUND].Width = 0;
+            pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].Width = 100;
+            pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].Width = 0;
+            pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].Width = 0;
 
             curveControl.Visible = true;
             pnlActionEvent.Visible = false;
@@ -354,13 +356,13 @@ namespace Edit2D.ScriptControl
         private void ViewActionEvent(ActionEvent actionEvent)
         {
             //--- Affiche le panneau ActionEvent
-            pnlMain.ColumnStyles[2 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[2 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[2 + ID_ACTION_SOUND].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].SizeType = SizeType.Percent;
 
-            pnlMain.ColumnStyles[2 + ID_ACTION_CURVE].Width = 0;
-            pnlMain.ColumnStyles[2 + ID_ACTION_EVENT].Width = 100;
-            pnlMain.ColumnStyles[2 + ID_ACTION_SOUND].Width = 0;
+            pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].Width = 0;
+            pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].Width = 100;
+            pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].Width = 0;
 
             curveControl.Visible = false;
             pnlActionEvent.Visible = true;
@@ -457,12 +459,12 @@ namespace Edit2D.ScriptControl
         private void ViewActionSound(ActionSound actionSound)
         {
             //--- Affiche le panneau ActionEvent
-            pnlMain.ColumnStyles[2 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[2 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[2 + ID_ACTION_SOUND].SizeType = SizeType.AutoSize;
+            pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
+            pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].SizeType = SizeType.AutoSize;
 
-            pnlMain.ColumnStyles[2 + ID_ACTION_CURVE].SizeType = 0;
-            pnlMain.ColumnStyles[2 + ID_ACTION_EVENT].SizeType = 0;
+            pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].SizeType = 0;
+            pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].SizeType = 0;
 
             curveControl.Visible = false;
             pnlActionEvent.Visible = false;
@@ -974,5 +976,10 @@ namespace Edit2D.ScriptControl
             }
         }
         #endregion
+
+        private void pnlScript_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
