@@ -1,19 +1,19 @@
 ﻿<!-- Color Palette by Color Scheme Designer -->
 <palette>
   <url>
-    http://colorschemedesigner.com/#3v22f1B6p6q6q0w0.l1--RC2w0zc3w0MP4w0UBr--Vh
+    http://colorschemedesigner.com/#3v22f1B6p6q6q0w0.l1w0C52w0zc3--RR4w0UBpw0UBqw0xQr--Vh
   </url>
   <colorset id="primary" title="Primary Color">
     <color id="primary-1" nr="1" rgb="232323" r="35" g="35" b="35"/>
-    <color id="primary-2" nr="2" rgb="006DB4" r="0" g="109" b="180"/>
+    <color id="primary-2" nr="2" rgb="006DB4" r="56" g="56" b="56"/>
     <color id="primary-3" nr="3" rgb="191919" r="25" g="25" b="25"/>
-    <color id="primary-4" nr="4" rgb="8E8E8E" r="142" g="142" b="142"/>
+    <color id="primary-4" nr="4" rgb="8E8E8E" r="0" g="110" b="182"/>
     <color id="primary-5" nr="5" rgb="CCCCCC" r="204" g="204" b="204"/>
   </colorset>
   <colorset id="complement" title="Complementary Color">
     <color id="complement-1" nr="1" rgb="333230" r="51" g="50" b="48"/>
-    <color id="complement-2" nr="2" rgb="302F2E" r="48" g="47" b="46"/>
-    <color id="complement-3" nr="3" rgb="2F2C29" r="47" g="44" b="41"/>
+    <color id="complement-2" nr="2" rgb="302F2E" r="204" g="204" b="204"/>
+    <color id="complement-3" nr="3" rgb="2F2C29" r="15" g="15" b="15"/>
     <color id="complement-4" nr="4" rgb="D17500" r="209" g="117" b="0"/>
     <color id="complement-5" nr="5" rgb="474644" r="71" g="70" b="68"/>
   </colorset>

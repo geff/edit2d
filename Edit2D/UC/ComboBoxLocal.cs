@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Edit2D.Properties;
 
 namespace Edit2D.UC
 {
@@ -48,8 +49,12 @@ namespace Edit2D.UC
 
             e.Graphics.FillRectangle(backgroundBrush, e.ClipRectangle);
 
-            Rectangle recArrow = new Rectangle(e.ClipRectangle.Width - 20, 0, 20, e.ClipRectangle.Height);
-            ComboBoxRenderer.DrawDropDownButton(e.Graphics, recArrow, System.Windows.Forms.VisualStyles.ComboBoxState.Normal);
+            //Rectangle recArrow = new Rectangle(e.ClipRectangle.Width - 20, 0, 20, e.ClipRectangle.Height);
+            //ComboBoxRenderer.DrawDropDownButton(e.Graphics, recArrow, System.Windows.Forms.VisualStyles.ComboBoxState.Normal);
+
+            Point position = new Point(e.ClipRectangle.Width - 15, 3);
+
+            e.Graphics.DrawImage(Resources.icon_Combo, position);
 
             e.Graphics.DrawString(this.Text, this.Font, foregroundBrush, 2, 3);
         }
