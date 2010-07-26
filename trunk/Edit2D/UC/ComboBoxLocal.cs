@@ -16,6 +16,9 @@ namespace Edit2D.UC
         private Brush foregroundBrush = Brushes.YellowGreen;
         private Brush mouseOverBrush = Brushes.YellowGreen;
 
+        private Brush backgroundBrushDisabled = Brushes.YellowGreen;
+        private Brush foregroundBrushDisabled = Brushes.YellowGreen;
+
         public ComboBoxLocal()
         {
             InitializeComponent();
@@ -45,18 +48,25 @@ namespace Edit2D.UC
                 backgroundBrush = new SolidBrush(this.BackColor);
                 foregroundBrush = new SolidBrush(this.ForeColor);
                 mouseOverBrush = new SolidBrush(WinformVisualStyle.MouseOverColor);
+
+                backgroundBrushDisabled = new SolidBrush(Color.DarkGray);
+                foregroundBrushDisabled = new SolidBrush(Color.DarkGray);
             }
 
-            e.Graphics.FillRectangle(backgroundBrush, e.ClipRectangle);
 
-            //Rectangle recArrow = new Rectangle(e.ClipRectangle.Width - 20, 0, 20, e.ClipRectangle.Height);
-            //ComboBoxRenderer.DrawDropDownButton(e.Graphics, recArrow, System.Windows.Forms.VisualStyles.ComboBoxState.Normal);
+            if (this.Enabled)
+            {
+                e.Graphics.FillRectangle(backgroundBrush, e.ClipRectangle);
+                e.Graphics.DrawString(this.Text, this.Font, foregroundBrush, 2, 3);
+            }
+            else
+            {
+                e.Graphics.FillRectangle(backgroundBrushDisabled, e.ClipRectangle);
+                e.Graphics.DrawString(this.Text, this.Font, foregroundBrushDisabled, 2, 3);
+            }
 
-            Point position = new Point(e.ClipRectangle.Width - 15, 3);
-
+            Point position = new Point(this.Width - 15, 3);
             e.Graphics.DrawImage(Resources.icon_Combo, position);
-
-            e.Graphics.DrawString(this.Text, this.Font, foregroundBrush, 2, 3);
         }
     }
 }

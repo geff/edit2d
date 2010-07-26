@@ -101,6 +101,16 @@ namespace Xna.Tools
             set { curveView.GridBoldLineColor = value; }
         }
 
+        [Category("Curve Control")]
+        [Description("The background color of grid.")]
+        [DefaultValue(typeof(Color), "100, 102, 106")]
+        public Color GridBackColor
+        {
+            get { return curveView.BackColor; }
+            set { curveView.BackColor = value; }
+        }
+
+
         [Browsable(false)]
         public EditCurveCollection Curves { get { return curves; } }
 
@@ -167,7 +177,7 @@ namespace Xna.Tools
             cursorMap.Add(EditMode.Select, selectCursor);
             cursorMap.Add(EditMode.Move,
                 NativeMethods.LoadCursor(CurveControlResources.MoveCursor));
-            cursorMap.Add(EditMode.MoveTimeLine, Cursors.IBeam);
+            cursorMap.Add(EditMode.MoveTimeLine, Cursors.SizeWE);
 
             SelectCursorShape();
         }

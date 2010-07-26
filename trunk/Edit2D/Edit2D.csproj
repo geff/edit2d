@@ -147,6 +147,9 @@
     <EmbeddedResource Include="TriggerControl\TriggerControl.resx">
       <DependentUpon>TriggerControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UC\PropertyGridLocal.resx">
+      <DependentUpon>PropertyGridLocal.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -164,6 +167,12 @@
     </Compile>
     <Compile Include="UC\ComboBoxLocal.Designer.cs">
       <DependentUpon>ComboBoxLocal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\PropertyGridLocal.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\PropertyGridLocal.Designer.cs">
+      <DependentUpon>PropertyGridLocal.cs</DependentUpon>
     </Compile>
     <Compile Include="WinformVisualStyle.cs" />
     <Compile Include="XNA\ContentBuilder.cs" />
