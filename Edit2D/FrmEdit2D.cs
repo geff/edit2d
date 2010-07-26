@@ -56,6 +56,8 @@ namespace Edit2D
             modelViewerControl.MouseWheel += new MouseEventHandler(modelViewerControl_MouseWheel);
             this.Load += new EventHandler(Form1_Load);
             listView.DrawItem += new DrawListViewItemEventHandler(listView_DrawItem);
+            propertyGrid.PropertyGrid.PropertyValueChanged += new PropertyValueChangedEventHandler(PropertyGrid_PropertyValueChanged);
+            propertyGrid.PropertyGrid.PropertySort = PropertySort.CategorizedAlphabetical;
         }
 
         private void Init()
@@ -84,7 +86,7 @@ namespace Edit2D
             repository.Pause = true;
 
             //--- Mode simplifié
-            //if (repository.IsSimpleMode)
+            if (repository.IsSimpleMode)
             {
                 repository.World.GradientColor1 = Microsoft.Xna.Framework.Graphics.Color.White;
                 repository.World.GradientColor2 = Microsoft.Xna.Framework.Graphics.Color.White;
@@ -124,6 +126,7 @@ namespace Edit2D
 
             btnScriptModeBar.PerformClick();
 
+            //WinformVisualStyle.ApplyStyle(this, "Fillette");
             WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             //InitInputHandler();
@@ -458,7 +461,7 @@ namespace Edit2D
 
             if (repository.CurrentEntite != null)
             {
-                prop.SelectedObject = repository.CurrentEntite;
+                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentEntite;
                 btnPinStatic.Checked = repository.CurrentEntite.IsStatic;
                 btnColisionable.Checked = repository.CurrentEntite.IsColisionable;
 
@@ -468,11 +471,11 @@ namespace Edit2D
             }
             else if (repository.CurrentParticleSystem != null)
             {
-                prop.SelectedObject = repository.CurrentParticleSystem;
+                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem;
             }
             else if (newSelection is World)
             {
-                prop.SelectedObject = (World)newSelection;
+                propertyGrid.PropertyGrid.SelectedObject = (World)newSelection;
             }
 
             //--- Rafraichi le contrôle du mode courant
@@ -853,6 +856,8 @@ namespace Edit2D
                 {
                     ShowScriptMode();
                     script = this.scriptControl.AddScriptToCurrentEntity();
+                    if (script == null)
+                        return;
                 }
 
                 if (script.ListAction.Count == 0)
@@ -1127,7 +1132,7 @@ namespace Edit2D
             {
                 if (ChangeEntityName(repository.CurrentEntite, toolStripTextBoxEntityName.Text, repository.CurrentEntite.Name))
                 {
-                    this.prop.Refresh();
+                    this.propertyGrid.PropertyGrid.Refresh();
                     RefreshTreeView();
                 }
             }
@@ -1155,7 +1160,7 @@ namespace Edit2D
             pnlEntites.Visible = true;
             pnlSpring.Visible = false;
             pnlJoint.Visible = false;
-            prop.Visible = false;
+            propertyGrid.PropertyGrid.Visible = false;
         }
 
         private void optRightBarSpring_CheckedChanged(object sender, EventArgs e)
@@ -1163,7 +1168,7 @@ namespace Edit2D
             pnlEntites.Visible = false;
             pnlSpring.Visible = true;
             pnlJoint.Visible = false;
-            prop.Visible = false;
+            propertyGrid.PropertyGrid.Visible = false;
         }
 
         private void optRightBarJoint_CheckedChanged(object sender, EventArgs e)
@@ -1171,7 +1176,7 @@ namespace Edit2D
             pnlEntites.Visible = false;
             pnlSpring.Visible = false;
             pnlJoint.Visible = true;
-            prop.Visible = false;
+            propertyGrid.PropertyGrid.Visible = false;
         }
 
         private void optRightBarProperties_CheckedChanged(object sender, EventArgs e)
@@ -1179,7 +1184,7 @@ namespace Edit2D
             pnlEntites.Visible = false;
             pnlSpring.Visible = false;
             pnlJoint.Visible = false;
-            prop.Visible = true;
+            propertyGrid.PropertyGrid.Visible = true;
         }
         #endregion
 
@@ -1360,15 +1365,15 @@ namespace Edit2D
             }
         }
 
-        private void prop_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        private void PropertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            if (this.prop.SelectedObject != null && this.prop.SelectedObject is Entite)
+            if (this.propertyGrid.PropertyGrid.SelectedObject != null && this.propertyGrid.PropertyGrid.SelectedObject is Entite)
             {
                 if (e.ChangedItem.Label == "Name")
                 {
-                    if (!ChangeEntityName(((Entite)this.prop.SelectedObject), e.ChangedItem.Value.ToString(), e.OldValue.ToString()))
+                    if (!ChangeEntityName(((Entite)this.propertyGrid.PropertyGrid.SelectedObject), e.ChangedItem.Value.ToString(), e.OldValue.ToString()))
                     {
-                        this.prop.Refresh();
+                        this.propertyGrid.PropertyGrid.Refresh();
                     }
                 }
 
@@ -1603,7 +1608,7 @@ namespace Edit2D
                 }
 
                 //--- Affecte les entités sélectionnées au property grid
-                prop.SelectedObjects = repository.GetSelectedEntite().ToArray();
+                propertyGrid.PropertyGrid.SelectedObjects = repository.GetSelectedEntite().ToArray();
                 //---
             }
             else

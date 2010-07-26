@@ -94,7 +94,6 @@ namespace Xna.Tools
             this.LeftToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.ContentPanel = new System.Windows.Forms.ToolStripContentPanel();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
-            this.curveView = new Xna.Tools.GridControl();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.selectionButton = new System.Windows.Forms.ToolStripButton();
             this.addZeroKey = new System.Windows.Forms.ToolStripButton();
@@ -110,6 +109,7 @@ namespace Xna.Tools
             this.keyValueTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.smoothButton = new System.Windows.Forms.ToolStripButton();
             this.linearButton = new System.Windows.Forms.ToolStripButton();
+            this.curveView = new Xna.Tools.GridControl();
             this.menuStrip.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -119,6 +119,7 @@ namespace Xna.Tools
             // 
             // menuStrip
             // 
+            this.menuStrip.BackColor = System.Drawing.Color.DimGray;
             this.menuStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.editToolStripMenuItem,
@@ -129,6 +130,7 @@ namespace Xna.Tools
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(655, 24);
             this.menuStrip.TabIndex = 0;
+            this.menuStrip.Tag = "";
             this.menuStrip.Text = "menuStrip1";
             // 
             // editToolStripMenuItem
@@ -627,7 +629,7 @@ namespace Xna.Tools
             // toolStripContainer1.ContentPanel
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.curveView);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(655, 221);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(655, 196);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer1.Name = "toolStripContainer1";
@@ -637,26 +639,15 @@ namespace Xna.Tools
             // 
             // toolStripContainer1.TopToolStripPanel
             // 
+            this.toolStripContainer1.TopToolStripPanel.BackColor = System.Drawing.Color.Black;
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.menuStrip);
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip);
-            // 
-            // curveView
-            // 
-            this.curveView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(228)))), ((int)(((byte)(233)))), ((int)(((byte)(240)))));
-            this.curveView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.curveView.Location = new System.Drawing.Point(0, 0);
-            this.curveView.Name = "curveView";
-            this.curveView.Size = new System.Drawing.Size(655, 221);
-            this.curveView.TabIndex = 0;
-            this.curveView.Paint += new System.Windows.Forms.PaintEventHandler(this.curveView_Paint);
-            this.curveView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.curveView_MouseMove);
-            this.curveView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.curveView_KeyUp);
-            this.curveView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.curveView_MouseDown);
-            this.curveView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.curveView_MouseUp);
-            this.curveView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.curveView_KeyDown);
+            this.toolStripContainer1.TopToolStripPanel.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.toolStripContainer1.TopToolStripPanel.Tag = "";
             // 
             // toolStrip
             // 
+            this.toolStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -674,9 +665,12 @@ namespace Xna.Tools
             this.keyValueTextBox,
             this.smoothButton,
             this.linearButton});
+            this.toolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.toolStrip.Location = new System.Drawing.Point(3, 24);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(477, 25);
+            this.toolStrip.Padding = new System.Windows.Forms.Padding(0);
+            this.toolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.toolStrip.Size = new System.Drawing.Size(553, 25);
             this.toolStrip.TabIndex = 1;
             // 
             // selectionButton
@@ -822,10 +816,26 @@ namespace Xna.Tools
             this.linearButton.Visible = false;
             this.linearButton.Click += new System.EventHandler(this.linearButton_Click);
             // 
+            // curveView
+            // 
+            this.curveView.BackColor = System.Drawing.Color.Silver;
+            this.curveView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.curveView.Location = new System.Drawing.Point(0, 0);
+            this.curveView.Name = "curveView";
+            this.curveView.Size = new System.Drawing.Size(655, 196);
+            this.curveView.TabIndex = 0;
+            this.curveView.Paint += new System.Windows.Forms.PaintEventHandler(this.curveView_Paint);
+            this.curveView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.curveView_MouseMove);
+            this.curveView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.curveView_KeyUp);
+            this.curveView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.curveView_MouseDown);
+            this.curveView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.curveView_MouseUp);
+            this.curveView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.curveView_KeyDown);
+            // 
             // CurveControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.Controls.Add(this.toolStripContainer1);
             this.Name = "CurveControl";
             this.Size = new System.Drawing.Size(655, 270);
@@ -898,11 +908,6 @@ namespace Xna.Tools
         private System.Windows.Forms.ToolStripMenuItem neverToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem activeOnlyToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem infinityToolStripMenuItem;
-        private System.Windows.Forms.ToolStripPanel BottomToolStripPanel;
-        private System.Windows.Forms.ToolStripPanel TopToolStripPanel;
-        private System.Windows.Forms.ToolStripPanel RightToolStripPanel;
-        private System.Windows.Forms.ToolStripPanel LeftToolStripPanel;
-        private System.Windows.Forms.ToolStripContentPanel ContentPanel;
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripLabel keyPositionLabel;
@@ -920,5 +925,10 @@ namespace Xna.Tools
         private System.Windows.Forms.ToolStripButton smoothButton;
         private System.Windows.Forms.ToolStripButton linearButton;
         private System.Windows.Forms.ToolStripButton addZeroKey;
+        private System.Windows.Forms.ToolStripPanel BottomToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel TopToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel RightToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel LeftToolStripPanel;
+        private System.Windows.Forms.ToolStripContentPanel ContentPanel;
     }
 }

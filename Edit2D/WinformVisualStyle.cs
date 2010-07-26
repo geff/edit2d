@@ -85,6 +85,14 @@ namespace Edit2D
             {
                 ApplyStyleLabel((Label)ctrl);
             }
+            else if (ctrl is StatusStrip)
+            {
+                ApplyStyleStatusStrip((StatusStrip)ctrl);
+            }
+            else if (ctrl is CurveControl)
+            {
+                ApplyStyleCurveControl((CurveControl)ctrl);
+            }
 
             if (ctrl is TableLayoutPanel && ctrlParent is ActionEventLineControl)
             {
@@ -126,7 +134,7 @@ namespace Edit2D
             button.FlatAppearance.BorderSize = 2;
 
             button.BackColor = BackColorLight;
-            
+
             Color borderColorLight = BackColorLight;
             int offset = 7;
             borderColorLight = Color.FromArgb(BackColorLight.R + offset, BackColorLight.G + offset, BackColorLight.B + offset);
@@ -174,7 +182,7 @@ namespace Edit2D
             propertyGrid.ViewBackColor = BackColorDark;
             propertyGrid.ViewForeColor = BackColorDark;
         }
-        
+
         private static void ApplyStyleActionEventLine(TableLayoutPanel panel)
         {
             panel.Margin = new Padding(1);
@@ -209,6 +217,23 @@ namespace Edit2D
 
             if (lbl.Parent != null)
                 lbl.BackColor = lbl.Parent.BackColor;
+        }
+
+        private static void ApplyStyleStatusStrip(StatusStrip statusStrip)
+        {
+            statusStrip.BackColor = BackColorDark;
+            statusStrip.ForeColor = ForeColor1;
+        }
+
+        private static void ApplyStyleCurveControl(CurveControl ctrl)
+        {
+            Color slectingBoxcolor = Color.FromArgb(50, MouseOverColor);
+
+            ctrl.SelectingBoxColor = slectingBoxcolor;
+            ctrl.GridTextColor = ForeColor1;
+            ctrl.GridLineColor = BorderColor;
+            ctrl.GridBoldLineColor = BackColorLight;
+            ctrl.GridBackColor = BackColorDark;
         }
 
         private static void OpenVisualStyle(string visualStyleName)

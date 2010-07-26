@@ -30,8 +30,8 @@ namespace Edit2D.ScriptControl
         int currentSubAction = -1;
 
         private int timeLineValue;
-        public int TimeLineValue 
-        { 
+        public int TimeLineValue
+        {
             get
             {
                 return timeLineValue;
@@ -55,8 +55,9 @@ namespace Edit2D.ScriptControl
         private void InitScriptControl()
         {
             cmbActionType.SelectedIndex = 0;
-
+            propAction.PropertyGrid.PropertyValueChanged += new PropertyValueChangedEventHandler(PropertyGrid_PropertyValueChanged);
             //ViewActionCurve(null);
+            listboxScript.SelectedIndex = -1;
         }
 
         private void RefreshScriptView()
@@ -73,10 +74,31 @@ namespace Edit2D.ScriptControl
             }
         }
 
+        private void HideActionView()
+        {
+            pnlAction.Enabled = false;
+            lblActionName.Enabled = false;
+            lblActionProperty.Enabled = false;
+            cmbActionProperties.Enabled = false;
+            cmbActionType.Enabled = false;
+            lblAction.Enabled = false;
+        }
+
+        private void ShowActionView()
+        {
+            pnlAction.Enabled = true;
+            lblActionName.Enabled = true;
+            lblActionProperty.Enabled = true;
+            cmbActionProperties.Enabled = true;
+            cmbActionType.Enabled = true;
+            lblAction.Enabled = true;
+        }
+
         private void RefreshActionView()
         {
             treeViewAction.Nodes.Clear();
             IActionHandler actionHandler = GetCurrentActionHandler();
+
 
             //TODO : à remplacer par l'ensemble des contrôles
             //       action
@@ -85,6 +107,8 @@ namespace Edit2D.ScriptControl
 
             if (actionHandler != null && currentScript != -1)
             {
+                ShowActionView();
+
                 Script script = actionHandler.ListScript[currentScript];
 
                 for (int i = 0; i < script.ListAction.Count; i++)
@@ -163,20 +187,24 @@ namespace Edit2D.ScriptControl
                     }
                 }
             }
+            else
+            {
+                HideActionView();
+            }
         }
 
         private void ViewActionCurve(ActionCurve actionCurve)
         {
             //--- Affiche le contrôle de courbe
-            pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].SizeType = SizeType.Percent;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].SizeType = SizeType.AutoSize;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].SizeType = SizeType.Percent;
 
-            pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].Width = 100;
-            pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].Width = 0;
-            pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].Width = 0;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].Width = 100;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].Width = 0;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].Width = 0;
 
-            curveControl.Visible = true;
+            pnlCurve.Visible = true;
             pnlActionEvent.Visible = false;
             actionSoundControl.Visible = false;
             //---
@@ -356,15 +384,15 @@ namespace Edit2D.ScriptControl
         private void ViewActionEvent(ActionEvent actionEvent)
         {
             //--- Affiche le panneau ActionEvent
-            pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].SizeType = SizeType.Percent;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].SizeType = SizeType.Percent;
 
-            pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].Width = 0;
-            pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].Width = 100;
-            pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].Width = 0;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].Width = 0;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].Width = 100;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].Width = 0;
 
-            curveControl.Visible = false;
+            pnlCurve.Visible = false;
             pnlActionEvent.Visible = true;
             actionSoundControl.Visible = false;
             //---
@@ -393,7 +421,7 @@ namespace Edit2D.ScriptControl
             {
                 CreateActionEventLines(actionEvent, actionEvent.PropertyName, new String[] { "" }, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
             }
-            
+
             //---
             for (int i = 0; i < actionEvent.ActionEventTypes.Length; i++)
             {
@@ -459,14 +487,14 @@ namespace Edit2D.ScriptControl
         private void ViewActionSound(ActionSound actionSound)
         {
             //--- Affiche le panneau ActionEvent
-            pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
-            pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].SizeType = SizeType.AutoSize;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].SizeType = SizeType.Percent;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].SizeType = SizeType.Percent;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_SOUND].SizeType = SizeType.AutoSize;
 
-            pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].SizeType = 0;
-            pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].SizeType = 0;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_CURVE].SizeType = 0;
+            //pnlMain.ColumnStyles[1 + ID_ACTION_EVENT].SizeType = 0;
 
-            curveControl.Visible = false;
+            pnlCurve.Visible = false;
             pnlActionEvent.Visible = false;
             actionSoundControl.Visible = true;
             //---
@@ -502,7 +530,7 @@ namespace Edit2D.ScriptControl
         private ActionEvent GetCurrentActionEvent()
         {
             IActionHandler actionHandler = GetCurrentActionHandler();
-            
+
             if (currentScript != -1 && currentAction != -1)
                 return (ActionEvent)actionHandler.ListScript[currentScript].ListAction[currentAction];
             else
@@ -747,7 +775,7 @@ namespace Edit2D.ScriptControl
         {
             IActionHandler actionHandler = GetCurrentActionHandler();
 
-            if (actionHandler!= null && currentScript != -1 && currentAction != -1)
+            if (actionHandler != null && currentScript != -1 && currentAction != -1)
             {
                 Script script = actionHandler.ListScript[currentScript];
 
@@ -816,7 +844,7 @@ namespace Edit2D.ScriptControl
                 if (actionHandler != null)
                     action = actionHandler.ListScript[currentScript].ListAction[currentAction];
 
-                propAction.SelectedObject = action;
+                propAction.PropertyGrid.SelectedObject = action;
             }
 
             if (action is ActionCurve)
@@ -875,7 +903,7 @@ namespace Edit2D.ScriptControl
             }
         }
 
-        private void propAction_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        private void PropertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             RefreshActionView();
         }
@@ -889,7 +917,25 @@ namespace Edit2D.ScriptControl
 
             if (actionHandler != null)
             {
-                script = new Script(String.Format("Script{0}", actionHandler.ListScript.Count + 1), actionHandler);
+                string scriptName = String.Empty;
+
+                if (String.IsNullOrEmpty(txtScriptName.Text))
+                {
+                    scriptName = String.Format("Script{0}", actionHandler.ListScript.Count + 1);
+                }
+                else
+                {
+                    scriptName = txtScriptName.Text;
+                }
+
+                if (actionHandler.ListScript.Exists(s => s.ScriptName == scriptName))
+                {
+                    MessageBox.Show(String.Format("Le nom de script '{0}' existe déja", scriptName), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return null;
+                }
+
+                script = new Script(scriptName, actionHandler);
+
                 actionHandler.ListScript.Add(script);
 
                 RefreshScriptView();
@@ -976,10 +1022,5 @@ namespace Edit2D.ScriptControl
             }
         }
         #endregion
-
-        private void pnlScript_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
     }
 }
