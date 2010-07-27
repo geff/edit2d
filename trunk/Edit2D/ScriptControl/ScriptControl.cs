@@ -325,7 +325,7 @@ namespace Edit2D.ScriptControl
         private void CreateActionEventLines(ActionEvent actionEvent, string nameTemplate, string[] propNames, float fixedValue, float fixedMinValue, float fixedMaxValue, float rndMinValue, float rndMinMinValue, float rndMinMaxValue, float rndMaxValue, float rndMaxMinValue, float rndMaxMaxValue)
         {
             pnlActionEventLines.Controls.Clear();
-            pnlActionEventLines.Height = propNames.Length * 200;
+            pnlActionEventLines.Height = 0;// propNames.Length * 200;
 
             for (int i = 0; i < propNames.Length; i++)
             {
@@ -334,6 +334,7 @@ namespace Edit2D.ScriptControl
                 pnlActionEventLines.Controls.Add(actionEventLine);
                 actionEventLine.Top = i * (actionEventLine.Height - 1);
                 pnlActionEventLines.Width = actionEventLine.Width;
+                pnlActionEventLines.Height = actionEventLine.Bottom;
 
                 actionEventLine.ActionEvent = actionEvent;
                 actionEventLine.ActionEventIndex = i;
@@ -374,7 +375,7 @@ namespace Edit2D.ScriptControl
                 }
             }
 
-            WinformVisualStyle.ApplyStyle(pnlActionEventLines, WinformVisualStyle.CurrentVisualStyleName);
+            WinformVisualStyle.ApplyStyle(pnlActionEventLines);
         }
 
         private void ViewActionEvent(ActionEvent actionEvent)

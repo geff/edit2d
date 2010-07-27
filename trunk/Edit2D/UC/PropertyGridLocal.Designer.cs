@@ -41,7 +41,7 @@
             this.PropertyGrid.Margin = new System.Windows.Forms.Padding(0);
             this.PropertyGrid.Name = "PropertyGrid";
             this.PropertyGrid.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
-            this.PropertyGrid.Size = new System.Drawing.Size(152, 152);
+            this.PropertyGrid.Size = new System.Drawing.Size(252, 254);
             this.PropertyGrid.TabIndex = 0;
             this.PropertyGrid.ToolbarVisible = false;
             // 
@@ -51,6 +51,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.PropertyGrid);
             this.Name = "PropertyGridLocal";
+            this.Size = new System.Drawing.Size(250, 252);
             this.ResumeLayout(false);
 
         }

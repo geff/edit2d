@@ -40,7 +40,7 @@
             this.numRndMin = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.optDurationActivate = new System.Windows.Forms.RadioButton();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.pnlHeader = new System.Windows.Forms.Panel();
             this.lblActionEventPropertyName = new System.Windows.Forms.Label();
             this.optDurationDeactivate = new System.Windows.Forms.RadioButton();
             this.optActionEventLineDeactivated = new System.Windows.Forms.RadioButton();
@@ -49,31 +49,33 @@
             this.optFixedValueTrue = new System.Windows.Forms.RadioButton();
             this.numFixedValue = new System.Windows.Forms.NumericUpDown();
             this.pnlDuration = new System.Windows.Forms.Panel();
-            this.label5 = new System.Windows.Forms.Label();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.lblTransitionUnit = new System.Windows.Forms.Label();
             this.numSpeed = new System.Windows.Forms.NumericUpDown();
             this.numDuration = new System.Windows.Forms.NumericUpDown();
             this.pnlBoundValue = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.panel5 = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
-            this.panel6 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.pnlRelative = new System.Windows.Forms.Panel();
             this.chkRelative = new System.Windows.Forms.CheckBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel7 = new System.Windows.Forms.Panel();
             this.panel8 = new System.Windows.Forms.Panel();
-            this.panel4 = new System.Windows.Forms.Panel();
+            this.pnlTransition = new System.Windows.Forms.Panel();
             this.pnlRandomValue.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRndMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRndMin)).BeginInit();
-            this.panel1.SuspendLayout();
+            this.pnlHeader.SuspendLayout();
             this.pnlFixedValue.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numFixedValue)).BeginInit();
             this.pnlDuration.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSpeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDuration)).BeginInit();
             this.pnlBoundValue.SuspendLayout();
-            this.panel5.SuspendLayout();
+            this.pnlRelative.SuspendLayout();
+            this.pnlTransition.SuspendLayout();
             this.SuspendLayout();
             // 
             // optActionEventLineFixedValue
@@ -142,7 +144,7 @@
             this.optSpeedActivate.Appearance = System.Windows.Forms.Appearance.Button;
             this.optSpeedActivate.FlatAppearance.BorderSize = 0;
             this.optSpeedActivate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.optSpeedActivate.Location = new System.Drawing.Point(766, 74);
+            this.optSpeedActivate.Location = new System.Drawing.Point(87, 24);
             this.optSpeedActivate.Margin = new System.Windows.Forms.Padding(0);
             this.optSpeedActivate.Name = "optSpeedActivate";
             this.optSpeedActivate.Size = new System.Drawing.Size(85, 24);
@@ -227,7 +229,7 @@
             this.optDurationActivate.Appearance = System.Windows.Forms.Appearance.Button;
             this.optDurationActivate.FlatAppearance.BorderSize = 0;
             this.optDurationActivate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.optDurationActivate.Location = new System.Drawing.Point(681, 74);
+            this.optDurationActivate.Location = new System.Drawing.Point(2, 24);
             this.optDurationActivate.Margin = new System.Windows.Forms.Padding(0);
             this.optDurationActivate.Name = "optDurationActivate";
             this.optDurationActivate.Size = new System.Drawing.Size(85, 24);
@@ -238,15 +240,15 @@
             this.optDurationActivate.UseVisualStyleBackColor = true;
             this.optDurationActivate.CheckedChanged += new System.EventHandler(this.optDurationActivate_CheckedChanged);
             // 
-            // panel1
+            // pnlHeader
             // 
-            this.panel1.Controls.Add(this.lblActionEventPropertyName);
-            this.panel1.Location = new System.Drawing.Point(0, 10);
-            this.panel1.Margin = new System.Windows.Forms.Padding(0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(851, 40);
-            this.panel1.TabIndex = 0;
-            this.panel1.Tag = "BG2";
+            this.pnlHeader.Controls.Add(this.lblActionEventPropertyName);
+            this.pnlHeader.Location = new System.Drawing.Point(0, 10);
+            this.pnlHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.pnlHeader.Name = "pnlHeader";
+            this.pnlHeader.Size = new System.Drawing.Size(851, 40);
+            this.pnlHeader.TabIndex = 0;
+            this.pnlHeader.Tag = "BG2";
             // 
             // lblActionEventPropertyName
             // 
@@ -265,14 +267,14 @@
             this.optDurationDeactivate.Checked = true;
             this.optDurationDeactivate.FlatAppearance.BorderSize = 0;
             this.optDurationDeactivate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.optDurationDeactivate.Location = new System.Drawing.Point(681, 50);
+            this.optDurationDeactivate.Location = new System.Drawing.Point(0, 0);
             this.optDurationDeactivate.Margin = new System.Windows.Forms.Padding(0);
             this.optDurationDeactivate.Name = "optDurationDeactivate";
-            this.optDurationDeactivate.Size = new System.Drawing.Size(170, 24);
+            this.optDurationDeactivate.Size = new System.Drawing.Size(172, 24);
             this.optDurationDeactivate.TabIndex = 5;
             this.optDurationDeactivate.TabStop = true;
             this.optDurationDeactivate.Tag = "B";
-            this.optDurationDeactivate.Text = "Activer transition";
+            this.optDurationDeactivate.Text = "Désactiver transition";
             this.optDurationDeactivate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.optDurationDeactivate.UseVisualStyleBackColor = true;
             this.optDurationDeactivate.CheckedChanged += new System.EventHandler(this.optDurationDeactivate_CheckedChanged);
@@ -348,9 +350,9 @@
             // 
             this.numFixedValue.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.numFixedValue.Enabled = false;
-            this.numFixedValue.Location = new System.Drawing.Point(33, 19);
+            this.numFixedValue.Location = new System.Drawing.Point(21, 19);
             this.numFixedValue.Name = "numFixedValue";
-            this.numFixedValue.Size = new System.Drawing.Size(52, 16);
+            this.numFixedValue.Size = new System.Drawing.Size(80, 16);
             this.numFixedValue.TabIndex = 0;
             this.numFixedValue.Tag = "BG2";
             this.numFixedValue.ValueChanged += new System.EventHandler(this.numFixedValue_ValueChanged);
@@ -360,9 +362,10 @@
             this.pnlDuration.Controls.Add(this.panel4);
             this.pnlDuration.Controls.Add(this.panel6);
             this.pnlDuration.Controls.Add(this.panel3);
-            this.pnlDuration.Controls.Add(this.label5);
+            this.pnlDuration.Controls.Add(this.lblTransitionUnit);
             this.pnlDuration.Controls.Add(this.numSpeed);
             this.pnlDuration.Controls.Add(this.numDuration);
+            this.pnlDuration.Enabled = false;
             this.pnlDuration.Location = new System.Drawing.Point(681, 98);
             this.pnlDuration.Margin = new System.Windows.Forms.Padding(0);
             this.pnlDuration.Name = "pnlDuration";
@@ -370,20 +373,46 @@
             this.pnlDuration.TabIndex = 27;
             this.pnlDuration.Tag = "BG1";
             // 
-            // label5
+            // panel4
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(97, 20);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(63, 13);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "unités / sec";
+            this.panel4.Location = new System.Drawing.Point(6, 50);
+            this.panel4.Margin = new System.Windows.Forms.Padding(0);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(158, 6);
+            this.panel4.TabIndex = 32;
+            this.panel4.Tag = "B";
+            // 
+            // panel6
+            // 
+            this.panel6.Location = new System.Drawing.Point(164, 0);
+            this.panel6.Margin = new System.Windows.Forms.Padding(0);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(6, 56);
+            this.panel6.TabIndex = 31;
+            this.panel6.Tag = "B";
+            // 
+            // panel3
+            // 
+            this.panel3.Location = new System.Drawing.Point(0, 0);
+            this.panel3.Margin = new System.Windows.Forms.Padding(0);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(6, 56);
+            this.panel3.TabIndex = 30;
+            this.panel3.Tag = "B";
+            // 
+            // lblTransitionUnit
+            // 
+            this.lblTransitionUnit.AutoSize = true;
+            this.lblTransitionUnit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTransitionUnit.Location = new System.Drawing.Point(97, 20);
+            this.lblTransitionUnit.Name = "lblTransitionUnit";
+            this.lblTransitionUnit.Size = new System.Drawing.Size(63, 13);
+            this.lblTransitionUnit.TabIndex = 11;
+            this.lblTransitionUnit.Text = "unités / sec";
             // 
             // numSpeed
             // 
             this.numSpeed.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.numSpeed.Enabled = false;
             this.numSpeed.Location = new System.Drawing.Point(24, 18);
             this.numSpeed.Maximum = new decimal(new int[] {
             60000,
@@ -403,7 +432,6 @@
             // numDuration
             // 
             this.numDuration.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.numDuration.Enabled = false;
             this.numDuration.Location = new System.Drawing.Point(24, 18);
             this.numDuration.Maximum = new decimal(new int[] {
             60000,
@@ -411,7 +439,7 @@
             0,
             0});
             this.numDuration.Name = "numDuration";
-            this.numDuration.Size = new System.Drawing.Size(55, 16);
+            this.numDuration.Size = new System.Drawing.Size(67, 16);
             this.numDuration.TabIndex = 8;
             this.numDuration.Tag = "BG2";
             this.numDuration.Value = new decimal(new int[] {
@@ -434,16 +462,6 @@
             this.pnlBoundValue.TabIndex = 28;
             this.pnlBoundValue.Tag = "BG1";
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(3, 8);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(39, 13);
-            this.label1.TabIndex = 25;
-            this.label1.Text = "Entités";
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -454,33 +472,26 @@
             this.label4.TabIndex = 26;
             this.label4.Text = "Propriétés";
             // 
-            // panel5
+            // label1
             // 
-            this.panel5.Controls.Add(this.chkRelative);
-            this.panel5.Location = new System.Drawing.Point(681, 154);
-            this.panel5.Margin = new System.Windows.Forms.Padding(0);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(170, 58);
-            this.panel5.TabIndex = 29;
-            this.panel5.Tag = "BG1";
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(3, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(39, 13);
+            this.label1.TabIndex = 25;
+            this.label1.Text = "Entités";
             // 
-            // panel3
+            // pnlRelative
             // 
-            this.panel3.Location = new System.Drawing.Point(0, 0);
-            this.panel3.Margin = new System.Windows.Forms.Padding(0);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(6, 56);
-            this.panel3.TabIndex = 30;
-            this.panel3.Tag = "B";
-            // 
-            // panel6
-            // 
-            this.panel6.Location = new System.Drawing.Point(163, 0);
-            this.panel6.Margin = new System.Windows.Forms.Padding(0);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(6, 56);
-            this.panel6.TabIndex = 31;
-            this.panel6.Tag = "B";
+            this.pnlRelative.Controls.Add(this.chkRelative);
+            this.pnlRelative.Enabled = false;
+            this.pnlRelative.Location = new System.Drawing.Point(681, 154);
+            this.pnlRelative.Margin = new System.Windows.Forms.Padding(0);
+            this.pnlRelative.Name = "pnlRelative";
+            this.pnlRelative.Size = new System.Drawing.Size(170, 58);
+            this.pnlRelative.TabIndex = 29;
+            this.pnlRelative.Tag = "BG1";
             // 
             // chkRelative
             // 
@@ -496,6 +507,7 @@
             this.chkRelative.Text = "Valeur relative";
             this.chkRelative.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.chkRelative.UseVisualStyleBackColor = true;
+            this.chkRelative.CheckedChanged += new System.EventHandler(this.chkRelative_CheckedChanged);
             // 
             // panel2
             // 
@@ -519,51 +531,53 @@
             // panel8
             // 
             this.panel8.BackColor = System.Drawing.Color.Gray;
-            this.panel8.Location = new System.Drawing.Point(0, 213);
+            this.panel8.Location = new System.Drawing.Point(0, 212);
             this.panel8.Margin = new System.Windows.Forms.Padding(0);
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(851, 2);
             this.panel8.TabIndex = 32;
             this.panel8.Tag = "BG2";
             // 
-            // panel4
+            // pnlTransition
             // 
-            this.panel4.Location = new System.Drawing.Point(6, 50);
-            this.panel4.Margin = new System.Windows.Forms.Padding(0);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(157, 6);
-            this.panel4.TabIndex = 32;
-            this.panel4.Tag = "B";
+            this.pnlTransition.BackColor = System.Drawing.Color.LightGray;
+            this.pnlTransition.Controls.Add(this.optDurationDeactivate);
+            this.pnlTransition.Controls.Add(this.optDurationActivate);
+            this.pnlTransition.Controls.Add(this.optSpeedActivate);
+            this.pnlTransition.Enabled = false;
+            this.pnlTransition.Location = new System.Drawing.Point(679, 50);
+            this.pnlTransition.Margin = new System.Windows.Forms.Padding(0);
+            this.pnlTransition.Name = "pnlTransition";
+            this.pnlTransition.Size = new System.Drawing.Size(172, 48);
+            this.pnlTransition.TabIndex = 10;
             // 
             // ActionEventLineControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.pnlTransition);
             this.Controls.Add(this.panel8);
             this.Controls.Add(this.panel7);
             this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel5);
+            this.Controls.Add(this.pnlRelative);
             this.Controls.Add(this.pnlRandomValue);
             this.Controls.Add(this.pnlBoundValue);
-            this.Controls.Add(this.optSpeedActivate);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.pnlHeader);
             this.Controls.Add(this.pnlFixedValue);
             this.Controls.Add(this.pnlDuration);
             this.Controls.Add(this.optActionEventLineDeactivated);
-            this.Controls.Add(this.optDurationActivate);
             this.Controls.Add(this.optActionEventLineFixedValue);
-            this.Controls.Add(this.optDurationDeactivate);
             this.Controls.Add(this.optActionEventLineEntity);
             this.Controls.Add(this.optActionEventLineRandom);
             this.Name = "ActionEventLineControl";
-            this.Size = new System.Drawing.Size(852, 215);
+            this.Size = new System.Drawing.Size(852, 214);
             this.Tag = "BG1";
             this.pnlRandomValue.ResumeLayout(false);
             this.pnlRandomValue.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRndMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRndMin)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.pnlHeader.ResumeLayout(false);
+            this.pnlHeader.PerformLayout();
             this.pnlFixedValue.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numFixedValue)).EndInit();
             this.pnlDuration.ResumeLayout(false);
@@ -572,14 +586,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.numDuration)).EndInit();
             this.pnlBoundValue.ResumeLayout(false);
             this.pnlBoundValue.PerformLayout();
-            this.panel5.ResumeLayout(false);
+            this.pnlRelative.ResumeLayout(false);
+            this.pnlTransition.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel pnlHeader;
         private System.Windows.Forms.Panel pnlFixedValue;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
@@ -600,13 +615,13 @@
         public System.Windows.Forms.RadioButton optFixedValueFalse;
         public System.Windows.Forms.RadioButton optFixedValueTrue;
         public System.Windows.Forms.Panel pnlDuration;
-        public System.Windows.Forms.Label label5;
+        public System.Windows.Forms.Label lblTransitionUnit;
         public System.Windows.Forms.NumericUpDown numSpeed;
         public System.Windows.Forms.RadioButton optSpeedActivate;
         private System.Windows.Forms.Panel pnlBoundValue;
         public System.Windows.Forms.Label label4;
         public System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.Panel pnlRelative;
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.CheckBox chkRelative;
@@ -614,6 +629,7 @@
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.Panel panel8;
         private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Panel pnlTransition;
 
     }
 }
