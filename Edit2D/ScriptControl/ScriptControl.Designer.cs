@@ -53,7 +53,7 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.lblScript = new System.Windows.Forms.Label();
-            this.panel7 = new System.Windows.Forms.Panel();
+            this.pnlActions = new System.Windows.Forms.Panel();
             this.pnlActionEvent = new System.Windows.Forms.Panel();
             this.pnlActionEventLines = new System.Windows.Forms.Panel();
             this.pnlCurve = new System.Windows.Forms.Panel();
@@ -68,7 +68,7 @@
             this.panel1.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel2.SuspendLayout();
-            this.panel7.SuspendLayout();
+            this.pnlActions.SuspendLayout();
             this.pnlActionEvent.SuspendLayout();
             this.pnlCurve.SuspendLayout();
             this.SuspendLayout();
@@ -77,15 +77,16 @@
             // 
             this.pnlMain.ColumnCount = 2;
             this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 393F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 684F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 709F));
             this.pnlMain.Controls.Add(this.pnlScriptAction, 0, 0);
-            this.pnlMain.Controls.Add(this.panel7, 1, 0);
+            this.pnlMain.Controls.Add(this.pnlActions, 1, 0);
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlMain.Location = new System.Drawing.Point(0, 0);
+            this.pnlMain.Margin = new System.Windows.Forms.Padding(0);
             this.pnlMain.Name = "pnlMain";
             this.pnlMain.RowCount = 1;
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.pnlMain.Size = new System.Drawing.Size(1077, 305);
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.pnlMain.Size = new System.Drawing.Size(1130, 305);
             this.pnlMain.TabIndex = 0;
             // 
             // pnlScriptAction
@@ -433,17 +434,17 @@
             this.lblScript.Tag = "F2";
             this.lblScript.Text = "Script";
             // 
-            // panel7
+            // pnlActions
             // 
-            this.panel7.Controls.Add(this.pnlActionEvent);
-            this.panel7.Controls.Add(this.pnlCurve);
-            this.panel7.Controls.Add(this.actionSoundControl);
-            this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel7.Location = new System.Drawing.Point(393, 0);
-            this.panel7.Margin = new System.Windows.Forms.Padding(0);
-            this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(684, 305);
-            this.panel7.TabIndex = 11;
+            this.pnlActions.Controls.Add(this.pnlActionEvent);
+            this.pnlActions.Controls.Add(this.pnlCurve);
+            this.pnlActions.Controls.Add(this.actionSoundControl);
+            this.pnlActions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlActions.Location = new System.Drawing.Point(394, 0);
+            this.pnlActions.Margin = new System.Windows.Forms.Padding(0);
+            this.pnlActions.Name = "pnlActions";
+            this.pnlActions.Size = new System.Drawing.Size(736, 305);
+            this.pnlActions.TabIndex = 11;
             // 
             // pnlActionEvent
             // 
@@ -451,17 +452,19 @@
             this.pnlActionEvent.Controls.Add(this.pnlActionEventLines);
             this.pnlActionEvent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlActionEvent.Location = new System.Drawing.Point(0, 0);
+            this.pnlActionEvent.Margin = new System.Windows.Forms.Padding(0);
             this.pnlActionEvent.Name = "pnlActionEvent";
-            this.pnlActionEvent.Size = new System.Drawing.Size(684, 305);
+            this.pnlActionEvent.Size = new System.Drawing.Size(736, 305);
             this.pnlActionEvent.TabIndex = 14;
             this.pnlActionEvent.Visible = false;
             // 
             // pnlActionEventLines
             // 
+            this.pnlActionEventLines.AutoSize = true;
             this.pnlActionEventLines.Location = new System.Drawing.Point(0, 0);
             this.pnlActionEventLines.Margin = new System.Windows.Forms.Padding(0);
             this.pnlActionEventLines.Name = "pnlActionEventLines";
-            this.pnlActionEventLines.Size = new System.Drawing.Size(684, 305);
+            this.pnlActionEventLines.Size = new System.Drawing.Size(232, 51);
             this.pnlActionEventLines.TabIndex = 0;
             // 
             // pnlCurve
@@ -472,7 +475,7 @@
             this.pnlCurve.Location = new System.Drawing.Point(0, 0);
             this.pnlCurve.Margin = new System.Windows.Forms.Padding(0);
             this.pnlCurve.Name = "pnlCurve";
-            this.pnlCurve.Size = new System.Drawing.Size(684, 305);
+            this.pnlCurve.Size = new System.Drawing.Size(736, 305);
             this.pnlCurve.TabIndex = 0;
             this.pnlCurve.Visible = false;
             // 
@@ -485,7 +488,7 @@
             this.curveControl.Location = new System.Drawing.Point(0, 0);
             this.curveControl.Margin = new System.Windows.Forms.Padding(0);
             this.curveControl.Name = "curveControl";
-            this.curveControl.Size = new System.Drawing.Size(684, 305);
+            this.curveControl.Size = new System.Drawing.Size(736, 305);
             this.curveControl.TabIndex = 10;
             this.curveControl.TimeLine = 0;
             this.curveControl.CurveChange += new Xna.Tools.CurveControl.CurveChangeEventHandler(this.curveControl_CurveChange);
@@ -543,7 +546,7 @@
             this.actionSoundControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.actionSoundControl.Location = new System.Drawing.Point(0, 0);
             this.actionSoundControl.Name = "actionSoundControl";
-            this.actionSoundControl.Size = new System.Drawing.Size(684, 305);
+            this.actionSoundControl.Size = new System.Drawing.Size(736, 305);
             this.actionSoundControl.TabIndex = 15;
             this.actionSoundControl.Visible = false;
             // 
@@ -553,7 +556,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pnlMain);
             this.Name = "ScriptControl";
-            this.Size = new System.Drawing.Size(1077, 305);
+            this.Size = new System.Drawing.Size(1130, 305);
             this.Resize += new System.EventHandler(this.ScriptControl_Resize);
             this.pnlMain.ResumeLayout(false);
             this.pnlScriptAction.ResumeLayout(false);
@@ -564,8 +567,9 @@
             this.panel4.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
-            this.panel7.ResumeLayout(false);
+            this.pnlActions.ResumeLayout(false);
             this.pnlActionEvent.ResumeLayout(false);
+            this.pnlActionEvent.PerformLayout();
             this.pnlCurve.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -599,7 +603,7 @@
         private System.Windows.Forms.Label lblActionName;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel pnlAction;
-        private System.Windows.Forms.Panel panel7;
+        private System.Windows.Forms.Panel pnlActions;
         private System.Windows.Forms.Panel pnlActionEvent;
         private System.Windows.Forms.Panel pnlActionEventLines;
         private ActionSoundControl actionSoundControl;

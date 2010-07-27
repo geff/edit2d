@@ -24,12 +24,25 @@ namespace Edit2D
         public static Color MouseOverColor = Color.White;
         public static Color SelectedColor = Color.White;
 
+        public static Brush BrushBackColorDark = Brushes.White;
+        public static Brush BrushBackColorLight = Brushes.White;
+        public static Brush BrushSelectedColor = Brushes.White;
+        public static Brush BrushMouseOverColor = Brushes.White;
+        public static Brush BrushForeColor1 = Brushes.White;
+
         public static void ApplyStyle(Control ctrl, string visualStyleName)
         {
             CurrentVisualStyleName = visualStyleName;
-            OpenVisualStyle(visualStyleName);
 
-            ApplyStyleRecursively(ctrl, null);
+            if (OpenVisualStyle(visualStyleName))
+            {
+                ApplyStyleRecursively(ctrl, null);
+            }
+        }
+
+        public static void ApplyStyle(Control ctrl)
+        {
+            ApplyStyle(ctrl, CurrentVisualStyleName);
         }
 
         private static void ApplyStyleRecursively(Control ctrl, Control ctrlParent)
@@ -230,13 +243,21 @@ namespace Edit2D
             ctrl.GridBackColor = BackColorDark;
         }
 
-        private static void OpenVisualStyle(string visualStyleName)
+        private static bool OpenVisualStyle(string visualStyleName)
         {
             //===========================================================================================//
             //NOTE : Utilisation du site http://colorschemedesigner.com/ pour la génération des styles   //
             //===========================================================================================//
 
-            XPathDocument doc = new XPathDocument(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"VisualStyle\" + visualStyleName + ".xml"));
+            string pathVisualStyleFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"VisualStyle\" + visualStyleName + ".xml");
+
+            if (!File.Exists(pathVisualStyleFile))
+            {
+                MessageBox.Show(String.Format("Le fichier '{0}' n'existe pas.", pathVisualStyleFile), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            XPathDocument doc = new XPathDocument(pathVisualStyleFile);
             XPathNavigator xPath = doc.CreateNavigator();
 
             BackColorLight = ReadColor(xPath, "palette/colorset[@id='primary']/color[@id='primary-1']");
@@ -249,6 +270,14 @@ namespace Edit2D
             ForeColor2 = ReadColor(xPath, "palette/colorset[@id='complement']/color[@id='complement-3']");
 
             SelectedColor = ReadColor(xPath, "palette/colorset[@id='complement']/color[@id='complement-4']");
+
+            BrushBackColorDark = new SolidBrush(BackColorDark);
+            BrushBackColorLight = new SolidBrush(BackColorLight);
+            BrushSelectedColor = new SolidBrush(SelectedColor);
+            BrushMouseOverColor = new SolidBrush(MouseOverColor);
+            BrushForeColor1 = new SolidBrush(ForeColor1);
+
+            return true;
         }
 
         private static Color ReadColor(XPathNavigator xPath, string request)

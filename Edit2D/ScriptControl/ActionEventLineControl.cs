@@ -33,22 +33,26 @@ namespace Edit2D.ScriptControl
         #region Evènements
         private void optDurationDeactivate_CheckedChanged(object sender, EventArgs e)
         {
-            numDuration.Enabled = false;
-            numSpeed.Enabled = false;
+            pnlDuration.Enabled = false;
             UpdateActionEvent();
         }
 
         private void optDurationActivate_CheckedChanged(object sender, EventArgs e)
         {
-            numDuration.Enabled = true;
-            numSpeed.Enabled = false;
+            pnlDuration.Enabled = true;
+            numDuration.Visible = true;
+            numSpeed.Visible = false;
+            lblTransitionUnit.Text = "ms";
             UpdateActionEvent();
         }
 
         private void optSpeedActivate_CheckedChanged(object sender, EventArgs e)
         {
-            numDuration.Enabled = false;
-            numSpeed.Enabled = true;
+            pnlDuration.Enabled = true;
+            numDuration.Visible = false;
+            numSpeed.Visible = true;
+            lblTransitionUnit.Text = "unités / sec";
+
             UpdateActionEvent();
         }
 
@@ -61,8 +65,9 @@ namespace Edit2D.ScriptControl
             numRndMin.Enabled = false;
             numRndMax.Enabled = false;
 
-            optDurationActivate.Enabled = false;
-            optDurationDeactivate.Enabled = false;
+            pnlTransition.Enabled = false;
+            pnlDuration.Enabled = false;
+            pnlRelative.Enabled = false;
 
             optFixedValueTrue.Enabled = false;
             optFixedValueFalse.Enabled = false;
@@ -71,7 +76,9 @@ namespace Edit2D.ScriptControl
             pnlBoundValue.Tag = "BG1";
             pnlRandomValue.Tag = "BG1";
 
-            WinformVisualStyle.ApplyStyle(this, WinformVisualStyle.CurrentVisualStyleName);
+            WinformVisualStyle.ApplyStyle(pnlFixedValue);
+            WinformVisualStyle.ApplyStyle(pnlBoundValue);
+            WinformVisualStyle.ApplyStyle(pnlRandomValue);
 
             UpdateActionEvent();
         }
@@ -103,8 +110,9 @@ namespace Edit2D.ScriptControl
             numRndMin.Enabled = false;
             numRndMax.Enabled = false;
 
-            optDurationActivate.Enabled = true;
-            optDurationDeactivate.Enabled = true;
+            pnlTransition.Enabled = true;
+            pnlDuration.Enabled = true;
+            pnlRelative.Enabled = true;
 
             optFixedValueTrue.Enabled = true;
             optFixedValueFalse.Enabled = true;
@@ -113,7 +121,10 @@ namespace Edit2D.ScriptControl
             pnlBoundValue.Tag = "BG1";
             pnlRandomValue.Tag = "BG1";
 
-            WinformVisualStyle.ApplyStyle(this, WinformVisualStyle.CurrentVisualStyleName);
+            WinformVisualStyle.ApplyStyle(pnlFixedValue);
+            WinformVisualStyle.ApplyStyle(pnlBoundValue);
+            WinformVisualStyle.ApplyStyle(pnlRandomValue);
+
             UpdateActionEvent();
         }
 
@@ -126,8 +137,9 @@ namespace Edit2D.ScriptControl
             numRndMin.Enabled = false;
             numRndMax.Enabled = false;
 
-            optDurationActivate.Enabled = true;
-            optDurationDeactivate.Enabled = true;
+            pnlTransition.Enabled = true;
+            pnlDuration.Enabled = true;
+            pnlRelative.Enabled = true;
 
             optFixedValueTrue.Enabled = false;
             optFixedValueFalse.Enabled = false;
@@ -136,7 +148,9 @@ namespace Edit2D.ScriptControl
             pnlBoundValue.Tag = "B";
             pnlRandomValue.Tag = "BG1";
 
-            WinformVisualStyle.ApplyStyle(this, WinformVisualStyle.CurrentVisualStyleName);
+            WinformVisualStyle.ApplyStyle(pnlFixedValue);
+            WinformVisualStyle.ApplyStyle(pnlBoundValue);
+            WinformVisualStyle.ApplyStyle(pnlRandomValue);
 
             UpdateActionEvent();
         }
@@ -150,8 +164,9 @@ namespace Edit2D.ScriptControl
             numRndMin.Enabled = true;
             numRndMax.Enabled = true;
 
-            optDurationActivate.Enabled = true;
-            optDurationDeactivate.Enabled = true;
+            pnlTransition.Enabled = true;
+            pnlDuration.Enabled = true;
+            pnlRelative.Enabled = true;
 
             optFixedValueTrue.Enabled = false;
             optFixedValueFalse.Enabled = false;
@@ -160,7 +175,9 @@ namespace Edit2D.ScriptControl
             pnlBoundValue.Tag = "BG1";
             pnlRandomValue.Tag = "B";
 
-            WinformVisualStyle.ApplyStyle(this, WinformVisualStyle.CurrentVisualStyleName);
+            WinformVisualStyle.ApplyStyle(pnlFixedValue);
+            WinformVisualStyle.ApplyStyle(pnlBoundValue);
+            WinformVisualStyle.ApplyStyle(pnlRandomValue);
 
             UpdateActionEvent();
         }
@@ -207,6 +224,13 @@ namespace Edit2D.ScriptControl
 
         private void chkRelative_CheckedChanged(object sender, EventArgs e)
         {
+            if (chkRelative.Checked)
+                pnlRelative.Tag = "B";
+            else
+                pnlRelative.Tag = "BG1";
+
+            WinformVisualStyle.ApplyStyle(pnlRelative);
+
             UpdateActionEvent();
         }
         #endregion

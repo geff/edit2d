@@ -1208,15 +1208,19 @@ namespace Edit2D
 
             if ((int)e.State == 17 || (listView.SelectedItems.Count > 0 && e.Item == listView.SelectedItems[0]))
             {
-                e.Graphics.FillRectangle(Brushes.CornflowerBlue, recBackground);
+                e.Graphics.FillRectangle(WinformVisualStyle.BrushSelectedColor, recBackground);
+            }
+            else if (e.State == ListViewItemStates.Hot)// || (listView.SelectedItems.Count > 0 && e.Item == listView.SelectedItems[0]))
+            {
+                e.Graphics.FillRectangle(WinformVisualStyle.BrushMouseOverColor, recBackground);
             }
             else
             {
-                e.Graphics.FillRectangle(Brushes.DarkGray, recBackground);
+                e.Graphics.FillRectangle(WinformVisualStyle.BrushBackColorDark, recBackground);
             }
 
             e.Graphics.DrawImage(e.Item.ImageList.Images[e.Item.ImageKey], rec);
-            e.Graphics.DrawString(e.Item.Text, listView.Font, Brushes.Black, loc);
+            e.Graphics.DrawString(e.Item.Text, listView.Font, WinformVisualStyle.BrushForeColor1, loc);
         }
 
         void Form1_Load(object sender, EventArgs e)
