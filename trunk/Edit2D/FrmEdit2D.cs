@@ -85,11 +85,13 @@ namespace Edit2D
             repository.FrmEdit2D = this;
             repository.Pause = true;
 
+            repository.World.GradientColor1 = Microsoft.Xna.Framework.Graphics.Color.White;
+            repository.World.GradientColor2 = Microsoft.Xna.Framework.Graphics.Color.White;
+
             //--- Mode simplifié
             if (repository.IsSimpleMode)
             {
-                repository.World.GradientColor1 = Microsoft.Xna.Framework.Graphics.Color.White;
-                repository.World.GradientColor2 = Microsoft.Xna.Framework.Graphics.Color.White;
+
 
                 pnlViewerModes.Panel2Collapsed = false;
                 pnlMain.Panel2Collapsed = true;
@@ -126,7 +128,7 @@ namespace Edit2D
 
             btnScriptModeBar.PerformClick();
 
-            //WinformVisualStyle.ApplyStyle(this, "Fillette");
+            //WinformVisualStyle.ApplyStyle(this, "LightGray");
             WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             //InitInputHandler();

@@ -60,8 +60,6 @@ namespace Edit2D.ScriptControl
             treeViewProperties.Enabled = false;
             numRndMin.Enabled = false;
             numRndMax.Enabled = false;
-            optActionEventLineMouseX.Enabled = false;
-            optActionEventLineMouseY.Enabled = false;
 
             optDurationActivate.Enabled = false;
             optDurationDeactivate.Enabled = false;
@@ -69,28 +67,32 @@ namespace Edit2D.ScriptControl
             optFixedValueTrue.Enabled = false;
             optFixedValueFalse.Enabled = false;
 
-            UpdateActionEvent();
-        }
+            pnlFixedValue.Tag = "BG1";
+            pnlBoundValue.Tag = "BG1";
+            pnlRandomValue.Tag = "BG1";
 
-        private void optActionEventLineMouse_CheckedChanged(object sender, EventArgs e)
-        {
-            numFixedValue.Enabled = false;
-            numRndMax.Enabled = false;
-            treeviewEntiteTargetCollision.Enabled = false;
-            treeViewProperties.Enabled = false;
-            numRndMin.Enabled = false;
-            numRndMax.Enabled = false;
-            optActionEventLineMouseX.Enabled = true;
-            optActionEventLineMouseY.Enabled = true;
-
-            optDurationActivate.Enabled = true;
-            optDurationDeactivate.Enabled = true;
-
-            optFixedValueTrue.Enabled = false;
-            optFixedValueFalse.Enabled = false;
+            WinformVisualStyle.ApplyStyle(this, WinformVisualStyle.CurrentVisualStyleName);
 
             UpdateActionEvent();
         }
+
+        //private void optActionEventLineMouse_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    numFixedValue.Enabled = false;
+        //    numRndMax.Enabled = false;
+        //    treeviewEntiteTargetCollision.Enabled = false;
+        //    treeViewProperties.Enabled = false;
+        //    numRndMin.Enabled = false;
+        //    numRndMax.Enabled = false;
+
+        //    optDurationActivate.Enabled = true;
+        //    optDurationDeactivate.Enabled = true;
+
+        //    optFixedValueTrue.Enabled = false;
+        //    optFixedValueFalse.Enabled = false;
+
+        //    UpdateActionEvent();
+        //}
 
         private void optActionEventLineFixedValue_CheckedChanged(object sender, EventArgs e)
         {
@@ -100,8 +102,6 @@ namespace Edit2D.ScriptControl
             treeViewProperties.Enabled = false;
             numRndMin.Enabled = false;
             numRndMax.Enabled = false;
-            optActionEventLineMouseX.Enabled = false;
-            optActionEventLineMouseY.Enabled = false;
 
             optDurationActivate.Enabled = true;
             optDurationDeactivate.Enabled = true;
@@ -109,6 +109,11 @@ namespace Edit2D.ScriptControl
             optFixedValueTrue.Enabled = true;
             optFixedValueFalse.Enabled = true;
 
+            pnlFixedValue.Tag = "B";
+            pnlBoundValue.Tag = "BG1";
+            pnlRandomValue.Tag = "BG1";
+
+            WinformVisualStyle.ApplyStyle(this, WinformVisualStyle.CurrentVisualStyleName);
             UpdateActionEvent();
         }
 
@@ -120,14 +125,18 @@ namespace Edit2D.ScriptControl
             treeViewProperties.Enabled = true;
             numRndMin.Enabled = false;
             numRndMax.Enabled = false;
-            optActionEventLineMouseX.Enabled = false;
-            optActionEventLineMouseY.Enabled = false;
 
             optDurationActivate.Enabled = true;
             optDurationDeactivate.Enabled = true;
 
             optFixedValueTrue.Enabled = false;
             optFixedValueFalse.Enabled = false;
+
+            pnlFixedValue.Tag = "BG1";
+            pnlBoundValue.Tag = "B";
+            pnlRandomValue.Tag = "BG1";
+
+            WinformVisualStyle.ApplyStyle(this, WinformVisualStyle.CurrentVisualStyleName);
 
             UpdateActionEvent();
         }
@@ -140,14 +149,18 @@ namespace Edit2D.ScriptControl
             treeViewProperties.Enabled = false;
             numRndMin.Enabled = true;
             numRndMax.Enabled = true;
-            optActionEventLineMouseX.Enabled = false;
-            optActionEventLineMouseY.Enabled = false;
 
             optDurationActivate.Enabled = true;
             optDurationDeactivate.Enabled = true;
 
             optFixedValueTrue.Enabled = false;
             optFixedValueFalse.Enabled = false;
+
+            pnlFixedValue.Tag = "BG1";
+            pnlBoundValue.Tag = "BG1";
+            pnlRandomValue.Tag = "B";
+
+            WinformVisualStyle.ApplyStyle(this, WinformVisualStyle.CurrentVisualStyleName);
 
             UpdateActionEvent();
         }
@@ -224,14 +237,14 @@ namespace Edit2D.ScriptControl
                 {
                     ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.Deactivated;
                 }
-                else if (optActionEventLineMouse.Checked && optActionEventLineMouseX.Checked)
-                {
-                    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.MouseX;
-                }
-                else if (optActionEventLineMouse.Checked && optActionEventLineMouseY.Checked)
-                {
-                    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.MouseY;
-                }
+                //else if (optActionEventLineMouse.Checked && optActionEventLineMouseX.Checked)
+                //{
+                //    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.MouseX;
+                //}
+                //else if (optActionEventLineMouse.Checked && optActionEventLineMouseY.Checked)
+                //{
+                //    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.MouseY;
+                //}
                 else if (optActionEventLineFixedValue.Checked)
                 {
                     ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.FixedValue;

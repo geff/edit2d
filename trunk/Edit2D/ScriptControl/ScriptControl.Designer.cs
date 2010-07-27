@@ -459,6 +459,7 @@
             // pnlActionEventLines
             // 
             this.pnlActionEventLines.Location = new System.Drawing.Point(0, 0);
+            this.pnlActionEventLines.Margin = new System.Windows.Forms.Padding(0);
             this.pnlActionEventLines.Name = "pnlActionEventLines";
             this.pnlActionEventLines.Size = new System.Drawing.Size(684, 305);
             this.pnlActionEventLines.TabIndex = 0;

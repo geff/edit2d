@@ -333,7 +333,7 @@ namespace Edit2D.ScriptControl
 
                 pnlActionEventLines.Controls.Add(actionEventLine);
                 actionEventLine.Top = i * (actionEventLine.Height - 1);
-                actionEventLine.Width = pnlActionEventLines.Width;
+                pnlActionEventLines.Width = actionEventLine.Width;
 
                 actionEventLine.ActionEvent = actionEvent;
                 actionEventLine.ActionEventIndex = i;
@@ -342,16 +342,10 @@ namespace Edit2D.ScriptControl
 
                 if (actionEvent.PropertyType.Name == "Boolean")
                 {
-                    actionEventLine.optActionEventLineMouse.Visible = false;
-                    actionEventLine.optActionEventLineMouseX.Visible = false;
-                    actionEventLine.optActionEventLineMouseY.Visible = false;
-
-                    actionEventLine.numFixedValue.Visible = false;
-                    actionEventLine.optFixedValueTrue.Visible = true;
-                    actionEventLine.optFixedValueFalse.Visible = true;
+                    //actionEventLine.optFixedValueFalse.Visible = true;
 
                     actionEventLine.optActionEventLineRandom.Visible = false;
-                    actionEventLine.pnlRandom.Visible = false;
+                    actionEventLine.pnlRandomValue.Visible = false;
                     actionEventLine.numRndMax.Visible = false;
                     actionEventLine.pnlDuration.Visible = false;
                 }
@@ -379,6 +373,8 @@ namespace Edit2D.ScriptControl
                     actionEventLine.numRndMax.DecimalPlaces = 2;
                 }
             }
+
+            WinformVisualStyle.ApplyStyle(pnlActionEventLines, WinformVisualStyle.CurrentVisualStyleName);
         }
 
         private void ViewActionEvent(ActionEvent actionEvent)
@@ -448,14 +444,14 @@ namespace Edit2D.ScriptControl
                         else
                             ((ActionEventLineControl)pnlActionEventLines.Controls[i]).numFixedValue.Value = (decimal)actionEvent.FloatValues[i];
                         break;
-                    case ActionEventType.MouseX:
-                        ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineMouse.Checked = true;
-                        ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineMouseX.Checked = true;
-                        break;
-                    case ActionEventType.MouseY:
-                        ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineMouse.Checked = true;
-                        ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineMouseY.Checked = true;
-                        break;
+                    //case ActionEventType.MouseX:
+                    //    ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineMouse.Checked = true;
+                    //    ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineMouseX.Checked = true;
+                    //    break;
+                    //case ActionEventType.MouseY:
+                    //    ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineMouse.Checked = true;
+                    //    ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineMouseY.Checked = true;
+                    //    break;
                     case ActionEventType.EntityBinding:
                         ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineEntity.Checked = true;
                         break;
