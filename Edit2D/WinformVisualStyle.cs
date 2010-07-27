@@ -15,6 +15,7 @@ namespace Edit2D
 {
     public static class WinformVisualStyle
     {
+        public static String CurrentVisualStyleName = String.Empty;
         public static Color BackColorDark = Color.White;
         public static Color BackColorLight = Color.White;
         public static Color BorderColor = Color.White;
@@ -25,6 +26,7 @@ namespace Edit2D
 
         public static void ApplyStyle(Control ctrl, string visualStyleName)
         {
+            CurrentVisualStyleName = visualStyleName;
             OpenVisualStyle(visualStyleName);
 
             ApplyStyleRecursively(ctrl, null);
@@ -34,11 +36,6 @@ namespace Edit2D
         {
             ApplyStyleOnControl(ctrl, ctrlParent);
 
-            if (ctrl is TabControl)
-            {
-                int a = 0;
-            }
-
             foreach (Control ctrlChild in ctrl.Controls)
             {
                 ApplyStyleRecursively(ctrlChild, ctrl);
@@ -47,9 +44,6 @@ namespace Edit2D
 
         private static void ApplyStyleOnControl(Control ctrl, Control ctrlParent)
         {
-            //if (ctrl is ComboBoxLocal)
-            //    return;
-
             if (!(ctrl is GridControl))
                 ApplyStyleControl(ctrl);
 
