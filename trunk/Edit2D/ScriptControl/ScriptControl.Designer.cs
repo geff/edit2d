@@ -58,6 +58,7 @@
             this.pnlActionEventLines = new System.Windows.Forms.Panel();
             this.pnlCurve = new System.Windows.Forms.Panel();
             this.curveControl = new Xna.Tools.CurveControl();
+            this.btnChangeScriptName = new System.Windows.Forms.Button();
             this.propAction = new Edit2D.UC.PropertyGridLocal();
             this.cmbActionProperties = new Edit2D.UC.ComboBoxLocal();
             this.cmbActionType = new Edit2D.UC.ComboBoxLocal();
@@ -77,7 +78,7 @@
             // 
             this.pnlMain.ColumnCount = 2;
             this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 393F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 709F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 737F));
             this.pnlMain.Controls.Add(this.pnlScriptAction, 0, 0);
             this.pnlMain.Controls.Add(this.pnlActions, 1, 0);
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -260,6 +261,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.panel1.BackColor = System.Drawing.Color.DarkGray;
+            this.panel1.Controls.Add(this.btnChangeScriptName);
             this.panel1.Controls.Add(this.listboxScript);
             this.panel1.Controls.Add(this.btnAddScript);
             this.panel1.Controls.Add(this.btnDelSrcipt);
@@ -295,7 +297,7 @@
             this.btnAddScript.FlatAppearance.BorderSize = 0;
             this.btnAddScript.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAddScript.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
-            this.btnAddScript.Location = new System.Drawing.Point(24, 4);
+            this.btnAddScript.Location = new System.Drawing.Point(6, 4);
             this.btnAddScript.Margin = new System.Windows.Forms.Padding(0);
             this.btnAddScript.Name = "btnAddScript";
             this.btnAddScript.Size = new System.Drawing.Size(42, 35);
@@ -311,8 +313,8 @@
             this.btnDelSrcipt.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
             this.btnDelSrcipt.FlatAppearance.BorderSize = 0;
             this.btnDelSrcipt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDelSrcipt.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
-            this.btnDelSrcipt.Location = new System.Drawing.Point(66, 4);
+            this.btnDelSrcipt.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDelSrcipt.Location = new System.Drawing.Point(48, 4);
             this.btnDelSrcipt.Margin = new System.Windows.Forms.Padding(0);
             this.btnDelSrcipt.Name = "btnDelSrcipt";
             this.btnDelSrcipt.Size = new System.Drawing.Size(42, 35);
@@ -331,7 +333,7 @@
             this.btnPlayScript.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPlayScript.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnPlayScript.Image = ((System.Drawing.Image)(resources.GetObject("btnPlayScript.Image")));
-            this.btnPlayScript.Location = new System.Drawing.Point(108, 4);
+            this.btnPlayScript.Location = new System.Drawing.Point(132, 4);
             this.btnPlayScript.Margin = new System.Windows.Forms.Padding(0);
             this.btnPlayScript.Name = "btnPlayScript";
             this.btnPlayScript.Size = new System.Drawing.Size(42, 35);
@@ -357,6 +359,7 @@
             this.txtScriptName.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtScriptName.Location = new System.Drawing.Point(45, 57);
             this.txtScriptName.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
+            this.txtScriptName.Multiline = false;
             this.txtScriptName.Name = "txtScriptName";
             this.txtScriptName.Size = new System.Drawing.Size(126, 21);
             this.txtScriptName.TabIndex = 14;
@@ -440,10 +443,10 @@
             this.pnlActions.Controls.Add(this.pnlCurve);
             this.pnlActions.Controls.Add(this.actionSoundControl);
             this.pnlActions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlActions.Location = new System.Drawing.Point(394, 0);
+            this.pnlActions.Location = new System.Drawing.Point(393, 0);
             this.pnlActions.Margin = new System.Windows.Forms.Padding(0);
             this.pnlActions.Name = "pnlActions";
-            this.pnlActions.Size = new System.Drawing.Size(736, 305);
+            this.pnlActions.Size = new System.Drawing.Size(737, 305);
             this.pnlActions.TabIndex = 11;
             // 
             // pnlActionEvent
@@ -454,7 +457,7 @@
             this.pnlActionEvent.Location = new System.Drawing.Point(0, 0);
             this.pnlActionEvent.Margin = new System.Windows.Forms.Padding(0);
             this.pnlActionEvent.Name = "pnlActionEvent";
-            this.pnlActionEvent.Size = new System.Drawing.Size(736, 305);
+            this.pnlActionEvent.Size = new System.Drawing.Size(737, 305);
             this.pnlActionEvent.TabIndex = 14;
             this.pnlActionEvent.Visible = false;
             // 
@@ -475,7 +478,7 @@
             this.pnlCurve.Location = new System.Drawing.Point(0, 0);
             this.pnlCurve.Margin = new System.Windows.Forms.Padding(0);
             this.pnlCurve.Name = "pnlCurve";
-            this.pnlCurve.Size = new System.Drawing.Size(736, 305);
+            this.pnlCurve.Size = new System.Drawing.Size(737, 305);
             this.pnlCurve.TabIndex = 0;
             this.pnlCurve.Visible = false;
             // 
@@ -488,11 +491,29 @@
             this.curveControl.Location = new System.Drawing.Point(0, 0);
             this.curveControl.Margin = new System.Windows.Forms.Padding(0);
             this.curveControl.Name = "curveControl";
-            this.curveControl.Size = new System.Drawing.Size(736, 305);
+            this.curveControl.Size = new System.Drawing.Size(737, 305);
             this.curveControl.TabIndex = 10;
             this.curveControl.TimeLine = 0;
             this.curveControl.CurveChange += new Xna.Tools.CurveControl.CurveChangeEventHandler(this.curveControl_CurveChange);
             this.curveControl.TimeLineChange += new Xna.Tools.CurveControl.TimeLineChangeEventHandler(this.curveControl_TimeLineChange);
+            // 
+            // btnChangeScriptName
+            // 
+            this.btnChangeScriptName.BackColor = System.Drawing.Color.Gray;
+            this.btnChangeScriptName.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.btnChangeScriptName.FlatAppearance.BorderSize = 0;
+            this.btnChangeScriptName.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnChangeScriptName.Font = new System.Drawing.Font("Wingdings", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
+            this.btnChangeScriptName.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnChangeScriptName.Location = new System.Drawing.Point(90, 4);
+            this.btnChangeScriptName.Margin = new System.Windows.Forms.Padding(0);
+            this.btnChangeScriptName.Name = "btnChangeScriptName";
+            this.btnChangeScriptName.Size = new System.Drawing.Size(42, 35);
+            this.btnChangeScriptName.TabIndex = 14;
+            this.btnChangeScriptName.Tag = "BG2";
+            this.btnChangeScriptName.Text = "ü";
+            this.btnChangeScriptName.UseVisualStyleBackColor = false;
+            this.btnChangeScriptName.Click += new System.EventHandler(this.btnChangeScriptName_Click);
             // 
             // propAction
             // 
@@ -546,7 +567,7 @@
             this.actionSoundControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.actionSoundControl.Location = new System.Drawing.Point(0, 0);
             this.actionSoundControl.Name = "actionSoundControl";
-            this.actionSoundControl.Size = new System.Drawing.Size(736, 305);
+            this.actionSoundControl.Size = new System.Drawing.Size(737, 305);
             this.actionSoundControl.TabIndex = 15;
             this.actionSoundControl.Visible = false;
             // 
@@ -610,5 +631,6 @@
         private System.Windows.Forms.Panel pnlCurve;
         private Xna.Tools.CurveControl curveControl;
         private Edit2D.UC.PropertyGridLocal propAction;
+        private System.Windows.Forms.Button btnChangeScriptName;
     }
 }

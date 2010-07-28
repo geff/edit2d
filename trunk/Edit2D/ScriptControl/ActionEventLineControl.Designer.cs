@@ -31,14 +31,13 @@
             this.optActionEventLineFixedValue = new System.Windows.Forms.RadioButton();
             this.optActionEventLineEntity = new System.Windows.Forms.RadioButton();
             this.optActionEventLineRandom = new System.Windows.Forms.RadioButton();
-            this.treeViewProperties = new System.Windows.Forms.TreeView();
             this.optSpeedActivate = new System.Windows.Forms.RadioButton();
-            this.treeviewEntiteTargetCollision = new System.Windows.Forms.TreeView();
+            this.treeViewBoundEntity = new System.Windows.Forms.TreeView();
             this.pnlRandomValue = new System.Windows.Forms.Panel();
             this.numRndMax = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblRandomValueMax = new System.Windows.Forms.Label();
             this.numRndMin = new System.Windows.Forms.NumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lblRandomValueMin = new System.Windows.Forms.Label();
             this.optDurationActivate = new System.Windows.Forms.RadioButton();
             this.pnlHeader = new System.Windows.Forms.Panel();
             this.lblActionEventPropertyName = new System.Windows.Forms.Label();
@@ -56,7 +55,6 @@
             this.numSpeed = new System.Windows.Forms.NumericUpDown();
             this.numDuration = new System.Windows.Forms.NumericUpDown();
             this.pnlBoundValue = new System.Windows.Forms.Panel();
-            this.label4 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.pnlRelative = new System.Windows.Forms.Panel();
             this.chkRelative = new System.Windows.Forms.CheckBox();
@@ -102,7 +100,7 @@
             this.optActionEventLineEntity.Location = new System.Drawing.Point(207, 50);
             this.optActionEventLineEntity.Margin = new System.Windows.Forms.Padding(0);
             this.optActionEventLineEntity.Name = "optActionEventLineEntity";
-            this.optActionEventLineEntity.Size = new System.Drawing.Size(355, 24);
+            this.optActionEventLineEntity.Size = new System.Drawing.Size(240, 24);
             this.optActionEventLineEntity.TabIndex = 6;
             this.optActionEventLineEntity.Tag = "BG2";
             this.optActionEventLineEntity.Text = "Valeur liée";
@@ -115,7 +113,7 @@
             this.optActionEventLineRandom.Appearance = System.Windows.Forms.Appearance.Button;
             this.optActionEventLineRandom.FlatAppearance.BorderSize = 0;
             this.optActionEventLineRandom.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.optActionEventLineRandom.Location = new System.Drawing.Point(562, 50);
+            this.optActionEventLineRandom.Location = new System.Drawing.Point(447, 50);
             this.optActionEventLineRandom.Margin = new System.Windows.Forms.Padding(0);
             this.optActionEventLineRandom.Name = "optActionEventLineRandom";
             this.optActionEventLineRandom.Size = new System.Drawing.Size(119, 24);
@@ -126,28 +124,15 @@
             this.optActionEventLineRandom.UseVisualStyleBackColor = true;
             this.optActionEventLineRandom.CheckedChanged += new System.EventHandler(this.optActionEventLineRandom_CheckedChanged);
             // 
-            // treeViewProperties
-            // 
-            this.treeViewProperties.BackColor = System.Drawing.Color.Silver;
-            this.treeViewProperties.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.treeViewProperties.CheckBoxes = true;
-            this.treeViewProperties.Enabled = false;
-            this.treeViewProperties.Location = new System.Drawing.Point(175, 24);
-            this.treeViewProperties.Name = "treeViewProperties";
-            this.treeViewProperties.Size = new System.Drawing.Size(177, 111);
-            this.treeViewProperties.TabIndex = 24;
-            this.treeViewProperties.Tag = "BG2";
-            this.treeViewProperties.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewProperties_AfterCheck);
-            // 
             // optSpeedActivate
             // 
             this.optSpeedActivate.Appearance = System.Windows.Forms.Appearance.Button;
             this.optSpeedActivate.FlatAppearance.BorderSize = 0;
             this.optSpeedActivate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.optSpeedActivate.Location = new System.Drawing.Point(87, 24);
+            this.optSpeedActivate.Location = new System.Drawing.Point(85, 24);
             this.optSpeedActivate.Margin = new System.Windows.Forms.Padding(0);
             this.optSpeedActivate.Name = "optSpeedActivate";
-            this.optSpeedActivate.Size = new System.Drawing.Size(85, 24);
+            this.optSpeedActivate.Size = new System.Drawing.Size(84, 24);
             this.optSpeedActivate.TabIndex = 9;
             this.optSpeedActivate.Tag = "B";
             this.optSpeedActivate.Text = "Vitesse";
@@ -155,30 +140,30 @@
             this.optSpeedActivate.UseVisualStyleBackColor = true;
             this.optSpeedActivate.CheckedChanged += new System.EventHandler(this.optSpeedActivate_CheckedChanged);
             // 
-            // treeviewEntiteTargetCollision
+            // treeViewBoundEntity
             // 
-            this.treeviewEntiteTargetCollision.BackColor = System.Drawing.Color.Silver;
-            this.treeviewEntiteTargetCollision.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.treeviewEntiteTargetCollision.CheckBoxes = true;
-            this.treeviewEntiteTargetCollision.Enabled = false;
-            this.treeviewEntiteTargetCollision.Location = new System.Drawing.Point(3, 24);
-            this.treeviewEntiteTargetCollision.Name = "treeviewEntiteTargetCollision";
-            this.treeviewEntiteTargetCollision.Size = new System.Drawing.Size(166, 111);
-            this.treeviewEntiteTargetCollision.TabIndex = 23;
-            this.treeviewEntiteTargetCollision.Tag = "BG2";
-            this.treeviewEntiteTargetCollision.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeviewEntiteTargetCollision_AfterCheck);
+            this.treeViewBoundEntity.BackColor = System.Drawing.Color.Silver;
+            this.treeViewBoundEntity.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.treeViewBoundEntity.CheckBoxes = true;
+            this.treeViewBoundEntity.Enabled = false;
+            this.treeViewBoundEntity.Location = new System.Drawing.Point(3, 24);
+            this.treeViewBoundEntity.Name = "treeViewBoundEntity";
+            this.treeViewBoundEntity.Size = new System.Drawing.Size(233, 111);
+            this.treeViewBoundEntity.TabIndex = 23;
+            this.treeViewBoundEntity.Tag = "BG2";
+            this.treeViewBoundEntity.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewBoundEntity_AfterCheck);
             // 
             // pnlRandomValue
             // 
             this.pnlRandomValue.BackColor = System.Drawing.Color.Silver;
             this.pnlRandomValue.Controls.Add(this.numRndMax);
-            this.pnlRandomValue.Controls.Add(this.label3);
+            this.pnlRandomValue.Controls.Add(this.lblRandomValueMax);
             this.pnlRandomValue.Controls.Add(this.numRndMin);
-            this.pnlRandomValue.Controls.Add(this.label2);
-            this.pnlRandomValue.Location = new System.Drawing.Point(562, 74);
+            this.pnlRandomValue.Controls.Add(this.lblRandomValueMin);
+            this.pnlRandomValue.Location = new System.Drawing.Point(447, 74);
             this.pnlRandomValue.Margin = new System.Windows.Forms.Padding(0);
             this.pnlRandomValue.Name = "pnlRandomValue";
-            this.pnlRandomValue.Size = new System.Drawing.Size(117, 138);
+            this.pnlRandomValue.Size = new System.Drawing.Size(119, 138);
             this.pnlRandomValue.TabIndex = 12;
             this.pnlRandomValue.Tag = "BG1";
             // 
@@ -193,15 +178,15 @@
             this.numRndMax.Tag = "BG2";
             this.numRndMax.ValueChanged += new System.EventHandler(this.numRndMax_ValueChanged);
             // 
-            // label3
+            // lblRandomValueMax
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(3, 44);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(51, 13);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Maximum";
+            this.lblRandomValueMax.AutoSize = true;
+            this.lblRandomValueMax.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRandomValueMax.Location = new System.Drawing.Point(3, 44);
+            this.lblRandomValueMax.Name = "lblRandomValueMax";
+            this.lblRandomValueMax.Size = new System.Drawing.Size(51, 13);
+            this.lblRandomValueMax.TabIndex = 8;
+            this.lblRandomValueMax.Text = "Maximum";
             // 
             // numRndMin
             // 
@@ -214,25 +199,25 @@
             this.numRndMin.Tag = "BG2";
             this.numRndMin.ValueChanged += new System.EventHandler(this.numRndMin_ValueChanged);
             // 
-            // label2
+            // lblRandomValueMin
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(3, 3);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(48, 13);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Minimum";
+            this.lblRandomValueMin.AutoSize = true;
+            this.lblRandomValueMin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRandomValueMin.Location = new System.Drawing.Point(3, 3);
+            this.lblRandomValueMin.Name = "lblRandomValueMin";
+            this.lblRandomValueMin.Size = new System.Drawing.Size(48, 13);
+            this.lblRandomValueMin.TabIndex = 6;
+            this.lblRandomValueMin.Text = "Minimum";
             // 
             // optDurationActivate
             // 
             this.optDurationActivate.Appearance = System.Windows.Forms.Appearance.Button;
             this.optDurationActivate.FlatAppearance.BorderSize = 0;
             this.optDurationActivate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.optDurationActivate.Location = new System.Drawing.Point(2, 24);
+            this.optDurationActivate.Location = new System.Drawing.Point(0, 24);
             this.optDurationActivate.Margin = new System.Windows.Forms.Padding(0);
             this.optDurationActivate.Name = "optDurationActivate";
-            this.optDurationActivate.Size = new System.Drawing.Size(85, 24);
+            this.optDurationActivate.Size = new System.Drawing.Size(84, 24);
             this.optDurationActivate.TabIndex = 6;
             this.optDurationActivate.Tag = "B";
             this.optDurationActivate.Text = "Durée";
@@ -246,7 +231,7 @@
             this.pnlHeader.Location = new System.Drawing.Point(0, 10);
             this.pnlHeader.Margin = new System.Windows.Forms.Padding(0);
             this.pnlHeader.Name = "pnlHeader";
-            this.pnlHeader.Size = new System.Drawing.Size(851, 40);
+            this.pnlHeader.Size = new System.Drawing.Size(736, 40);
             this.pnlHeader.TabIndex = 0;
             this.pnlHeader.Tag = "BG2";
             // 
@@ -270,7 +255,7 @@
             this.optDurationDeactivate.Location = new System.Drawing.Point(0, 0);
             this.optDurationDeactivate.Margin = new System.Windows.Forms.Padding(0);
             this.optDurationDeactivate.Name = "optDurationDeactivate";
-            this.optDurationDeactivate.Size = new System.Drawing.Size(172, 24);
+            this.optDurationDeactivate.Size = new System.Drawing.Size(168, 24);
             this.optDurationDeactivate.TabIndex = 5;
             this.optDurationDeactivate.TabStop = true;
             this.optDurationDeactivate.Tag = "B";
@@ -366,10 +351,10 @@
             this.pnlDuration.Controls.Add(this.numSpeed);
             this.pnlDuration.Controls.Add(this.numDuration);
             this.pnlDuration.Enabled = false;
-            this.pnlDuration.Location = new System.Drawing.Point(681, 98);
+            this.pnlDuration.Location = new System.Drawing.Point(568, 98);
             this.pnlDuration.Margin = new System.Windows.Forms.Padding(0);
             this.pnlDuration.Name = "pnlDuration";
-            this.pnlDuration.Size = new System.Drawing.Size(170, 56);
+            this.pnlDuration.Size = new System.Drawing.Size(168, 56);
             this.pnlDuration.TabIndex = 27;
             this.pnlDuration.Tag = "BG1";
             // 
@@ -378,13 +363,13 @@
             this.panel4.Location = new System.Drawing.Point(6, 50);
             this.panel4.Margin = new System.Windows.Forms.Padding(0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(158, 6);
+            this.panel4.Size = new System.Drawing.Size(156, 6);
             this.panel4.TabIndex = 32;
             this.panel4.Tag = "B";
             // 
             // panel6
             // 
-            this.panel6.Location = new System.Drawing.Point(164, 0);
+            this.panel6.Location = new System.Drawing.Point(162, 0);
             this.panel6.Margin = new System.Windows.Forms.Padding(0);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(6, 56);
@@ -451,26 +436,14 @@
             // 
             // pnlBoundValue
             // 
-            this.pnlBoundValue.Controls.Add(this.label4);
             this.pnlBoundValue.Controls.Add(this.label1);
-            this.pnlBoundValue.Controls.Add(this.treeviewEntiteTargetCollision);
-            this.pnlBoundValue.Controls.Add(this.treeViewProperties);
+            this.pnlBoundValue.Controls.Add(this.treeViewBoundEntity);
             this.pnlBoundValue.Location = new System.Drawing.Point(207, 74);
             this.pnlBoundValue.Margin = new System.Windows.Forms.Padding(0);
             this.pnlBoundValue.Name = "pnlBoundValue";
-            this.pnlBoundValue.Size = new System.Drawing.Size(355, 138);
+            this.pnlBoundValue.Size = new System.Drawing.Size(240, 138);
             this.pnlBoundValue.TabIndex = 28;
             this.pnlBoundValue.Tag = "BG1";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(172, 8);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(54, 13);
-            this.label4.TabIndex = 26;
-            this.label4.Text = "Propriétés";
             // 
             // label1
             // 
@@ -486,10 +459,10 @@
             // 
             this.pnlRelative.Controls.Add(this.chkRelative);
             this.pnlRelative.Enabled = false;
-            this.pnlRelative.Location = new System.Drawing.Point(681, 154);
+            this.pnlRelative.Location = new System.Drawing.Point(568, 154);
             this.pnlRelative.Margin = new System.Windows.Forms.Padding(0);
             this.pnlRelative.Name = "pnlRelative";
-            this.pnlRelative.Size = new System.Drawing.Size(170, 58);
+            this.pnlRelative.Size = new System.Drawing.Size(168, 58);
             this.pnlRelative.TabIndex = 29;
             this.pnlRelative.Tag = "BG1";
             // 
@@ -501,7 +474,7 @@
             this.chkRelative.Location = new System.Drawing.Point(6, 18);
             this.chkRelative.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.chkRelative.Name = "chkRelative";
-            this.chkRelative.Size = new System.Drawing.Size(158, 24);
+            this.chkRelative.Size = new System.Drawing.Size(156, 24);
             this.chkRelative.TabIndex = 6;
             this.chkRelative.Tag = "BG2";
             this.chkRelative.Text = "Valeur relative";
@@ -515,7 +488,7 @@
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Margin = new System.Windows.Forms.Padding(0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(851, 10);
+            this.panel2.Size = new System.Drawing.Size(736, 10);
             this.panel2.TabIndex = 6;
             this.panel2.Tag = "BG2";
             // 
@@ -534,7 +507,7 @@
             this.panel8.Location = new System.Drawing.Point(0, 212);
             this.panel8.Margin = new System.Windows.Forms.Padding(0);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(851, 2);
+            this.panel8.Size = new System.Drawing.Size(736, 2);
             this.panel8.TabIndex = 32;
             this.panel8.Tag = "BG2";
             // 
@@ -545,10 +518,10 @@
             this.pnlTransition.Controls.Add(this.optDurationActivate);
             this.pnlTransition.Controls.Add(this.optSpeedActivate);
             this.pnlTransition.Enabled = false;
-            this.pnlTransition.Location = new System.Drawing.Point(679, 50);
+            this.pnlTransition.Location = new System.Drawing.Point(568, 50);
             this.pnlTransition.Margin = new System.Windows.Forms.Padding(0);
             this.pnlTransition.Name = "pnlTransition";
-            this.pnlTransition.Size = new System.Drawing.Size(172, 48);
+            this.pnlTransition.Size = new System.Drawing.Size(168, 48);
             this.pnlTransition.TabIndex = 10;
             // 
             // ActionEventLineControl
@@ -570,7 +543,7 @@
             this.Controls.Add(this.optActionEventLineEntity);
             this.Controls.Add(this.optActionEventLineRandom);
             this.Name = "ActionEventLineControl";
-            this.Size = new System.Drawing.Size(852, 214);
+            this.Size = new System.Drawing.Size(737, 214);
             this.Tag = "BG1";
             this.pnlRandomValue.ResumeLayout(false);
             this.pnlRandomValue.PerformLayout();
@@ -596,8 +569,8 @@
 
         private System.Windows.Forms.Panel pnlHeader;
         private System.Windows.Forms.Panel pnlFixedValue;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblRandomValueMin;
+        private System.Windows.Forms.Label lblRandomValueMax;
         public System.Windows.Forms.RadioButton optActionEventLineFixedValue;
         public System.Windows.Forms.RadioButton optActionEventLineEntity;
         public System.Windows.Forms.RadioButton optActionEventLineRandom;
@@ -606,8 +579,7 @@
         public System.Windows.Forms.NumericUpDown numFixedValue;
         public System.Windows.Forms.NumericUpDown numRndMax;
         public System.Windows.Forms.NumericUpDown numRndMin;
-        public System.Windows.Forms.TreeView treeViewProperties;
-        public System.Windows.Forms.TreeView treeviewEntiteTargetCollision;
+        public System.Windows.Forms.TreeView treeViewBoundEntity;
         public System.Windows.Forms.NumericUpDown numDuration;
         public System.Windows.Forms.RadioButton optDurationActivate;
         public System.Windows.Forms.RadioButton optDurationDeactivate;
@@ -619,7 +591,6 @@
         public System.Windows.Forms.NumericUpDown numSpeed;
         public System.Windows.Forms.RadioButton optSpeedActivate;
         private System.Windows.Forms.Panel pnlBoundValue;
-        public System.Windows.Forms.Label label4;
         public System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel pnlRelative;
         private System.Windows.Forms.Panel panel6;

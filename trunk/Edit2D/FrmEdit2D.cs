@@ -128,8 +128,8 @@ namespace Edit2D
 
             btnScriptModeBar.PerformClick();
 
-            //WinformVisualStyle.ApplyStyle(this, "LightGray");
-            WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
+            WinformVisualStyle.ApplyStyle(this, "LightGray");
+            //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             //InitInputHandler();
         }
@@ -237,16 +237,19 @@ namespace Edit2D
 
             foreach (String textureName in TextureManager.ListTexture2D.Keys)
             {
-                Texture2D texture = TextureManager.ListTexture2D[textureName];
+                if (textureName == "BigRec")
+                {
+                    Texture2D texture = TextureManager.ListTexture2D[textureName];
 
-                //------
-                Bitmap bmp = TextureManager.GetBitmapFromTexture2D(texture);
-                //------
+                    //------
+                    Bitmap bmp = TextureManager.GetBitmapFromTexture2D(texture);
+                    //------
 
-                imageList.Images.Add(textureName, (Image)bmp);
+                    imageList.Images.Add(textureName, (Image)bmp);
 
-                listView.Items.Add(new ListViewItem(textureName, textureName));
-                listView.LargeImageList = imageList;
+                    listView.Items.Add(new ListViewItem(textureName, textureName));
+                    listView.LargeImageList = imageList;
+                }
             }
         }
 
@@ -1159,34 +1162,46 @@ namespace Edit2D
         #region RightBar Events
         private void optRightBarEntities_CheckedChanged(object sender, EventArgs e)
         {
-            pnlEntites.Visible = true;
-            pnlSpring.Visible = false;
-            pnlJoint.Visible = false;
-            propertyGrid.PropertyGrid.Visible = false;
+            if (optRightBarEntities.Checked)
+            {
+                pnlEntites.Visible = true;
+                pnlSpring.Visible = false;
+                pnlJoint.Visible = false;
+                propertyGrid.Visible = false;
+            }
         }
 
         private void optRightBarSpring_CheckedChanged(object sender, EventArgs e)
         {
-            pnlEntites.Visible = false;
-            pnlSpring.Visible = true;
-            pnlJoint.Visible = false;
-            propertyGrid.PropertyGrid.Visible = false;
+            if (optRightBarSpring.Checked)
+            {
+                pnlEntites.Visible = false;
+                pnlSpring.Visible = true;
+                pnlJoint.Visible = false;
+                propertyGrid.Visible = false;
+            }
         }
 
         private void optRightBarJoint_CheckedChanged(object sender, EventArgs e)
         {
-            pnlEntites.Visible = false;
-            pnlSpring.Visible = false;
-            pnlJoint.Visible = true;
-            propertyGrid.PropertyGrid.Visible = false;
+            if (optRightBarJoint.Checked)
+            {
+                pnlEntites.Visible = false;
+                pnlSpring.Visible = false;
+                pnlJoint.Visible = true;
+                propertyGrid.Visible = false;
+            }
         }
 
         private void optRightBarProperties_CheckedChanged(object sender, EventArgs e)
         {
-            pnlEntites.Visible = false;
-            pnlSpring.Visible = false;
-            pnlJoint.Visible = false;
-            propertyGrid.PropertyGrid.Visible = true;
+            if (optRightBarProperties.Checked)
+            {
+                pnlEntites.Visible = false;
+                pnlSpring.Visible = false;
+                pnlJoint.Visible = false;
+                propertyGrid.Visible = true;
+            }
         }
         #endregion
 
