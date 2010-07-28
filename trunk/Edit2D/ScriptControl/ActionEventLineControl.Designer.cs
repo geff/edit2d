@@ -413,6 +413,7 @@
             0,
             0,
             0});
+            this.numSpeed.ValueChanged += new System.EventHandler(this.numSpeed_ValueChanged);
             // 
             // numDuration
             // 
@@ -595,12 +596,12 @@
         private System.Windows.Forms.Panel pnlRelative;
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.CheckBox chkRelative;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.Panel panel8;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Panel pnlTransition;
+        public System.Windows.Forms.CheckBox chkRelative;
 
     }
 }
