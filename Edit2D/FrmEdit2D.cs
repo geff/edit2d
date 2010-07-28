@@ -58,13 +58,13 @@ namespace Edit2D
             listView.DrawItem += new DrawListViewItemEventHandler(listView_DrawItem);
             propertyGrid.PropertyGrid.PropertyValueChanged += new PropertyValueChangedEventHandler(PropertyGrid_PropertyValueChanged);
             propertyGrid.PropertyGrid.PropertySort = PropertySort.CategorizedAlphabetical;
+            timer.Tick += new EventHandler(timer_Tick);
         }
 
         private void Init()
         {
             rnd = new Random();
 
-            timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = 1;
             timer.Enabled = true;
 
@@ -237,7 +237,7 @@ namespace Edit2D
 
             foreach (String textureName in TextureManager.ListTexture2D.Keys)
             {
-                if (textureName == "BigRec")
+                //if (textureName == "BigRec")
                 {
                     Texture2D texture = TextureManager.ListTexture2D[textureName];
 

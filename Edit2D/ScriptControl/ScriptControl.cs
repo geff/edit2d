@@ -54,9 +54,9 @@ namespace Edit2D.ScriptControl
         #region Script private methods
         private void InitScriptControl()
         {
-            cmbActionType.SelectedIndex = 0;
             propAction.PropertyGrid.PropertyValueChanged += new PropertyValueChangedEventHandler(PropertyGrid_PropertyValueChanged);
-            //ViewActionCurve(null);
+
+            cmbActionType.SelectedIndex = 0;
             listboxScript.SelectedIndex = -1;
         }
 
@@ -383,64 +383,10 @@ namespace Edit2D.ScriptControl
                 CreateActionEventLines(actionEvent, actionEvent.PropertyName, new String[] { "" }, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
             }
 
-            //---
+            //--- Mise à jour du composant graphique
             for (int i = 0; i < actionEvent.ActionEventTypes.Length; i++)
             {
-                switch (actionEvent.ActionEventTypes[i])
-                {
-                    case ActionEventType.Deactivated:
-                        ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineDeactivated.Checked = true;
-                        break;
-                    case ActionEventType.FixedValue:
-                        ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineFixedValue.Checked = true;
-                        if (actionEvent.PropertyType.Name == "Boolean")
-                        {
-                            if (actionEvent.BoolValue)
-                            {
-                                ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optFixedValueTrue.Checked = true;
-                                ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optFixedValueFalse.Checked = false;
-                            }
-                            else
-                            {
-                                ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optFixedValueTrue.Checked = false;
-                                ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optFixedValueFalse.Checked = true;
-                            }
-                        }
-                        else
-                            ((ActionEventLineControl)pnlActionEventLines.Controls[i]).numFixedValue.Value = (decimal)actionEvent.FloatValues[i];
-                        break;
-                    //case ActionEventType.MouseX:
-                    //    ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineMouse.Checked = true;
-                    //    ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineMouseX.Checked = true;
-                    //    break;
-                    //case ActionEventType.MouseY:
-                    //    ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineMouse.Checked = true;
-                    //    ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineMouseY.Checked = true;
-                    //    break;
-                    case ActionEventType.EntityBinding:
-                        ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineEntity.Checked = true;
-                        break;
-                    case ActionEventType.Random:
-                        ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optActionEventLineRandom.Checked = true;
-                        ((ActionEventLineControl)pnlActionEventLines.Controls[i]).numRndMin.Value = (decimal)actionEvent.RndMinValues[i];
-                        ((ActionEventLineControl)pnlActionEventLines.Controls[i]).numRndMax.Value = (decimal)actionEvent.RndMaxValues[i];
-                        break;
-                    default:
-                        break;
-                }
-
-                if (actionEvent.Durations[i] != 0)
-                {
-                    ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optDurationActivate.Checked = true;
-                    ((ActionEventLineControl)pnlActionEventLines.Controls[i]).numDuration.Value = actionEvent.Durations[i];
-                }
-                else
-                {
-                    ((ActionEventLineControl)pnlActionEventLines.Controls[i]).optDurationDeactivate.Checked = true;
-                    ((ActionEventLineControl)pnlActionEventLines.Controls[i]).numDuration.Value = 0;
-                }
-
-                ((ActionEventLineControl)pnlActionEventLines.Controls[i]).IsInitialized = true;
+                ((ActionEventLineControl)pnlActionEventLines.Controls[i]).RefreshActionEvent();
             }
             //---
         }

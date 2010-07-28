@@ -212,6 +212,11 @@ namespace Edit2D.ScriptControl
             UpdateActionEvent();
         }
 
+        private void numSpeed_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateActionEvent();
+        }
+
         private void chkRelative_CheckedChanged(object sender, EventArgs e)
         {
             if (chkRelative.Checked)
@@ -406,6 +411,30 @@ namespace Edit2D.ScriptControl
             }
         }
 
+        private TreeNode GetNodeWithTag(TreeNode nodeParent, Entite entite, PropertyInfo propertyInfo, int index)
+        {
+            TreeNode node = null;
+
+            foreach (TreeNode nodeChild in nodeParent.Nodes)
+            {
+                if (node == null &&
+                    (nodeChild.Tag is Object[]) &&
+                    nodeParent.Tag == entite &&
+                    ((PropertyInfo)((Object[])nodeChild.Tag)[0]).Name == propertyInfo.Name &&
+                     ((int)((Object[])nodeChild.Tag)[1]) == index)
+                {
+                    node = nodeChild;
+                }
+
+                if (node == null)
+                {
+                    node = GetNodeWithTag(nodeChild, entite, propertyInfo, index);
+                }
+            }
+
+            return node;
+        }
+
         /// <summary>
         /// Met à jour l'objet ActionEvent selon l'état du composant
         /// </summary>
@@ -443,7 +472,7 @@ namespace Edit2D.ScriptControl
                             if (propNodes[0].Tag.ToString().StartsWith(MOUSE_X_TAG))
                                 ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.MouseX;
                             else if (propNodes[0].Tag.ToString().StartsWith(MOUSE_Y_TAG))
-                                ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.MouseX;
+                                ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.MouseY;
                         }
                         //---> Propriété liée à une entité
                         else
@@ -489,6 +518,79 @@ namespace Edit2D.ScriptControl
                 }
                 //---
             }
+        }
+        #endregion
+
+        #region Public methods
+        public void RefreshActionEvent()
+        {
+            switch (ActionEvent.ActionEventTypes[ActionEventIndex])
+            {
+                case ActionEventType.Deactivated:
+                    optActionEventLineDeactivated.Checked = true;
+                    break;
+                case ActionEventType.FixedValue:
+                    optActionEventLineFixedValue.Checked = true;
+                    if (ActionEvent.PropertyType.Name == "Boolean")
+                    {
+                        if (ActionEvent.BoolValue)
+                        {
+                            optFixedValueTrue.Checked = true;
+                            optFixedValueFalse.Checked = false;
+                        }
+                        else
+                        {
+                            optFixedValueTrue.Checked = false;
+                            optFixedValueFalse.Checked = true;
+                        }
+                    }
+                    else
+                        numFixedValue.Value = (decimal)ActionEvent.FloatValues[ActionEventIndex];
+                    break;
+                case ActionEventType.MouseX:
+                    optActionEventLineEntity.Checked = true;
+                    treeViewBoundEntity.Nodes[0].Nodes[0].Nodes[0].Checked = true;
+                    break;
+                case ActionEventType.MouseY:
+                    optActionEventLineEntity.Checked = true;
+                    treeViewBoundEntity.Nodes[0].Nodes[0].Nodes[1].Checked = true;
+                    break;
+                case ActionEventType.EntityBinding:
+                    optActionEventLineEntity.Checked = true;
+
+                    TreeNode node = GetNodeWithTag( treeViewBoundEntity.Nodes[0], 
+                                                    ActionEvent.EntiteBindings[ActionEventIndex],
+                                                    ActionEvent.EntiteBindingProperties[ActionEventIndex], 
+                                                    ActionEvent.EntiteBindingPropertyId[ActionEventIndex]);
+                    node.Checked = true;
+
+                    break;
+                case ActionEventType.Random:
+                    optActionEventLineRandom.Checked = true;
+                    numRndMin.Value = (decimal)ActionEvent.RndMinValues[ActionEventIndex];
+                    numRndMax.Value = (decimal)ActionEvent.RndMaxValues[ActionEventIndex];
+                    break;
+                default:
+                    break;
+            }
+
+            if (ActionEvent.Durations[ActionEventIndex] != 0)
+            {
+                optDurationActivate.Checked = true;
+                numDuration.Value = ActionEvent.Durations[ActionEventIndex];
+            }
+            else if (ActionEvent.Speeds[ActionEventIndex] != 0)
+            {
+                optSpeedActivate.Checked = true;
+                numSpeed.Value = ActionEvent.Speeds[ActionEventIndex];
+            }
+            else
+            {
+                optDurationDeactivate.Checked = true;
+                numDuration.Value = 0;
+            }
+
+            IsInitialized = true;
         }
         #endregion
     }
