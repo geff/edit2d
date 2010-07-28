@@ -59,29 +59,23 @@ namespace Edit2DEngine.Action
             this.ActionProperty = typeEntite.GetProperty(propertyName);
             this.PropertyType = this.ActionProperty.PropertyType;
 
-            if (this.PropertyType.Name == "Vector2")
-            {
-                InitVar(2);
-            }
-            else if (PropertyType.Name == "Size")
-            {
-                InitVar(2);
-            }
-            else if (this.PropertyType.Name == "Single")
+            if (
+                this.PropertyType.Name == "Single" ||
+                this.PropertyType.Name == "Int32" ||
+                this.PropertyType.Name == "Boolean")
             {
                 InitVar(1);
             }
-            else if (this.PropertyType.Name == "Int32")
+            else if (
+                this.PropertyType.Name == "Vector2" ||
+                this.PropertyType.Name == "Size")
             {
-                InitVar(1);
+                InitVar(2);
             }
-            else if (this.PropertyType.Name == "Color")
+            else if (
+                this.PropertyType.Name == "Color")
             {
                 InitVar(3);
-            }
-            else if (this.PropertyType.Name == "Boolean")
-            {
-                InitVar(1);
             }
         }
 
@@ -123,6 +117,7 @@ namespace Edit2DEngine.Action
         //Microsoft.Xna.Framework.Graphics.Color colorStartValue = Microsoft.Xna.Framework.Graphics.Color.Black;
         //bool boolStartValue = false;
         float[] rndStartValue;
+        float rndStartValueBoolean;
         ////---
 
         ////--- Actual values
@@ -220,7 +215,19 @@ namespace Edit2DEngine.Action
 
             //--- Initialisation des valeurs aléatoires
             if (this.ActionEventTypes[i] == ActionEventType.Random)
-                rndStartValue[i] = repository.GetRandomValue(RndMinValues[i], RndMaxValues[i]);
+            {
+                if (this.PropertyType.Name == "Boolean")
+                {
+                    if (repository.GetRandomValue(0f, 10f) <= 5f)
+                        rndStartValue[i] = Convert.ToSingle(true);
+                    else
+                        rndStartValue[i] = Convert.ToSingle(false);
+                }
+                else
+                {
+                    rndStartValue[i] = repository.GetRandomValue(RndMinValues[i], RndMaxValues[i]);
+                }
+            }
             //---
 
             initialized[i] = true;
@@ -256,7 +263,7 @@ namespace Edit2DEngine.Action
                 }
                 else
                 {
-                    if(Speeds[i] == 0)
+                    if (Speeds[i] == 0)
                         deltaMs[i] = 0;
 
                     initialized[i] = true;
@@ -265,31 +272,32 @@ namespace Edit2DEngine.Action
 
                 float calcValue = 0f;
 
-                #region Vector2
-                switch (this.ActionEventTypes[i])
-                {
-                    case ActionEventType.Deactivated:
-                        calcValue = startValues[i];
-                        break;
-                    case ActionEventType.FixedValue:
-                        calcValue = this.FloatValues[i];
-                        break;
-                    case ActionEventType.MouseX:
-                        calcValue = repository.GetMousePosition().X - startValues[i];
-                        break;
-                    case ActionEventType.MouseY:
-                        calcValue = repository.GetMousePosition().Y - startValues[i];
-                        break;
-                    case ActionEventType.EntityBinding:
-                        calcValue = GetPropertyValue(i);
-                        break;
-                    case ActionEventType.Random:
-                        calcValue = rndStartValue[i];
-                        break;
-                    default:
-                        break;
-                }
-                #endregion
+                //--- Calcul de la valeur
+                
+                    switch (this.ActionEventTypes[i])
+                    {
+                        case ActionEventType.Deactivated:
+                            calcValue = startValues[i];
+                            break;
+                        case ActionEventType.FixedValue:
+                            calcValue = this.FloatValues[i];
+                            break;
+                        case ActionEventType.MouseX:
+                            calcValue = repository.GetMousePosition().X - startValues[i];
+                            break;
+                        case ActionEventType.MouseY:
+                            calcValue = repository.GetMousePosition().Y - startValues[i];
+                            break;
+                        case ActionEventType.EntityBinding:
+                            calcValue = GetPropertyValue(i);
+                            break;
+                        case ActionEventType.Random:
+                            calcValue = rndStartValue[i];
+                            break;
+                        default:
+                            break;
+                    }
+                //---
 
                 //--- Relatives & Durations
                 if (this.IsRelative[i])
@@ -355,8 +363,7 @@ namespace Edit2DEngine.Action
             }
             else if (this.PropertyType.Name == "Boolean")
             {
-                Boolean boolValue = false;
-                Boolean.TryParse(updateValues[0].ToString(), out boolValue);
+                Boolean boolValue = Convert.ToBoolean(updateValues[0]);
                 this.ActionProperty.SetValue(this.Script.ActionHandler, boolValue, null);
             }
         }

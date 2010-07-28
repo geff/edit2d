@@ -63,6 +63,8 @@ namespace Edit2D.ScriptControl
         private void RefreshScriptView()
         {
             listboxScript.Items.Clear();
+            txtScriptName.Text = String.Empty;
+
             IActionHandler actionHandler = GetCurrentActionHandler();
 
             if (actionHandler != null)
@@ -99,11 +101,9 @@ namespace Edit2D.ScriptControl
             treeViewAction.Nodes.Clear();
             IActionHandler actionHandler = GetCurrentActionHandler();
 
-
-            //TODO : à remplacer par l'ensemble des contrôles
-            //       action
-            //if (repository.CurrentScript != null)
-            //    pnlAction.Enabled = true;
+            pnlCurve.Visible = false;
+            pnlActionEvent.Visible = false;
+            actionSoundControl.Visible = false;
 
             if (actionHandler != null && currentScript != -1)
             {
@@ -325,54 +325,18 @@ namespace Edit2D.ScriptControl
         private void CreateActionEventLines(ActionEvent actionEvent, string nameTemplate, string[] propNames, float fixedValue, float fixedMinValue, float fixedMaxValue, float rndMinValue, float rndMinMinValue, float rndMinMaxValue, float rndMaxValue, float rndMaxMinValue, float rndMaxMaxValue)
         {
             pnlActionEventLines.Controls.Clear();
-            pnlActionEventLines.Height = 0;// propNames.Length * 200;
+            pnlActionEventLines.Height = 0;
 
             for (int i = 0; i < propNames.Length; i++)
             {
-                ActionEventLineControl actionEventLine = new ActionEventLineControl(actionEvent.PropertyType, repository);
+                ActionEventLineControl actionEventLine = new ActionEventLineControl(
+                    actionEvent.PropertyType, repository, String.Format(nameTemplate, propNames[i]), actionEvent, i,
+                    fixedValue, fixedMinValue, fixedMaxValue, rndMinValue, rndMinMinValue, rndMinMaxValue, rndMaxValue, rndMaxMinValue, rndMaxMaxValue);
 
                 pnlActionEventLines.Controls.Add(actionEventLine);
                 actionEventLine.Top = i * (actionEventLine.Height - 1);
                 pnlActionEventLines.Width = actionEventLine.Width;
-                pnlActionEventLines.Height = actionEventLine.Bottom;
-
-                actionEventLine.ActionEvent = actionEvent;
-                actionEventLine.ActionEventIndex = i;
-
-                actionEventLine.lblActionEventPropertyName.Text = String.Format(nameTemplate, propNames[i]);
-
-                if (actionEvent.PropertyType.Name == "Boolean")
-                {
-                    //actionEventLine.optFixedValueFalse.Visible = true;
-
-                    actionEventLine.optActionEventLineRandom.Visible = false;
-                    actionEventLine.pnlRandomValue.Visible = false;
-                    actionEventLine.numRndMax.Visible = false;
-                    actionEventLine.pnlDuration.Visible = false;
-                }
-                else
-                {
-                    actionEventLine.optFixedValueTrue.Visible = false;
-                    actionEventLine.optFixedValueFalse.Visible = false;
-
-                    actionEventLine.numFixedValue.Minimum = (decimal)fixedMinValue;
-                    actionEventLine.numFixedValue.Maximum = (decimal)fixedMaxValue;
-
-                    actionEventLine.numRndMin.Minimum = (decimal)rndMinMinValue;
-                    actionEventLine.numRndMin.Maximum = (decimal)rndMinMaxValue;
-
-                    actionEventLine.numRndMax.Minimum = (decimal)rndMaxMinValue;
-                    actionEventLine.numRndMax.Maximum = (decimal)rndMaxMaxValue;
-                }
-
-                if (actionEvent.PropertyType.Name == "Vector2" ||
-                    actionEvent.PropertyType.Name == "Size" ||
-                    actionEvent.PropertyType.Name == "Single")
-                {
-                    actionEventLine.numFixedValue.DecimalPlaces = 2;
-                    actionEventLine.numRndMin.DecimalPlaces = 2;
-                    actionEventLine.numRndMax.DecimalPlaces = 2;
-                }
+                pnlActionEventLines.Height = actionEventLine.Bottom;                
             }
 
             WinformVisualStyle.ApplyStyle(pnlActionEventLines);
@@ -682,6 +646,27 @@ namespace Edit2D.ScriptControl
             }
         }
 
+        private void btnChangeScriptName_Click(object sender, EventArgs e)
+        {
+            if (repository.CurrentScript != null &&
+                !String.IsNullOrEmpty(txtScriptName.Text) &&
+                txtScriptName.Text != repository.CurrentScript.ScriptName
+                )
+            {
+                IActionHandler actionHandler = GetCurrentActionHandler();
+
+                if (actionHandler.ListScript.Exists(s => s.ScriptName == txtScriptName.Text))
+                {
+                    MessageBox.Show(String.Format("Le nom de script '{0}' existe déja", txtScriptName.Text), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    repository.CurrentScript.ScriptName = txtScriptName.Text;
+                    RefreshScriptView();
+                }
+            }
+        }
+
         private void btnPlayScript_Click(object sender, EventArgs e)
         {
             if (currentScript != -1)
@@ -708,7 +693,18 @@ namespace Edit2D.ScriptControl
         {
             currentScript = listboxScript.SelectedIndex;
             repository.CurrentScript = GetSelectedScript();
+            
             RefreshActionView();
+
+            if (repository.CurrentScript != null)
+            {
+                txtScriptName.Text = repository.CurrentScript.ScriptName;
+
+                if (treeViewAction.Nodes.Count > 0)
+                {
+                    treeViewAction.SelectedNode = treeViewAction.Nodes[0];
+                }
+            }
         }
 
         private void btnAddAction_Click(object sender, EventArgs e)

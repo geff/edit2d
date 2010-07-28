@@ -21,13 +21,24 @@ namespace Edit2D.ScriptControl
         public Type PropertyType { get; set; }
         public Repository repository { get; set; }
 
-        public ActionEventLineControl(Type propertyType, Repository repository)
+        private const string MOUSE_X_TAG = "MOUSEX";
+        private const string MOUSE_Y_TAG = "MOUSEY";
+
+        public ActionEventLineControl(Type propertyType, Repository repository, string nameProperty, ActionEvent actionEvent, int index,
+            float fixedValue, float fixedMinValue, float fixedMaxValue, float rndMinValue, float rndMinMinValue, float rndMinMaxValue, float rndMaxValue, float rndMaxMinValue, float rndMaxMaxValue)
         {
             InitializeComponent();
+
             this.PropertyType = propertyType;
             this.repository = repository;
+            this.ActionEvent = actionEvent;
+            this.ActionEventIndex = index;
 
-            RefreshTreeViewEntite(treeviewEntiteTargetCollision);
+            this.lblActionEventPropertyName.Text = nameProperty;
+
+            Init(fixedValue, fixedMinValue, fixedMaxValue, rndMinValue, rndMinMinValue, rndMinMaxValue, rndMaxValue, rndMaxMinValue, rndMaxMaxValue);
+
+            RefreshTreeViewEntite(treeViewBoundEntity);
         }
 
         #region Evènements
@@ -43,6 +54,7 @@ namespace Edit2D.ScriptControl
             numDuration.Visible = true;
             numSpeed.Visible = false;
             lblTransitionUnit.Text = "ms";
+
             UpdateActionEvent();
         }
 
@@ -60,8 +72,7 @@ namespace Edit2D.ScriptControl
         {
             numFixedValue.Enabled = false;
             numRndMax.Enabled = false;
-            treeviewEntiteTargetCollision.Enabled = false;
-            treeViewProperties.Enabled = false;
+            treeViewBoundEntity.Enabled = false;
             numRndMin.Enabled = false;
             numRndMax.Enabled = false;
 
@@ -83,30 +94,11 @@ namespace Edit2D.ScriptControl
             UpdateActionEvent();
         }
 
-        //private void optActionEventLineMouse_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    numFixedValue.Enabled = false;
-        //    numRndMax.Enabled = false;
-        //    treeviewEntiteTargetCollision.Enabled = false;
-        //    treeViewProperties.Enabled = false;
-        //    numRndMin.Enabled = false;
-        //    numRndMax.Enabled = false;
-
-        //    optDurationActivate.Enabled = true;
-        //    optDurationDeactivate.Enabled = true;
-
-        //    optFixedValueTrue.Enabled = false;
-        //    optFixedValueFalse.Enabled = false;
-
-        //    UpdateActionEvent();
-        //}
-
         private void optActionEventLineFixedValue_CheckedChanged(object sender, EventArgs e)
         {
             numFixedValue.Enabled = true;
             numRndMax.Enabled = false;
-            treeviewEntiteTargetCollision.Enabled = false;
-            treeViewProperties.Enabled = false;
+            treeViewBoundEntity.Enabled = false;
             numRndMin.Enabled = false;
             numRndMax.Enabled = false;
 
@@ -132,8 +124,7 @@ namespace Edit2D.ScriptControl
         {
             numFixedValue.Enabled = false;
             numRndMax.Enabled = false;
-            treeviewEntiteTargetCollision.Enabled = true;
-            treeViewProperties.Enabled = true;
+            treeViewBoundEntity.Enabled = true;
             numRndMin.Enabled = false;
             numRndMax.Enabled = false;
 
@@ -159,8 +150,7 @@ namespace Edit2D.ScriptControl
         {
             numFixedValue.Enabled = false;
             numRndMax.Enabled = false;
-            treeviewEntiteTargetCollision.Enabled = false;
-            treeViewProperties.Enabled = false;
+            treeViewBoundEntity.Enabled = false;
             numRndMin.Enabled = true;
             numRndMax.Enabled = true;
 
@@ -233,107 +223,18 @@ namespace Edit2D.ScriptControl
 
             UpdateActionEvent();
         }
-        #endregion
 
-        #region Private methods
-        private void GetCheckedNodes(TreeNode node, List<TreeNode> checkedNode)
-        {
-            if (node == null)
-                return;
-
-            if (node.Checked)
-                checkedNode.Add(node);
-
-            if (node.Nodes.Count > 0)
-            {
-                for (int i = 0; i < node.Nodes.Count; i++)
-                {
-                    GetCheckedNodes(node.Nodes[i], checkedNode);
-                }
-            }
-        }
-
-        private void UpdateActionEvent()
-        {
-            if (IsInitialized && ActionEvent != null)
-            {
-                if (optActionEventLineDeactivated.Checked)
-                {
-                    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.Deactivated;
-                }
-                //else if (optActionEventLineMouse.Checked && optActionEventLineMouseX.Checked)
-                //{
-                //    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.MouseX;
-                //}
-                //else if (optActionEventLineMouse.Checked && optActionEventLineMouseY.Checked)
-                //{
-                //    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.MouseY;
-                //}
-                else if (optActionEventLineFixedValue.Checked)
-                {
-                    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.FixedValue;
-
-                    if (this.PropertyType.Name == "Boolean")
-                        ActionEvent.BoolValue = optFixedValueTrue.Checked;
-                    else
-                        ActionEvent.FloatValues[ActionEventIndex] = (float)numFixedValue.Value;
-                }
-                else if (optActionEventLineEntity.Checked)
-                {
-                    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.EntityBinding;
-
-                    //--- Recherche des propriétés cochées
-                    List<TreeNode> propNodes = new List<TreeNode>();
-                    GetCheckedNodes(treeviewEntiteTargetCollision.Nodes[0], propNodes);
-                    //---
-
-                    if(propNodes.Count >0)
-                    {
-                        ActionEvent.EntiteBindingProperties[ActionEventIndex] = (PropertyInfo)((Object[])propNodes[0].Tag)[0];
-                        ActionEvent.EntiteBindingPropertyId[ActionEventIndex] = (int)((Object[])propNodes[0].Tag)[1];
-                        ActionEvent.EntiteBindings[ActionEventIndex] = ((Entite)propNodes[0].Parent.Tag);
-                    }
-                }
-                else if (optActionEventLineRandom.Checked)
-                {
-                    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.Random;
-                    ActionEvent.RndMinValues[ActionEventIndex] = (float)numRndMin.Value;
-                    ActionEvent.RndMaxValues[ActionEventIndex] = (float)numRndMax.Value;
-                }
-
-                //--- Relative
-                ActionEvent.IsRelative[ActionEventIndex] = chkRelative.Checked;
-                //---
-
-                //--- Duration
-                if (optDurationActivate.Checked)
-                {
-                    ActionEvent.Durations[ActionEventIndex] = (int)numDuration.Value;
-                    ActionEvent.Speeds[ActionEventIndex] = 0;
-                }
-                else if (optSpeedActivate.Checked)
-                {
-                    ActionEvent.Durations[ActionEventIndex] = 0;
-                    ActionEvent.Speeds[ActionEventIndex] = (int)numSpeed.Value;
-                }
-                else
-                {
-                    ActionEvent.Durations[ActionEventIndex] = 0;
-                    ActionEvent.Speeds[ActionEventIndex] = 0;
-                }
-                //---
-            }
-        }
-        #endregion
-
-        private void treeviewEntiteTargetCollision_AfterCheck(object sender, TreeViewEventArgs e)
+        private void treeViewBoundEntity_AfterCheck(object sender, TreeViewEventArgs e)
         {
             if (e.Action == TreeViewAction.ByMouse || e.Action == TreeViewAction.ByKeyboard)
             {
-                if (e.Node.Tag is Object[])
+                if (e.Node.Tag is Object[] ||
+                    (e.Node.Tag is String &&
+                        (e.Node.Tag.ToString() == MOUSE_X_TAG || e.Node.Tag.ToString() == MOUSE_Y_TAG)))
                 {
                     bool isChecked = e.Node.Checked;
-                    ChangeNodeCheck(e.Node.Parent, false);
+
+                    ChangeNodeCheck(e.Node.TreeView.Nodes[0], false);
 
                     e.Node.Checked = isChecked;
                 }
@@ -346,16 +247,49 @@ namespace Edit2D.ScriptControl
             }
         }
 
-        private void treeViewProperties_AfterCheck(object sender, TreeViewEventArgs e)
-        {
+        #endregion
 
-        }
-
-        private void ChangeNodeCheck(TreeNode node, bool isChecked)
+        #region Private methods
+        private void Init(float fixedValue, float fixedMinValue, float fixedMaxValue, float rndMinValue, float rndMinMinValue, float rndMinMaxValue, float rndMaxValue, float rndMaxMinValue, float rndMaxMaxValue)
         {
-            for (int i = 0; i < node.Nodes.Count; i++)
+            if (ActionEvent.PropertyType.Name == "Boolean")
             {
-                node.Nodes[i].Checked = isChecked;
+                optFixedValueTrue.Visible = true;
+                optFixedValueFalse.Visible = true;
+                numFixedValue.Visible = false;
+
+                numRndMax.Visible = false;
+                numRndMin.Visible = false;
+                lblRandomValueMin.Visible = false;
+                lblRandomValueMax.Visible = false;
+
+                pnlDuration.Visible = false;
+                pnlTransition.Visible = false;
+                pnlRelative.Visible = false;
+            }
+            else
+            {
+                optFixedValueTrue.Visible = false;
+                optFixedValueFalse.Visible = false;
+                numFixedValue.Visible = true;
+
+                numFixedValue.Minimum = (decimal)fixedMinValue;
+                numFixedValue.Maximum = (decimal)fixedMaxValue;
+
+                numRndMin.Minimum = (decimal)rndMinMinValue;
+                numRndMin.Maximum = (decimal)rndMinMaxValue;
+
+                numRndMax.Minimum = (decimal)rndMaxMinValue;
+                numRndMax.Maximum = (decimal)rndMaxMaxValue;
+            }
+
+            if (ActionEvent.PropertyType.Name == "Vector2" ||
+                ActionEvent.PropertyType.Name == "Size" ||
+                ActionEvent.PropertyType.Name == "Single")
+            {
+                numFixedValue.DecimalPlaces = 2;
+                numRndMin.DecimalPlaces = 2;
+                numRndMax.DecimalPlaces = 2;
             }
         }
 
@@ -363,6 +297,14 @@ namespace Edit2D.ScriptControl
         {
             treeView.Nodes.Clear();
             TreeNode nodeRoot = treeView.Nodes.Add("World");
+
+            //--- Noeud Souris
+            TreeNode nodeMouse = nodeRoot.Nodes.Add("Souris");
+            TreeNode nodeMouseX = nodeMouse.Nodes.Add("X");
+            TreeNode nodeMouseY = nodeMouse.Nodes.Add("Y");
+            nodeMouseX.Tag = MOUSE_X_TAG;
+            nodeMouseY.Tag = MOUSE_Y_TAG;
+            //---
 
             for (int i = 0; i < repository.listEntite.Count; i++)
             {
@@ -418,7 +360,7 @@ namespace Edit2D.ScriptControl
                         {
                             if (properties[i].PropertyType.Name == "Vector2")
                             {
-                                node.Nodes.Add(properties[i].Name + ".X").Tag = new Object[]{ properties[i],1};
+                                node.Nodes.Add(properties[i].Name + ".X").Tag = new Object[] { properties[i], 1 };
                                 node.Nodes.Add(properties[i].Name + ".Y").Tag = new Object[] { properties[i], 2 };
                             }
                             else if (properties[i].PropertyType.Name == "Single" ||
@@ -436,5 +378,118 @@ namespace Edit2D.ScriptControl
                 }
             }
         }
+
+        private void ChangeNodeCheck(TreeNode node, bool isChecked)
+        {
+            for (int i = 0; i < node.Nodes.Count; i++)
+            {
+                node.Nodes[i].Checked = isChecked;
+
+                ChangeNodeCheck(node.Nodes[i], isChecked);
+            }
+        }
+
+        private void GetCheckedNodes(TreeNode node, List<TreeNode> checkedNode)
+        {
+            if (node == null)
+                return;
+
+            if (node.Checked)
+                checkedNode.Add(node);
+
+            if (node.Nodes.Count > 0)
+            {
+                for (int i = 0; i < node.Nodes.Count; i++)
+                {
+                    GetCheckedNodes(node.Nodes[i], checkedNode);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Met à jour l'objet ActionEvent selon l'état du composant
+        /// </summary>
+        private void UpdateActionEvent()
+        {
+            if (IsInitialized && ActionEvent != null)
+            {
+                if (optActionEventLineDeactivated.Checked)
+                {
+                    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.Deactivated;
+                }
+                else if (optActionEventLineFixedValue.Checked)
+                {
+                    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.FixedValue;
+
+                    if (this.PropertyType.Name == "Boolean")
+                        ActionEvent.BoolValue = optFixedValueTrue.Checked;
+                    else
+                        ActionEvent.FloatValues[ActionEventIndex] = (float)numFixedValue.Value;
+                }
+                else if (optActionEventLineEntity.Checked)
+                {
+                    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.EntityBinding;
+
+                    //--- Recherche des propriétés cochées
+                    List<TreeNode> propNodes = new List<TreeNode>();
+                    GetCheckedNodes(treeViewBoundEntity.Nodes[0], propNodes);
+                    //---
+
+                    if (propNodes.Count > 0)
+                    {
+                        //---> Propriété liée à la position de la souris
+                        if (propNodes[0].Tag is String)
+                        {
+                            if (propNodes[0].Tag.ToString().StartsWith(MOUSE_X_TAG))
+                                ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.MouseX;
+                            else if (propNodes[0].Tag.ToString().StartsWith(MOUSE_Y_TAG))
+                                ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.MouseX;
+                        }
+                        //---> Propriété liée à une entité
+                        else
+                        {
+                            ActionEvent.EntiteBindingProperties[ActionEventIndex] = (PropertyInfo)((Object[])propNodes[0].Tag)[0];
+                            ActionEvent.EntiteBindingPropertyId[ActionEventIndex] = (int)((Object[])propNodes[0].Tag)[1];
+                            ActionEvent.EntiteBindings[ActionEventIndex] = ((Entite)propNodes[0].Parent.Tag);
+                        }
+                    }
+                }
+                else if (optActionEventLineRandom.Checked)
+                {
+                    ActionEvent.ActionEventTypes[ActionEventIndex] = ActionEventType.Random;
+
+                    //---> Le choix des valeurs minimum et maximum pour "Valeur aléatoire"
+                    //     n'est pas possible pour les booléens
+                    if (this.PropertyType.Name != "Boolean")
+                    {
+                        ActionEvent.RndMinValues[ActionEventIndex] = (float)numRndMin.Value;
+                        ActionEvent.RndMaxValues[ActionEventIndex] = (float)numRndMax.Value;
+                    }
+                }
+
+                //--- Relative
+                ActionEvent.IsRelative[ActionEventIndex] = chkRelative.Checked;
+                //---
+
+                //--- Duration
+                if (optDurationActivate.Checked)
+                {
+                    ActionEvent.Durations[ActionEventIndex] = (int)numDuration.Value;
+                    ActionEvent.Speeds[ActionEventIndex] = 0;
+                }
+                else if (optSpeedActivate.Checked)
+                {
+                    ActionEvent.Durations[ActionEventIndex] = 0;
+                    ActionEvent.Speeds[ActionEventIndex] = (int)numSpeed.Value;
+                }
+                else
+                {
+                    ActionEvent.Durations[ActionEventIndex] = 0;
+                    ActionEvent.Speeds[ActionEventIndex] = 0;
+                }
+                //---
+            }
+        }
+        #endregion
     }
 }
