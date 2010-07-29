@@ -54,6 +54,11 @@ namespace Edit2D.TriggerControl
             }
         }
 
+        private void btnChangeTriggerName_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void listboxTrigger_SelectedIndexChanged(object sender, EventArgs e)
         {
             ITriggerHandler triggerHandler = GetCurrentTriggerHandler();
@@ -70,20 +75,10 @@ namespace Edit2D.TriggerControl
         {
             if (cmbTypeTrigger.SelectedIndex == 0)
             {
-                pnlTrigger.ColumnStyles[3].Width = 25;
-                pnlTrigger.ColumnStyles[4].Width = 0;
-                pnlTrigger.ColumnStyles[5].Width = 0;
-                pnlTrigger.ColumnStyles[6].Width = 0;
-
                 RefreshTreeViewEntite(treeviewEntiteTargetCollision);
             }
             else if (cmbTypeTrigger.SelectedIndex == 2)
             {
-                pnlTrigger.ColumnStyles[3].Width = 0;
-                pnlTrigger.ColumnStyles[4].Width = 0;
-                pnlTrigger.ColumnStyles[5].Width = 25;
-                pnlTrigger.ColumnStyles[6].Width = 0;
-
                 RefreshTreeViewProperties();
                 RefreshTreeViewCustomProperties(repository.CurrentEntite);
 
@@ -91,33 +86,81 @@ namespace Edit2D.TriggerControl
             }
             else if (cmbTypeTrigger.SelectedIndex == 3)
             {
-                pnlTrigger.ColumnStyles[3].Width = 0;
-                pnlTrigger.ColumnStyles[4].Width = 25;
-                pnlTrigger.ColumnStyles[5].Width = 0;
-                pnlTrigger.ColumnStyles[6].Width = 0;
-
                 RefreshComboBoxMouseTrigger();
             }
             else if (cmbTypeTrigger.SelectedIndex == 4)
             {
-                pnlTrigger.ColumnStyles[3].Width = 0;
-                pnlTrigger.ColumnStyles[4].Width = 0;
-                pnlTrigger.ColumnStyles[5].Width = 0;
-                pnlTrigger.ColumnStyles[6].Width = 0;
-
             }
             else if (cmbTypeTrigger.SelectedIndex == 5)
             {
-                pnlTrigger.ColumnStyles[3].Width = 0;
-                pnlTrigger.ColumnStyles[4].Width = 0;
-                pnlTrigger.ColumnStyles[5].Width = 0;
-                pnlTrigger.ColumnStyles[6].Width = 25;
             }
         }
 
-        private void btnTypeTrigger_Click(object sender, EventArgs e)
+        private void optTypeTriggerCollision_CheckedChanged(object sender, EventArgs e)
         {
+            pnlEntityCollision.Visible = true;
+            pnlValueOverflow.Visible = false;
+            pnlMouse.Visible = false;
+            pnlTime.Visible = false;
 
+            pnlScript.Left = pnlEntityCollision.Right;
+
+            RefreshTreeViewEntite(treeviewEntiteTargetCollision);
+        }
+
+        private void optTypeTriggerNoCollision_CheckedChanged(object sender, EventArgs e)
+        {
+            pnlEntityCollision.Visible = true;
+            pnlValueOverflow.Visible = false;
+            pnlMouse.Visible = false;
+            pnlTime.Visible = false;
+
+            pnlScript.Left = pnlEntityCollision.Right;
+
+            RefreshTreeViewEntite(treeviewEntiteTargetCollision);
+        }
+
+        private void optTypeTriggerValueOverflow_CheckedChanged(object sender, EventArgs e)
+        {
+            pnlEntityCollision.Visible = false;
+            pnlValueOverflow.Visible = true;
+            pnlMouse.Visible = false;
+            pnlTime.Visible = false;
+
+            pnlScript.Left = pnlValueOverflow.Right;
+
+            RefreshTreeViewProperties();
+            RefreshTreeViewCustomProperties(repository.CurrentEntite);
+        }
+
+        private void optTypeTriggerMouse_CheckedChanged(object sender, EventArgs e)
+        {
+            pnlEntityCollision.Visible = false;
+            pnlValueOverflow.Visible = false;
+            pnlMouse.Visible = true;
+            pnlTime.Visible = false;
+
+            pnlScript.Left = pnlMouse.Right;
+        }
+
+        private void optTypeTriggerLoading_CheckedChanged(object sender, EventArgs e)
+        {
+            pnlEntityCollision.Visible = false;
+            pnlValueOverflow.Visible = false;
+            pnlMouse.Visible = false;
+            pnlTime.Visible = false;
+
+            pnlScript.Left = pnlTypeTrigger.Right;
+        }
+
+        private void optTypeTriggerTime_CheckedChanged(object sender, EventArgs e)
+        {
+            pnlEntityCollision.Visible = false;
+            pnlValueOverflow.Visible = false;
+            pnlMouse.Visible = false;
+            pnlTime.Visible = true;
+
+            pnlScript.Left = pnlTime.Right;
         }
 
         private void treeviewEntiteTargetCollision_AfterCheck(object sender, TreeViewEventArgs e)
@@ -198,6 +241,41 @@ namespace Edit2D.TriggerControl
             //--- Visibilité du panneau de saisie des valeurs
             pnlValueProp.Visible = GetCheckedNodesCount(treeViewProperties) + GetCheckedNodesCount(treeViewCustomProperties) > 0;
             //---
+        }
+
+        private void optMouseRightClick_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void optMouseLeftClick_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void optMouseEnter_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void optMouseLeave_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void optMouseStayOver_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void optTimeLoopAlways_CheckedChanged(object sender, EventArgs e)
+        {
+            numTimeLoop.Enabled = false;
+        }
+
+        private void optTimeLoopParam_CheckedChanged(object sender, EventArgs e)
+        {
+            numTimeLoop.Enabled = true;
         }
 
         private void treeviewEntiteScript_AfterCheck(object sender, TreeViewEventArgs e)
@@ -339,7 +417,7 @@ namespace Edit2D.TriggerControl
                 {
                     newTrigger = new TriggerTime(trigger.TriggerName, trigger.TriggerHandler);
                     newTrigger.ListScript = listScript;
-                    
+
                     if (optTimeLoopAlways.Checked)
                         ((TriggerTime)newTrigger).TimeLoop = 0;
                     else
@@ -374,16 +452,6 @@ namespace Edit2D.TriggerControl
                 System.Drawing.Rectangle rec = new System.Drawing.Rectangle((e.Node.Level + 1) * treeviewEntiteScript.Indent, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
                 e.Graphics.DrawString(e.Node.Text, treeviewEntiteScript.Font, Brushes.Black, rec);
             }
-        }
-
-        private void optTimeLoopAlways_CheckedChanged(object sender, EventArgs e)
-        {
-            numTimeLoop.Enabled = false;
-        }
-
-        private void optTimeLoopParam_CheckedChanged(object sender, EventArgs e)
-        {
-            numTimeLoop.Enabled = true;
         }
         #endregion
 
@@ -765,29 +833,12 @@ namespace Edit2D.TriggerControl
         {
             if (trigger == null)
             {
-                pnlTrigger.ColumnStyles[0].Width = 0;
-                pnlTrigger.ColumnStyles[1].Width = 0;
-                pnlTrigger.ColumnStyles[2].Width = 0;
-                pnlTrigger.ColumnStyles[3].Width = 0;
-                pnlTrigger.ColumnStyles[4].Width = 0;
-                pnlTrigger.ColumnStyles[5].Width = 0;
-                pnlTrigger.ColumnStyles[6].Width = 0;
-                pnlTrigger.ColumnStyles[7].Width = 0;
-                pnlTrigger.ColumnStyles[8].Width = 100;
-
+                //TODO rendre invisible les panneaux
                 return;
             }
             else
             {
-                pnlTrigger.ColumnStyles[0].Width = 12;
-                pnlTrigger.ColumnStyles[1].Width = 12;
-                pnlTrigger.ColumnStyles[2].Width = 25;
-                pnlTrigger.ColumnStyles[3].Width = 0;
-                pnlTrigger.ColumnStyles[4].Width = 0;
-                pnlTrigger.ColumnStyles[5].Width = 0;
-                pnlTrigger.ColumnStyles[6].Width = 0;
-                pnlTrigger.ColumnStyles[7].Width = 25;
-                pnlTrigger.ColumnStyles[8].Width = 0;
+                
             }
 
             cmbTypeTrigger.SelectedIndex = -1;
@@ -911,12 +962,16 @@ namespace Edit2D.TriggerControl
                 SelectTrigger(null);
 
                 //--- Affichage des colonnes pour une entité ne disposant pas de triggers
-                pnlTrigger.ColumnStyles[0].Width = 12;
-                pnlTrigger.ColumnStyles[1].Width = 12;
+                //pnlTrigger.ColumnStyles[0].Width = 12;
+                //pnlTrigger.ColumnStyles[1].Width = 12;
                 //pnlTrigger.ColumnStyles[7].Width = 76;
                 //---
             }
         }
         #endregion
+
+
+
+
     }
 }

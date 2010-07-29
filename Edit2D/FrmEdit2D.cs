@@ -88,6 +88,8 @@ namespace Edit2D
             repository.World.GradientColor1 = Microsoft.Xna.Framework.Graphics.Color.White;
             repository.World.GradientColor2 = Microsoft.Xna.Framework.Graphics.Color.White;
 
+            pnlMain.Panel2Collapsed = true;
+
             //--- Mode simplifié
             if (repository.IsSimpleMode)
             {
