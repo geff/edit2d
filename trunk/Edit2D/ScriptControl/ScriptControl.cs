@@ -51,6 +51,319 @@ namespace Edit2D.ScriptControl
             InitScriptControl();
         }
 
+        #region Script events
+        private void txtScriptName_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                txtScriptName.Text = String.Empty;
+            }
+        }
+
+        private void btnAddScript_Click(object sender, EventArgs e)
+        {
+            AddScriptToCurrentEntity();
+
+
+            //if (repository.CurrentEntite != null)
+            //{
+            //    Script script = new Script(String.Format("Script{0}", repository.CurrentEntite.ListScript.Count + 1), repository.CurrentEntite);
+            //    repository.CurrentEntite.ListScript.Add(script);
+
+            //    RefreshScriptView();
+
+            //    currentScript = repository.CurrentEntite.ListScript.Count - 1;
+            //    listboxScript.SelectedIndex = listboxScript.Items.Count - 1;
+
+            //    RefreshActionView();
+            //}
+            //else if (repository.CurrentParticleSystem != null)
+            //{
+            //    //TODO : tenter de réunifier le code via l'interface IActionHandler
+            //    IActionHandler actionHandler = (IActionHandler)repository.CurrentParticleSystem;
+
+            //    Script script = new Script(String.Format("Script{0}", actionHandler.ListScript.Count + 1), repository.CurrentParticleSystem);
+            //    repository.CurrentParticleSystem.ListScript.Add(script);
+
+            //    RefreshScriptView();
+
+            //    currentScript = repository.CurrentParticleSystem.ListScript.Count - 1;
+            //    listboxScript.SelectedIndex = listboxScript.Items.Count - 1;
+
+            //    RefreshActionView();
+            //}
+        }
+
+        private void btnDelScript_Click(object sender, EventArgs e)
+        {
+            IActionHandler actionHandler = GetCurrentActionHandler();
+
+            if (actionHandler != null && currentScript != -1)
+            {
+                actionHandler.ListScript.RemoveAt(listboxScript.SelectedIndex);
+                currentScript = -1;
+
+                RefreshScriptView();
+                RefreshActionView();
+            }
+        }
+
+        private void btnChangeScriptName_Click(object sender, EventArgs e)
+        {
+            if (repository.CurrentScript != null &&
+                !String.IsNullOrEmpty(txtScriptName.Text) &&
+                txtScriptName.Text != repository.CurrentScript.ScriptName
+                )
+            {
+                IActionHandler actionHandler = GetCurrentActionHandler();
+
+                if (actionHandler.ListScript.Exists(s => s.ScriptName == txtScriptName.Text))
+                {
+                    MessageBox.Show(String.Format("Le nom de script '{0}' existe déja", txtScriptName.Text), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    repository.CurrentScript.ScriptName = txtScriptName.Text;
+                    RefreshScriptView();
+                }
+            }
+        }
+
+        private void btnPlayScript_Click(object sender, EventArgs e)
+        {
+            if (currentScript != -1)
+            {
+                IActionHandler actionHandler = GetCurrentActionHandler();
+                Script script = actionHandler.ListScript[currentScript];
+
+                foreach (ActionBase action in script.ListAction)
+                {
+                    if (action is ActionCurve)
+                    {
+                        if (((ActionCurve)action).playAnimationState != PlayAnimationState.Stop)
+                            ((ActionCurve)action).playAnimationState = PlayAnimationState.Stop;
+                        else
+                        {
+                            ((ActionCurve)action).StartAnimation(PlayAnimationState.PlayInEditor);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void listboxScript_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            currentScript = listboxScript.SelectedIndex;
+            repository.CurrentScript = GetSelectedScript();
+
+            RefreshActionView();
+
+            if (repository.CurrentScript != null)
+            {
+                txtScriptName.Text = repository.CurrentScript.ScriptName;
+
+                if (treeViewAction.Nodes.Count > 0)
+                {
+                    treeViewAction.SelectedNode = treeViewAction.Nodes[0];
+                }
+            }
+        }
+
+        private void btnAddAction_Click(object sender, EventArgs e)
+        {
+            if ((repository.CurrentEntite != null || repository.CurrentObject != null) &&
+                currentScript != -1 &&
+                cmbActionType.SelectedIndex != -1 &&
+                (cmbActionProperties.SelectedIndex != -1 || !cmbActionProperties.Visible))
+            {
+                //--- Déterminaison du type de l'entité porteuse de l'action
+                Type typeEntite = null;
+                Script script = null;
+
+                if (repository.CurrentEntite != null)
+                {
+                    typeEntite = typeof(Entite);
+                    script = repository.CurrentEntite.ListScript[currentScript];
+                }
+                else if (repository.CurrentParticleSystem != null)
+                {
+                    typeEntite = typeof(ParticleSystem);
+                    script = repository.CurrentParticleSystem.ListScript[currentScript];
+                }
+                //---
+
+                int curveCount = script.ListAction.Count(action => action is ActionCurve) - 1;
+                int eventCount = script.ListAction.Count(action => action is ActionEvent) - 1;
+                int soundCount = script.ListAction.Count(action => action is ActionSound) - 1;
+
+                ActionBase act = null;
+
+                //--- Création de l'action
+                if (cmbActionType.SelectedIndex == ID_ACTION_CURVE)
+                {
+                    act = new ActionCurve(script, String.Format("Curve{0}", curveCount + 1), true, false, typeEntite, cmbActionProperties.SelectedItem.ToString());
+                    currentAction = curveCount + 1;
+                }
+                else if (cmbActionType.SelectedIndex == ID_ACTION_EVENT)
+                {
+                    act = new ActionEvent(script, String.Format("Event{0}", eventCount + 1), typeEntite, cmbActionProperties.SelectedItem.ToString());
+                    currentAction = eventCount + 1;
+                }
+                else if (cmbActionType.SelectedIndex == ID_ACTION_SOUND)
+                {
+                    act = new ActionSound(script, String.Format("Sound{0}", soundCount + 1), String.Empty, false);
+                    currentAction = soundCount + 1;
+                }
+                //---
+
+                script.ListAction.Add(act);
+
+                RefreshScriptView();
+                RefreshActionView();
+
+                currentSubAction = 0;
+                treeViewAction.SelectedNode = treeViewAction.Nodes[treeViewAction.Nodes.Count - 1];
+            }
+        }
+
+        private void btnDelAction_Click(object sender, EventArgs e)
+        {
+            IActionHandler actionHandler = GetCurrentActionHandler();
+
+            if (actionHandler != null && currentScript != -1 && currentAction != -1)
+            {
+                Script script = actionHandler.ListScript[currentScript];
+
+                script.ListAction.RemoveAt(currentAction);
+                currentAction = -1;
+                currentSubAction = -1;
+
+                RefreshScriptView();
+                RefreshActionView();
+            }
+        }
+
+        private void btnActionUp_Click(object sender, EventArgs e)
+        {
+            /*if (currentScript != 1 && currentCurve != -1)
+            {
+                repository.currentEntite.ListScript[currentScript].ListCurve.mo [currentCurve]
+            }*/
+        }
+
+        private void btnActionDown_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cmbActionType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            InitComboProperties();
+        }
+
+        private void btnPlayScriptAction_Click(object sender, EventArgs e)
+        {
+            ActionCurve actionCurve = GetCurrentActionCurve();
+
+            if (actionCurve == null)
+                return;
+
+            //---> Arrête l'animation si elle est en route
+            if (actionCurve.playAnimationState != PlayAnimationState.Stop)
+                actionCurve.playAnimationState = PlayAnimationState.Stop;
+            else
+            {
+                actionCurve.StartAnimation(PlayAnimationState.PlayInEditor);
+            }
+        }
+
+        private void treeViewAction_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            ActionBase action = null;
+
+            if (e.Node.Parent != null)
+            {
+                currentAction = e.Node.Parent.Index;
+                currentSubAction = e.Node.Index;
+            }
+            else
+            {
+                currentAction = e.Node.Index;
+                currentSubAction = -1;
+            }
+
+            if (currentAction != -1)
+            {
+                IActionHandler actionHandler = GetCurrentActionHandler();
+
+                if (actionHandler != null)
+                    action = actionHandler.ListScript[currentScript].ListAction[currentAction];
+
+                propAction.PropertyGrid.SelectedObject = action;
+            }
+
+            if (action is ActionCurve)
+            {
+                btnPlayScriptAction.Visible = true;
+                ViewActionCurve((ActionCurve)action);
+            }
+            else if (action is ActionEvent)
+            {
+                btnPlayScriptAction.Visible = false;
+                ViewActionEvent((ActionEvent)action);
+            }
+            else if (action is ActionSound)
+            {
+                btnPlayScriptAction.Visible = true;
+                ViewActionSound((ActionSound)action);
+            }
+        }
+
+        private void curveControl_TimeLineChange(object sender, int value)
+        {
+            ActionCurve actionCurve = GetCurrentActionCurve();
+            this.timeLineValue = value;
+
+            if (actionCurve != null)
+            {
+                if (value == -1) // StartAnimation
+                {
+                    actionCurve.StartAnimation(PlayAnimationState.PlayManually);
+                }
+                else
+                {
+                    actionCurve.UpdateAnimation(value);
+                }
+            }
+        }
+
+        private void curveControl_CurveChange(object sender, EventArgs e)
+        {
+            ActionCurve curve = GetCurrentActionCurve();
+
+            if (curve != null)
+            {
+                UpdateCurve(curve);
+            }
+            else
+                return;
+        }
+
+        private void ScriptControl_Resize(object sender, EventArgs e)
+        {
+            //TODO : ajouter une condition sur l'action event visible
+            //foreach (Control ctrl in pnlActionEventLines.Controls)
+            //{
+            //    ctrl.Width = pnlActionEventLines.Width;
+            //}
+        }
+
+        private void PropertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            RefreshActionView();
+        }
+        #endregion
+
         #region Script private methods
         private void InitScriptControl()
         {
@@ -326,6 +639,7 @@ namespace Edit2D.ScriptControl
         {
             pnlActionEventLines.Controls.Clear();
             pnlActionEventLines.Height = 0;
+            pnlActionEventLines.Visible = false;
 
             for (int i = 0; i < propNames.Length; i++)
             {
@@ -336,10 +650,13 @@ namespace Edit2D.ScriptControl
                 pnlActionEventLines.Controls.Add(actionEventLine);
                 actionEventLine.Top = i * (actionEventLine.Height - 1);
                 pnlActionEventLines.Width = actionEventLine.Width;
-                pnlActionEventLines.Height = actionEventLine.Bottom;                
+                pnlActionEventLines.Height = actionEventLine.Bottom;
             }
 
+
             WinformVisualStyle.ApplyStyle(pnlActionEventLines);
+
+            pnlActionEventLines.Visible = true;
         }
 
         private void ViewActionEvent(ActionEvent actionEvent)
@@ -540,311 +857,6 @@ namespace Edit2D.ScriptControl
 
                 cmbActionProperties.Items.AddRange(propertiesName.ToArray());
             }
-        }
-        #endregion
-
-        #region Script events
-        private void btnAddScript_Click(object sender, EventArgs e)
-        {
-            AddScriptToCurrentEntity();
-
-
-            //if (repository.CurrentEntite != null)
-            //{
-            //    Script script = new Script(String.Format("Script{0}", repository.CurrentEntite.ListScript.Count + 1), repository.CurrentEntite);
-            //    repository.CurrentEntite.ListScript.Add(script);
-
-            //    RefreshScriptView();
-
-            //    currentScript = repository.CurrentEntite.ListScript.Count - 1;
-            //    listboxScript.SelectedIndex = listboxScript.Items.Count - 1;
-
-            //    RefreshActionView();
-            //}
-            //else if (repository.CurrentParticleSystem != null)
-            //{
-            //    //TODO : tenter de réunifier le code via l'interface IActionHandler
-            //    IActionHandler actionHandler = (IActionHandler)repository.CurrentParticleSystem;
-
-            //    Script script = new Script(String.Format("Script{0}", actionHandler.ListScript.Count + 1), repository.CurrentParticleSystem);
-            //    repository.CurrentParticleSystem.ListScript.Add(script);
-
-            //    RefreshScriptView();
-
-            //    currentScript = repository.CurrentParticleSystem.ListScript.Count - 1;
-            //    listboxScript.SelectedIndex = listboxScript.Items.Count - 1;
-
-            //    RefreshActionView();
-            //}
-        }
-
-        private void btnDelScript_Click(object sender, EventArgs e)
-        {
-            IActionHandler actionHandler = GetCurrentActionHandler();
-
-            if (actionHandler != null && currentScript != -1)
-            {
-                actionHandler.ListScript.RemoveAt(listboxScript.SelectedIndex);
-                currentScript = -1;
-
-                RefreshScriptView();
-                RefreshActionView();
-            }
-        }
-
-        private void btnChangeScriptName_Click(object sender, EventArgs e)
-        {
-            if (repository.CurrentScript != null &&
-                !String.IsNullOrEmpty(txtScriptName.Text) &&
-                txtScriptName.Text != repository.CurrentScript.ScriptName
-                )
-            {
-                IActionHandler actionHandler = GetCurrentActionHandler();
-
-                if (actionHandler.ListScript.Exists(s => s.ScriptName == txtScriptName.Text))
-                {
-                    MessageBox.Show(String.Format("Le nom de script '{0}' existe déja", txtScriptName.Text), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-                else
-                {
-                    repository.CurrentScript.ScriptName = txtScriptName.Text;
-                    RefreshScriptView();
-                }
-            }
-        }
-
-        private void btnPlayScript_Click(object sender, EventArgs e)
-        {
-            if (currentScript != -1)
-            {
-                IActionHandler actionHandler = GetCurrentActionHandler();
-                Script script = actionHandler.ListScript[currentScript];
-
-                foreach (ActionBase action in script.ListAction)
-                {
-                    if (action is ActionCurve)
-                    {
-                        if (((ActionCurve)action).playAnimationState != PlayAnimationState.Stop)
-                            ((ActionCurve)action).playAnimationState = PlayAnimationState.Stop;
-                        else
-                        {
-                            ((ActionCurve)action).StartAnimation(PlayAnimationState.PlayInEditor);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void listboxScript_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            currentScript = listboxScript.SelectedIndex;
-            repository.CurrentScript = GetSelectedScript();
-            
-            RefreshActionView();
-
-            if (repository.CurrentScript != null)
-            {
-                txtScriptName.Text = repository.CurrentScript.ScriptName;
-
-                if (treeViewAction.Nodes.Count > 0)
-                {
-                    treeViewAction.SelectedNode = treeViewAction.Nodes[0];
-                }
-            }
-        }
-
-        private void btnAddAction_Click(object sender, EventArgs e)
-        {
-            if ((repository.CurrentEntite != null || repository.CurrentObject != null) &&
-                currentScript != -1 &&
-                cmbActionType.SelectedIndex != -1 &&
-                (cmbActionProperties.SelectedIndex != -1 || !cmbActionProperties.Visible))
-            {
-                //--- Déterminaison du type de l'entité porteuse de l'action
-                Type typeEntite = null;
-                Script script = null;
-
-                if (repository.CurrentEntite != null)
-                {
-                    typeEntite = typeof(Entite);
-                    script = repository.CurrentEntite.ListScript[currentScript];
-                }
-                else if (repository.CurrentParticleSystem != null)
-                {
-                    typeEntite = typeof(ParticleSystem);
-                    script = repository.CurrentParticleSystem.ListScript[currentScript];
-                }
-                //---
-
-                int curveCount = script.ListAction.Count(action => action is ActionCurve) - 1;
-                int eventCount = script.ListAction.Count(action => action is ActionEvent) - 1;
-                int soundCount = script.ListAction.Count(action => action is ActionSound) - 1;
-
-                ActionBase act = null;
-
-                //--- Création de l'action
-                if (cmbActionType.SelectedIndex == ID_ACTION_CURVE)
-                {
-                    act = new ActionCurve(script, String.Format("Curve{0}", curveCount + 1), true, false, typeEntite, cmbActionProperties.SelectedItem.ToString());
-                    currentAction = curveCount + 1;
-                }
-                else if (cmbActionType.SelectedIndex == ID_ACTION_EVENT)
-                {
-                    act = new ActionEvent(script, String.Format("Event{0}", eventCount + 1), typeEntite, cmbActionProperties.SelectedItem.ToString());
-                    currentAction = eventCount + 1;
-                }
-                else if (cmbActionType.SelectedIndex == ID_ACTION_SOUND)
-                {
-                    act = new ActionSound(script, String.Format("Sound{0}", soundCount + 1), String.Empty, false);
-                    currentAction = soundCount + 1;
-                }
-                //---
-
-                script.ListAction.Add(act);
-
-                RefreshScriptView();
-                RefreshActionView();
-
-                currentSubAction = 0;
-                treeViewAction.SelectedNode = treeViewAction.Nodes[treeViewAction.Nodes.Count - 1];
-            }
-        }
-
-        private void btnDelAction_Click(object sender, EventArgs e)
-        {
-            IActionHandler actionHandler = GetCurrentActionHandler();
-
-            if (actionHandler != null && currentScript != -1 && currentAction != -1)
-            {
-                Script script = actionHandler.ListScript[currentScript];
-
-                script.ListAction.RemoveAt(currentAction);
-                currentAction = -1;
-                currentSubAction = -1;
-
-                RefreshScriptView();
-                RefreshActionView();
-            }
-        }
-
-        private void btnActionUp_Click(object sender, EventArgs e)
-        {
-            /*if (currentScript != 1 && currentCurve != -1)
-            {
-                repository.currentEntite.ListScript[currentScript].ListCurve.mo [currentCurve]
-            }*/
-        }
-
-        private void btnActionDown_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void cmbActionType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            InitComboProperties();
-        }
-
-        private void btnPlayScriptAction_Click(object sender, EventArgs e)
-        {
-            ActionCurve actionCurve = GetCurrentActionCurve();
-
-            if (actionCurve == null)
-                return;
-
-            //---> Arrête l'animation si elle est en route
-            if (actionCurve.playAnimationState != PlayAnimationState.Stop)
-                actionCurve.playAnimationState = PlayAnimationState.Stop;
-            else
-            {
-                actionCurve.StartAnimation(PlayAnimationState.PlayInEditor);
-            }
-        }
-
-        private void treeViewAction_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            ActionBase action = null;
-
-            if (e.Node.Parent != null)
-            {
-                currentAction = e.Node.Parent.Index;
-                currentSubAction = e.Node.Index;
-            }
-            else
-            {
-                currentAction = e.Node.Index;
-                currentSubAction = -1;
-            }
-
-            if (currentAction != -1)
-            {
-                IActionHandler actionHandler = GetCurrentActionHandler();
-
-                if (actionHandler != null)
-                    action = actionHandler.ListScript[currentScript].ListAction[currentAction];
-
-                propAction.PropertyGrid.SelectedObject = action;
-            }
-
-            if (action is ActionCurve)
-            {
-                btnPlayScriptAction.Visible = true;
-                ViewActionCurve((ActionCurve)action);
-            }
-            else if (action is ActionEvent)
-            {
-                btnPlayScriptAction.Visible = false;
-                ViewActionEvent((ActionEvent)action);
-            }
-            else if (action is ActionSound)
-            {
-                btnPlayScriptAction.Visible = true;
-                ViewActionSound((ActionSound)action);
-            }
-        }
-
-        private void curveControl_TimeLineChange(object sender, int value)
-        {
-            ActionCurve actionCurve = GetCurrentActionCurve();
-            this.timeLineValue = value;
-
-            if (actionCurve != null)
-            {
-                if (value == -1) // StartAnimation
-                {
-                    actionCurve.StartAnimation(PlayAnimationState.PlayManually);
-                }
-                else
-                {
-                    actionCurve.UpdateAnimation(value);
-                }
-            }
-        }
-
-        private void curveControl_CurveChange(object sender, EventArgs e)
-        {
-            ActionCurve curve = GetCurrentActionCurve();
-
-            if (curve != null)
-            {
-                UpdateCurve(curve);
-            }
-            else
-                return;
-        }
-
-        private void ScriptControl_Resize(object sender, EventArgs e)
-        {
-            //TODO : ajouter une condition sur l'action event visible
-            foreach (Control ctrl in pnlActionEventLines.Controls)
-            {
-                ctrl.Width = pnlActionEventLines.Width;
-            }
-        }
-
-        private void PropertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
-        {
-            RefreshActionView();
         }
         #endregion
 

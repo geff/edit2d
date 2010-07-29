@@ -32,6 +32,7 @@
             this.pnlMain = new System.Windows.Forms.TableLayoutPanel();
             this.pnlScriptAction = new System.Windows.Forms.Panel();
             this.pnlAction = new System.Windows.Forms.Panel();
+            this.propAction = new Edit2D.UC.PropertyGridLocal();
             this.treeViewAction = new System.Windows.Forms.TreeView();
             this.btnPlayScriptAction = new System.Windows.Forms.Button();
             this.btnAddAction = new System.Windows.Forms.Button();
@@ -41,12 +42,15 @@
             this.lblActionProperty = new System.Windows.Forms.Label();
             this.lblActionName = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnChangeScriptName = new System.Windows.Forms.Button();
             this.listboxScript = new System.Windows.Forms.ListBox();
             this.btnAddScript = new System.Windows.Forms.Button();
             this.btnDelSrcipt = new System.Windows.Forms.Button();
             this.btnPlayScript = new System.Windows.Forms.Button();
             this.lblScriptName = new System.Windows.Forms.Label();
             this.txtScriptName = new System.Windows.Forms.RichTextBox();
+            this.cmbActionProperties = new Edit2D.UC.ComboBoxLocal();
+            this.cmbActionType = new Edit2D.UC.ComboBoxLocal();
             this.panel5 = new System.Windows.Forms.Panel();
             this.panel4 = new System.Windows.Forms.Panel();
             this.lblAction = new System.Windows.Forms.Label();
@@ -58,10 +62,6 @@
             this.pnlActionEventLines = new System.Windows.Forms.Panel();
             this.pnlCurve = new System.Windows.Forms.Panel();
             this.curveControl = new Xna.Tools.CurveControl();
-            this.btnChangeScriptName = new System.Windows.Forms.Button();
-            this.propAction = new Edit2D.UC.PropertyGridLocal();
-            this.cmbActionProperties = new Edit2D.UC.ComboBoxLocal();
-            this.cmbActionType = new Edit2D.UC.ComboBoxLocal();
             this.actionSoundControl = new Edit2D.ScriptControl.ActionSoundControl();
             this.pnlMain.SuspendLayout();
             this.pnlScriptAction.SuspendLayout();
@@ -131,6 +131,16 @@
             this.pnlAction.Size = new System.Drawing.Size(214, 196);
             this.pnlAction.TabIndex = 21;
             this.pnlAction.Tag = "B";
+            // 
+            // propAction
+            // 
+            this.propAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.propAction.Location = new System.Drawing.Point(0, 132);
+            this.propAction.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
+            this.propAction.Name = "propAction";
+            this.propAction.Size = new System.Drawing.Size(210, 60);
+            this.propAction.TabIndex = 0;
             // 
             // treeViewAction
             // 
@@ -273,6 +283,24 @@
             this.panel1.TabIndex = 18;
             this.panel1.Tag = "B";
             // 
+            // btnChangeScriptName
+            // 
+            this.btnChangeScriptName.BackColor = System.Drawing.Color.Gray;
+            this.btnChangeScriptName.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.btnChangeScriptName.FlatAppearance.BorderSize = 0;
+            this.btnChangeScriptName.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnChangeScriptName.Font = new System.Drawing.Font("Wingdings", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
+            this.btnChangeScriptName.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnChangeScriptName.Location = new System.Drawing.Point(90, 4);
+            this.btnChangeScriptName.Margin = new System.Windows.Forms.Padding(0);
+            this.btnChangeScriptName.Name = "btnChangeScriptName";
+            this.btnChangeScriptName.Size = new System.Drawing.Size(42, 35);
+            this.btnChangeScriptName.TabIndex = 14;
+            this.btnChangeScriptName.Tag = "BG2";
+            this.btnChangeScriptName.Text = "ü";
+            this.btnChangeScriptName.UseVisualStyleBackColor = false;
+            this.btnChangeScriptName.Click += new System.EventHandler(this.btnChangeScriptName_Click);
+            // 
             // listboxScript
             // 
             this.listboxScript.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -366,6 +394,43 @@
             this.txtScriptName.Tag = "BG2";
             this.txtScriptName.Text = "";
             this.txtScriptName.ZoomFactor = 1.2F;
+            this.txtScriptName.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtScriptName_MouseDown);
+            // 
+            // cmbActionProperties
+            // 
+            this.cmbActionProperties.BackColor = System.Drawing.SystemColors.Control;
+            this.cmbActionProperties.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbActionProperties.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbActionProperties.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbActionProperties.FormattingEnabled = true;
+            this.cmbActionProperties.ItemHeight = 16;
+            this.cmbActionProperties.Items.AddRange(new object[] {
+            "Position",
+            "Angle",
+            "Color"});
+            this.cmbActionProperties.Location = new System.Drawing.Point(248, 80);
+            this.cmbActionProperties.Margin = new System.Windows.Forms.Padding(3, 1, 3, 3);
+            this.cmbActionProperties.Name = "cmbActionProperties";
+            this.cmbActionProperties.Size = new System.Drawing.Size(142, 22);
+            this.cmbActionProperties.TabIndex = 14;
+            // 
+            // cmbActionType
+            // 
+            this.cmbActionType.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.cmbActionType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbActionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbActionType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbActionType.FormattingEnabled = true;
+            this.cmbActionType.Items.AddRange(new object[] {
+            "Courbe",
+            "Evènement",
+            "Son"});
+            this.cmbActionType.Location = new System.Drawing.Point(248, 57);
+            this.cmbActionType.Margin = new System.Windows.Forms.Padding(3, 6, 3, 1);
+            this.cmbActionType.Name = "cmbActionType";
+            this.cmbActionType.Size = new System.Drawing.Size(142, 21);
+            this.cmbActionType.TabIndex = 11;
+            this.cmbActionType.SelectedIndexChanged += new System.EventHandler(this.cmbActionType_SelectedIndexChanged);
             // 
             // panel5
             // 
@@ -496,70 +561,6 @@
             this.curveControl.TimeLine = 0;
             this.curveControl.CurveChange += new Xna.Tools.CurveControl.CurveChangeEventHandler(this.curveControl_CurveChange);
             this.curveControl.TimeLineChange += new Xna.Tools.CurveControl.TimeLineChangeEventHandler(this.curveControl_TimeLineChange);
-            // 
-            // btnChangeScriptName
-            // 
-            this.btnChangeScriptName.BackColor = System.Drawing.Color.Gray;
-            this.btnChangeScriptName.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.btnChangeScriptName.FlatAppearance.BorderSize = 0;
-            this.btnChangeScriptName.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnChangeScriptName.Font = new System.Drawing.Font("Wingdings", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
-            this.btnChangeScriptName.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnChangeScriptName.Location = new System.Drawing.Point(90, 4);
-            this.btnChangeScriptName.Margin = new System.Windows.Forms.Padding(0);
-            this.btnChangeScriptName.Name = "btnChangeScriptName";
-            this.btnChangeScriptName.Size = new System.Drawing.Size(42, 35);
-            this.btnChangeScriptName.TabIndex = 14;
-            this.btnChangeScriptName.Tag = "BG2";
-            this.btnChangeScriptName.Text = "ü";
-            this.btnChangeScriptName.UseVisualStyleBackColor = false;
-            this.btnChangeScriptName.Click += new System.EventHandler(this.btnChangeScriptName_Click);
-            // 
-            // propAction
-            // 
-            this.propAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.propAction.Location = new System.Drawing.Point(0, 132);
-            this.propAction.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
-            this.propAction.Name = "propAction";
-            this.propAction.Size = new System.Drawing.Size(210, 60);
-            this.propAction.TabIndex = 0;
-            // 
-            // cmbActionProperties
-            // 
-            this.cmbActionProperties.BackColor = System.Drawing.SystemColors.Control;
-            this.cmbActionProperties.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbActionProperties.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbActionProperties.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbActionProperties.FormattingEnabled = true;
-            this.cmbActionProperties.ItemHeight = 16;
-            this.cmbActionProperties.Items.AddRange(new object[] {
-            "Position",
-            "Angle",
-            "Color"});
-            this.cmbActionProperties.Location = new System.Drawing.Point(248, 80);
-            this.cmbActionProperties.Margin = new System.Windows.Forms.Padding(3, 1, 3, 3);
-            this.cmbActionProperties.Name = "cmbActionProperties";
-            this.cmbActionProperties.Size = new System.Drawing.Size(142, 22);
-            this.cmbActionProperties.TabIndex = 14;
-            // 
-            // cmbActionType
-            // 
-            this.cmbActionType.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.cmbActionType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbActionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbActionType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbActionType.FormattingEnabled = true;
-            this.cmbActionType.Items.AddRange(new object[] {
-            "Courbe",
-            "Evènement",
-            "Son"});
-            this.cmbActionType.Location = new System.Drawing.Point(248, 57);
-            this.cmbActionType.Margin = new System.Windows.Forms.Padding(3, 6, 3, 1);
-            this.cmbActionType.Name = "cmbActionType";
-            this.cmbActionType.Size = new System.Drawing.Size(142, 21);
-            this.cmbActionType.TabIndex = 11;
-            this.cmbActionType.SelectedIndexChanged += new System.EventHandler(this.cmbActionType_SelectedIndexChanged);
             // 
             // actionSoundControl
             // 

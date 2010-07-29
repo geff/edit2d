@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.cmbMouseTriggerType = new System.Windows.Forms.ComboBox();
             this.treeviewEntiteScript = new System.Windows.Forms.TreeView();
             this.listboxTrigger = new System.Windows.Forms.ListBox();
             this.treeviewEntiteTargetCollision = new System.Windows.Forms.TreeView();
@@ -44,7 +43,6 @@
             this.cmbProp1 = new System.Windows.Forms.ComboBox();
             this.lblProp1 = new System.Windows.Forms.Label();
             this.treeViewProperties = new System.Windows.Forms.TreeView();
-            this.cmbTypeTrigger = new System.Windows.Forms.ComboBox();
             this.numTimeLoop = new System.Windows.Forms.NumericUpDown();
             this.optTimeLoopParam = new System.Windows.Forms.RadioButton();
             this.optTimeLoopAlways = new System.Windows.Forms.RadioButton();
@@ -111,25 +109,6 @@
             this.panel15.SuspendLayout();
             this.SuspendLayout();
             // 
-            // cmbMouseTriggerType
-            // 
-            this.cmbMouseTriggerType.BackColor = System.Drawing.Color.Gray;
-            this.cmbMouseTriggerType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbMouseTriggerType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbMouseTriggerType.FormattingEnabled = true;
-            this.cmbMouseTriggerType.Items.AddRange(new object[] {
-            "MouseRightClick",
-            "MouseLeftClick",
-            "MouseEnter",
-            "MouseLeave",
-            "MouseOver"});
-            this.cmbMouseTriggerType.Location = new System.Drawing.Point(7, 57);
-            this.cmbMouseTriggerType.Margin = new System.Windows.Forms.Padding(10);
-            this.cmbMouseTriggerType.Name = "cmbMouseTriggerType";
-            this.cmbMouseTriggerType.Size = new System.Drawing.Size(188, 21);
-            this.cmbMouseTriggerType.TabIndex = 29;
-            this.cmbMouseTriggerType.Visible = false;
-            // 
             // treeviewEntiteScript
             // 
             this.treeviewEntiteScript.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -140,7 +119,7 @@
             this.treeviewEntiteScript.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
             this.treeviewEntiteScript.Location = new System.Drawing.Point(6, 61);
             this.treeviewEntiteScript.Name = "treeviewEntiteScript";
-            this.treeviewEntiteScript.Size = new System.Drawing.Size(178, 246);
+            this.treeviewEntiteScript.Size = new System.Drawing.Size(178, 237);
             this.treeviewEntiteScript.TabIndex = 26;
             this.treeviewEntiteScript.Tag = "BG2";
             this.treeviewEntiteScript.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeviewEntiteScript_AfterCheck);
@@ -153,9 +132,9 @@
             this.listboxTrigger.BackColor = System.Drawing.Color.Gray;
             this.listboxTrigger.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listboxTrigger.FormattingEnabled = true;
-            this.listboxTrigger.Location = new System.Drawing.Point(5, 40);
+            this.listboxTrigger.Location = new System.Drawing.Point(6, 42);
             this.listboxTrigger.Name = "listboxTrigger";
-            this.listboxTrigger.Size = new System.Drawing.Size(163, 143);
+            this.listboxTrigger.Size = new System.Drawing.Size(162, 143);
             this.listboxTrigger.TabIndex = 11;
             this.listboxTrigger.Tag = "BG2";
             this.listboxTrigger.SelectedIndexChanged += new System.EventHandler(this.listboxTrigger_SelectedIndexChanged);
@@ -168,9 +147,9 @@
             this.treeviewEntiteTargetCollision.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.treeviewEntiteTargetCollision.CheckBoxes = true;
             this.treeviewEntiteTargetCollision.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
-            this.treeviewEntiteTargetCollision.Location = new System.Drawing.Point(10, 60);
+            this.treeviewEntiteTargetCollision.Location = new System.Drawing.Point(6, 61);
             this.treeviewEntiteTargetCollision.Name = "treeviewEntiteTargetCollision";
-            this.treeviewEntiteTargetCollision.Size = new System.Drawing.Size(188, 231);
+            this.treeviewEntiteTargetCollision.Size = new System.Drawing.Size(196, 237);
             this.treeviewEntiteTargetCollision.TabIndex = 22;
             this.treeviewEntiteTargetCollision.Tag = "BG2";
             this.treeviewEntiteTargetCollision.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeviewEntiteTargetCollision_AfterCheck);
@@ -181,12 +160,12 @@
             this.treeViewCustomProperties.BackColor = System.Drawing.Color.Gray;
             this.treeViewCustomProperties.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.treeViewCustomProperties.CheckBoxes = true;
-            this.treeViewCustomProperties.Location = new System.Drawing.Point(10, 143);
+            this.treeViewCustomProperties.Location = new System.Drawing.Point(6, 148);
             this.treeViewCustomProperties.Name = "treeViewCustomProperties";
             this.treeViewCustomProperties.ShowLines = false;
             this.treeViewCustomProperties.ShowPlusMinus = false;
             this.treeViewCustomProperties.ShowRootLines = false;
-            this.treeViewCustomProperties.Size = new System.Drawing.Size(188, 55);
+            this.treeViewCustomProperties.Size = new System.Drawing.Size(196, 68);
             this.treeViewCustomProperties.TabIndex = 25;
             this.treeViewCustomProperties.Tag = "BG2";
             this.treeViewCustomProperties.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewCustomProperties_AfterCheck);
@@ -204,9 +183,9 @@
             this.pnlValueProp.Controls.Add(this.cmbProp1);
             this.pnlValueProp.Controls.Add(this.lblProp1);
             this.pnlValueProp.Cursor = System.Windows.Forms.Cursors.Default;
-            this.pnlValueProp.Location = new System.Drawing.Point(0, 204);
+            this.pnlValueProp.Location = new System.Drawing.Point(0, 222);
             this.pnlValueProp.Name = "pnlValueProp";
-            this.pnlValueProp.Size = new System.Drawing.Size(208, 101);
+            this.pnlValueProp.Size = new System.Drawing.Size(208, 83);
             this.pnlValueProp.TabIndex = 21;
             this.pnlValueProp.Tag = "B";
             // 
@@ -214,11 +193,11 @@
             // 
             this.txtProp3.BackColor = System.Drawing.Color.Gray;
             this.txtProp3.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtProp3.Location = new System.Drawing.Point(112, 59);
+            this.txtProp3.Location = new System.Drawing.Point(112, 57);
             this.txtProp3.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
             this.txtProp3.Multiline = false;
             this.txtProp3.Name = "txtProp3";
-            this.txtProp3.Size = new System.Drawing.Size(83, 21);
+            this.txtProp3.Size = new System.Drawing.Size(90, 21);
             this.txtProp3.TabIndex = 22;
             this.txtProp3.Tag = "BG2";
             this.txtProp3.Text = "";
@@ -228,11 +207,11 @@
             // 
             this.txtProp2.BackColor = System.Drawing.Color.Gray;
             this.txtProp2.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtProp2.Location = new System.Drawing.Point(112, 31);
+            this.txtProp2.Location = new System.Drawing.Point(112, 28);
             this.txtProp2.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
             this.txtProp2.Multiline = false;
             this.txtProp2.Name = "txtProp2";
-            this.txtProp2.Size = new System.Drawing.Size(83, 21);
+            this.txtProp2.Size = new System.Drawing.Size(90, 21);
             this.txtProp2.TabIndex = 21;
             this.txtProp2.Tag = "BG2";
             this.txtProp2.Text = "";
@@ -242,11 +221,11 @@
             // 
             this.txtProp1.BackColor = System.Drawing.Color.Gray;
             this.txtProp1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtProp1.Location = new System.Drawing.Point(112, 4);
+            this.txtProp1.Location = new System.Drawing.Point(112, 0);
             this.txtProp1.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
             this.txtProp1.Multiline = false;
             this.txtProp1.Name = "txtProp1";
-            this.txtProp1.Size = new System.Drawing.Size(83, 21);
+            this.txtProp1.Size = new System.Drawing.Size(90, 21);
             this.txtProp1.TabIndex = 20;
             this.txtProp1.Tag = "BG2";
             this.txtProp1.Text = "";
@@ -266,7 +245,7 @@
             "<=",
             "=",
             "!="});
-            this.cmbProp3.Location = new System.Drawing.Point(66, 59);
+            this.cmbProp3.Location = new System.Drawing.Point(66, 57);
             this.cmbProp3.Name = "cmbProp3";
             this.cmbProp3.Size = new System.Drawing.Size(40, 21);
             this.cmbProp3.TabIndex = 7;
@@ -274,7 +253,7 @@
             // 
             // lblProp3
             // 
-            this.lblProp3.Location = new System.Drawing.Point(4, 59);
+            this.lblProp3.Location = new System.Drawing.Point(4, 57);
             this.lblProp3.Name = "lblProp3";
             this.lblProp3.Size = new System.Drawing.Size(57, 20);
             this.lblProp3.TabIndex = 6;
@@ -294,7 +273,7 @@
             "<=",
             "=",
             "!="});
-            this.cmbProp2.Location = new System.Drawing.Point(66, 31);
+            this.cmbProp2.Location = new System.Drawing.Point(66, 28);
             this.cmbProp2.Name = "cmbProp2";
             this.cmbProp2.Size = new System.Drawing.Size(40, 21);
             this.cmbProp2.TabIndex = 4;
@@ -302,7 +281,7 @@
             // 
             // lblProp2
             // 
-            this.lblProp2.Location = new System.Drawing.Point(3, 34);
+            this.lblProp2.Location = new System.Drawing.Point(3, 28);
             this.lblProp2.Name = "lblProp2";
             this.lblProp2.Size = new System.Drawing.Size(57, 20);
             this.lblProp2.TabIndex = 3;
@@ -322,7 +301,7 @@
             "<=",
             "=",
             "!="});
-            this.cmbProp1.Location = new System.Drawing.Point(66, 4);
+            this.cmbProp1.Location = new System.Drawing.Point(66, 0);
             this.cmbProp1.Name = "cmbProp1";
             this.cmbProp1.Size = new System.Drawing.Size(40, 21);
             this.cmbProp1.TabIndex = 1;
@@ -330,7 +309,7 @@
             // 
             // lblProp1
             // 
-            this.lblProp1.Location = new System.Drawing.Point(3, 7);
+            this.lblProp1.Location = new System.Drawing.Point(3, 0);
             this.lblProp1.Name = "lblProp1";
             this.lblProp1.Size = new System.Drawing.Size(57, 20);
             this.lblProp1.TabIndex = 0;
@@ -342,44 +321,22 @@
             this.treeViewProperties.BackColor = System.Drawing.Color.Gray;
             this.treeViewProperties.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.treeViewProperties.CheckBoxes = true;
-            this.treeViewProperties.Location = new System.Drawing.Point(10, 60);
+            this.treeViewProperties.Location = new System.Drawing.Point(6, 61);
             this.treeViewProperties.Name = "treeViewProperties";
             this.treeViewProperties.ShowLines = false;
             this.treeViewProperties.ShowPlusMinus = false;
             this.treeViewProperties.ShowRootLines = false;
-            this.treeViewProperties.Size = new System.Drawing.Size(188, 81);
+            this.treeViewProperties.Size = new System.Drawing.Size(196, 81);
             this.treeViewProperties.TabIndex = 24;
             this.treeViewProperties.Tag = "BG2";
             this.treeViewProperties.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewProperties_AfterCheck);
-            // 
-            // cmbTypeTrigger
-            // 
-            this.cmbTypeTrigger.BackColor = System.Drawing.Color.Gray;
-            this.cmbTypeTrigger.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTypeTrigger.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbTypeTrigger.FormattingEnabled = true;
-            this.cmbTypeTrigger.Items.AddRange(new object[] {
-            "Collision",
-            "No collision",
-            "Changement valeur",
-            "Mouse",
-            "Chargement",
-            "Temps"});
-            this.cmbTypeTrigger.Location = new System.Drawing.Point(17, 57);
-            this.cmbTypeTrigger.Margin = new System.Windows.Forms.Padding(10);
-            this.cmbTypeTrigger.Name = "cmbTypeTrigger";
-            this.cmbTypeTrigger.Size = new System.Drawing.Size(154, 21);
-            this.cmbTypeTrigger.TabIndex = 16;
-            this.cmbTypeTrigger.Tag = "BG2";
-            this.cmbTypeTrigger.Visible = false;
-            this.cmbTypeTrigger.SelectedIndexChanged += new System.EventHandler(this.cmbTypeTrigger_SelectedIndexChanged);
             // 
             // numTimeLoop
             // 
             this.numTimeLoop.BackColor = System.Drawing.Color.Gray;
             this.numTimeLoop.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.numTimeLoop.Enabled = false;
-            this.numTimeLoop.Location = new System.Drawing.Point(70, 164);
+            this.numTimeLoop.Location = new System.Drawing.Point(70, 165);
             this.numTimeLoop.Maximum = new decimal(new int[] {
             60000,
             0,
@@ -393,6 +350,7 @@
             0,
             0,
             0});
+            this.numTimeLoop.ValueChanged += new System.EventHandler(this.numTimeLoop_ValueChanged);
             // 
             // optTimeLoopParam
             // 
@@ -456,11 +414,12 @@
             this.txtTriggerName.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
             this.txtTriggerName.Multiline = false;
             this.txtTriggerName.Name = "txtTriggerName";
-            this.txtTriggerName.Size = new System.Drawing.Size(123, 21);
+            this.txtTriggerName.Size = new System.Drawing.Size(126, 21);
             this.txtTriggerName.TabIndex = 19;
             this.txtTriggerName.Tag = "BG2";
             this.txtTriggerName.Text = "";
             this.txtTriggerName.ZoomFactor = 1.2F;
+            this.txtTriggerName.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtTriggerName_MouseDown);
             // 
             // panel17
             // 
@@ -510,7 +469,7 @@
             this.btnChangeTriggerName.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnChangeTriggerName.Font = new System.Drawing.Font("Wingdings", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.btnChangeTriggerName.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnChangeTriggerName.Location = new System.Drawing.Point(109, 2);
+            this.btnChangeTriggerName.Location = new System.Drawing.Point(109, 4);
             this.btnChangeTriggerName.Margin = new System.Windows.Forms.Padding(0);
             this.btnChangeTriggerName.Name = "btnChangeTriggerName";
             this.btnChangeTriggerName.Size = new System.Drawing.Size(42, 35);
@@ -527,7 +486,7 @@
             this.btnAddTrigger.FlatAppearance.BorderSize = 0;
             this.btnAddTrigger.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAddTrigger.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
-            this.btnAddTrigger.Location = new System.Drawing.Point(25, 2);
+            this.btnAddTrigger.Location = new System.Drawing.Point(25, 4);
             this.btnAddTrigger.Margin = new System.Windows.Forms.Padding(0);
             this.btnAddTrigger.Name = "btnAddTrigger";
             this.btnAddTrigger.Size = new System.Drawing.Size(42, 35);
@@ -544,7 +503,7 @@
             this.btnDelTrigger.FlatAppearance.BorderSize = 0;
             this.btnDelTrigger.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDelTrigger.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDelTrigger.Location = new System.Drawing.Point(67, 2);
+            this.btnDelTrigger.Location = new System.Drawing.Point(67, 4);
             this.btnDelTrigger.Margin = new System.Windows.Forms.Padding(0);
             this.btnDelTrigger.Name = "btnDelTrigger";
             this.btnDelTrigger.Size = new System.Drawing.Size(42, 35);
@@ -567,13 +526,13 @@
             this.pnlTypeTrigger.Controls.Add(this.optTypeTriggerCollision);
             this.pnlTypeTrigger.Controls.Add(this.panel1);
             this.pnlTypeTrigger.Controls.Add(this.panel5);
-            this.pnlTypeTrigger.Controls.Add(this.cmbTypeTrigger);
             this.pnlTypeTrigger.Location = new System.Drawing.Point(174, 0);
             this.pnlTypeTrigger.Margin = new System.Windows.Forms.Padding(0);
             this.pnlTypeTrigger.Name = "pnlTypeTrigger";
             this.pnlTypeTrigger.Size = new System.Drawing.Size(184, 305);
             this.pnlTypeTrigger.TabIndex = 3;
             this.pnlTypeTrigger.Tag = "BG1";
+            this.pnlTypeTrigger.Visible = false;
             // 
             // optTypeTriggerTime
             // 
@@ -692,7 +651,7 @@
             this.label7.Location = new System.Drawing.Point(6, 16);
             this.label7.Margin = new System.Windows.Forms.Padding(6);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(169, 19);
+            this.label7.Size = new System.Drawing.Size(168, 19);
             this.label7.TabIndex = 0;
             this.label7.Tag = "F2";
             this.label7.Text = "Type de déclencheur";
@@ -708,13 +667,13 @@
             this.pnlMouse.Controls.Add(this.optMouseLeftClick);
             this.pnlMouse.Controls.Add(this.optMouseRightClick);
             this.pnlMouse.Controls.Add(this.panel7);
-            this.pnlMouse.Controls.Add(this.cmbMouseTriggerType);
             this.pnlMouse.Location = new System.Drawing.Point(358, 0);
             this.pnlMouse.Margin = new System.Windows.Forms.Padding(0);
             this.pnlMouse.Name = "pnlMouse";
             this.pnlMouse.Size = new System.Drawing.Size(208, 305);
             this.pnlMouse.TabIndex = 4;
             this.pnlMouse.Tag = "B";
+            this.pnlMouse.Visible = false;
             // 
             // optMouseStayOver
             // 
@@ -835,6 +794,7 @@
             this.pnlEntityCollision.Size = new System.Drawing.Size(208, 304);
             this.pnlEntityCollision.TabIndex = 5;
             this.pnlEntityCollision.Tag = "B";
+            this.pnlEntityCollision.Visible = false;
             // 
             // panel9
             // 
@@ -884,6 +844,7 @@
             this.pnlValueOverflow.Size = new System.Drawing.Size(208, 305);
             this.pnlValueOverflow.TabIndex = 6;
             this.pnlValueOverflow.Tag = "B";
+            this.pnlValueOverflow.Visible = false;
             // 
             // panel11
             // 
@@ -935,6 +896,7 @@
             this.pnlTime.Size = new System.Drawing.Size(208, 305);
             this.pnlTime.TabIndex = 7;
             this.pnlTime.Tag = "B";
+            this.pnlTime.Visible = false;
             // 
             // panel13
             // 
@@ -966,7 +928,7 @@
             this.label11.Location = new System.Drawing.Point(6, 16);
             this.label11.Margin = new System.Windows.Forms.Padding(6);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(61, 19);
+            this.label11.Size = new System.Drawing.Size(60, 19);
             this.label11.TabIndex = 0;
             this.label11.Tag = "F2";
             this.label11.Text = "Temps";
@@ -985,6 +947,7 @@
             this.pnlScript.Size = new System.Drawing.Size(194, 305);
             this.pnlScript.TabIndex = 8;
             this.pnlScript.Tag = "BG1";
+            this.pnlScript.Visible = false;
             // 
             // panel2
             // 
@@ -1029,10 +992,10 @@
             this.Controls.Add(this.pnlScript);
             this.Controls.Add(this.pnlTrigger);
             this.Controls.Add(this.pnlTypeTrigger);
+            this.Controls.Add(this.pnlEntityCollision);
             this.Controls.Add(this.pnlMouse);
             this.Controls.Add(this.pnlValueOverflow);
             this.Controls.Add(this.pnlTime);
-            this.Controls.Add(this.pnlEntityCollision);
             this.Name = "TriggerControl";
             this.Size = new System.Drawing.Size(805, 304);
             this.Tag = "BG1";
@@ -1068,7 +1031,6 @@
         #endregion
 
         private System.Windows.Forms.ListBox listboxTrigger;
-        private System.Windows.Forms.ComboBox cmbTypeTrigger;
         private System.Windows.Forms.TreeView treeviewEntiteScript;
         private System.Windows.Forms.TreeView treeviewEntiteTargetCollision;
         private System.Windows.Forms.Panel pnlValueProp;
@@ -1079,7 +1041,6 @@
         private System.Windows.Forms.ComboBox cmbProp1;
         private System.Windows.Forms.Label lblProp1;
         private System.Windows.Forms.TreeView treeViewProperties;
-        private System.Windows.Forms.ComboBox cmbMouseTriggerType;
         private System.Windows.Forms.TreeView treeViewCustomProperties;
         private System.Windows.Forms.NumericUpDown numTimeLoop;
         private System.Windows.Forms.RadioButton optTimeLoopParam;

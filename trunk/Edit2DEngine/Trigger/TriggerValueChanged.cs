@@ -88,7 +88,8 @@ namespace Edit2DEngine.Trigger
             else
                 this.TriggerProperty = typeof(Entite).GetProperty(propertyName);
 
-            this.PropertyType = this.TriggerProperty.PropertyType;
+            if(TriggerProperty != null)
+                this.PropertyType = this.TriggerProperty.PropertyType;
 
             this.Sens = sens;
             this.Value = values;

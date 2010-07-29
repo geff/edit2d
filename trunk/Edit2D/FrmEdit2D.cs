@@ -130,8 +130,8 @@ namespace Edit2D
 
             btnScriptModeBar.PerformClick();
 
-            WinformVisualStyle.ApplyStyle(this, "LightGray");
-            //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
+            //WinformVisualStyle.ApplyStyle(this, "LightGray");
+            WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             //InitInputHandler();
         }
@@ -239,7 +239,7 @@ namespace Edit2D
 
             foreach (String textureName in TextureManager.ListTexture2D.Keys)
             {
-                //if (textureName == "BigRec")
+                if (textureName == "BigRec")
                 {
                     Texture2D texture = TextureManager.ListTexture2D[textureName];
 
