@@ -19,7 +19,6 @@ using System.IO;
 using Edit2D;
 using FarseerGames.GettingStarted.DrawingSystem;
 using Edit2DEngine.Particles;
-using Edit2DEngine.Particles;
 using Edit2DEngine;
 using Edit2D.Properties;
 using System.Threading;

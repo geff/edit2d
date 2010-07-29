@@ -144,7 +144,7 @@ namespace Edit2D
 
             Color borderColorLight = BackColorLight;
             int offset = 7;
-            borderColorLight = Color.FromArgb(BackColorLight.R + offset, BackColorLight.G + offset, BackColorLight.B + offset);
+            borderColorLight = Color.FromArgb(Math.Min(BackColorLight.R + offset,255), Math.Min(BackColorLight.G + offset, 255), Math.Min(BackColorLight.B + offset,255));
 
             button.FlatAppearance.BorderColor = borderColorLight;
 

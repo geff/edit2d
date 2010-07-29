@@ -24,20 +24,17 @@ namespace Edit2D.TriggerControl
         }
 
         #region Events
+        private void txtTriggerName_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                txtTriggerName.Text = String.Empty;
+            }
+        }
+
         private void btnAddTrigger_Click(object sender, EventArgs e)
         {
-            ITriggerHandler triggerHandler = GetCurrentTriggerHandler();
-
-            if (triggerHandler == null)
-                return;
-
-            TriggerCollision trigger = new TriggerCollision(String.Format("Trigger{0}", triggerHandler.ListTrigger.Count + 1), triggerHandler, null);
-
-            triggerHandler.ListTrigger.Add(trigger);
-
-            RefreshTriggerList();
-
-            listboxTrigger.SelectedIndex = listboxTrigger.Items.Count - 1;
+            AddTriggerToCurrentEntity();
         }
 
         private void btnDelTrigger_Click(object sender, EventArgs e)
@@ -56,7 +53,29 @@ namespace Edit2D.TriggerControl
 
         private void btnChangeTriggerName_Click(object sender, EventArgs e)
         {
+            ITriggerHandler triggerHandler = GetCurrentTriggerHandler();
 
+            if (triggerHandler != null &&
+                listboxTrigger.SelectedIndex != -1 &&
+                !String.IsNullOrEmpty(txtTriggerName.Text) &&
+                txtTriggerName.Text != triggerHandler.ListTrigger[listboxTrigger.SelectedIndex].TriggerName
+                )
+            {
+
+                if (triggerHandler.ListTrigger.Exists(t => t.TriggerName == txtTriggerName.Text))
+                {
+                    MessageBox.Show(String.Format("Le nom du déclencheur '{0}' existe déja", txtTriggerName.Text), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    int previousIndexSelected = listboxTrigger.SelectedIndex;
+
+                    triggerHandler.ListTrigger[listboxTrigger.SelectedIndex].TriggerName = txtTriggerName.Text;
+                    RefreshTriggerList();
+
+                    listboxTrigger.SelectedIndex = previousIndexSelected;
+                }
+            }
         }
 
         private void listboxTrigger_SelectedIndexChanged(object sender, EventArgs e)
@@ -67,100 +86,106 @@ namespace Edit2D.TriggerControl
                 return;
 
             TriggerBase trigger = triggerHandler.ListTrigger[listboxTrigger.SelectedIndex];
+            txtTriggerName.Text = trigger.TriggerName;
 
             SelectTrigger(trigger);
         }
 
-        private void cmbTypeTrigger_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cmbTypeTrigger.SelectedIndex == 0)
-            {
-                RefreshTreeViewEntite(treeviewEntiteTargetCollision);
-            }
-            else if (cmbTypeTrigger.SelectedIndex == 2)
-            {
-                RefreshTreeViewProperties();
-                RefreshTreeViewCustomProperties(repository.CurrentEntite);
-
-                pnlValueProp.Visible = false;
-            }
-            else if (cmbTypeTrigger.SelectedIndex == 3)
-            {
-                RefreshComboBoxMouseTrigger();
-            }
-            else if (cmbTypeTrigger.SelectedIndex == 4)
-            {
-            }
-            else if (cmbTypeTrigger.SelectedIndex == 5)
-            {
-            }
-        }
-
         private void optTypeTriggerCollision_CheckedChanged(object sender, EventArgs e)
         {
-            pnlEntityCollision.Visible = true;
-            pnlValueOverflow.Visible = false;
-            pnlMouse.Visible = false;
-            pnlTime.Visible = false;
+            if (optTypeTriggerCollision.Checked)
+            {
+                pnlEntityCollision.Visible = true;
+                pnlValueOverflow.Visible = false;
+                pnlMouse.Visible = false;
+                pnlTime.Visible = false;
 
-            pnlScript.Left = pnlEntityCollision.Right;
+                pnlScript.Left = pnlEntityCollision.Right;
 
-            RefreshTreeViewEntite(treeviewEntiteTargetCollision);
+                RefreshTreeViewEntite(treeviewEntiteTargetCollision);
+
+                UpdateTrigger();
+            }
         }
 
         private void optTypeTriggerNoCollision_CheckedChanged(object sender, EventArgs e)
         {
-            pnlEntityCollision.Visible = true;
-            pnlValueOverflow.Visible = false;
-            pnlMouse.Visible = false;
-            pnlTime.Visible = false;
+            if (optTypeTriggerNoCollision.Checked)
+            {
+                pnlEntityCollision.Visible = true;
+                pnlValueOverflow.Visible = false;
+                pnlMouse.Visible = false;
+                pnlTime.Visible = false;
 
-            pnlScript.Left = pnlEntityCollision.Right;
+                pnlScript.Left = pnlEntityCollision.Right;
 
-            RefreshTreeViewEntite(treeviewEntiteTargetCollision);
+                RefreshTreeViewEntite(treeviewEntiteTargetCollision);
+
+                UpdateTrigger();
+            }
         }
 
         private void optTypeTriggerValueOverflow_CheckedChanged(object sender, EventArgs e)
         {
-            pnlEntityCollision.Visible = false;
-            pnlValueOverflow.Visible = true;
-            pnlMouse.Visible = false;
-            pnlTime.Visible = false;
+            if (optTypeTriggerValueOverflow.Checked)
+            {
+                pnlEntityCollision.Visible = false;
+                pnlValueOverflow.Visible = true;
+                pnlMouse.Visible = false;
+                pnlTime.Visible = false;
 
-            pnlScript.Left = pnlValueOverflow.Right;
+                pnlScript.Left = pnlValueOverflow.Right;
 
-            RefreshTreeViewProperties();
-            RefreshTreeViewCustomProperties(repository.CurrentEntite);
+                RefreshTreeViewProperties();
+                RefreshTreeViewCustomProperties(repository.CurrentEntite);
+
+                UpdateTrigger();
+            }
         }
 
         private void optTypeTriggerMouse_CheckedChanged(object sender, EventArgs e)
         {
-            pnlEntityCollision.Visible = false;
-            pnlValueOverflow.Visible = false;
-            pnlMouse.Visible = true;
-            pnlTime.Visible = false;
+            if (optTypeTriggerMouse.Checked)
+            {
+                pnlEntityCollision.Visible = false;
+                pnlValueOverflow.Visible = false;
+                pnlMouse.Visible = true;
+                pnlTime.Visible = false;
 
-            pnlScript.Left = pnlMouse.Right;
+                pnlScript.Left = pnlMouse.Right;
+
+                UpdateTrigger();
+            }
         }
 
         private void optTypeTriggerLoading_CheckedChanged(object sender, EventArgs e)
         {
-            pnlEntityCollision.Visible = false;
-            pnlValueOverflow.Visible = false;
-            pnlMouse.Visible = false;
-            pnlTime.Visible = false;
+            if (optTypeTriggerLoading.Checked)
+            {
+                pnlEntityCollision.Visible = false;
+                pnlValueOverflow.Visible = false;
+                pnlMouse.Visible = false;
+                pnlTime.Visible = false;
 
-            pnlScript.Left = pnlTypeTrigger.Right;
+                pnlScript.Left = pnlTypeTrigger.Right;
+
+                UpdateTrigger();
+            }
         }
 
         private void optTypeTriggerTime_CheckedChanged(object sender, EventArgs e)
         {
-            pnlEntityCollision.Visible = false;
-            pnlValueOverflow.Visible = false;
-            pnlMouse.Visible = false;
-            pnlTime.Visible = true;
+            if (optTypeTriggerTime.Checked)
+            {
+                pnlEntityCollision.Visible = false;
+                pnlValueOverflow.Visible = false;
+                pnlMouse.Visible = false;
+                pnlTime.Visible = true;
 
-            pnlScript.Left = pnlTime.Right;
+                pnlScript.Left = pnlTime.Right;
+
+                UpdateTrigger();
+            }
         }
 
         private void treeviewEntiteTargetCollision_AfterCheck(object sender, TreeViewEventArgs e)
@@ -178,6 +203,8 @@ namespace Edit2D.TriggerControl
                     e.Node.Checked = false;
                 }
             }
+
+            UpdateTrigger();
         }
 
         private void treeViewProperties_AfterCheck(object sender, TreeViewEventArgs e)
@@ -209,6 +236,8 @@ namespace Edit2D.TriggerControl
                 pnlValueProp.Visible = GetCheckedNodesCount(treeViewProperties) + GetCheckedNodesCount(treeViewCustomProperties) > 0;
                 //---
             }
+
+            UpdateTrigger();
         }
 
         private void treeViewCustomProperties_AfterCheck(object sender, TreeViewEventArgs e)
@@ -241,41 +270,45 @@ namespace Edit2D.TriggerControl
             //--- Visibilité du panneau de saisie des valeurs
             pnlValueProp.Visible = GetCheckedNodesCount(treeViewProperties) + GetCheckedNodesCount(treeViewCustomProperties) > 0;
             //---
+
+            UpdateTrigger();
         }
 
         private void optMouseRightClick_CheckedChanged(object sender, EventArgs e)
         {
-
+            UpdateTrigger();
         }
 
         private void optMouseLeftClick_CheckedChanged(object sender, EventArgs e)
         {
-
+            UpdateTrigger();
         }
 
         private void optMouseEnter_CheckedChanged(object sender, EventArgs e)
         {
-
+            UpdateTrigger();
         }
 
         private void optMouseLeave_CheckedChanged(object sender, EventArgs e)
         {
-
+            UpdateTrigger();
         }
 
         private void optMouseStayOver_CheckedChanged(object sender, EventArgs e)
         {
-
+            UpdateTrigger();
         }
 
         private void optTimeLoopAlways_CheckedChanged(object sender, EventArgs e)
         {
             numTimeLoop.Enabled = false;
+            UpdateTrigger();
         }
 
         private void optTimeLoopParam_CheckedChanged(object sender, EventArgs e)
         {
             numTimeLoop.Enabled = true;
+            UpdateTrigger();
         }
 
         private void treeviewEntiteScript_AfterCheck(object sender, TreeViewEventArgs e)
@@ -293,139 +326,13 @@ namespace Edit2D.TriggerControl
                     e.Node.Checked = false;
                 }
             }
+
+            UpdateTrigger();
         }
 
-        private void btnScriptToExecute_Click(object sender, EventArgs e)
+        private void numTimeLoop_ValueChanged(object sender, EventArgs e)
         {
-            ITriggerHandler triggerHandler = GetCurrentTriggerHandler();
-
-            if (triggerHandler != null && listboxTrigger.SelectedIndex != -1)
-            {
-                TriggerBase trigger = triggerHandler.ListTrigger[listboxTrigger.SelectedIndex];
-                TriggerBase newTrigger = null;
-
-                //--- Recherche des scripts cochés
-                List<TreeNode> scriptNodes = new List<TreeNode>();
-                GetCheckedNodes(treeviewEntiteScript.Nodes[0], scriptNodes);
-
-                if (scriptNodes.Count == 0)
-                {
-                    MessageBox.Show("Vous-devez cocher au moins un script!", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return;
-                }
-
-                List<Script> listScript = new List<Script>();
-                foreach (TreeNode scriptNode in scriptNodes)
-                {
-                    if (scriptNode.Tag is Script)
-                        listScript.Add((Script)scriptNode.Tag);
-                }
-                //---
-
-                if (cmbTypeTrigger.SelectedIndex == 0)
-                {
-                    TreeNode node = GetCheckedNode(treeviewEntiteTargetCollision.Nodes[0]);
-
-                    if (node == null)
-                    {
-                        MessageBox.Show("Vous-devez cocher au moins une entité de collision!", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                        return;
-                    }
-
-                    Entite targetEntiteCollision = (Entite)node.Tag;
-
-                    newTrigger = new TriggerCollision(trigger.TriggerName, trigger.TriggerHandler, targetEntiteCollision);
-                    newTrigger.ListScript = listScript;
-
-                    triggerHandler.ListTrigger[listboxTrigger.SelectedIndex] = newTrigger;
-                }
-                else if (cmbTypeTrigger.SelectedIndex == 2)
-                {
-                    TreeNode nodeProp = GetCheckedNode(treeViewProperties.TopNode);
-                    TreeNode nodeCustomProp = GetCheckedNode(treeViewCustomProperties.TopNode);
-
-                    Type propertyType = null;
-                    String propertyName = String.Empty;
-                    bool isCustomProperty = false;
-                    TriggerValueChangedSens[] sens = null;
-                    Object values = null;
-
-                    //--- Détection du type et du nom de la propriété
-                    if (nodeProp != null)
-                    {
-                        PropertyInfo propInfo = (PropertyInfo)nodeProp.Tag;
-
-                        propertyType = propInfo.PropertyType;
-                        propertyName = propInfo.Name;
-                    }
-                    else if (nodeCustomProp != null)
-                    {
-                        isCustomProperty = true;
-
-                        Object customProp = ((Entite)trigger.TriggerHandler).ListCustomProperties[nodeCustomProp.Text];
-
-                        propertyType = customProp.GetType();
-                        propertyName = nodeCustomProp.Text;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Vous-devez cocher une propriété!", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                        return;
-                    }
-                    //---
-
-                    if (propertyType.Name == "Vector2")
-                    {
-                        sens = new TriggerValueChangedSens[] { (TriggerValueChangedSens)cmbProp1.SelectedIndex, (TriggerValueChangedSens)cmbProp2.SelectedIndex };
-                        values = new Vector2(float.Parse(txtProp1.Text), float.Parse(txtProp2.Text));
-                    }
-                    else if (propertyType.Name == "Single")
-                    {
-                        sens = new TriggerValueChangedSens[] { (TriggerValueChangedSens)cmbProp1.SelectedIndex };
-                        values = float.Parse(txtProp1.Text);
-                    }
-                    else if (propertyType.Name == "Color")
-                    {
-                        sens = new TriggerValueChangedSens[] { (TriggerValueChangedSens)cmbProp1.SelectedIndex, (TriggerValueChangedSens)cmbProp2.SelectedIndex, (TriggerValueChangedSens)cmbProp3.SelectedIndex };
-                        Microsoft.Xna.Framework.Graphics.Color color = new Microsoft.Xna.Framework.Graphics.Color();
-
-                        //TODO : ajouter l'alpha
-                        color = new Microsoft.Xna.Framework.Graphics.Color(byte.Parse(txtProp1.Text), byte.Parse(txtProp2.Text), byte.Parse(txtProp3.Text));
-                        values = color;
-                    }
-
-                    //--- Enregistrement du trigger
-                    newTrigger = new TriggerValueChanged(trigger.TriggerName, trigger.TriggerHandler, propertyName, sens, values, isCustomProperty);
-                    newTrigger.ListScript = listScript;
-
-                    triggerHandler.ListTrigger[listboxTrigger.SelectedIndex] = newTrigger;
-                    //---
-                }
-                else if (cmbTypeTrigger.SelectedIndex == 3)
-                {
-                    newTrigger = new TriggerMouse(trigger.TriggerName, trigger.TriggerHandler, (TriggerMouseType)cmbMouseTriggerType.SelectedIndex);
-                    newTrigger.ListScript = listScript;
-                    triggerHandler.ListTrigger[listboxTrigger.SelectedIndex] = newTrigger;
-                }
-                else if (cmbTypeTrigger.SelectedIndex == 4)
-                {
-                    newTrigger = new TriggerLoad(trigger.TriggerName, trigger.TriggerHandler);
-                    newTrigger.ListScript = listScript;
-                    triggerHandler.ListTrigger[listboxTrigger.SelectedIndex] = newTrigger;
-                }
-                else if (cmbTypeTrigger.SelectedIndex == 5)
-                {
-                    newTrigger = new TriggerTime(trigger.TriggerName, trigger.TriggerHandler);
-                    newTrigger.ListScript = listScript;
-
-                    if (optTimeLoopAlways.Checked)
-                        ((TriggerTime)newTrigger).TimeLoop = 0;
-                    else
-                        ((TriggerTime)newTrigger).TimeLoop = (int)numTimeLoop.Value;
-
-                    triggerHandler.ListTrigger[listboxTrigger.SelectedIndex] = newTrigger;
-                }
-            }
+            UpdateTrigger();
         }
 
         private void treeviewEntiteTargetCollision_DrawNode(object sender, DrawTreeNodeEventArgs e)
@@ -824,31 +731,34 @@ namespace Edit2D.TriggerControl
             return node;
         }
 
-        private void RefreshComboBoxMouseTrigger()
-        {
-            cmbMouseTriggerType.SelectedIndex = 0;
-        }
-
         private void SelectTrigger(TriggerBase trigger)
         {
             if (trigger == null)
             {
-                //TODO rendre invisible les panneaux
+                pnlTypeTrigger.Visible = false;
+                pnlEntityCollision.Visible = false;
+                pnlValueOverflow.Visible = false;
+                pnlMouse.Visible = false;
+                pnlTime.Visible = false;
+                pnlScript.Visible = false;
+
                 return;
             }
             else
             {
-                
-            }
+                pnlTypeTrigger.Visible = true;
+                pnlScript.Visible = true;
 
-            cmbTypeTrigger.SelectedIndex = -1;
+                RefreshTreeViewScript(treeviewEntiteScript, trigger);
+            }
 
             if (trigger is TriggerCollision)
             {
                 TriggerCollision triggerCol = (TriggerCollision)trigger;
 
                 //--- Type de trigger
-                cmbTypeTrigger.SelectedIndex = 0;
+                optTypeTriggerCollision.Checked = true;
+                optTypeTriggerCollision_CheckedChanged(null, null);
                 //---
 
                 //--- Trigger collision
@@ -857,8 +767,6 @@ namespace Edit2D.TriggerControl
                     TreeNode treeNode = treeviewEntiteTargetCollision.Nodes.Find(triggerCol.TargetEntite.Name, true)[0];
                     treeNode.Checked = true;
                 }
-
-                RefreshTreeViewScript(treeviewEntiteScript, trigger);
                 //---
             }
             else if (trigger is TriggerValueChanged)
@@ -866,7 +774,8 @@ namespace Edit2D.TriggerControl
                 TriggerValueChanged triggerVal = (TriggerValueChanged)trigger;
 
                 //--- Type de trigger
-                cmbTypeTrigger.SelectedIndex = 2;
+                optTypeTriggerValueOverflow.Checked = true;
+                optTypeTriggerValueOverflow_CheckedChanged(null, null);
                 //---
 
                 //--- Trigger ValueChanged
@@ -880,8 +789,6 @@ namespace Edit2D.TriggerControl
                     TreeNode treeNode = treeViewProperties.Nodes.Find(triggerVal.PropertyName, true)[0];
                     treeNode.Checked = true;
                 }
-
-                RefreshTreeViewScript(treeviewEntiteScript, trigger);
                 //---
             }
             else if (trigger is TriggerMouse)
@@ -889,13 +796,31 @@ namespace Edit2D.TriggerControl
                 TriggerMouse triggerMouse = (TriggerMouse)trigger;
 
                 //--- Type de trigger
-                cmbTypeTrigger.SelectedIndex = 3;
+                optTypeTriggerMouse.Checked = true;
+                optTypeTriggerMouse_CheckedChanged(null, null);
                 //---
 
                 //--- Trigger Mouse
-                cmbMouseTriggerType.SelectedIndex = (int)triggerMouse.TriggerMouseType;
-
-                RefreshTreeViewScript(treeviewEntiteScript, trigger);
+                switch (triggerMouse.TriggerMouseType)
+                {
+                    case TriggerMouseType.MouseRightClick:
+                        optMouseRightClick.Checked = true;
+                        break;
+                    case TriggerMouseType.MouseLeftClick:
+                        optMouseLeftClick.Checked = true;
+                        break;
+                    case TriggerMouseType.MouseEnter:
+                        optMouseEnter.Checked = true;
+                        break;
+                    case TriggerMouseType.MouseLeave:
+                        optMouseLeave.Checked = true;
+                        break;
+                    case TriggerMouseType.MouseOver:
+                        optMouseStayOver.Checked = true;
+                        break;
+                    default:
+                        break;
+                }
                 //---
             }
             else if (trigger is TriggerLoad)
@@ -903,17 +828,17 @@ namespace Edit2D.TriggerControl
                 TriggerLoad triggerLoad = (TriggerLoad)trigger;
 
                 //--- Type de trigger
-                cmbTypeTrigger.SelectedIndex = 4;
+                optTypeTriggerLoading.Checked = true;
+                optTypeTriggerLoading_CheckedChanged(null, null);
                 //---
-
-                RefreshTreeViewScript(treeviewEntiteScript, trigger);
             }
             else if (trigger is TriggerTime)
             {
                 TriggerTime triggerTime = (TriggerTime)trigger;
 
                 //--- Type de trigger
-                cmbTypeTrigger.SelectedIndex = 5;
+                optTypeTriggerTime.Checked = true;
+                optTypeTriggerTime_CheckedChanged(null, null);
                 //---
 
                 //--- Trigger Time
@@ -926,14 +851,200 @@ namespace Edit2D.TriggerControl
                     optTimeLoopParam.Checked = true;
                     numTimeLoop.Value = triggerTime.TimeLoop;
                 }
-
-                RefreshTreeViewScript(treeviewEntiteScript, trigger);
                 //---
+            }
+        }
+
+        private void UpdateTrigger()
+        {
+            ITriggerHandler triggerHandler = GetCurrentTriggerHandler();
+
+            if (triggerHandler != null && listboxTrigger.SelectedIndex != -1)
+            {
+                TriggerBase trigger = triggerHandler.ListTrigger[listboxTrigger.SelectedIndex];
+                TriggerBase newTrigger = null;
+
+                //--- Recherche des scripts cochés
+                List<TreeNode> scriptNodes = new List<TreeNode>();
+                GetCheckedNodes(treeviewEntiteScript.Nodes[0], scriptNodes);
+
+                //if (scriptNodes.Count == 0)
+                //{
+                //    MessageBox.Show("Vous-devez cocher au moins un script!", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                //    return;
+                //}
+
+                List<Script> listScript = new List<Script>();
+                foreach (TreeNode scriptNode in scriptNodes)
+                {
+                    if (scriptNode.Tag is Script)
+                        listScript.Add((Script)scriptNode.Tag);
+                }
+                //---
+
+                if (optTypeTriggerCollision.Checked)
+                {
+                    TreeNode node = GetCheckedNode(treeviewEntiteTargetCollision.Nodes[0]);
+
+                    //if (node == null)
+                    //{
+                    //    MessageBox.Show("Vous-devez cocher au moins une entité de collision!", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    //    return;
+                    //}
+
+                    Entite targetEntiteCollision = null;
+
+                    if (node != null)
+                        targetEntiteCollision = (Entite)node.Tag;
+
+                    newTrigger = new TriggerCollision(trigger.TriggerName, trigger.TriggerHandler, targetEntiteCollision);
+                    newTrigger.ListScript = listScript;
+
+                    triggerHandler.ListTrigger[listboxTrigger.SelectedIndex] = newTrigger;
+                }
+                if (optTypeTriggerValueOverflow.Checked)
+                {
+                    TreeNode nodeProp = GetCheckedNode(treeViewProperties.TopNode);
+                    TreeNode nodeCustomProp = GetCheckedNode(treeViewCustomProperties.TopNode);
+
+                    Type propertyType = null;
+                    String propertyName = String.Empty;
+                    bool isCustomProperty = false;
+                    TriggerValueChangedSens[] sens = null;
+                    Object values = null;
+
+                    //--- Détection du type et du nom de la propriété
+                    if (nodeProp != null)
+                    {
+                        PropertyInfo propInfo = (PropertyInfo)nodeProp.Tag;
+
+                        propertyType = propInfo.PropertyType;
+                        propertyName = propInfo.Name;
+                    }
+                    else if (nodeCustomProp != null)
+                    {
+                        isCustomProperty = true;
+
+                        Object customProp = ((Entite)trigger.TriggerHandler).ListCustomProperties[nodeCustomProp.Text];
+
+                        propertyType = customProp.GetType();
+                        propertyName = nodeCustomProp.Text;
+                    }
+                    //else
+                    //{
+                    //    MessageBox.Show("Vous-devez cocher une propriété!", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    //    return;
+                    //}
+                    //---
+
+                    if (propertyType != null && propertyType.Name == "Vector2")
+                    {
+                        sens = new TriggerValueChangedSens[] { (TriggerValueChangedSens)cmbProp1.SelectedIndex, (TriggerValueChangedSens)cmbProp2.SelectedIndex };
+                        values = new Vector2(float.Parse(txtProp1.Text), float.Parse(txtProp2.Text));
+                    }
+                    else if (propertyType != null && propertyType.Name == "Single")
+                    {
+                        sens = new TriggerValueChangedSens[] { (TriggerValueChangedSens)cmbProp1.SelectedIndex };
+                        values = float.Parse(txtProp1.Text);
+                    }
+                    else if (propertyType != null && propertyType.Name == "Color")
+                    {
+                        sens = new TriggerValueChangedSens[] { (TriggerValueChangedSens)cmbProp1.SelectedIndex, (TriggerValueChangedSens)cmbProp2.SelectedIndex, (TriggerValueChangedSens)cmbProp3.SelectedIndex };
+                        Microsoft.Xna.Framework.Graphics.Color color = new Microsoft.Xna.Framework.Graphics.Color();
+
+                        //TODO : ajouter l'alpha
+                        color = new Microsoft.Xna.Framework.Graphics.Color(byte.Parse(txtProp1.Text), byte.Parse(txtProp2.Text), byte.Parse(txtProp3.Text));
+                        values = color;
+                    }
+
+                    //--- Enregistrement du trigger
+                    newTrigger = new TriggerValueChanged(trigger.TriggerName, trigger.TriggerHandler, propertyName, sens, values, isCustomProperty);
+                    newTrigger.ListScript = listScript;
+
+                    triggerHandler.ListTrigger[listboxTrigger.SelectedIndex] = newTrigger;
+                    //---
+                }
+                else if (optTypeTriggerMouse.Checked)
+                {
+                    TriggerMouseType triggerMousetype = TriggerMouseType.MouseRightClick;
+
+                    if (optMouseRightClick.Checked)
+                        triggerMousetype = TriggerMouseType.MouseRightClick;
+                    else if (optMouseLeftClick.Checked)
+                        triggerMousetype = TriggerMouseType.MouseLeftClick;
+                    else if (optMouseEnter.Checked)
+                        triggerMousetype = TriggerMouseType.MouseEnter;
+                    else if (optMouseLeave.Checked)
+                        triggerMousetype = TriggerMouseType.MouseLeave;
+                    else if (optMouseStayOver.Checked)
+                        triggerMousetype = TriggerMouseType.MouseOver;
+
+                    newTrigger = new TriggerMouse(trigger.TriggerName, trigger.TriggerHandler, triggerMousetype);
+                    newTrigger.ListScript = listScript;
+                    triggerHandler.ListTrigger[listboxTrigger.SelectedIndex] = newTrigger;
+                }
+                else if (optTypeTriggerLoading.Checked)
+                {
+                    newTrigger = new TriggerLoad(trigger.TriggerName, trigger.TriggerHandler);
+                    newTrigger.ListScript = listScript;
+                    triggerHandler.ListTrigger[listboxTrigger.SelectedIndex] = newTrigger;
+                }
+                else if (optTypeTriggerTime.Checked)
+                {
+                    newTrigger = new TriggerTime(trigger.TriggerName, trigger.TriggerHandler);
+                    newTrigger.ListScript = listScript;
+
+                    if (optTimeLoopAlways.Checked)
+                        ((TriggerTime)newTrigger).TimeLoop = 0;
+                    else
+                        ((TriggerTime)newTrigger).TimeLoop = (int)numTimeLoop.Value;
+
+                    triggerHandler.ListTrigger[listboxTrigger.SelectedIndex] = newTrigger;
+                }
             }
         }
         #endregion
 
         #region Public methods
+        public TriggerBase AddTriggerToCurrentEntity()
+        {
+            ITriggerHandler triggerHandler = GetCurrentTriggerHandler();
+
+            if (triggerHandler == null)
+                return null;
+
+            //--- Calcul du nom du déclencheur
+            string triggerName = String.Empty;
+
+            if (String.IsNullOrEmpty(txtTriggerName.Text))
+            {
+                triggerName = String.Format("Trigger{0}", triggerHandler.ListTrigger.Count + 1);
+            }
+            else
+            {
+                triggerName = txtTriggerName.Text;
+            }
+
+            if (triggerHandler.ListTrigger.Exists(s => s.TriggerName == triggerName))
+            {
+                MessageBox.Show(String.Format("Le nom du déclencheur '{0}' existe déja", triggerName), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return null;
+            }
+            //---
+
+            //--- Création du trigger modèle
+            TriggerTime trigger = new TriggerTime(triggerName, triggerHandler);
+            trigger.TimeLoop = 0;
+
+            triggerHandler.ListTrigger.Add(trigger);
+            //---
+
+            RefreshTriggerList();
+            listboxTrigger.SelectedIndex = listboxTrigger.Items.Count - 1;
+
+            return trigger;
+        }
+
         public void RefreshTriggerList()
         {
             listboxTrigger.Items.Clear();
@@ -969,9 +1080,5 @@ namespace Edit2D.TriggerControl
             }
         }
         #endregion
-
-
-
-
     }
 }
