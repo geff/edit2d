@@ -130,8 +130,8 @@ namespace Edit2D
 
             btnScriptModeBar.PerformClick();
 
-            //WinformVisualStyle.ApplyStyle(this, "LightGray");
-            WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
+            WinformVisualStyle.ApplyStyle(this, "LightGray");
+            //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             //InitInputHandler();
         }

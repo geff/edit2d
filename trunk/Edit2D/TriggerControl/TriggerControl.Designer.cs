@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.treeviewEntiteScript = new System.Windows.Forms.TreeView();
             this.listboxTrigger = new System.Windows.Forms.ListBox();
             this.treeviewEntiteTargetCollision = new System.Windows.Forms.TreeView();
@@ -90,6 +91,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel15 = new System.Windows.Forms.Panel();
             this.label12 = new System.Windows.Forms.Label();
+            this.treeViewLocal1 = new Edit2D.UC.TreeViewLocal();
             this.pnlValueProp.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numTimeLoop)).BeginInit();
             this.pnlTrigger.SuspendLayout();
@@ -651,7 +653,7 @@
             this.label7.Location = new System.Drawing.Point(6, 16);
             this.label7.Margin = new System.Windows.Forms.Padding(6);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(168, 19);
+            this.label7.Size = new System.Drawing.Size(169, 19);
             this.label7.TabIndex = 0;
             this.label7.Tag = "F2";
             this.label7.Text = "Type de déclencheur";
@@ -928,7 +930,7 @@
             this.label11.Location = new System.Drawing.Point(6, 16);
             this.label11.Margin = new System.Windows.Forms.Padding(6);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(60, 19);
+            this.label11.Size = new System.Drawing.Size(61, 19);
             this.label11.TabIndex = 0;
             this.label11.Tag = "F2";
             this.label11.Text = "Temps";
@@ -938,13 +940,14 @@
             this.pnlScript.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.pnlScript.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pnlScript.Controls.Add(this.treeViewLocal1);
             this.pnlScript.Controls.Add(this.panel2);
             this.pnlScript.Controls.Add(this.panel15);
             this.pnlScript.Controls.Add(this.treeviewEntiteScript);
             this.pnlScript.Location = new System.Drawing.Point(566, 0);
             this.pnlScript.Margin = new System.Windows.Forms.Padding(0);
             this.pnlScript.Name = "pnlScript";
-            this.pnlScript.Size = new System.Drawing.Size(194, 305);
+            this.pnlScript.Size = new System.Drawing.Size(239, 305);
             this.pnlScript.TabIndex = 8;
             this.pnlScript.Tag = "BG1";
             this.pnlScript.Visible = false;
@@ -954,7 +957,7 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.panel2.BackColor = System.Drawing.Color.Gray;
-            this.panel2.Location = new System.Drawing.Point(188, 50);
+            this.panel2.Location = new System.Drawing.Point(233, 50);
             this.panel2.Margin = new System.Windows.Forms.Padding(0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(6, 255);
@@ -968,7 +971,7 @@
             this.panel15.Location = new System.Drawing.Point(0, 0);
             this.panel15.Margin = new System.Windows.Forms.Padding(0);
             this.panel15.Name = "panel15";
-            this.panel15.Size = new System.Drawing.Size(194, 50);
+            this.panel15.Size = new System.Drawing.Size(239, 50);
             this.panel15.TabIndex = 27;
             this.panel15.Tag = "BG2";
             // 
@@ -984,6 +987,26 @@
             this.label12.TabIndex = 0;
             this.label12.Tag = "F2";
             this.label12.Text = "Script";
+            // 
+            // treeViewLocal1
+            // 
+            this.treeViewLocal1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.treeViewLocal1.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
+            this.treeViewLocal1.FullRowSelect = true;
+            this.treeViewLocal1.HideSelection = false;
+            this.treeViewLocal1.HotTracking = true;
+            this.treeViewLocal1.ImageIndex = 0;
+            this.treeViewLocal1.Indent = 19;
+            this.treeViewLocal1.ItemHeight = 25;
+            this.treeViewLocal1.ItemTypeCheckBoxed = Edit2D.UC.TreeViewLocalItemType.Script;
+            this.treeViewLocal1.ItemTypeShowed = Edit2D.UC.TreeViewLocalItemType.Script;
+            this.treeViewLocal1.Location = new System.Drawing.Point(3, 53);
+            this.treeViewLocal1.Name = "treeViewLocal1";
+            this.treeViewLocal1.OrderType = Edit2D.UC.TreeViewLocalOrderType.OrderByEntity;
+            this.treeViewLocal1.Repository = null;
+            this.treeViewLocal1.SelectedImageIndex = 0;
+            this.treeViewLocal1.Size = new System.Drawing.Size(227, 248);
+            this.treeViewLocal1.TabIndex = 9;
             // 
             // TriggerControl
             // 
@@ -1092,5 +1115,6 @@
         private System.Windows.Forms.RadioButton optMouseEnter;
         private System.Windows.Forms.RadioButton optMouseLeftClick;
         private System.Windows.Forms.RadioButton optMouseRightClick;
+        private Edit2D.UC.TreeViewLocal treeViewLocal1;
     }
 }
