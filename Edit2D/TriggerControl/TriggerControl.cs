@@ -11,6 +11,7 @@ using System.Reflection;
 using Microsoft.Xna.Framework;
 using Edit2DEngine.Particles;
 using Edit2DEngine;
+using Edit2D.UC;
 
 namespace Edit2D.TriggerControl
 {
@@ -34,6 +35,17 @@ namespace Edit2D.TriggerControl
 
         private void btnAddTrigger_Click(object sender, EventArgs e)
         {
+            treeViewLocal1.Repository = repository;
+            treeViewLocal1.ItemTypeShowed =
+                                            TreeViewLocalItemType.Script |
+                                            TreeViewLocalItemType.EntityProperties |
+                                            TreeViewLocalItemType.ParticleSystem |
+                                            TreeViewLocalItemType.Trigger;
+            
+            treeViewLocal1.ItemTypeCheckBoxed = TreeViewLocalItemType.Script;
+
+            treeViewLocal1.RefreshView();
+
             AddTriggerToCurrentEntity();
         }
 

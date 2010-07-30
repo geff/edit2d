@@ -150,6 +150,9 @@
     <EmbeddedResource Include="UC\PropertyGridLocal.resx">
       <DependentUpon>PropertyGridLocal.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UC\TreeViewLocal.resx">
+      <DependentUpon>TreeViewLocal.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -173,6 +176,12 @@
     </Compile>
     <Compile Include="UC\PropertyGridLocal.Designer.cs">
       <DependentUpon>PropertyGridLocal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\TreeViewLocal.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UC\TreeViewLocal.Designer.cs">
+      <DependentUpon>TreeViewLocal.cs</DependentUpon>
     </Compile>
     <Compile Include="WinformVisualStyle.cs" />
     <Compile Include="XNA\ContentBuilder.cs" />
