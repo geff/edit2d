@@ -299,6 +299,14 @@ namespace Edit2DEngine
             set;
         }
 
+        public String TreeViewPath
+        {
+            get
+            {
+                return "Monde\\Entités\\" + this.Name;
+            }
+        }
+
         public Entite(bool linkToPhysiSimulator, bool isCollisionable, string textureName, string name)
         {
             Constructor(linkToPhysiSimulator, isCollisionable, textureName, name);

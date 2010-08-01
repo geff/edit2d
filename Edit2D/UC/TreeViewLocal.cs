@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Edit2DEngine;
 using Edit2DEngine.Trigger;
 using Edit2DEngine.Particles;
+using System.Reflection;
 
 namespace Edit2D.UC
 {
@@ -21,51 +22,145 @@ namespace Edit2D.UC
         public TreeViewLocalItemType ItemTypeShowed { get; set; }
         public TreeViewLocalItemType ItemTypeCheckBoxed { get; set; }
 
-        private const int IMAGE_INDEX_EMPTY = 0;
-        private const int IMAGE_INDEX_ENTITY = 1;
-        private const int IMAGE_INDEX_PARTICLE_SYSTEM = 2;
-        private const int IMAGE_INDEX_SCRIPT = 3;
-        private const int IMAGE_INDEX_TRIGGER = 4;
-        private const int IMAGE_INDEX_WORLD = 5;
-        private const int IMAGE_INDEX_CHECKED = 6;
-        private const int IMAGE_INDEX_UNCHECKED = 7;
-        //private const int IMAGE_INDEX_SUBENTITY = 6;
+        [Browsable(true)]
+        public Boolean AllowMultipleItemChecked { get; set; }
+
+        public Boolean IsCheckedByMouse { get; set; }
+
+        private const String IMAGE_KEY_EMPTY = "icon_Empty";
+        private const String IMAGE_KEY_ENTITY = "icon_Entity";
+        private const String IMAGE_KEY_PARTICLE_SYSTEM = "icon_Particlesystem";
+        private const String IMAGE_KEY_SCRIPT = "icon_Script";
+        private const String IMAGE_KEY_TRIGGER = "icon_Trigger";
+        private const String IMAGE_KEY_WORLD = "icon_World";
+        private const String IMAGE_KEY_CHECKED = "icon_Checked";
+        private const String IMAGE_KEY_UNCHECKED = "icon_Unchecked";
+        private const String IMAGE_KEY_EXPANDED = "icon_Expanded";
+        private const String IMAGE_KEY_COLLAPSED = "icon_Collapsed";
+        private const String IMAGE_KEY_MOUSE = "icon_Mouse";
+        private const String IMAGE_KEY_PROPERTY = "icon_Properties";
+
+        private const String MOUSE_X = "MOUSE_X";
+        private const String MOUSE_Y = "MOUSE_Y";
+
+        private string NODE_WORLD = "Monde";
+        private string NODE_MOUSE = "Souris";
+        private string NODE_ENTITY = "Entités";
+        private string NODE_PROPERTIES = "Propriétés";
+        private string NODE_SCRIPT = "Scripts";
+        private string NODE_TRIGGER = "Déclencheurs";
+        private string NODE_PARTICLESYSTEM = "Systèmes de particules";
 
         private SolidBrush backgroundBrush;
+        private Boolean IsRefreshing { get; set; }
 
         public TreeViewLocal()
         {
             InitializeComponent();
+            this.IsCheckedByMouse = false;
+        }
+
+        public void RefreshView<T>(T nodeToCheck)
+        {
+            RefreshView();
+
+            CheckNode<T>(nodeToCheck);
+        }
+
+        public void RefreshView<T>(List<T> nodesToCheck)
+        {
+            RefreshView();
+
+            CheckNodes<T>(nodesToCheck);
         }
 
         public void RefreshView()
         {
+            this.IsRefreshing = true;
+            this.BeginUpdate();
+
+            //--- Conserve les noeuds cochés et le positionnement vertical
+            List<String> listCheckedNodesPath = GetCheckedNodesPath();
+            TreeNode firstDrawingNode = this.GetNodeAt(0, 0);
+            string firstDrawingNodePath = String.Empty;
+
+            if (firstDrawingNode != null)
+                firstDrawingNodePath = firstDrawingNode.FullPath;
+            //---
+
             backgroundBrush = new SolidBrush(this.BackColor);
 
             this.Nodes.Clear();
 
             //--- World
-            TreeNode nodeWorld = this.Nodes.Add("World", "World", IMAGE_INDEX_WORLD, IMAGE_INDEX_WORLD);
+            TreeNode nodeWorld = this.Nodes.Add(NODE_WORLD, NODE_WORLD, IMAGE_KEY_WORLD);
+            //---
+
+            //--- Souris
+            if ((ItemTypeShowed & TreeViewLocalItemType.Mouse) == TreeViewLocalItemType.Mouse)
+            {
+                TreeNode nodeMouse = nodeWorld.Nodes.Add(NODE_MOUSE, NODE_MOUSE, IMAGE_KEY_MOUSE);
+                nodeMouse.Tag = new Object[] { TreeViewLocalItemType.Mouse };
+
+                TreeNode nodeMouseX = nodeMouse.Nodes.Add("X", "X", IMAGE_KEY_EMPTY);
+                nodeMouseX.Tag = new Object[] { TreeViewLocalItemType.Mouse, MOUSE_X };
+
+                TreeNode nodeMouseY = nodeMouse.Nodes.Add("Y", "Y", IMAGE_KEY_EMPTY);
+                nodeMouseY.Tag = new Object[] { TreeViewLocalItemType.Mouse, MOUSE_Y };
+            }
             //---
 
             //--- Entités
-            TreeNode nodeEntities = nodeWorld.Nodes.Add("Entity", "Entités", IMAGE_INDEX_ENTITY, IMAGE_INDEX_ENTITY);
+            TreeNode nodeEntities = nodeWorld.Nodes.Add(NODE_ENTITY, NODE_ENTITY, IMAGE_KEY_ENTITY);
             //---
 
             //--- Entité
             foreach (Entite entite in Repository.listEntite)
             {
-                TreeNode nodeEntity = nodeEntities.Nodes.Add(entite.Name, entite.Name, IMAGE_INDEX_EMPTY, IMAGE_INDEX_EMPTY);
+                TreeNode nodeEntity = nodeEntities.Nodes.Add(entite.Name, entite.Name, IMAGE_KEY_EMPTY);
+                nodeEntity.Tag = new Object[] { TreeViewLocalItemType.Entity, entite };
+
+                //--- Propriétés
+                if ((ItemTypeShowed & TreeViewLocalItemType.EntityProperties) == TreeViewLocalItemType.EntityProperties)
+                {
+                    TreeNode nodeProperties = nodeEntity.Nodes.Add(NODE_PROPERTIES, NODE_PROPERTIES, IMAGE_KEY_PROPERTY);
+                    nodeProperties.Tag = new Object[] { TreeViewLocalItemType.EntityProperties };
+
+                    PropertyInfo[] propertiesInfo = entite.GetType().GetProperties();
+
+                    foreach (PropertyInfo propertyInfo in propertiesInfo)
+                    {
+                        if (propertyInfo.GetCustomAttributes(typeof(AttributeAction), true).Length > 0)
+                        {
+                            TreeNode nodeProperty = nodeProperties.Nodes.Add(propertyInfo.Name, propertyInfo.Name, IMAGE_KEY_EMPTY);
+                            nodeProperty.Tag = new Object[] { TreeViewLocalItemType.EntityProperties, propertyInfo };
+                        }
+                    }
+                }
+                //---
+
+                //TODO : gérer les propriétés personalisées
+                //--- Propriétés personalisées
+                //for (int i = 0; i < entite.ListCustomProperties.Count; i++)
+                //{
+                //    KeyValuePair<String, Object> customProp = entite.ListCustomProperties.ElementAt(i);
+
+                //    TreeNode node = new TreeNode(customProp.Key);
+                //    node.Tag = customProp.Key;
+
+                //    treeViewCustomProperties.Nodes.Add(node);
+                //}
+                //---
 
                 //--- Script
                 if ((ItemTypeShowed & TreeViewLocalItemType.Script) == TreeViewLocalItemType.Script)
                 {
-                    TreeNode nodeScripts = nodeEntity.Nodes.Add("Script", "Scripts", IMAGE_INDEX_SCRIPT, IMAGE_INDEX_SCRIPT);
+                    TreeNode nodeScripts = nodeEntity.Nodes.Add(NODE_SCRIPT, NODE_SCRIPT, IMAGE_KEY_SCRIPT);
                     nodeScripts.Tag = new Object[] { TreeViewLocalItemType.Script };
 
                     foreach (Script script in entite.ListScript)
                     {
-                        TreeNode nodeScript = nodeScripts.Nodes.Add(script.ScriptName, script.ScriptName, IMAGE_INDEX_EMPTY, IMAGE_INDEX_EMPTY);
+                        TreeNode nodeScript = nodeScripts.Nodes.Add(script.ScriptName, script.ScriptName, IMAGE_KEY_EMPTY);
                         nodeScript.Tag = new Object[] { TreeViewLocalItemType.Script, script };
                     }
                 }
@@ -74,49 +169,417 @@ namespace Edit2D.UC
                 //--- Trigger
                 if ((ItemTypeShowed & TreeViewLocalItemType.Trigger) == TreeViewLocalItemType.Trigger)
                 {
-                    TreeNode nodeTriggers = nodeEntity.Nodes.Add("Trigger", "Déclencheurs", IMAGE_INDEX_TRIGGER, IMAGE_INDEX_TRIGGER);
+                    TreeNode nodeTriggers = nodeEntity.Nodes.Add(NODE_TRIGGER, NODE_TRIGGER, IMAGE_KEY_TRIGGER);
                     nodeTriggers.Tag = new Object[] { TreeViewLocalItemType.Trigger };
 
                     foreach (TriggerBase trigger in entite.ListTrigger)
                     {
-                        TreeNode nodeTrigger = nodeTriggers.Nodes.Add(trigger.TriggerName, trigger.TriggerName, IMAGE_INDEX_EMPTY, IMAGE_INDEX_EMPTY);
+                        TreeNode nodeTrigger = nodeTriggers.Nodes.Add(trigger.TriggerName, trigger.TriggerName, IMAGE_KEY_EMPTY);
                         nodeTrigger.Tag = new Object[] { TreeViewLocalItemType.Trigger, trigger };
                     }
                 }
                 //---
 
-
                 //--- ParticleSystem
                 if ((ItemTypeShowed & TreeViewLocalItemType.ParticleSystem) == TreeViewLocalItemType.ParticleSystem)
                 {
-                    TreeNode nodeParticleSystems = nodeEntity.Nodes.Add("ParticleSystem", "Systèmes de particules", IMAGE_INDEX_PARTICLE_SYSTEM, IMAGE_INDEX_PARTICLE_SYSTEM);
+                    TreeNode nodeParticleSystems = nodeEntity.Nodes.Add(NODE_PARTICLESYSTEM, NODE_PARTICLESYSTEM, IMAGE_KEY_PARTICLE_SYSTEM);
                     nodeParticleSystems.Tag = new Object[] { TreeViewLocalItemType.ParticleSystem };
 
                     foreach (ParticleSystem particleSystem in entite.ListParticleSystem)
                     {
-                        TreeNode nodeParticleSystem = nodeParticleSystems.Nodes.Add(particleSystem.ParticleSystemName, particleSystem.ParticleSystemName, IMAGE_INDEX_EMPTY, IMAGE_INDEX_EMPTY);
+                        TreeNode nodeParticleSystem = nodeParticleSystems.Nodes.Add(particleSystem.ParticleSystemName, particleSystem.ParticleSystemName, IMAGE_KEY_EMPTY);
                         nodeParticleSystem.Tag = new Object[] { TreeViewLocalItemType.ParticleSystem, particleSystem };
 
                         foreach (Particle particle in particleSystem.ListParticleTemplate)
                         {
-                            TreeNode nodeParticle = nodeParticleSystem.Nodes.Add(particle.Name, particle.Name, IMAGE_INDEX_EMPTY, IMAGE_INDEX_EMPTY);
+                            TreeNode nodeParticle = nodeParticleSystem.Nodes.Add(particle.Name, particle.Name, IMAGE_KEY_EMPTY);
                             nodeParticle.Tag = new Object[] { TreeViewLocalItemType.ParticleSystem, particle };
                         }
                     }
                 }
                 //---
-
-
             }
             //---
 
             this.ExpandAll();
+
+            //--- Coche les noeuds cochés avant le rafraichissement
+            foreach (String nodePath in listCheckedNodesPath)
+            {
+                CheckNode(Nodes[0], nodePath);
+            }
+            //---
+
+            //--- Positionne verticalement l'arborescence selon son état précédent le rafraichissement
+            if (!String.IsNullOrEmpty(firstDrawingNodePath))
+            {
+                TreeNode newFirstDrawingNode = GetNodeWithPath(firstDrawingNodePath);
+                
+                if(newFirstDrawingNode != null)
+                    newFirstDrawingNode.EnsureVisible();
+            }
+            //---
+
+            this.EndUpdate();
+            this.IsRefreshing = false;
         }
 
-        private void TreeViewLocal_AfterSelect(object sender, TreeViewEventArgs e)
+        private void ChangeNodeCheck(TreeNode node, bool isChecked)
         {
-            if (e.Action == TreeViewAction.ByKeyboard || e.Action == TreeViewAction.ByMouse)
+            for (int i = 0; i < node.Nodes.Count; i++)
             {
+                node.Nodes[i].Checked = isChecked;
+
+                ChangeNodeCheck(node.Nodes[i], isChecked);
+            }
+        }
+
+        public void CheckNode<T>(T nodeToCheck, string pathParent)
+        {
+            if (nodeToCheck == null)
+                return;
+
+            string typeNode = String.Empty;
+
+            if (nodeToCheck is PropertyInfo)
+                typeNode = "\\" + NODE_PROPERTIES + "\\" + (nodeToCheck as PropertyInfo).Name;
+            else if (nodeToCheck is Script)
+                typeNode = "\\" + NODE_SCRIPT + "\\" + (nodeToCheck as Script).ScriptName;
+            else if (nodeToCheck is TriggerBase)
+                typeNode = "\\" + NODE_TRIGGER + "\\" + (nodeToCheck as TriggerBase).TriggerName;
+            else if (nodeToCheck is ParticleSystem)
+                typeNode = "\\" + NODE_PARTICLESYSTEM + "\\" + (nodeToCheck as ParticleSystem).Name;
+            else if (nodeToCheck is Particle)
+                typeNode = "\\" + NODE_PARTICLESYSTEM + "\\" + (nodeToCheck as Particle).ParticleSystem.Name + "\\" + (nodeToCheck as Particle).Name;
+
+            string fullPath = pathParent + typeNode;
+
+            CheckNode(Nodes[0], fullPath);
+        }
+
+        public void CheckNode(TreeNode node, string fullPath)
+        {
+            if (node == null)
+                return;
+
+            if (
+                node.FullPath == fullPath
+                )
+            {
+                node.Checked = true;
+            }
+            else
+            {
+                node.Checked = false;
+            }
+
+            if (node.Nodes.Count > 0)
+            {
+                for (int i = 0; i < node.Nodes.Count; i++)
+                {
+                    CheckNode(node.Nodes[i], fullPath);
+                }
+            }
+        }
+
+        public void CheckNode<T>(T nodeToCheck)
+        {
+            if (nodeToCheck == null)
+                return;
+
+            CheckNode<T>(Nodes[0], nodeToCheck);
+        }
+
+        public void CheckNode<T>(TreeNode node, T nodeToCheck)
+        {
+            if (node == null)
+                return;
+
+            if (nodeToCheck == null)
+                return;
+
+            if (
+                node.Tag is Object[] &&
+                ((Object[])node.Tag).Length > 1 &&
+                (((Object[])node.Tag)[1]) is T &&
+                nodeToCheck.Equals(((T)(((Object[])node.Tag)[1])))
+                )
+            {
+                node.Checked = true;
+            }
+            else
+            {
+                node.Checked = false;
+            }
+
+            if (node.Nodes.Count > 0)
+            {
+                for (int i = 0; i < node.Nodes.Count; i++)
+                {
+                    CheckNode(node.Nodes[i], nodeToCheck);
+                }
+            }
+        }
+
+        public void CheckNodes<T>(List<T> listNodesToCheck)
+        {
+            if (listNodesToCheck == null)
+                return;
+
+            CheckNodes<T>(Nodes[0], listNodesToCheck);
+        }
+
+        public void CheckNodes<T>(TreeNode node, List<T> listNodesToCheck)
+        {
+            if (node == null)
+                return;
+
+            if (listNodesToCheck == null)
+                return;
+
+            if (
+                node.Tag is Object[] &&
+                ((Object[])node.Tag).Length > 1 &&
+                (((Object[])node.Tag)[1]) is T &&
+                listNodesToCheck.Contains(((T)(((Object[])node.Tag)[1]))))
+            {
+                node.Checked = true;
+            }
+            else
+            {
+                node.Checked = false;
+            }
+
+            if (node.Nodes.Count > 0)
+            {
+                for (int i = 0; i < node.Nodes.Count; i++)
+                {
+                    CheckNodes(node.Nodes[i], listNodesToCheck);
+                }
+            }
+        }
+
+        public TreeNode GetNodeWithPath(string fullPath)
+        {
+            return GetNodeWithPath(Nodes[0], fullPath);
+        }
+
+        public TreeNode GetNodeWithPath(TreeNode node, string fullPath)
+        {
+            TreeNode nodeFound = null;
+
+            if (node == null)
+                return null;
+
+            if (node.FullPath == fullPath)
+            {
+                return node;
+            }
+
+            if (node.Nodes.Count > 0)
+            {
+                for (int i = 0; i < node.Nodes.Count; i++)
+                {
+                    nodeFound = GetNodeWithPath(node.Nodes[i], fullPath);
+
+                    if (nodeFound != null)
+                        return nodeFound;
+                }
+            }
+
+            return null;
+        }
+
+        public List<T> GetCheckedNodes<T>()
+        {
+            List<T> listCheckedNodes = new List<T>();
+
+            GetCheckedNodes<T>(Nodes[0], listCheckedNodes);
+
+            return listCheckedNodes;
+        }
+
+        public void GetCheckedNodes<T>(TreeNode node, List<T> listCheckedNodes)
+        {
+            if (node == null)
+                return;
+
+            if (node.Checked &&
+                node.Tag is Object[] &&
+                (((Object[])node.Tag)[1]) is T)
+            {
+                listCheckedNodes.Add((T)(((Object[])node.Tag)[1]));
+            }
+
+            if (node.Nodes.Count > 0)
+            {
+                for (int i = 0; i < node.Nodes.Count; i++)
+                {
+                    GetCheckedNodes(node.Nodes[i], listCheckedNodes);
+                }
+            }
+        }
+
+        public List<String> GetCheckedNodesPath()
+        {
+            List<String> listCheckedNodesPath = new List<String>();
+            List<TreeNode> listCheckedNodes = GetCheckedNodes();
+
+            foreach (TreeNode node in listCheckedNodes)
+            {
+                listCheckedNodesPath.Add(node.FullPath);
+            }
+
+            return listCheckedNodesPath;
+        }
+
+        public List<TreeNode> GetCheckedNodes()
+        {
+            List<TreeNode> listCheckedNodes = new List<TreeNode>();
+
+            if (Nodes.Count > 0)
+                GetCheckedNodes(Nodes[0], listCheckedNodes);
+
+            return listCheckedNodes;
+        }
+
+        public void GetCheckedNodes(TreeNode node, List<TreeNode> listCheckedNodes)
+        {
+            if (node == null)
+                return;
+
+            if (node.Checked)
+            {
+                listCheckedNodes.Add(node);
+            }
+
+            if (node.Nodes.Count > 0)
+            {
+                for (int i = 0; i < node.Nodes.Count; i++)
+                {
+                    GetCheckedNodes(node.Nodes[i], listCheckedNodes);
+                }
+            }
+        }
+
+        public TreeNode GetNodeWithTag(TreeNode nodeParent, Entite entite, PropertyInfo propertyInfo, int index)
+        {
+            TreeNode node = null;
+
+            foreach (TreeNode nodeChild in nodeParent.Nodes)
+            {
+                if (node == null &&
+                    (nodeChild.Tag is Object[]) &&
+                    nodeParent.Tag == entite &&
+                    ((PropertyInfo)((Object[])nodeChild.Tag)[0]).Name == propertyInfo.Name &&
+                     ((int)((Object[])nodeChild.Tag)[1]) == index)
+                {
+                    node = nodeChild;
+                }
+
+                if (node == null)
+                {
+                    node = GetNodeWithTag(nodeChild, entite, propertyInfo, index);
+                }
+            }
+
+            return node;
+        }
+
+        protected override void OnDrawNode(DrawTreeNodeEventArgs e)
+        {
+            if (this.IsRefreshing)
+                return;
+
+            int deltaY = 0;
+            bool isHeadNode = true;
+            TreeViewLocalItemType itemType = TreeViewLocalItemType.None;
+
+            if (e.Node.Tag is Object[])
+            {
+                itemType = (TreeViewLocalItemType)(((Object[])e.Node.Tag)[0]);
+                isHeadNode = ((Object[])e.Node.Tag).Length == 1;
+            }
+
+            Point textPosition = new Point(e.Node.Level * this.Indent, 0);
+
+            //--- Tampon graphique
+            Bitmap bmp = new Bitmap(e.Bounds.Width, e.Bounds.Height);
+            Graphics g = Graphics.FromImage(bmp);
+            //---
+
+            if (e.Node.Checked)
+            {
+                g.FillRectangle(WinformVisualStyle.BrushSelectedColor, 0, 0, e.Bounds.Width, e.Bounds.Height);
+            }
+            else if ((e.State & TreeNodeStates.Hot) == TreeNodeStates.Hot)
+            {
+                g.FillRectangle(WinformVisualStyle.BrushMouseOverColor, 0, 0, e.Bounds.Width, e.Bounds.Height);
+            }
+            else
+            {
+                g.FillRectangle(backgroundBrush, 0, 0, e.Bounds.Width, e.Bounds.Height);
+            }
+
+            //--- Flèche Collapsed / Expanded
+            if (e.Node.Nodes.Count > 0)
+            {
+                deltaY = this.ItemHeight / 2 - ImageList.Images[IMAGE_KEY_COLLAPSED].Height / 2;
+
+                if (e.Node.IsExpanded)
+                    g.DrawImage(ImageList.Images[IMAGE_KEY_EXPANDED], textPosition.X, textPosition.Y + deltaY);
+                else
+                    g.DrawImage(ImageList.Images[IMAGE_KEY_COLLAPSED], textPosition.X, textPosition.Y + deltaY);
+
+                textPosition.X += 8;
+            }
+            //---
+
+            //--- Noeuds d'entête sans case à cocher mais avec icône
+            if (e.Node.ImageKey != IMAGE_KEY_EMPTY)
+            {
+                deltaY = this.ItemHeight / 2 - ImageList.Images[e.Node.ImageKey].Height / 2;
+
+                g.DrawImage(ImageList.Images[e.Node.ImageKey], textPosition.X, textPosition.Y + deltaY);
+                textPosition.X += ImageList.ImageSize.Width;
+            }
+            //---
+
+            //--- Détection de la case à cocher
+            if (itemType != TreeViewLocalItemType.None &&
+                (itemType & ItemTypeCheckBoxed) == itemType &&
+                !isHeadNode)
+            {
+                deltaY = this.ItemHeight / 2 - ImageList.Images[IMAGE_KEY_CHECKED].Height / 2;
+
+                if (e.Node.Checked)
+                    g.DrawImage(ImageList.Images[IMAGE_KEY_CHECKED], textPosition.X, textPosition.Y + deltaY);
+                else
+                    g.DrawImage(ImageList.Images[IMAGE_KEY_UNCHECKED], textPosition.X, textPosition.Y + deltaY);
+
+                textPosition.X += 10;
+            }
+            //---
+
+            //--- Affichage du texte
+            Font font = new Font(this.Font, isHeadNode ? FontStyle.Bold : FontStyle.Regular);
+
+            deltaY = this.ItemHeight / 2 - (int)g.MeasureString(e.Node.Text, font).Height / 2;
+            g.DrawString(e.Node.Text, font, WinformVisualStyle.BrushForeColor1, textPosition.X, textPosition.Y + deltaY);
+            //---
+
+            //--- Affiche le tampon graphique
+            e.Graphics.DrawImage(bmp, e.Bounds.Left, e.Bounds.Top);
+            //---
+        }
+
+        private void TreeViewLocal_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                IsCheckedByMouse = true;
+
                 //---
                 bool isHeadNode = false;
                 TreeViewLocalItemType itemType = TreeViewLocalItemType.None;
@@ -132,69 +595,33 @@ namespace Edit2D.UC
                     (itemType & ItemTypeCheckBoxed) == itemType &&
                     !isHeadNode)
                 {
-                    e.Node.Checked = !e.Node.Checked;
+                    Boolean prevCheckState = e.Node.Checked;
+
+                    //--- Déselectionne tous les noeuds
+                    if (!AllowMultipleItemChecked)
+                    {
+                        ChangeNodeCheck(Nodes[0], false);
+                    }
+                    //---
+
+                    e.Node.Checked = !prevCheckState;
                 }
+
+                IsCheckedByMouse = false;
             }
         }
 
-        protected override void OnDrawNode(DrawTreeNodeEventArgs e)
+        private void TreeViewLocal_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            int deltaY = 0;
-            bool isHeadNode = false;
-            TreeViewLocalItemType itemType = TreeViewLocalItemType.None;
-
-            if (e.Node.Tag is Object[])
+            if (e.Button == MouseButtons.Right)
             {
-                itemType = (TreeViewLocalItemType)(((Object[])e.Node.Tag)[0]);
-                isHeadNode = ((Object[])e.Node.Tag).Length == 1;
+                e.Node.Expand();
+
+                foreach (TreeNode nodeChild in e.Node.Nodes)
+                {
+                    nodeChild.Collapse();
+                }
             }
-
-            Point textPosition = e.Bounds.Location;
-            textPosition.X += e.Node.Level * this.Indent;
-
-            if (e.Node.Checked)
-            {
-                e.Graphics.FillRectangle(WinformVisualStyle.BrushSelectedColor, e.Bounds);
-            }
-            else if (e.State == TreeNodeStates.Hot || e.State == TreeNodeStates.Focused || e.State == TreeNodeStates.Selected ||e.State == TreeNodeStates.Marked)
-            {
-                e.Graphics.FillRectangle(WinformVisualStyle.BrushMouseOverColor, e.Bounds);
-            }
-            else
-            {
-                e.Graphics.FillRectangle(backgroundBrush, e.Bounds);
-            }
-
-            //--- Noeuds d'entête sans case à cocher mais avec icône
-            if (e.Node.ImageIndex >= 0)
-            {
-                deltaY = this.ItemHeight / 2 - ImageList.Images[e.Node.ImageIndex].Height / 2;
-
-                e.Graphics.DrawImage(ImageList.Images[e.Node.ImageIndex], textPosition.X, textPosition.Y + deltaY);
-                textPosition.X += ImageList.ImageSize.Width;
-            }
-            //---
-
-            //--- Détection de la case à cocher
-            if (itemType != TreeViewLocalItemType.None &&
-                (itemType & ItemTypeCheckBoxed) == itemType &&
-                !isHeadNode)
-            {
-                deltaY = this.ItemHeight / 2 - ImageList.Images[IMAGE_INDEX_CHECKED].Height / 2;
-
-                if (e.Node.Checked)
-                    e.Graphics.DrawImage(ImageList.Images[IMAGE_INDEX_CHECKED], textPosition.X, textPosition.Y + deltaY);
-                else
-                    e.Graphics.DrawImage(ImageList.Images[IMAGE_INDEX_UNCHECKED], textPosition.X, textPosition.Y + deltaY);
-
-                textPosition.X += 10;
-            }
-            //---
-
-            //--- Affichage du texte
-            deltaY = this.ItemHeight / 2 - (int)e.Graphics.MeasureString(e.Node.Text, this.Font).Height / 2;
-            e.Graphics.DrawString(e.Node.Text, this.Font, WinformVisualStyle.BrushForeColor1, textPosition.X, textPosition.Y + deltaY);
-            //---
         }
     }
 
@@ -208,11 +635,13 @@ namespace Edit2D.UC
     public enum TreeViewLocalItemType : int
     {
         None = 0,
-        Script = 1,
-        Trigger = 2,
-        ParticleSystem = 4,
-        SubEntity = 8,
-        EntityProperties = 16,
-        CustomProperties = 32
+        Entity = 1,
+        Script = 2,
+        Trigger = 4,
+        ParticleSystem = 8,
+        SubEntity = 16,
+        EntityProperties = 32,
+        CustomProperties = 64,
+        Mouse = 128
     }
 }

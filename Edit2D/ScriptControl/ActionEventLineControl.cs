@@ -10,10 +10,11 @@ using Edit2DEngine.Action;
 using Edit2DEngine.Particles;
 using System.Reflection;
 using Edit2DEngine;
+using Edit2D.UC;
 
 namespace Edit2D.ScriptControl
 {
-    public partial class ActionEventLineControl : UserControl
+    public partial class ActionEventLineControl : UserControlLocal
     {
         public ActionEvent ActionEvent { get; set; }
         public int ActionEventIndex { get; set; }

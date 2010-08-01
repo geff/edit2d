@@ -124,8 +124,8 @@
   <data name="icon_EditWhenPlaying" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_EditWhenPlaying.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="MouseScale" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\MouseScale.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="icon_OrderDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_OrderDown.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="icon_Pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_Pause.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -133,11 +133,17 @@
   <data name="MouseMove" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\MouseMove.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="icon_Script" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_Script.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_OrderUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_OrderUp.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="icon_PanelRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_PanelRight.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="icon_ResetPhysic" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon_ResetPhysic.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="MouseScale" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MouseScale.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="icon_Rec" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_Rec.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -145,11 +151,23 @@
   <data name="icon_RecLoop" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_RecLoop.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="icon_ParticleSystem" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_ParticleSystem.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_ResetPhysic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_ResetPhysic.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="MouseSelect" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\MouseSelect.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="icon_Trigger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_Trigger.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="icon_Play" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_Play.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_Stop.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="MouseRotate" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\MouseRotate.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -163,19 +181,13 @@
   <data name="icon_PanelBottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_PanelBottom.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="icon_Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon_Stop.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="icon_Combo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_Combo.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="icon_EditMode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_EditMode.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="icon_OrderDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon_OrderDown.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="icon_OrderUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon_OrderUp.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="icon_Combo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon_Combo.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="icon_ParticleSystem1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_ParticleSystem.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

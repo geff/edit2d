@@ -29,10 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.treeviewEntiteScript = new System.Windows.Forms.TreeView();
             this.listboxTrigger = new System.Windows.Forms.ListBox();
-            this.treeviewEntiteTargetCollision = new System.Windows.Forms.TreeView();
-            this.treeViewCustomProperties = new System.Windows.Forms.TreeView();
             this.pnlValueProp = new System.Windows.Forms.Panel();
             this.txtProp3 = new System.Windows.Forms.RichTextBox();
             this.txtProp2 = new System.Windows.Forms.RichTextBox();
@@ -43,7 +40,6 @@
             this.lblProp2 = new System.Windows.Forms.Label();
             this.cmbProp1 = new System.Windows.Forms.ComboBox();
             this.lblProp1 = new System.Windows.Forms.Label();
-            this.treeViewProperties = new System.Windows.Forms.TreeView();
             this.numTimeLoop = new System.Windows.Forms.NumericUpDown();
             this.optTimeLoopParam = new System.Windows.Forms.RadioButton();
             this.optTimeLoopAlways = new System.Windows.Forms.RadioButton();
@@ -76,10 +72,12 @@
             this.panel18 = new System.Windows.Forms.Panel();
             this.label8 = new System.Windows.Forms.Label();
             this.pnlEntityCollision = new System.Windows.Forms.Panel();
+            this.treeViewCollision = new Edit2D.UC.TreeViewLocal();
             this.panel9 = new System.Windows.Forms.Panel();
             this.panel19 = new System.Windows.Forms.Panel();
             this.label9 = new System.Windows.Forms.Label();
             this.pnlValueOverflow = new System.Windows.Forms.Panel();
+            this.treeViewValueChanged = new Edit2D.UC.TreeViewLocal();
             this.panel11 = new System.Windows.Forms.Panel();
             this.panel20 = new System.Windows.Forms.Panel();
             this.label10 = new System.Windows.Forms.Label();
@@ -88,10 +86,10 @@
             this.panel21 = new System.Windows.Forms.Panel();
             this.label11 = new System.Windows.Forms.Label();
             this.pnlScript = new System.Windows.Forms.Panel();
+            this.treeViewScript = new Edit2D.UC.TreeViewLocal();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel15 = new System.Windows.Forms.Panel();
             this.label12 = new System.Windows.Forms.Label();
-            this.treeViewLocal1 = new Edit2D.UC.TreeViewLocal();
             this.pnlValueProp.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numTimeLoop)).BeginInit();
             this.pnlTrigger.SuspendLayout();
@@ -111,22 +109,6 @@
             this.panel15.SuspendLayout();
             this.SuspendLayout();
             // 
-            // treeviewEntiteScript
-            // 
-            this.treeviewEntiteScript.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
-            this.treeviewEntiteScript.BackColor = System.Drawing.Color.Gray;
-            this.treeviewEntiteScript.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.treeviewEntiteScript.CheckBoxes = true;
-            this.treeviewEntiteScript.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
-            this.treeviewEntiteScript.Location = new System.Drawing.Point(6, 61);
-            this.treeviewEntiteScript.Name = "treeviewEntiteScript";
-            this.treeviewEntiteScript.Size = new System.Drawing.Size(178, 237);
-            this.treeviewEntiteScript.TabIndex = 26;
-            this.treeviewEntiteScript.Tag = "BG2";
-            this.treeviewEntiteScript.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeviewEntiteScript_AfterCheck);
-            this.treeviewEntiteScript.DrawNode += new System.Windows.Forms.DrawTreeNodeEventHandler(this.treeviewEntiteScript_DrawNode);
-            // 
             // listboxTrigger
             // 
             this.listboxTrigger.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -141,39 +123,9 @@
             this.listboxTrigger.Tag = "BG2";
             this.listboxTrigger.SelectedIndexChanged += new System.EventHandler(this.listboxTrigger_SelectedIndexChanged);
             // 
-            // treeviewEntiteTargetCollision
-            // 
-            this.treeviewEntiteTargetCollision.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
-            this.treeviewEntiteTargetCollision.BackColor = System.Drawing.Color.Gray;
-            this.treeviewEntiteTargetCollision.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.treeviewEntiteTargetCollision.CheckBoxes = true;
-            this.treeviewEntiteTargetCollision.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
-            this.treeviewEntiteTargetCollision.Location = new System.Drawing.Point(6, 61);
-            this.treeviewEntiteTargetCollision.Name = "treeviewEntiteTargetCollision";
-            this.treeviewEntiteTargetCollision.Size = new System.Drawing.Size(196, 237);
-            this.treeviewEntiteTargetCollision.TabIndex = 22;
-            this.treeviewEntiteTargetCollision.Tag = "BG2";
-            this.treeviewEntiteTargetCollision.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeviewEntiteTargetCollision_AfterCheck);
-            this.treeviewEntiteTargetCollision.DrawNode += new System.Windows.Forms.DrawTreeNodeEventHandler(this.treeviewEntiteTargetCollision_DrawNode);
-            // 
-            // treeViewCustomProperties
-            // 
-            this.treeViewCustomProperties.BackColor = System.Drawing.Color.Gray;
-            this.treeViewCustomProperties.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.treeViewCustomProperties.CheckBoxes = true;
-            this.treeViewCustomProperties.Location = new System.Drawing.Point(6, 148);
-            this.treeViewCustomProperties.Name = "treeViewCustomProperties";
-            this.treeViewCustomProperties.ShowLines = false;
-            this.treeViewCustomProperties.ShowPlusMinus = false;
-            this.treeViewCustomProperties.ShowRootLines = false;
-            this.treeViewCustomProperties.Size = new System.Drawing.Size(196, 68);
-            this.treeViewCustomProperties.TabIndex = 25;
-            this.treeViewCustomProperties.Tag = "BG2";
-            this.treeViewCustomProperties.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewCustomProperties_AfterCheck);
-            // 
             // pnlValueProp
             // 
+            this.pnlValueProp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.pnlValueProp.BackColor = System.Drawing.Color.DarkGray;
             this.pnlValueProp.Controls.Add(this.txtProp3);
             this.pnlValueProp.Controls.Add(this.txtProp2);
@@ -204,6 +156,7 @@
             this.txtProp3.Tag = "BG2";
             this.txtProp3.Text = "";
             this.txtProp3.ZoomFactor = 1.2F;
+            this.txtProp3.TextChanged += new System.EventHandler(this.txtProp3_TextChanged);
             // 
             // txtProp2
             // 
@@ -218,6 +171,7 @@
             this.txtProp2.Tag = "BG2";
             this.txtProp2.Text = "";
             this.txtProp2.ZoomFactor = 1.2F;
+            this.txtProp2.TextChanged += new System.EventHandler(this.txtProp2_TextChanged);
             // 
             // txtProp1
             // 
@@ -232,6 +186,7 @@
             this.txtProp1.Tag = "BG2";
             this.txtProp1.Text = "";
             this.txtProp1.ZoomFactor = 1.2F;
+            this.txtProp1.TextChanged += new System.EventHandler(this.txtProp1_TextChanged);
             // 
             // cmbProp3
             // 
@@ -252,6 +207,7 @@
             this.cmbProp3.Size = new System.Drawing.Size(40, 21);
             this.cmbProp3.TabIndex = 7;
             this.cmbProp3.Tag = "BG2";
+            this.cmbProp3.SelectedIndexChanged += new System.EventHandler(this.cmbProp3_SelectedIndexChanged);
             // 
             // lblProp3
             // 
@@ -280,6 +236,7 @@
             this.cmbProp2.Size = new System.Drawing.Size(40, 21);
             this.cmbProp2.TabIndex = 4;
             this.cmbProp2.Tag = "BG2";
+            this.cmbProp2.SelectedIndexChanged += new System.EventHandler(this.cmbProp2_SelectedIndexChanged);
             // 
             // lblProp2
             // 
@@ -308,6 +265,7 @@
             this.cmbProp1.Size = new System.Drawing.Size(40, 21);
             this.cmbProp1.TabIndex = 1;
             this.cmbProp1.Tag = "BG2";
+            this.cmbProp1.SelectedIndexChanged += new System.EventHandler(this.cmbProp1_SelectedIndexChanged);
             // 
             // lblProp1
             // 
@@ -317,21 +275,6 @@
             this.lblProp1.TabIndex = 0;
             this.lblProp1.Text = "R";
             this.lblProp1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // treeViewProperties
-            // 
-            this.treeViewProperties.BackColor = System.Drawing.Color.Gray;
-            this.treeViewProperties.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.treeViewProperties.CheckBoxes = true;
-            this.treeViewProperties.Location = new System.Drawing.Point(6, 61);
-            this.treeViewProperties.Name = "treeViewProperties";
-            this.treeViewProperties.ShowLines = false;
-            this.treeViewProperties.ShowPlusMinus = false;
-            this.treeViewProperties.ShowRootLines = false;
-            this.treeViewProperties.Size = new System.Drawing.Size(196, 81);
-            this.treeViewProperties.TabIndex = 24;
-            this.treeViewProperties.Tag = "BG2";
-            this.treeViewProperties.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewProperties_AfterCheck);
             // 
             // numTimeLoop
             // 
@@ -386,6 +329,8 @@
             // 
             // pnlTrigger
             // 
+            this.pnlTrigger.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
             this.pnlTrigger.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pnlTrigger.Controls.Add(this.lblScriptName);
             this.pnlTrigger.Controls.Add(this.txtTriggerName);
@@ -459,7 +404,7 @@
             this.panel16.Location = new System.Drawing.Point(0, 109);
             this.panel16.Margin = new System.Windows.Forms.Padding(0);
             this.panel16.Name = "panel16";
-            this.panel16.Size = new System.Drawing.Size(174, 196);
+            this.panel16.Size = new System.Drawing.Size(174, 195);
             this.panel16.TabIndex = 12;
             this.panel16.Tag = "B";
             // 
@@ -497,6 +442,7 @@
             this.btnAddTrigger.Text = "+";
             this.btnAddTrigger.UseVisualStyleBackColor = false;
             this.btnAddTrigger.Click += new System.EventHandler(this.btnAddTrigger_Click);
+            this.btnAddTrigger.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnAddTrigger_MouseDown);
             // 
             // btnDelTrigger
             // 
@@ -653,7 +599,7 @@
             this.label7.Location = new System.Drawing.Point(6, 16);
             this.label7.Margin = new System.Windows.Forms.Padding(6);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(169, 19);
+            this.label7.Size = new System.Drawing.Size(168, 19);
             this.label7.TabIndex = 0;
             this.label7.Tag = "F2";
             this.label7.Text = "Type de déclencheur";
@@ -788,8 +734,8 @@
             this.pnlEntityCollision.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.pnlEntityCollision.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pnlEntityCollision.Controls.Add(this.treeViewCollision);
             this.pnlEntityCollision.Controls.Add(this.panel9);
-            this.pnlEntityCollision.Controls.Add(this.treeviewEntiteTargetCollision);
             this.pnlEntityCollision.Location = new System.Drawing.Point(358, 0);
             this.pnlEntityCollision.Margin = new System.Windows.Forms.Padding(0);
             this.pnlEntityCollision.Name = "pnlEntityCollision";
@@ -797,6 +743,32 @@
             this.pnlEntityCollision.TabIndex = 5;
             this.pnlEntityCollision.Tag = "B";
             this.pnlEntityCollision.Visible = false;
+            // 
+            // treeViewCollision
+            // 
+            this.treeViewCollision.AllowMultipleItemChecked = false;
+            this.treeViewCollision.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.treeViewCollision.BackColor = System.Drawing.Color.Gray;
+            this.treeViewCollision.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.treeViewCollision.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
+            this.treeViewCollision.HideSelection = false;
+            this.treeViewCollision.HotTracking = true;
+            this.treeViewCollision.ImageIndex = 0;
+            this.treeViewCollision.Indent = 15;
+            this.treeViewCollision.IsCheckedByMouse = false;
+            this.treeViewCollision.ItemHeight = 25;
+            this.treeViewCollision.ItemTypeCheckBoxed = Edit2D.UC.TreeViewLocalItemType.Entity;
+            this.treeViewCollision.ItemTypeShowed = Edit2D.UC.TreeViewLocalItemType.Entity;
+            this.treeViewCollision.Location = new System.Drawing.Point(6, 61);
+            this.treeViewCollision.Name = "treeViewCollision";
+            this.treeViewCollision.OrderType = Edit2D.UC.TreeViewLocalOrderType.OrderByEntity;
+            this.treeViewCollision.Repository = null;
+            this.treeViewCollision.SelectedImageIndex = 0;
+            this.treeViewCollision.Size = new System.Drawing.Size(196, 237);
+            this.treeViewCollision.TabIndex = 24;
+            this.treeViewCollision.Tag = "BG2";
+            this.treeViewCollision.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewCollision_AfterCheck);
             // 
             // panel9
             // 
@@ -835,11 +807,12 @@
             // 
             // pnlValueOverflow
             // 
+            this.pnlValueOverflow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
             this.pnlValueOverflow.BackColor = System.Drawing.Color.DarkGray;
+            this.pnlValueOverflow.Controls.Add(this.treeViewValueChanged);
             this.pnlValueOverflow.Controls.Add(this.panel11);
             this.pnlValueOverflow.Controls.Add(this.pnlValueProp);
-            this.pnlValueOverflow.Controls.Add(this.treeViewCustomProperties);
-            this.pnlValueOverflow.Controls.Add(this.treeViewProperties);
             this.pnlValueOverflow.Location = new System.Drawing.Point(358, 0);
             this.pnlValueOverflow.Margin = new System.Windows.Forms.Padding(0);
             this.pnlValueOverflow.Name = "pnlValueOverflow";
@@ -847,6 +820,30 @@
             this.pnlValueOverflow.TabIndex = 6;
             this.pnlValueOverflow.Tag = "B";
             this.pnlValueOverflow.Visible = false;
+            // 
+            // treeViewValueChanged
+            // 
+            this.treeViewValueChanged.AllowMultipleItemChecked = false;
+            this.treeViewValueChanged.BackColor = System.Drawing.Color.Gray;
+            this.treeViewValueChanged.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.treeViewValueChanged.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
+            this.treeViewValueChanged.HideSelection = false;
+            this.treeViewValueChanged.HotTracking = true;
+            this.treeViewValueChanged.ImageIndex = 0;
+            this.treeViewValueChanged.Indent = 15;
+            this.treeViewValueChanged.IsCheckedByMouse = false;
+            this.treeViewValueChanged.ItemHeight = 25;
+            this.treeViewValueChanged.ItemTypeCheckBoxed = Edit2D.UC.TreeViewLocalItemType.None;
+            this.treeViewValueChanged.ItemTypeShowed = Edit2D.UC.TreeViewLocalItemType.None;
+            this.treeViewValueChanged.Location = new System.Drawing.Point(7, 53);
+            this.treeViewValueChanged.Name = "treeViewValueChanged";
+            this.treeViewValueChanged.OrderType = Edit2D.UC.TreeViewLocalOrderType.OrderByEntity;
+            this.treeViewValueChanged.Repository = null;
+            this.treeViewValueChanged.SelectedImageIndex = 0;
+            this.treeViewValueChanged.Size = new System.Drawing.Size(195, 166);
+            this.treeViewValueChanged.TabIndex = 27;
+            this.treeViewValueChanged.Tag = "BG2";
+            this.treeViewValueChanged.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewValueChanged_AfterCheck);
             // 
             // panel11
             // 
@@ -898,7 +895,6 @@
             this.pnlTime.Size = new System.Drawing.Size(208, 305);
             this.pnlTime.TabIndex = 7;
             this.pnlTime.Tag = "B";
-            this.pnlTime.Visible = false;
             // 
             // panel13
             // 
@@ -930,7 +926,7 @@
             this.label11.Location = new System.Drawing.Point(6, 16);
             this.label11.Margin = new System.Windows.Forms.Padding(6);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(61, 19);
+            this.label11.Size = new System.Drawing.Size(60, 19);
             this.label11.TabIndex = 0;
             this.label11.Tag = "F2";
             this.label11.Text = "Temps";
@@ -940,10 +936,9 @@
             this.pnlScript.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.pnlScript.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pnlScript.Controls.Add(this.treeViewLocal1);
+            this.pnlScript.Controls.Add(this.treeViewScript);
             this.pnlScript.Controls.Add(this.panel2);
             this.pnlScript.Controls.Add(this.panel15);
-            this.pnlScript.Controls.Add(this.treeviewEntiteScript);
             this.pnlScript.Location = new System.Drawing.Point(566, 0);
             this.pnlScript.Margin = new System.Windows.Forms.Padding(0);
             this.pnlScript.Name = "pnlScript";
@@ -951,6 +946,31 @@
             this.pnlScript.TabIndex = 8;
             this.pnlScript.Tag = "BG1";
             this.pnlScript.Visible = false;
+            // 
+            // treeViewScript
+            // 
+            this.treeViewScript.AllowMultipleItemChecked = true;
+            this.treeViewScript.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.treeViewScript.BackColor = System.Drawing.Color.Gray;
+            this.treeViewScript.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.treeViewScript.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
+            this.treeViewScript.HideSelection = false;
+            this.treeViewScript.HotTracking = true;
+            this.treeViewScript.ImageIndex = 0;
+            this.treeViewScript.Indent = 15;
+            this.treeViewScript.IsCheckedByMouse = false;
+            this.treeViewScript.ItemHeight = 25;
+            this.treeViewScript.ItemTypeCheckBoxed = Edit2D.UC.TreeViewLocalItemType.None;
+            this.treeViewScript.ItemTypeShowed = Edit2D.UC.TreeViewLocalItemType.None;
+            this.treeViewScript.Location = new System.Drawing.Point(3, 53);
+            this.treeViewScript.Name = "treeViewScript";
+            this.treeViewScript.OrderType = Edit2D.UC.TreeViewLocalOrderType.OrderByEntity;
+            this.treeViewScript.Repository = null;
+            this.treeViewScript.SelectedImageIndex = 0;
+            this.treeViewScript.Size = new System.Drawing.Size(227, 252);
+            this.treeViewScript.TabIndex = 9;
+            this.treeViewScript.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewLocal_AfterCheck);
             // 
             // panel2
             // 
@@ -988,26 +1008,6 @@
             this.label12.Tag = "F2";
             this.label12.Text = "Script";
             // 
-            // treeViewLocal1
-            // 
-            this.treeViewLocal1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.treeViewLocal1.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
-            this.treeViewLocal1.FullRowSelect = true;
-            this.treeViewLocal1.HideSelection = false;
-            this.treeViewLocal1.HotTracking = true;
-            this.treeViewLocal1.ImageIndex = 0;
-            this.treeViewLocal1.Indent = 19;
-            this.treeViewLocal1.ItemHeight = 25;
-            this.treeViewLocal1.ItemTypeCheckBoxed = Edit2D.UC.TreeViewLocalItemType.Script;
-            this.treeViewLocal1.ItemTypeShowed = Edit2D.UC.TreeViewLocalItemType.Script;
-            this.treeViewLocal1.Location = new System.Drawing.Point(3, 53);
-            this.treeViewLocal1.Name = "treeViewLocal1";
-            this.treeViewLocal1.OrderType = Edit2D.UC.TreeViewLocalOrderType.OrderByEntity;
-            this.treeViewLocal1.Repository = null;
-            this.treeViewLocal1.SelectedImageIndex = 0;
-            this.treeViewLocal1.Size = new System.Drawing.Size(227, 248);
-            this.treeViewLocal1.TabIndex = 9;
-            // 
             // TriggerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1015,13 +1015,14 @@
             this.Controls.Add(this.pnlScript);
             this.Controls.Add(this.pnlTrigger);
             this.Controls.Add(this.pnlTypeTrigger);
+            this.Controls.Add(this.pnlTime);
             this.Controls.Add(this.pnlEntityCollision);
             this.Controls.Add(this.pnlMouse);
             this.Controls.Add(this.pnlValueOverflow);
-            this.Controls.Add(this.pnlTime);
             this.Name = "TriggerControl";
             this.Size = new System.Drawing.Size(805, 304);
             this.Tag = "BG1";
+            this.Load += new System.EventHandler(this.TriggerControl_Load);
             this.pnlValueProp.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numTimeLoop)).EndInit();
             this.pnlTrigger.ResumeLayout(false);
@@ -1054,8 +1055,6 @@
         #endregion
 
         private System.Windows.Forms.ListBox listboxTrigger;
-        private System.Windows.Forms.TreeView treeviewEntiteScript;
-        private System.Windows.Forms.TreeView treeviewEntiteTargetCollision;
         private System.Windows.Forms.Panel pnlValueProp;
         private System.Windows.Forms.ComboBox cmbProp3;
         private System.Windows.Forms.Label lblProp3;
@@ -1063,8 +1062,6 @@
         private System.Windows.Forms.Label lblProp2;
         private System.Windows.Forms.ComboBox cmbProp1;
         private System.Windows.Forms.Label lblProp1;
-        private System.Windows.Forms.TreeView treeViewProperties;
-        private System.Windows.Forms.TreeView treeViewCustomProperties;
         private System.Windows.Forms.NumericUpDown numTimeLoop;
         private System.Windows.Forms.RadioButton optTimeLoopParam;
         private System.Windows.Forms.RadioButton optTimeLoopAlways;
@@ -1115,6 +1112,8 @@
         private System.Windows.Forms.RadioButton optMouseEnter;
         private System.Windows.Forms.RadioButton optMouseLeftClick;
         private System.Windows.Forms.RadioButton optMouseRightClick;
-        private Edit2D.UC.TreeViewLocal treeViewLocal1;
+        private Edit2D.UC.TreeViewLocal treeViewScript;
+        private Edit2D.UC.TreeViewLocal treeViewCollision;
+        private Edit2D.UC.TreeViewLocal treeViewValueChanged;
     }
 }

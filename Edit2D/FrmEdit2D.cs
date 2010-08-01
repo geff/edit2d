@@ -20,6 +20,7 @@ using System.Drawing.Imaging;
 using FarseerGames.FarseerPhysics.Collisions;
 using Edit2DEngine.Tools;
 using Microsoft.Xna.Framework.Input;
+using Edit2D.UC;
 
 namespace Edit2D
 {
@@ -88,7 +89,7 @@ namespace Edit2D
             repository.World.GradientColor1 = Microsoft.Xna.Framework.Graphics.Color.White;
             repository.World.GradientColor2 = Microsoft.Xna.Framework.Graphics.Color.White;
 
-            pnlMain.Panel2Collapsed = true;
+            //pnlMain.Panel2Collapsed = true;
 
             //--- Mode simplifié
             if (repository.IsSimpleMode)
@@ -116,22 +117,44 @@ namespace Edit2D
             }
             //---
 
-            AddEntity();
-            repository.CurrentEntite = repository.listEntite[0];
+
 
             InitListViewImage();
-            RefreshTreeView();
 
-            triggerControl.repository = repository;
-            scriptControl.repository = repository;
-            particleControl.repository = repository;
+            triggerControl.Repository = repository;
+            scriptControl.Repository = repository;
+            particleControl.Repository = repository;
 
+            //--- Initialise l'arborescence de sélection
+            treeView.ItemTypeShowed =
+                TreeViewLocalItemType.Entity |
+                TreeViewLocalItemType.CustomProperties |
+                TreeViewLocalItemType.Script |
+                TreeViewLocalItemType.Trigger |
+                TreeViewLocalItemType.ParticleSystem |
+                TreeViewLocalItemType.SubEntity;
+            treeView.ItemTypeCheckBoxed =
+                TreeViewLocalItemType.Entity |
+                TreeViewLocalItemType.CustomProperties |
+                TreeViewLocalItemType.Script |
+                TreeViewLocalItemType.Trigger |
+                TreeViewLocalItemType.ParticleSystem |
+                TreeViewLocalItemType.SubEntity;
+            treeView.AllowMultipleItemChecked = false;
+            treeView.Repository = repository;
+            //---
+            
             particleControl.InitParticleControl();
 
             btnScriptModeBar.PerformClick();
 
-            WinformVisualStyle.ApplyStyle(this, "LightGray");
-            //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
+            //WinformVisualStyle.ApplyStyle(this, "LightGray");
+            WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
+
+            AddEntity();
+            repository.CurrentEntite = repository.listEntite[0];
+
+            RefreshTreeView();
 
             //InitInputHandler();
         }
@@ -239,7 +262,7 @@ namespace Edit2D
 
             foreach (String textureName in TextureManager.ListTexture2D.Keys)
             {
-                if (textureName == "BigRec")
+                //if (textureName == "BigRec")
                 {
                     Texture2D texture = TextureManager.ListTexture2D[textureName];
 
@@ -506,25 +529,16 @@ namespace Edit2D
 
                 if (repository.CurrentEntite is Particle)
                 {
-                    ParticleSystem pSystem = ((Particle)repository.CurrentEntite).ParticleSystem;
-                    string pSystemKey = String.Format("{0}-{1}", pSystem.Entite.Name, pSystem.ParticleSystemName);
-
-                    nodeKey = String.Format("{0}-{1}", pSystemKey, repository.CurrentEntite.Name);
+                    treeView.CheckNode<Particle>((Particle)repository.CurrentEntite);
                 }
                 else
                 {
-                    nodeKey = repository.CurrentEntite.Name;
+                    treeView.CheckNode<Entite>(repository.CurrentEntite);
                 }
-
-                TreeNode node = treeView.Nodes[0].Nodes.Find(nodeKey, true)[0];
-                treeView.SelectedNode = node;
             }
             else if (repository.CurrentParticleSystem != null)
             {
-                String nodeKey = String.Format("{0}-{1}", repository.CurrentParticleSystem.Entite.Name, repository.CurrentParticleSystem.ParticleSystemName);
-
-                TreeNode node = treeView.Nodes[0].Nodes.Find(nodeKey, true)[0];
-                treeView.SelectedNode = node;
+                treeView.CheckNode<ParticleSystem>(repository.CurrentParticleSystem);
             }
             else
             {
@@ -534,66 +548,68 @@ namespace Edit2D
 
         private void RefreshTreeView()
         {
-            treeView.Nodes.Clear();
-            TreeNode nodeRoot = treeView.Nodes.Add("World");
-            nodeRoot.Tag = repository.World;
+            treeView.RefreshView();
 
-            for (int i = 0; i < repository.listEntite.Count; i++)
-            {
-                Entite entite = repository.listEntite[i];
+            //treeView.Nodes.Clear();
+            //TreeNode nodeRoot = treeView.Nodes.Add("World");
+            //nodeRoot.Tag = repository.World;
 
-                TreeNode nodeEntite = nodeRoot.Nodes.Add(entite.Name, entite.Name);
-                nodeEntite.Tag = entite;
+            //for (int i = 0; i < repository.listEntite.Count; i++)
+            //{
+            //    Entite entite = repository.listEntite[i];
 
-                //--- Spring
-                if (entite.ListFixedLinearSpring.Count > 0 || entite.ListLinearSpring.Count > 0)
-                {
-                    TreeNode nodeSpring = nodeEntite.Nodes.Add("Spring");
+            //    TreeNode nodeEntite = nodeRoot.Nodes.Add(entite.Name, entite.Name);
+            //    nodeEntite.Tag = entite;
 
-                    //--- FixedLinearSpring
-                    if (entite.ListFixedLinearSpring.Count > 0)
-                    {
-                        for (int j = 0; j < entite.ListFixedLinearSpring.Count; j++)
-                        {
-                            TreeNode node = nodeSpring.Nodes.Add("FixedLinearSpring " + j);
-                            node.Tag = entite.ListFixedLinearSpring[j];
-                        }
-                    }
-                    //---
+            //    //--- Spring
+            //    if (entite.ListFixedLinearSpring.Count > 0 || entite.ListLinearSpring.Count > 0)
+            //    {
+            //        TreeNode nodeSpring = nodeEntite.Nodes.Add("Spring");
 
-                    //--- LinearSpring
-                    if (entite.ListLinearSpring.Count > 0)
-                    {
-                        for (int j = 0; j < entite.ListLinearSpring.Count; j++)
-                        {
-                            TreeNode node = nodeSpring.Nodes.Add(String.Format("LinearSpring {0} ({1})", j, ""));
-                            node.Tag = entite.ListLinearSpring[j];
-                        }
-                    }
-                    //---
-                }
-                //---
+            //        //--- FixedLinearSpring
+            //        if (entite.ListFixedLinearSpring.Count > 0)
+            //        {
+            //            for (int j = 0; j < entite.ListFixedLinearSpring.Count; j++)
+            //            {
+            //                TreeNode node = nodeSpring.Nodes.Add("FixedLinearSpring " + j);
+            //                node.Tag = entite.ListFixedLinearSpring[j];
+            //            }
+            //        }
+            //        //---
 
-                //--- ParticleSystem
-                if (entite.ListParticleSystem.Count > 0)
-                {
-                    for (int j = 0; j < entite.ListParticleSystem.Count; j++)
-                    {
-                        string particleSystemKey = String.Format("{0}-{1}", entite.Name, entite.ListParticleSystem[j].ParticleSystemName);
-                        TreeNode nodeParticleSystem = nodeEntite.Nodes.Add(particleSystemKey, entite.ListParticleSystem[j].ParticleSystemName);
-                        nodeParticleSystem.Tag = entite.ListParticleSystem[j];
+            //        //--- LinearSpring
+            //        if (entite.ListLinearSpring.Count > 0)
+            //        {
+            //            for (int j = 0; j < entite.ListLinearSpring.Count; j++)
+            //            {
+            //                TreeNode node = nodeSpring.Nodes.Add(String.Format("LinearSpring {0} ({1})", j, ""));
+            //                node.Tag = entite.ListLinearSpring[j];
+            //            }
+            //        }
+            //        //---
+            //    }
+            //    //---
 
-                        for (int k = 0; k < entite.ListParticleSystem[j].ListParticleTemplate.Count; k++)
-                        {
-                            TreeNode node = nodeParticleSystem.Nodes.Add(String.Format("{0}-{1}", particleSystemKey, entite.ListParticleSystem[j].ListParticleTemplate[k].Name), entite.ListParticleSystem[j].ListParticleTemplate[k].Name);
-                            node.Tag = entite.ListParticleSystem[j].ListParticleTemplate[k];
-                        }
-                    }
-                }
-                //---
-            }
+            //    //--- ParticleSystem
+            //    if (entite.ListParticleSystem.Count > 0)
+            //    {
+            //        for (int j = 0; j < entite.ListParticleSystem.Count; j++)
+            //        {
+            //            string particleSystemKey = String.Format("{0}-{1}", entite.Name, entite.ListParticleSystem[j].ParticleSystemName);
+            //            TreeNode nodeParticleSystem = nodeEntite.Nodes.Add(particleSystemKey, entite.ListParticleSystem[j].ParticleSystemName);
+            //            nodeParticleSystem.Tag = entite.ListParticleSystem[j];
 
-            nodeRoot.ExpandAll();
+            //            for (int k = 0; k < entite.ListParticleSystem[j].ListParticleTemplate.Count; k++)
+            //            {
+            //                TreeNode node = nodeParticleSystem.Nodes.Add(String.Format("{0}-{1}", particleSystemKey, entite.ListParticleSystem[j].ListParticleTemplate[k].Name), entite.ListParticleSystem[j].ListParticleTemplate[k].Name);
+            //                node.Tag = entite.ListParticleSystem[j].ListParticleTemplate[k];
+            //            }
+            //        }
+            //    }
+            //    //---
+            //}
+
+            //nodeRoot.ExpandAll();
         }
 
         private void New()
@@ -628,9 +644,9 @@ namespace Edit2D
             render.UpdatePhysic();
             RefreshTreeView();
 
-            triggerControl.repository = repository;
-            scriptControl.repository = repository;
-            particleControl.repository = repository;
+            triggerControl.Repository = repository;
+            scriptControl.Repository = repository;
+            particleControl.Repository = repository;
         }
 
         private void Open()
@@ -647,8 +663,8 @@ namespace Edit2D
 
                 FileSystem.Open(dlg.FileName, this.repository);
 
-                triggerControl.repository = repository;
-                render.repository = repository;
+                triggerControl.Repository = repository;
+                render.Repository = repository;
                 repository.ShowDebugMode = showDebugMode;
             }
 
