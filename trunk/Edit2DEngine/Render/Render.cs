@@ -14,7 +14,7 @@ namespace Edit2DEngine.Render
     {
         public SpriteBatch SpriteBatch { get; set; }
         public GraphicsDevice GraphicsDevice { get; set; }
-        public Repository repository { get; set; }
+        public Repository Repository { get; set; }
 
         private Effect effect;
 
@@ -22,7 +22,7 @@ namespace Edit2DEngine.Render
         {
             this.SpriteBatch = spriteBatch;
             this.GraphicsDevice = graphicsDevice;
-            this.repository = repository;
+            this.Repository = repository;
 
             if(contentManager != null)
                 effect = contentManager.Load<Effect>(@"Content\Shader\SpriteBatch");
@@ -33,7 +33,7 @@ namespace Edit2DEngine.Render
         {
             UpdateEntityActionPlayer();
 
-            if (!repository.Pause)
+            if (!Repository.Pause)
             {
                 UpdateEntityTrigger();
                 UpdateEntityParticleSystem();
@@ -51,9 +51,9 @@ namespace Edit2DEngine.Render
 
         private void UpdateEntityActionPlayer()
         {
-            for (int i = 0; i < repository.listEntite.Count; i++)
+            for (int i = 0; i < Repository.listEntite.Count; i++)
             {
-                Entite entite = repository.listEntite[i];
+                Entite entite = Repository.listEntite[i];
 
                 UpdateActionHandlerPlayer(entite);
 
@@ -82,8 +82,8 @@ namespace Edit2DEngine.Render
                     {
                         ActionCurve actionCurve = (ActionCurve)action;
 
-                        if ((repository.Pause && (actionCurve.playAnimationState == PlayAnimationState.PlayInEditor) ||
-                           (!repository.Pause && (actionCurve.playAnimationState == PlayAnimationState.Play))))
+                        if ((Repository.Pause && (actionCurve.playAnimationState == PlayAnimationState.PlayInEditor) ||
+                           (!Repository.Pause && (actionCurve.playAnimationState == PlayAnimationState.Play))))
                         {
                             //--- Lit la courbe d'animation
                             ((ActionCurve)action).UpdateAnimation();
@@ -94,9 +94,9 @@ namespace Edit2DEngine.Render
                             //---
                         }
                     }
-                    else if (action is ActionEvent && !repository.Pause && ((ActionEvent)action).Playing)
+                    else if (action is ActionEvent && !Repository.Pause && ((ActionEvent)action).Playing)
                     {
-                        ((ActionEvent)action).UpdateValue(repository);
+                        ((ActionEvent)action).UpdateValue(Repository);
                     }
                 }
             }
@@ -105,15 +105,15 @@ namespace Edit2DEngine.Render
 
         private void UpdateEntityTrigger()
         {
-            for (int i = 0; i < repository.listEntite.Count; i++)
+            for (int i = 0; i < Repository.listEntite.Count; i++)
             {
-                Entite entite = repository.listEntite[i];
+                Entite entite = Repository.listEntite[i];
 
                 //--- Update Trigger
                 for (int j = 0; j < entite.ListTrigger.Count; j++)
                 {
                     //TODO : appeler LaunchTrigger uniquement à la fin de la boucle
-                    entite.ListTrigger[j].CheckTrigger(repository);
+                    entite.ListTrigger[j].CheckTrigger(Repository);
                 }
                 //---
 
@@ -124,7 +124,7 @@ namespace Edit2DEngine.Render
                     {
                         for (int l = 0; l < entite.ListParticleSystem[j].ListParticle[k].ListTrigger.Count; l++)
                         {
-                            entite.ListParticleSystem[j].ListParticle[k].ListTrigger[l].CheckTrigger(repository);
+                            entite.ListParticleSystem[j].ListParticle[k].ListTrigger[l].CheckTrigger(Repository);
                         }
                     }
                 }
@@ -132,18 +132,18 @@ namespace Edit2DEngine.Render
             }
 
             //--- Update Trigger
-            for (int j = 0; j < repository.World.ListTrigger.Count; j++)
+            for (int j = 0; j < Repository.World.ListTrigger.Count; j++)
             {
-                repository.World.ListTrigger[j].CheckTrigger(repository);
+                Repository.World.ListTrigger[j].CheckTrigger(Repository);
             }
             //---
         }
 
         private void UpdateEntityParticleSystem()
         {
-            for (int i = 0; i < repository.listEntite.Count; i++)
+            for (int i = 0; i < Repository.listEntite.Count; i++)
             {
-                Entite entite = repository.listEntite[i];
+                Entite entite = Repository.listEntite[i];
 
                 //--- Update Trigger
                 for (int j = 0; j < entite.ListParticleSystem.Count; j++)
@@ -158,9 +158,9 @@ namespace Edit2DEngine.Render
 
         public void Draw()
         {
-            for (int i = 0; i < repository.listEntite.Count; i++)
+            for (int i = 0; i < Repository.listEntite.Count; i++)
             {
-                Entite entite = repository.listEntite[i];
+                Entite entite = Repository.listEntite[i];
 
                 DrawEntite(entite);
             }
@@ -303,7 +303,7 @@ namespace Edit2DEngine.Render
             
             Rectangle recDraw = new Rectangle(entite.Rectangle.X, entite.Rectangle.Y, entite.Rectangle.Width, entite.Rectangle.Height);
             float PerspectiveFactor = 20f;
-            Vector2 drawPosition = (entite.Position - repository.Camera.Position) / PerspectiveFactor * (float)entite.Layer;
+            Vector2 drawPosition = (entite.Position - Repository.Camera.Position) / PerspectiveFactor * (float)entite.Layer;
             recDraw.X += (int)drawPosition.X;
 
             this.SpriteBatch.Draw(texture, recDraw, null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 1f);

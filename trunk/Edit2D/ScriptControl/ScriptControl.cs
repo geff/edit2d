@@ -12,10 +12,11 @@ using Xna.Tools;
 using System.Reflection;
 using Edit2DEngine.Particles;
 using Edit2DEngine;
+using Edit2D.UC;
 
 namespace Edit2D.ScriptControl
 {
-    public partial class ScriptControl : UserControl
+    public partial class ScriptControl : UserControlLocal
     {
         #region Constantes
         int ID_ACTION_CURVE = 0;
@@ -24,7 +25,7 @@ namespace Edit2D.ScriptControl
         #endregion
 
         #region Attributs
-        public Repository repository { get; set; }
+        public Repository Repository { get; set; }
         int currentScript = -1;
         int currentAction = -1;
         int currentSubAction = -1;
@@ -56,7 +57,10 @@ namespace Edit2D.ScriptControl
         {
             if (e.Button == MouseButtons.Middle)
             {
-                txtScriptName.Text = String.Empty;
+                
+                txtScriptName.ResetText();
+                txtScriptName.Focus();
+                txtScriptName.Update();
             }
         }
 
@@ -64,6 +68,7 @@ namespace Edit2D.ScriptControl
         {
             AddScriptToCurrentEntity();
 
+            
 
             //if (repository.CurrentEntite != null)
             //{
@@ -94,6 +99,15 @@ namespace Edit2D.ScriptControl
             //}
         }
 
+        private void btnAddScript_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                txtScriptName.Text = String.Empty;
+                AddScriptToCurrentEntity();
+            }
+        }
+
         private void btnDelScript_Click(object sender, EventArgs e)
         {
             IActionHandler actionHandler = GetCurrentActionHandler();
@@ -101,18 +115,27 @@ namespace Edit2D.ScriptControl
             if (actionHandler != null && currentScript != -1)
             {
                 actionHandler.ListScript.RemoveAt(listboxScript.SelectedIndex);
-                currentScript = -1;
+                //currentScript = -1;
+                
 
                 RefreshScriptView();
-                RefreshActionView();
+
+                if (actionHandler.ListScript.Count > 0)
+                    listboxScript.SelectedIndex = 0;
+                else
+                {
+                    currentScript = -1;
+                    RefreshActionView();
+                    RefreshGlobalTreeView();
+                }
             }
         }
 
         private void btnChangeScriptName_Click(object sender, EventArgs e)
         {
-            if (repository.CurrentScript != null &&
+            if (Repository.CurrentScript != null &&
                 !String.IsNullOrEmpty(txtScriptName.Text) &&
-                txtScriptName.Text != repository.CurrentScript.ScriptName
+                txtScriptName.Text != Repository.CurrentScript.ScriptName
                 )
             {
                 IActionHandler actionHandler = GetCurrentActionHandler();
@@ -123,8 +146,13 @@ namespace Edit2D.ScriptControl
                 }
                 else
                 {
-                    repository.CurrentScript.ScriptName = txtScriptName.Text;
+                    int previousSelectedIndex = listboxScript.SelectedIndex;
+                    Repository.CurrentScript.ScriptName = txtScriptName.Text;
+
                     RefreshScriptView();
+                    RefreshGlobalTreeView();
+
+                    listboxScript.SelectedIndex = previousSelectedIndex;
                 }
             }
         }
@@ -154,13 +182,14 @@ namespace Edit2D.ScriptControl
         private void listboxScript_SelectedIndexChanged(object sender, EventArgs e)
         {
             currentScript = listboxScript.SelectedIndex;
-            repository.CurrentScript = GetSelectedScript();
+            Repository.CurrentScript = GetSelectedScript();
 
             RefreshActionView();
+            CheckNodeGlobalTreeView<Script>(Repository.CurrentScript);
 
-            if (repository.CurrentScript != null)
+            if (Repository.CurrentScript != null)
             {
-                txtScriptName.Text = repository.CurrentScript.ScriptName;
+                txtScriptName.Text = Repository.CurrentScript.ScriptName;
 
                 if (treeViewAction.Nodes.Count > 0)
                 {
@@ -171,7 +200,7 @@ namespace Edit2D.ScriptControl
 
         private void btnAddAction_Click(object sender, EventArgs e)
         {
-            if ((repository.CurrentEntite != null || repository.CurrentObject != null) &&
+            if ((Repository.CurrentEntite != null || Repository.CurrentObject != null) &&
                 currentScript != -1 &&
                 cmbActionType.SelectedIndex != -1 &&
                 (cmbActionProperties.SelectedIndex != -1 || !cmbActionProperties.Visible))
@@ -180,15 +209,15 @@ namespace Edit2D.ScriptControl
                 Type typeEntite = null;
                 Script script = null;
 
-                if (repository.CurrentEntite != null)
+                if (Repository.CurrentEntite != null)
                 {
                     typeEntite = typeof(Entite);
-                    script = repository.CurrentEntite.ListScript[currentScript];
+                    script = Repository.CurrentEntite.ListScript[currentScript];
                 }
-                else if (repository.CurrentParticleSystem != null)
+                else if (Repository.CurrentParticleSystem != null)
                 {
                     typeEntite = typeof(ParticleSystem);
-                    script = repository.CurrentParticleSystem.ListScript[currentScript];
+                    script = Repository.CurrentParticleSystem.ListScript[currentScript];
                 }
                 //---
 
@@ -392,7 +421,7 @@ namespace Edit2D.ScriptControl
         private void HideActionView()
         {
             pnlAction.Enabled = false;
-            lblActionName.Enabled = false;
+            lblActionType.Enabled = false;
             lblActionProperty.Enabled = false;
             cmbActionProperties.Enabled = false;
             cmbActionType.Enabled = false;
@@ -402,7 +431,7 @@ namespace Edit2D.ScriptControl
         private void ShowActionView()
         {
             pnlAction.Enabled = true;
-            lblActionName.Enabled = true;
+            lblActionType.Enabled = true;
             lblActionProperty.Enabled = true;
             cmbActionProperties.Enabled = true;
             cmbActionType.Enabled = true;
@@ -644,7 +673,7 @@ namespace Edit2D.ScriptControl
             for (int i = 0; i < propNames.Length; i++)
             {
                 ActionEventLineControl actionEventLine = new ActionEventLineControl(
-                    actionEvent.PropertyType, repository, String.Format(nameTemplate, propNames[i]), actionEvent, i,
+                    actionEvent.PropertyType, Repository, String.Format(nameTemplate, propNames[i]), actionEvent, i,
                     fixedValue, fixedMinValue, fixedMaxValue, rndMinValue, rndMinMinValue, rndMinMaxValue, rndMaxValue, rndMaxMinValue, rndMaxMaxValue);
 
                 pnlActionEventLines.Controls.Add(actionEventLine);
@@ -728,10 +757,10 @@ namespace Edit2D.ScriptControl
         {
             IActionHandler actionHandler = null;
 
-            if (repository.CurrentEntite != null)
-                actionHandler = repository.CurrentEntite;
-            else if (repository.CurrentParticleSystem != null)
-                actionHandler = repository.CurrentParticleSystem;
+            if (Repository.CurrentEntite != null)
+                actionHandler = Repository.CurrentEntite;
+            else if (Repository.CurrentParticleSystem != null)
+                actionHandler = Repository.CurrentParticleSystem;
 
             return actionHandler;
         }
@@ -797,9 +826,9 @@ namespace Edit2D.ScriptControl
 
         private void StopAllScripts()
         {
-            for (int i = 0; i < repository.listEntite.Count; i++)
+            for (int i = 0; i < Repository.listEntite.Count; i++)
             {
-                Entite entite = repository.listEntite[i];
+                Entite entite = Repository.listEntite[i];
 
                 StopScript(entite);
 
@@ -837,13 +866,13 @@ namespace Edit2D.ScriptControl
             cmbActionProperties.Items.Clear();
             PropertyInfo[] properties = null;
 
-            if (repository != null && repository.CurrentEntite != null && cmbActionType.SelectedIndex != ID_ACTION_SOUND)
+            if (Repository != null && Repository.CurrentEntite != null && cmbActionType.SelectedIndex != ID_ACTION_SOUND)
             {
-                properties = repository.CurrentEntite.GetType().GetProperties();
+                properties = Repository.CurrentEntite.GetType().GetProperties();
             }
-            else if (repository != null && repository.CurrentParticleSystem != null)
+            else if (Repository != null && Repository.CurrentParticleSystem != null)
             {
-                properties = repository.CurrentObject.GetType().GetProperties();
+                properties = Repository.CurrentObject.GetType().GetProperties();
             }
 
             if (properties != null)
@@ -885,16 +914,20 @@ namespace Edit2D.ScriptControl
                     return null;
                 }
 
+                //--- Création du nouveau script
                 script = new Script(scriptName, actionHandler);
 
                 actionHandler.ListScript.Add(script);
+                //---
 
+                //--- Rafraichissement de la liste des scripts et de l'arborescence
                 RefreshScriptView();
+                RefreshGlobalTreeView();
+                //---
 
-                currentScript = actionHandler.ListScript.Count - 1;
+                //--- Sélectionne le nouveau script
                 listboxScript.SelectedIndex = listboxScript.Items.Count - 1;
-
-                RefreshActionView();
+                //---
             }
 
             return script;
@@ -904,9 +937,9 @@ namespace Edit2D.ScriptControl
         {
             Script script = null;
 
-            if (repository.CurrentEntite != null && currentScript != -1)
+            if (Repository.CurrentEntite != null && currentScript != -1)
             {
-                script = repository.CurrentEntite.ListScript[currentScript];
+                script = Repository.CurrentEntite.ListScript[currentScript];
             }
 
             return script;

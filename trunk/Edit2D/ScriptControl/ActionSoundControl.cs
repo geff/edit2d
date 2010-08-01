@@ -8,10 +8,11 @@ using System.Text;
 using System.Windows.Forms;
 using Edit2DEngine.Action;
 using System.IO;
+using Edit2D.UC;
 
 namespace Edit2D.ScriptControl
 {
-    public partial class ActionSoundControl : UserControl
+    public partial class ActionSoundControl : UserControlLocal
     {
         public ActionSound ActionSound { get; set; }
 

@@ -37,14 +37,18 @@
             // 
             this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
             this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList.Images.SetKeyName(0, "icon_Empty.png");
-            this.imageList.Images.SetKeyName(1, "icon_Entity.png");
-            this.imageList.Images.SetKeyName(2, "icon_ParticleSystem.png");
-            this.imageList.Images.SetKeyName(3, "icon_Script.gif");
-            this.imageList.Images.SetKeyName(4, "icon_Trigger.png");
-            this.imageList.Images.SetKeyName(5, "icon_World.png");
-            this.imageList.Images.SetKeyName(6, "icon_Checked.png");
-            this.imageList.Images.SetKeyName(7, "icon_Unchecked.png");
+            this.imageList.Images.SetKeyName(0, "icon_Empty");
+            this.imageList.Images.SetKeyName(1, "icon_Entity");
+            this.imageList.Images.SetKeyName(2, "icon_ParticleSystem");
+            this.imageList.Images.SetKeyName(3, "icon_Script");
+            this.imageList.Images.SetKeyName(4, "icon_Trigger");
+            this.imageList.Images.SetKeyName(5, "icon_Checked");
+            this.imageList.Images.SetKeyName(6, "icon_Unchecked");
+            this.imageList.Images.SetKeyName(7, "icon_Collapsed");
+            this.imageList.Images.SetKeyName(8, "icon_Expanded");
+            this.imageList.Images.SetKeyName(9, "icon_Mouse");
+            this.imageList.Images.SetKeyName(10, "icon_Properties");
+            this.imageList.Images.SetKeyName(11, "icon_World");
             // 
             // TreeViewLocal
             // 
@@ -58,7 +62,8 @@
             this.ItemHeight = 25;
             this.LineColor = System.Drawing.Color.Black;
             this.SelectedImageIndex = 0;
-            this.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeViewLocal_AfterSelect);
+            this.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeViewLocal_NodeMouseDoubleClick);
+            this.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeViewLocal_NodeMouseClick);
             this.ResumeLayout(false);
 
         }

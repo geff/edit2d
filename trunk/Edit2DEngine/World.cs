@@ -19,5 +19,13 @@ namespace Edit2DEngine
             this.GradientColor1 = Color.MidnightBlue;
             this.GradientColor2 = Color.MistyRose;
         }
+
+        public String TreeViewPath
+        {
+            get
+            {
+                return "Monde";
+            }
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace Edit2D.ParticleControl
 {
     public partial class ParticleControl : UserControl
     {
-        public Repository repository { get; set; }
+        public Repository Repository { get; set; }
 
         public ParticleControl()
         {
@@ -24,11 +24,11 @@ namespace Edit2D.ParticleControl
         #region Events
         private void btnAddParticleSystem_Click(object sender, EventArgs e)
         {
-            if (repository.CurrentEntite != null)
+            if (Repository.CurrentEntite != null)
             {
-                ParticleSystem particleSystem = new ParticleSystem(repository.CurrentEntite);
-                particleSystem.ParticleSystemName = String.Format("ParticleSystem{0}", repository.CurrentEntite.ListParticleSystem.Count + 1);
-                repository.CurrentEntite.ListParticleSystem.Add(particleSystem);
+                ParticleSystem particleSystem = new ParticleSystem(Repository.CurrentEntite);
+                particleSystem.ParticleSystemName = String.Format("ParticleSystem{0}", Repository.CurrentEntite.ListParticleSystem.Count + 1);
+                Repository.CurrentEntite.ListParticleSystem.Add(particleSystem);
 
                 RefreshParticleSystemListBox();
                 listBoxParticleSystem.SelectedIndex = listBoxParticleSystem.Items.Count - 1;
@@ -41,7 +41,7 @@ namespace Edit2D.ParticleControl
 
             if (particleSystem != null)
             {
-                repository.CurrentEntite.ListParticleSystem.Remove(particleSystem);
+                Repository.CurrentEntite.ListParticleSystem.Remove(particleSystem);
 
 
                 RefreshParticleSystemListBox();
@@ -192,9 +192,9 @@ namespace Edit2D.ParticleControl
         {
             listBoxParticleSystem.Items.Clear();
 
-            if (repository.CurrentEntite != null)
+            if (Repository.CurrentEntite != null)
             {
-                foreach (ParticleSystem particleSystem in repository.CurrentEntite.ListParticleSystem)
+                foreach (ParticleSystem particleSystem in Repository.CurrentEntite.ListParticleSystem)
                 {
                     listBoxParticleSystem.Items.Add(particleSystem.ParticleSystemName);
                 }
@@ -225,7 +225,7 @@ namespace Edit2D.ParticleControl
 
         public void RefreshParticleControl()
         {
-            if (repository.CurrentEntite == null)
+            if (Repository.CurrentEntite == null)
             {
                 this.Visible = false;
                 return;
@@ -250,9 +250,9 @@ namespace Edit2D.ParticleControl
 
         public ParticleSystem GetCurrentParticleSystem()
         {
-            if (repository.CurrentEntite != null && listBoxParticleSystem.SelectedIndex != -1)
+            if (Repository.CurrentEntite != null && listBoxParticleSystem.SelectedIndex != -1)
             {
-                return repository.CurrentEntite.ListParticleSystem[listBoxParticleSystem.SelectedIndex];
+                return Repository.CurrentEntite.ListParticleSystem[listBoxParticleSystem.SelectedIndex];
             }
 
             return null;

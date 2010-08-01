@@ -40,7 +40,7 @@
             this.btnDelAction = new System.Windows.Forms.Button();
             this.btnActionUp = new System.Windows.Forms.Button();
             this.lblActionProperty = new System.Windows.Forms.Label();
-            this.lblActionName = new System.Windows.Forms.Label();
+            this.lblActionType = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnChangeScriptName = new System.Windows.Forms.Button();
             this.listboxScript = new System.Windows.Forms.ListBox();
@@ -95,7 +95,7 @@
             this.pnlScriptAction.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pnlScriptAction.Controls.Add(this.pnlAction);
             this.pnlScriptAction.Controls.Add(this.lblActionProperty);
-            this.pnlScriptAction.Controls.Add(this.lblActionName);
+            this.pnlScriptAction.Controls.Add(this.lblActionType);
             this.pnlScriptAction.Controls.Add(this.panel1);
             this.pnlScriptAction.Controls.Add(this.lblScriptName);
             this.pnlScriptAction.Controls.Add(this.txtScriptName);
@@ -256,15 +256,15 @@
             this.lblActionProperty.TabIndex = 20;
             this.lblActionProperty.Text = "Propriété";
             // 
-            // lblActionName
+            // lblActionType
             // 
-            this.lblActionName.AutoSize = true;
-            this.lblActionName.ForeColor = System.Drawing.Color.White;
-            this.lblActionName.Location = new System.Drawing.Point(193, 60);
-            this.lblActionName.Name = "lblActionName";
-            this.lblActionName.Size = new System.Drawing.Size(29, 13);
-            this.lblActionName.TabIndex = 19;
-            this.lblActionName.Text = "Nom";
+            this.lblActionType.AutoSize = true;
+            this.lblActionType.ForeColor = System.Drawing.Color.White;
+            this.lblActionType.Location = new System.Drawing.Point(193, 60);
+            this.lblActionType.Name = "lblActionType";
+            this.lblActionType.Size = new System.Drawing.Size(31, 13);
+            this.lblActionType.TabIndex = 19;
+            this.lblActionType.Text = "Type";
             // 
             // panel1
             // 
@@ -334,6 +334,7 @@
             this.btnAddScript.Text = "+";
             this.btnAddScript.UseVisualStyleBackColor = false;
             this.btnAddScript.Click += new System.EventHandler(this.btnAddScript_Click);
+            this.btnAddScript.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnAddScript_MouseDown);
             // 
             // btnDelSrcipt
             // 
@@ -622,7 +623,7 @@
         private System.Windows.Forms.Label lblScript;
         private System.Windows.Forms.Label lblScriptName;
         private System.Windows.Forms.Label lblActionProperty;
-        private System.Windows.Forms.Label lblActionName;
+        private System.Windows.Forms.Label lblActionType;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel pnlAction;
         private System.Windows.Forms.Panel pnlActions;
