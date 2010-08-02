@@ -307,6 +307,22 @@ namespace Edit2DEngine
             }
         }
 
+        public bool SupportTrigerChangedValue
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public bool SupportTrigerCollision
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public Entite(bool linkToPhysiSimulator, bool isCollisionable, string textureName, string name)
         {
             Constructor(linkToPhysiSimulator, isCollisionable, textureName, name);

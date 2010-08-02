@@ -9,6 +9,9 @@ namespace Edit2DEngine.Trigger
     {
         List<TriggerBase> ListTrigger { get; set; }
 
-        String TreeViewPath { get;}
+        String TreeViewPath { get; }
+
+        Boolean SupportTrigerChangedValue { get; }
+        Boolean SupportTrigerCollision { get; }
     }
 }

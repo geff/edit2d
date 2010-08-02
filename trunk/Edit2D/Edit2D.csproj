@@ -89,6 +89,7 @@
     <Compile Include="Pointer.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="ScriptControl\ActionEventLineControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ScriptControl\ActionEventLineControl.Designer.cs">
       <DependentUpon>ActionEventLineControl.cs</DependentUpon>
