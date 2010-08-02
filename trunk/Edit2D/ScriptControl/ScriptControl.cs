@@ -57,7 +57,7 @@ namespace Edit2D.ScriptControl
         {
             if (e.Button == MouseButtons.Middle)
             {
-                
+
                 txtScriptName.ResetText();
                 txtScriptName.Focus();
                 txtScriptName.Update();
@@ -67,36 +67,6 @@ namespace Edit2D.ScriptControl
         private void btnAddScript_Click(object sender, EventArgs e)
         {
             AddScriptToCurrentEntity();
-
-            
-
-            //if (repository.CurrentEntite != null)
-            //{
-            //    Script script = new Script(String.Format("Script{0}", repository.CurrentEntite.ListScript.Count + 1), repository.CurrentEntite);
-            //    repository.CurrentEntite.ListScript.Add(script);
-
-            //    RefreshScriptView();
-
-            //    currentScript = repository.CurrentEntite.ListScript.Count - 1;
-            //    listboxScript.SelectedIndex = listboxScript.Items.Count - 1;
-
-            //    RefreshActionView();
-            //}
-            //else if (repository.CurrentParticleSystem != null)
-            //{
-            //    //TODO : tenter de réunifier le code via l'interface IActionHandler
-            //    IActionHandler actionHandler = (IActionHandler)repository.CurrentParticleSystem;
-
-            //    Script script = new Script(String.Format("Script{0}", actionHandler.ListScript.Count + 1), repository.CurrentParticleSystem);
-            //    repository.CurrentParticleSystem.ListScript.Add(script);
-
-            //    RefreshScriptView();
-
-            //    currentScript = repository.CurrentParticleSystem.ListScript.Count - 1;
-            //    listboxScript.SelectedIndex = listboxScript.Items.Count - 1;
-
-            //    RefreshActionView();
-            //}
         }
 
         private void btnAddScript_MouseDown(object sender, MouseEventArgs e)
@@ -116,17 +86,20 @@ namespace Edit2D.ScriptControl
             {
                 actionHandler.ListScript.RemoveAt(listboxScript.SelectedIndex);
                 //currentScript = -1;
-                
 
                 RefreshScriptView();
 
                 if (actionHandler.ListScript.Count > 0)
+                {
+                    RefreshGlobalTreeView();
                     listboxScript.SelectedIndex = 0;
+                }
                 else
                 {
                     currentScript = -1;
                     RefreshActionView();
-                    RefreshGlobalTreeView();
+
+                    RefreshGlobalTreeView<IActionHandler>(actionHandler);
                 }
             }
         }
@@ -200,52 +173,51 @@ namespace Edit2D.ScriptControl
 
         private void btnAddAction_Click(object sender, EventArgs e)
         {
-            if ((Repository.CurrentEntite != null || Repository.CurrentObject != null) &&
-                currentScript != -1 &&
+            if (Repository.CurrentScript != null &&
                 cmbActionType.SelectedIndex != -1 &&
                 (cmbActionProperties.SelectedIndex != -1 || !cmbActionProperties.Visible))
             {
                 //--- Déterminaison du type de l'entité porteuse de l'action
-                Type typeEntite = null;
-                Script script = null;
+                //Type typeEntite = null;
+                //Script script = null;
 
-                if (Repository.CurrentEntite != null)
-                {
-                    typeEntite = typeof(Entite);
-                    script = Repository.CurrentEntite.ListScript[currentScript];
-                }
-                else if (Repository.CurrentParticleSystem != null)
-                {
-                    typeEntite = typeof(ParticleSystem);
-                    script = Repository.CurrentParticleSystem.ListScript[currentScript];
-                }
+                //if (Repository.CurrentEntite != null)
+                //{
+                //    typeEntite = typeof(Entite);
+                //    script = Repository.CurrentEntite.ListScript[currentScript];
+                //}
+                //else if (Repository.CurrentParticleSystem != null)
+                //{
+                //    typeEntite = typeof(ParticleSystem);
+                //    script = Repository.CurrentParticleSystem.ListScript[currentScript];
+                //}
                 //---
 
-                int curveCount = script.ListAction.Count(action => action is ActionCurve) - 1;
-                int eventCount = script.ListAction.Count(action => action is ActionEvent) - 1;
-                int soundCount = script.ListAction.Count(action => action is ActionSound) - 1;
+                int curveCount = Repository.CurrentScript.ListAction.Count(action => action is ActionCurve) - 1;
+                int eventCount = Repository.CurrentScript.ListAction.Count(action => action is ActionEvent) - 1;
+                int soundCount = Repository.CurrentScript.ListAction.Count(action => action is ActionSound) - 1;
 
                 ActionBase act = null;
 
                 //--- Création de l'action
                 if (cmbActionType.SelectedIndex == ID_ACTION_CURVE)
                 {
-                    act = new ActionCurve(script, String.Format("Curve{0}", curveCount + 1), true, false, typeEntite, cmbActionProperties.SelectedItem.ToString());
+                    act = new ActionCurve(Repository.CurrentScript, String.Format("Curve{0}", curveCount + 1), true, false, cmbActionProperties.SelectedItem.ToString());
                     currentAction = curveCount + 1;
                 }
                 else if (cmbActionType.SelectedIndex == ID_ACTION_EVENT)
                 {
-                    act = new ActionEvent(script, String.Format("Event{0}", eventCount + 1), typeEntite, cmbActionProperties.SelectedItem.ToString());
+                    act = new ActionEvent(Repository.CurrentScript, String.Format("Event{0}", eventCount + 1), cmbActionProperties.SelectedItem.ToString());
                     currentAction = eventCount + 1;
                 }
                 else if (cmbActionType.SelectedIndex == ID_ACTION_SOUND)
                 {
-                    act = new ActionSound(script, String.Format("Sound{0}", soundCount + 1), String.Empty, false);
+                    act = new ActionSound(Repository.CurrentScript, String.Format("Sound{0}", soundCount + 1), String.Empty, false);
                     currentAction = soundCount + 1;
                 }
                 //---
 
-                script.ListAction.Add(act);
+                Repository.CurrentScript.ListAction.Add(act);
 
                 RefreshScriptView();
                 RefreshActionView();
@@ -405,7 +377,7 @@ namespace Edit2D.ScriptControl
         private void RefreshScriptView()
         {
             listboxScript.Items.Clear();
-            txtScriptName.Text = String.Empty;
+            txtScriptName.Clear();
 
             IActionHandler actionHandler = GetCurrentActionHandler();
 
@@ -450,6 +422,7 @@ namespace Edit2D.ScriptControl
             if (actionHandler != null && currentScript != -1)
             {
                 ShowActionView();
+                InitComboProperties();
 
                 Script script = actionHandler.ListScript[currentScript];
 
@@ -757,10 +730,15 @@ namespace Edit2D.ScriptControl
         {
             IActionHandler actionHandler = null;
 
+            if (Repository == null)
+                return null;
+
             if (Repository.CurrentEntite != null)
                 actionHandler = Repository.CurrentEntite;
             else if (Repository.CurrentParticleSystem != null)
                 actionHandler = Repository.CurrentParticleSystem;
+            else if (Repository.CurrentScript != null)
+                actionHandler = Repository.CurrentScript.ActionHandler;
 
             return actionHandler;
         }
@@ -866,14 +844,20 @@ namespace Edit2D.ScriptControl
             cmbActionProperties.Items.Clear();
             PropertyInfo[] properties = null;
 
-            if (Repository != null && Repository.CurrentEntite != null && cmbActionType.SelectedIndex != ID_ACTION_SOUND)
-            {
-                properties = Repository.CurrentEntite.GetType().GetProperties();
-            }
-            else if (Repository != null && Repository.CurrentParticleSystem != null)
-            {
-                properties = Repository.CurrentObject.GetType().GetProperties();
-            }
+            IActionHandler actionHandler = GetCurrentActionHandler();
+
+            //if (Repository != null && Repository.CurrentEntite != null && cmbActionType.SelectedIndex != ID_ACTION_SOUND)
+            //{
+            //    properties = Repository.CurrentEntite.GetType().GetProperties();
+            //}
+            //else if (Repository != null && Repository.CurrentParticleSystem != null)
+            //{
+            //    properties = Repository.CurrentObject.GetType().GetProperties();
+            //}
+
+            if (actionHandler != null)
+                properties = actionHandler.GetType().GetProperties();
+
 
             if (properties != null)
             {
@@ -893,42 +877,43 @@ namespace Edit2D.ScriptControl
         public Script AddScriptToCurrentEntity()
         {
             IActionHandler actionHandler = GetCurrentActionHandler();
-            Script script = null;
 
-            if (actionHandler != null)
+            if (actionHandler == null)
+                return null;
+
+            //--- Calcul du nom du script
+            string scriptName = String.Empty;
+
+            if (String.IsNullOrEmpty(txtScriptName.Text))
             {
-                string scriptName = String.Empty;
-
-                if (String.IsNullOrEmpty(txtScriptName.Text))
-                {
-                    scriptName = String.Format("Script{0}", actionHandler.ListScript.Count + 1);
-                }
-                else
-                {
-                    scriptName = txtScriptName.Text;
-                }
-
-                if (actionHandler.ListScript.Exists(s => s.ScriptName == scriptName))
-                {
-                    MessageBox.Show(String.Format("Le nom de script '{0}' existe déja", scriptName), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return null;
-                }
-
-                //--- Création du nouveau script
-                script = new Script(scriptName, actionHandler);
-
-                actionHandler.ListScript.Add(script);
-                //---
-
-                //--- Rafraichissement de la liste des scripts et de l'arborescence
-                RefreshScriptView();
-                RefreshGlobalTreeView();
-                //---
-
-                //--- Sélectionne le nouveau script
-                listboxScript.SelectedIndex = listboxScript.Items.Count - 1;
-                //---
+                scriptName = String.Format("Script{0}", actionHandler.ListScript.Count + 1);
             }
+            else
+            {
+                scriptName = txtScriptName.Text;
+            }
+
+            if (actionHandler.ListScript.Exists(s => s.ScriptName == scriptName))
+            {
+                MessageBox.Show(String.Format("Le nom de script '{0}' existe déja", scriptName), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return null;
+            }
+            //---
+
+            //--- Création du nouveau script
+            Script script = new Script(scriptName, actionHandler);
+
+            actionHandler.ListScript.Add(script);
+            //---
+
+            //--- Rafraichissement de la liste des scripts et de l'arborescence
+            RefreshScriptView();
+            RefreshGlobalTreeView();
+            //---
+
+            //--- Sélectionne le nouveau script
+            listboxScript.SelectedIndex = listboxScript.Items.Count - 1;
+            //---
 
             return script;
         }
@@ -937,15 +922,17 @@ namespace Edit2D.ScriptControl
         {
             Script script = null;
 
-            if (Repository.CurrentEntite != null && currentScript != -1)
+            IActionHandler actionHandler = GetCurrentActionHandler();
+
+            if (actionHandler != null && currentScript != -1)
             {
-                script = Repository.CurrentEntite.ListScript[currentScript];
+                script = actionHandler.ListScript[currentScript];
             }
 
             return script;
         }
 
-        public void RefreshScriptControl()
+        public void RefreshScriptControl(bool selectScript)
         {
             currentScript = -1;
             currentAction = -1;
@@ -966,30 +953,47 @@ namespace Edit2D.ScriptControl
                 this.Visible = true;
             }
 
-            if (actionHandler != null && actionHandler.ListScript.Count > 0)// && repository.currentEntite.ListScript[0].ListCurve.Count > 0)
+            if (selectScript)
             {
-                currentScript = 0;
-                listboxScript.SelectedIndex = 0;
+                if (Repository.CurrentScript != null)
+                {
+                    listboxScript.SelectedIndex = listboxScript.FindString(Repository.CurrentScript.ScriptName);
+                }
+                else if (actionHandler.ListScript.Count > 0)
+                {
+                    listboxScript.SelectedIndex = 0;
+                }
+                else
+                {
+                    RefreshActionView();
+                    RefreshGlobalTreeView<IActionHandler>(actionHandler);
+                }
             }
 
-            RefreshActionView();
-            if (actionHandler != null && actionHandler.ListScript.Count > 0 && actionHandler.ListScript[0].ListAction.Count > 0)
-            {
-                currentAction = 0;
-                action = actionHandler.ListScript[0].ListAction[0];
-                treeViewAction.SelectedNode = treeViewAction.Nodes[0];
-            }
-            else
-            {
-                InitComboProperties();
-            }
+            //if (actionHandler != null && actionHandler.ListScript.Count > 0)// && repository.currentEntite.ListScript[0].ListCurve.Count > 0)
+            //{
+            //    currentScript = 0;
+            //    listboxScript.SelectedIndex = 0;
+            //}
 
-            if (action is ActionCurve)
-                ViewActionCurve((ActionCurve)action);
-            else if (action is ActionEvent)
-                ViewActionEvent((ActionEvent)action);
-            else if (action is ActionSound)
-                ViewActionSound((ActionSound)action);
+            //RefreshActionView();
+            //if (actionHandler != null && actionHandler.ListScript.Count > 0 && actionHandler.ListScript[0].ListAction.Count > 0)
+            //{
+            //    currentAction = 0;
+            //    action = actionHandler.ListScript[0].ListAction[0];
+            //    treeViewAction.SelectedNode = treeViewAction.Nodes[0];
+            //}
+            //else
+            //{
+            //    InitComboProperties();
+            //}
+
+            //if (action is ActionCurve)
+            //    ViewActionCurve((ActionCurve)action);
+            //else if (action is ActionEvent)
+            //    ViewActionEvent((ActionEvent)action);
+            //else if (action is ActionSound)
+            //    ViewActionSound((ActionSound)action);
         }
 
         public void UpdateEntityActionPlayer(ActionCurve actionCurve)

@@ -166,7 +166,7 @@ namespace Edit2DEngine
                         {
                             Script scr = currentActionHandler.ListScript.Last();
 
-                            ActionCurve curve = new ActionCurve(scr, reader["ActionName"], bool.Parse(reader["IsRelative"]), bool.Parse(reader["IsLoop"]), currentActionHandler.GetType(), reader["PropertyName"]);
+                            ActionCurve curve = new ActionCurve(scr, reader["ActionName"], bool.Parse(reader["IsRelative"]), bool.Parse(reader["IsLoop"]), reader["PropertyName"]);
 
                             scr.ListAction.Add(curve);
 

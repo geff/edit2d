@@ -89,7 +89,6 @@
     <Compile Include="Pointer.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="ScriptControl\ActionEventLineControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ScriptControl\ActionEventLineControl.Designer.cs">
       <DependentUpon>ActionEventLineControl.cs</DependentUpon>
@@ -185,6 +184,9 @@
     </Compile>
     <Compile Include="UC\UserControlLocal.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\UserControlLocal.Designer.cs">
+      <DependentUpon>UserControlLocal.cs</DependentUpon>
     </Compile>
     <Compile Include="WinformVisualStyle.cs" />
     <Compile Include="XNA\ContentBuilder.cs" />

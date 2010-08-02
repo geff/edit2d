@@ -50,13 +50,13 @@ namespace Edit2DEngine.Action
         float[] updateValues;
         float[] startValues;
 
-        public ActionEvent(Script script, string actionName, Type typeEntite, string propertyName)
+        public ActionEvent(Script script, string actionName, string propertyName)
         {
             this.Script = script;
             this.ActionName = actionName;
 
             this.PropertyName = propertyName;
-            this.ActionProperty = typeEntite.GetProperty(propertyName);
+            this.ActionProperty = script.ActionHandler.GetType().GetProperty(propertyName);
             this.PropertyType = this.ActionProperty.PropertyType;
 
             if (

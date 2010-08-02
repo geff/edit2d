@@ -89,31 +89,32 @@ namespace Edit2D
             repository.World.GradientColor1 = Microsoft.Xna.Framework.Graphics.Color.White;
             repository.World.GradientColor2 = Microsoft.Xna.Framework.Graphics.Color.White;
 
-            //pnlMain.Panel2Collapsed = true;
-
             //--- Mode simplifié
-            if (repository.IsSimpleMode)
+            //if (repository.IsSimpleMode)
             {
 
-
                 pnlViewerModes.Panel2Collapsed = false;
-                pnlMain.Panel2Collapsed = true;
+                pnlMain.Panel2Collapsed = false;
 
-                //this.Size = new Size(500, 300);
+                pnlMain.SplitterDistance = 650;
+                pnlRight.SplitterDistance = 100;
+
+                this.Size = new Size(900, 400);
                 this.Left = Screen.PrimaryScreen.WorkingArea.Width - this.Size.Width;
                 this.Top = Screen.PrimaryScreen.WorkingArea.Height - this.Size.Height;
                 this.ShowIcon = false;
                 modelViewerControl.ChangeViewPortSize = true;
                 repository.CurrentPointer2.WorldPosition = new Vector2(10, 10);
                 repository.CurrentPointer.WorldPosition = new Vector2(100, 100);
+                toolStripMenu.Visible = false;
 
-                foreach (ToolStripItem item in toolStripMenu.Items)
-                {
-                    item.Image = null;
+                //foreach (ToolStripItem item in toolStripMenu.Items)
+                //{
+                //    item.Image = null;
 
-                    if (item.Name != "btnSetCenterEntity")
-                        item.Visible = false;
-                }
+                //    if (item.Name != "btnSetCenterEntity")
+                //        item.Visible = false;
+                //}
             }
             //---
 
@@ -134,6 +135,7 @@ namespace Edit2D
                 TreeViewLocalItemType.ParticleSystem |
                 TreeViewLocalItemType.SubEntity;
             treeView.ItemTypeCheckBoxed =
+                TreeViewLocalItemType.World |
                 TreeViewLocalItemType.Entity |
                 TreeViewLocalItemType.CustomProperties |
                 TreeViewLocalItemType.Script |
@@ -141,15 +143,16 @@ namespace Edit2D
                 TreeViewLocalItemType.ParticleSystem |
                 TreeViewLocalItemType.SubEntity;
             treeView.AllowMultipleItemChecked = false;
+            treeView.AllowUncheckedNode = false;
             treeView.Repository = repository;
             //---
-            
+
             particleControl.InitParticleControl();
 
             btnScriptModeBar.PerformClick();
 
-            //WinformVisualStyle.ApplyStyle(this, "LightGray");
-            WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
+            WinformVisualStyle.ApplyStyle(this, "LightGray");
+            //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             AddEntity();
             repository.CurrentEntite = repository.listEntite[0];
@@ -262,19 +265,16 @@ namespace Edit2D
 
             foreach (String textureName in TextureManager.ListTexture2D.Keys)
             {
-                //if (textureName == "BigRec")
-                {
-                    Texture2D texture = TextureManager.ListTexture2D[textureName];
+                Texture2D texture = TextureManager.ListTexture2D[textureName];
 
-                    //------
-                    Bitmap bmp = TextureManager.GetBitmapFromTexture2D(texture);
-                    //------
+                //------
+                Bitmap bmp = TextureManager.GetBitmapFromTexture2D(texture);
+                //------
 
-                    imageList.Images.Add(textureName, (Image)bmp);
+                imageList.Images.Add(textureName, (Image)bmp);
 
-                    listView.Items.Add(new ListViewItem(textureName, textureName));
-                    listView.LargeImageList = imageList;
-                }
+                listView.Items.Add(new ListViewItem(textureName, textureName));
+                listView.LargeImageList = imageList;
             }
         }
 
@@ -475,141 +475,125 @@ namespace Edit2D
 
         private void EntiteSelectionChange(bool refreshTreeView, Entite oldEntite, Object newSelection)
         {
-            if (newSelection == null)
-            {
-                repository.CurrentEntite = null;
-                repository.CurrentObject = null;
-            }
+            repository.CurrentObject = newSelection;
+            repository.CurrentEntite = null;
+            repository.CurrentScript = null;
+            repository.CurrentParticleSystem = null;
+            repository.CurrentTrigger = null;
 
-            if (newSelection is Entite)
+            if (newSelection is Particle)
+            {
+                ShowParticleSystemMode();
+            }
+            else if (newSelection is Entite)
+            {
                 repository.CurrentEntite = (Entite)newSelection;
-            else
-                repository.CurrentObject = newSelection;
 
-            if (refreshTreeView)
-                RefreshTreeView();
-
-            if (repository.CurrentEntite != null)
-            {
-                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentEntite;
-                btnPinStatic.Checked = repository.CurrentEntite.IsStatic;
-                btnColisionable.Checked = repository.CurrentEntite.IsColisionable;
-
-                //--- Affiche le nom de l'entité courante dans la statusStrip
-                toolStripTextBoxEntityName.Text = repository.CurrentEntite.Name;
-                //---
-            }
-            else if (repository.CurrentParticleSystem != null)
-            {
-                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem;
-            }
-            else if (newSelection is World)
-            {
-                propertyGrid.PropertyGrid.SelectedObject = (World)newSelection;
-            }
-
-            //--- Rafraichi le contrôle du mode courant
-            if (btnTriggerModeBar.Checked)
-            {
-                triggerControl.RefreshTriggerList();
-            }
-            else if (btnScriptModeBar.Checked)
-            {
-                scriptControl.RefreshScriptControl();
-            }
-            else if (btnParticleSystemModeBar.Checked)
-            {
-                particleControl.RefreshParticleControl();
-            }
-            //---
-
-            if (repository.CurrentEntite != null)
-            {
-                String nodeKey = String.Empty;
-
-                if (repository.CurrentEntite is Particle)
+                switch (repository.ViewingMode)
                 {
-                    treeView.CheckNode<Particle>((Particle)repository.CurrentEntite);
-                }
-                else
-                {
-                    treeView.CheckNode<Entite>(repository.CurrentEntite);
+                    case ViewingMode.Nothing :
+                        break;
+                    case ViewingMode.Script:
+                        scriptControl.RefreshScriptControl(true);
+                        break;
+                    case ViewingMode.Trigger:
+                        triggerControl.RefreshTriggerList(true);
+                        break;
+                    case ViewingMode.ParticleSystem:
+                        particleControl.RefreshParticleControl();
+                        break;
+                    default:
+                        break;
                 }
             }
-            else if (repository.CurrentParticleSystem != null)
+            else if (newSelection is Script)
             {
-                treeView.CheckNode<ParticleSystem>(repository.CurrentParticleSystem);
+                repository.CurrentScript = (Script)newSelection;
+
+                ShowScriptMode();
             }
-            else
+            else if (newSelection is TriggerBase)
             {
-                treeView.SelectedNode = null;
+                repository.CurrentTrigger = (TriggerBase)newSelection;
+
+                ShowTriggerMode();
             }
+            else if (newSelection is ParticleSystem)
+            {
+                repository.CurrentParticleSystem = (ParticleSystem)newSelection;
+
+                ShowParticleSystemMode();
+            }
+
+
+            //if (newSelection is Entite)
+            //    repository.CurrentEntite = (Entite)newSelection;
+            //else
+            //    repository.CurrentObject = newSelection;
+
+            //if (refreshTreeView)
+            //    RefreshTreeView();
+
+            //if (repository.CurrentEntite != null)
+            //{
+            //    propertyGrid.PropertyGrid.SelectedObject = repository.CurrentEntite;
+            //    btnPinStatic.Checked = repository.CurrentEntite.IsStatic;
+            //    btnColisionable.Checked = repository.CurrentEntite.IsColisionable;
+
+            //    //--- Affiche le nom de l'entité courante dans la statusStrip
+            //    toolStripTextBoxEntityName.Text = repository.CurrentEntite.Name;
+            //    //---
+            //}
+            //else if (repository.CurrentParticleSystem != null)
+            //{
+            //    propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem;
+            //}
+            //else if (newSelection is World)
+            //{
+            //    propertyGrid.PropertyGrid.SelectedObject = (World)newSelection;
+            //}
+
+            ////--- Rafraichi le contrôle du mode courant
+            //if (btnTriggerModeBar.Checked)
+            //{
+            //    triggerControl.RefreshTriggerList();
+            //}
+            //else if (btnScriptModeBar.Checked)
+            //{
+            //    scriptControl.RefreshScriptControl();
+            //}
+            //else if (btnParticleSystemModeBar.Checked)
+            //{
+            //    particleControl.RefreshParticleControl();
+            //}
+            ////---
+
+            //if (repository.CurrentEntite != null)
+            //{
+            //    //String nodeKey = String.Empty;
+
+            //    //if (repository.CurrentEntite is Particle)
+            //    //{
+            //    //    treeView.CheckNode<Particle>((Particle)repository.CurrentEntite);
+            //    //}
+            //    //else
+            //    {
+            //        treeView.CheckNode<Entite>(repository.CurrentEntite);
+            //    }
+            //}
+            //else if (repository.CurrentParticleSystem != null)
+            //{
+            //    treeView.CheckNode<ParticleSystem>(repository.CurrentParticleSystem);
+            //}
+            //else
+            //{
+            //    treeView.SelectedNode = null;
+            //}
         }
 
         private void RefreshTreeView()
         {
             treeView.RefreshView();
-
-            //treeView.Nodes.Clear();
-            //TreeNode nodeRoot = treeView.Nodes.Add("World");
-            //nodeRoot.Tag = repository.World;
-
-            //for (int i = 0; i < repository.listEntite.Count; i++)
-            //{
-            //    Entite entite = repository.listEntite[i];
-
-            //    TreeNode nodeEntite = nodeRoot.Nodes.Add(entite.Name, entite.Name);
-            //    nodeEntite.Tag = entite;
-
-            //    //--- Spring
-            //    if (entite.ListFixedLinearSpring.Count > 0 || entite.ListLinearSpring.Count > 0)
-            //    {
-            //        TreeNode nodeSpring = nodeEntite.Nodes.Add("Spring");
-
-            //        //--- FixedLinearSpring
-            //        if (entite.ListFixedLinearSpring.Count > 0)
-            //        {
-            //            for (int j = 0; j < entite.ListFixedLinearSpring.Count; j++)
-            //            {
-            //                TreeNode node = nodeSpring.Nodes.Add("FixedLinearSpring " + j);
-            //                node.Tag = entite.ListFixedLinearSpring[j];
-            //            }
-            //        }
-            //        //---
-
-            //        //--- LinearSpring
-            //        if (entite.ListLinearSpring.Count > 0)
-            //        {
-            //            for (int j = 0; j < entite.ListLinearSpring.Count; j++)
-            //            {
-            //                TreeNode node = nodeSpring.Nodes.Add(String.Format("LinearSpring {0} ({1})", j, ""));
-            //                node.Tag = entite.ListLinearSpring[j];
-            //            }
-            //        }
-            //        //---
-            //    }
-            //    //---
-
-            //    //--- ParticleSystem
-            //    if (entite.ListParticleSystem.Count > 0)
-            //    {
-            //        for (int j = 0; j < entite.ListParticleSystem.Count; j++)
-            //        {
-            //            string particleSystemKey = String.Format("{0}-{1}", entite.Name, entite.ListParticleSystem[j].ParticleSystemName);
-            //            TreeNode nodeParticleSystem = nodeEntite.Nodes.Add(particleSystemKey, entite.ListParticleSystem[j].ParticleSystemName);
-            //            nodeParticleSystem.Tag = entite.ListParticleSystem[j];
-
-            //            for (int k = 0; k < entite.ListParticleSystem[j].ListParticleTemplate.Count; k++)
-            //            {
-            //                TreeNode node = nodeParticleSystem.Nodes.Add(String.Format("{0}-{1}", particleSystemKey, entite.ListParticleSystem[j].ListParticleTemplate[k].Name), entite.ListParticleSystem[j].ListParticleTemplate[k].Name);
-            //                node.Tag = entite.ListParticleSystem[j].ListParticleTemplate[k];
-            //            }
-            //        }
-            //    }
-            //    //---
-            //}
-
-            //nodeRoot.ExpandAll();
         }
 
         private void New()
@@ -817,7 +801,7 @@ namespace Edit2D
                         timeLineValueIncrement = 1000;
 
                     scriptControl.TimeLineValue += timeLineValueIncrement;
-                    scriptControl.RefreshScriptControl();
+                    scriptControl.RefreshScriptControl(true);
                 }
             }
         }
@@ -886,17 +870,17 @@ namespace Edit2D
                 if (script.ListAction.Count == 0)
                 {
                     //--- Position
-                    ActionCurve actionPosition = new ActionCurve(script, "Position", false, false, typeof(Entite), "Position");
+                    ActionCurve actionPosition = new ActionCurve(script, "Position", false, false, "Position");
                     script.ListAction.Add(actionPosition);
                     //---
 
                     //--- Rotation
-                    ActionCurve actionRotation = new ActionCurve(script, "Rotation", false, false, typeof(Entite), "Rotation");
+                    ActionCurve actionRotation = new ActionCurve(script, "Rotation", false, false,  "Rotation");
                     script.ListAction.Add(actionRotation);
                     //---
 
                     //--- Size
-                    ActionCurve actionSize = new ActionCurve(script, "Size", false, false, typeof(Entite), "Size");
+                    ActionCurve actionSize = new ActionCurve(script, "Size", false, false, "Size");
                     script.ListAction.Add(actionSize);
                     //---
                 }
@@ -940,7 +924,7 @@ namespace Edit2D
                     timeLineValueIncrement = 1000;
 
                 scriptControl.TimeLineValue += timeLineValueIncrement;
-                scriptControl.RefreshScriptControl();
+                scriptControl.RefreshScriptControl(true);
             }
         }
 
@@ -1169,6 +1153,15 @@ namespace Edit2D
         private void btnPanelBottom_Click(object sender, EventArgs e)
         {
             pnlViewerModes.Panel2Collapsed = !btnPanelBottom.Checked;
+
+            if (pnlViewerModes.Panel2Collapsed)
+            {
+                repository.ViewingMode = ViewingMode.Nothing;
+            }
+            else
+            {
+                ShowScriptMode();
+            }
         }
 
         private void btnPanelRight_Click(object sender, EventArgs e)
@@ -1423,23 +1416,51 @@ namespace Edit2D
 
         private void treeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (e.Node != null && e.Node.Tag is Entite)
-            {
-                EntiteSelectionChange(false, repository.CurrentEntite, e.Node.Tag);
-            }
-            else if (e.Node != null && e.Node.Tag is ParticleSystem)
-            {
-                EntiteSelectionChange(false, repository.CurrentEntite, e.Node.Tag);
-                //repository.CurrentObject = e.Node.Tag;
-            }
-            else if (e.Node != null && e.Node.Tag is ITriggerHandler)
-            {
-                EntiteSelectionChange(false, repository.CurrentEntite, e.Node.Tag);
-            }
+            //if (e.Node != null && e.Node.Tag is Entite)
+            //{
+            //    EntiteSelectionChange(false, repository.CurrentEntite, e.Node.Tag);
+            //}
+            //else if (e.Node != null && e.Node.Tag is ParticleSystem)
+            //{
+            //    EntiteSelectionChange(false, repository.CurrentEntite, e.Node.Tag);
+            //    //repository.CurrentObject = e.Node.Tag;
+            //}
+            //else if (e.Node != null && e.Node.Tag is ITriggerHandler)
+            //{
+            //    EntiteSelectionChange(false, repository.CurrentEntite, e.Node.Tag);
+            //}
             //else if (e.Node != null && e.Node.Tag is World)
             //{
             //    EntiteSelectionChange(false, repository.CurrentEntite, e.Node.Tag);
             //}
+        }
+
+        private void treeView_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            if (treeView.IsCheckedByMouse && e.Node.Checked)
+            {
+                Object item = treeView.GetItemFromNode(e.Node);
+
+                EntiteSelectionChange(false, repository.CurrentEntite, item);
+
+
+                //if (item is Particle)
+                //{
+                //    EntiteSelectionChange(false, repository.CurrentEntite, item);
+                //}
+                //else if (item is Entite)
+                //{
+                //    EntiteSelectionChange(false, repository.CurrentEntite, item);
+                //}
+                //else if (item is ParticleSystem)
+                //{
+                //    EntiteSelectionChange(false, repository.CurrentEntite, item);
+                //}
+                //else if (item is ITriggerHandler)
+                //{
+                //    EntiteSelectionChange(false, repository.CurrentEntite, item);
+                //}
+            }
         }
 
         private void btnUpEntity_Click(object sender, EventArgs e)
@@ -2104,15 +2125,18 @@ namespace Edit2D
 
             repository.ViewingMode = ViewingMode.Script;
 
+            scriptControl.RefreshScriptControl(true);
+
             //---
-            IActionHandler actionHandler = null;
+            //IActionHandler actionHandler = null;
 
-            if (repository.CurrentEntite != null)
-                actionHandler = repository.CurrentEntite;
-            else if (repository.CurrentObject != null && repository.CurrentObject is IActionHandler)
-                actionHandler = (IActionHandler)repository.CurrentObject;
+            //////if (repository.CurrentEntite != null)
+            //////    actionHandler = repository.CurrentEntite;
+            //////else 
+            //if (repository.CurrentObject != null && repository.CurrentObject is IActionHandler)
+            //    actionHandler = (IActionHandler)repository.CurrentObject;
 
-            EntiteSelectionChange(true, repository.CurrentEntite, actionHandler);
+            //EntiteSelectionChange(true, repository.CurrentEntite, actionHandler);
             //---
         }
 
@@ -2130,15 +2154,17 @@ namespace Edit2D
 
             repository.ViewingMode = ViewingMode.Trigger;
 
+            triggerControl.RefreshTriggerList(true);
+
             //---
-            ITriggerHandler triggerHandler = null;
+            //ITriggerHandler triggerHandler = null;
 
-            if (repository.CurrentEntite != null)
-                triggerHandler = repository.CurrentEntite;
-            else if (repository.CurrentObject != null && repository.CurrentObject is ITriggerHandler)
-                triggerHandler = (ITriggerHandler)repository.CurrentObject;
+            //if (repository.CurrentEntite != null)
+            //    triggerHandler = repository.CurrentEntite;
+            //else if (repository.CurrentObject != null && repository.CurrentObject is ITriggerHandler)
+            //    triggerHandler = (ITriggerHandler)repository.CurrentObject;
 
-            EntiteSelectionChange(true, repository.CurrentEntite, triggerHandler);
+            //EntiteSelectionChange(true, repository.CurrentEntite, triggerHandler);
             //---
         }
 
@@ -2156,7 +2182,7 @@ namespace Edit2D
 
             repository.ViewingMode = ViewingMode.ParticleSystem;
 
-            EntiteSelectionChange(true, repository.CurrentEntite, repository.CurrentEntite);
+            //EntiteSelectionChange(true, repository.CurrentEntite, repository.CurrentEntite);
         }
         #endregion
     }

@@ -28,7 +28,7 @@ namespace Edit2DEngine.Action
         [Browsable(true)]
         public Boolean IsLoop { get; set; }
 
-        public ActionCurve(Script script, string actionName, bool isRelative, bool isLoop, Type typeEntity, string propertyName)
+        public ActionCurve(Script script, string actionName, bool isRelative, bool isLoop, string propertyName)
         {
             this.Script = script;
             this.ActionName = actionName;
@@ -38,7 +38,7 @@ namespace Edit2DEngine.Action
             this.ListCurve = new List<Microsoft.Xna.Framework.Curve>();
 
             this.PropertyName = propertyName;
-            this.ActionProperty = typeEntity.GetProperty(propertyName);
+            this.ActionProperty = script.ActionHandler.GetType().GetProperty(propertyName);
             this.PropertyType = this.ActionProperty.PropertyType;
 
             this.ListCurve.Add(new Curve());
