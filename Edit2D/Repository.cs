@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using FarseerGames.GettingStarted;
 using Edit2DEngine;
 using Edit2DEngine.Action;
+using Edit2DEngine.Trigger;
 
 namespace Edit2D
 {
@@ -24,10 +25,12 @@ namespace Edit2D
         public Pointer CurrentPointer { get; set; }
         public Pointer CurrentPointer2 { get; set; }
 
+        public TriggerBase CurrentTrigger { get; set; }
+
         public MouseMode MouseMode = MouseMode.Move;
         public ViewingMode ViewingMode = ViewingMode.Nothing;
 
-        //--- Visualsaiotn de la courbe courante
+        //--- Visualsation de la courbe courante
         public List<Vector2> ListCurveLine { get; set; }
         public List<Vector2> ListCurvePoint { get; set; }
 

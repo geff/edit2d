@@ -47,14 +47,17 @@ namespace Edit2D.TriggerControl
             treeViewValueChanged.ItemTypeShowed = TreeViewLocalItemType.EntityProperties | TreeViewLocalItemType.CustomProperties;
             treeViewValueChanged.ItemTypeCheckBoxed = TreeViewLocalItemType.EntityProperties | TreeViewLocalItemType.CustomProperties;
             treeViewValueChanged.AllowMultipleItemChecked = false;
+            treeViewValueChanged.AllowUncheckedNode = true;
 
             treeViewCollision.ItemTypeShowed = TreeViewLocalItemType.Entity;
             treeViewCollision.ItemTypeCheckBoxed = TreeViewLocalItemType.Entity;
-            treeViewScript.AllowMultipleItemChecked = false;
+            treeViewCollision.AllowMultipleItemChecked = false;
+            treeViewCollision.AllowUncheckedNode = true;
 
             treeViewScript.ItemTypeShowed = TreeViewLocalItemType.Script;
             treeViewScript.ItemTypeCheckBoxed = TreeViewLocalItemType.Script;
             treeViewScript.AllowMultipleItemChecked = true;
+            treeViewScript.AllowUncheckedNode = true;
         }
 
         private void txtTriggerName_MouseDown(object sender, MouseEventArgs e)
@@ -87,24 +90,20 @@ namespace Edit2D.TriggerControl
             {
                 triggerHandler.ListTrigger.RemoveAt(listboxTrigger.SelectedIndex);
 
-                RefreshTriggerList();
-                RefreshGlobalTreeView();
-
-                if (triggerHandler.ListTrigger.Count > 0)
-                    listboxTrigger.SelectedIndex = 0;
+                RefreshTriggerList(true);
             }
         }
 
         private void btnChangeTriggerName_Click(object sender, EventArgs e)
         {
-            ITriggerHandler triggerHandler = GetCurrentTriggerHandler();
-
-            if (triggerHandler != null &&
-                listboxTrigger.SelectedIndex != -1 &&
+            if (Repository.CurrentTrigger != null &&
+                //triggerHandler != null &&
+                //listboxTrigger.SelectedIndex != -1 &&
                 !String.IsNullOrEmpty(txtTriggerName.Text) &&
-                txtTriggerName.Text != triggerHandler.ListTrigger[listboxTrigger.SelectedIndex].TriggerName
+                txtTriggerName.Text != Repository.CurrentTrigger.TriggerName
                 )
             {
+                ITriggerHandler triggerHandler = GetCurrentTriggerHandler();
 
                 if (triggerHandler.ListTrigger.Exists(t => t.TriggerName == txtTriggerName.Text))
                 {
@@ -113,9 +112,10 @@ namespace Edit2D.TriggerControl
                 else
                 {
                     int previousIndexSelected = listboxTrigger.SelectedIndex;
-
-                    triggerHandler.ListTrigger[listboxTrigger.SelectedIndex].TriggerName = txtTriggerName.Text;
-                    RefreshTriggerList();
+                    Repository.CurrentTrigger.TriggerName = txtTriggerName.Text;
+                    
+                    RefreshTriggerList(false);
+                    RefreshGlobalTreeView();
 
                     listboxTrigger.SelectedIndex = previousIndexSelected;
                 }
@@ -151,9 +151,10 @@ namespace Edit2D.TriggerControl
                 if (trigger != null && trigger is TriggerCollision)
                     treeViewCollision.RefreshView<Entite>(((TriggerCollision)trigger).TargetEntite);
                 else
-                    treeViewCollision.RefreshView();
-
-                UpdateTrigger();
+                {
+                    treeViewCollision.RefreshView(false);
+                    UpdateTrigger();
+                }
             }
         }
 
@@ -173,9 +174,10 @@ namespace Edit2D.TriggerControl
                 if (trigger != null && trigger is TriggerCollision)
                     treeViewCollision.RefreshView<Entite>(((TriggerCollision)trigger).TargetEntite);
                 else
-                    treeViewCollision.RefreshView();
-
-                UpdateTrigger();
+                {
+                    treeViewCollision.RefreshView(false);
+                    UpdateTrigger();
+                }
             }
         }
 
@@ -196,7 +198,9 @@ namespace Edit2D.TriggerControl
                     treeViewValueChanged.RefreshView<PropertyInfo>(((TriggerValueChanged)trigger).TriggerProperty);
                 else
                 {
-                    treeViewValueChanged.RefreshView();
+                    treeViewValueChanged.RefreshView(false);
+                    ShowPropertyDetail(null);
+
                     UpdateTrigger();
                 }
             }
@@ -213,7 +217,14 @@ namespace Edit2D.TriggerControl
 
                 pnlScript.Left = pnlMouse.Right;
 
-                UpdateTrigger();
+                TriggerBase trigger = GetCurrentTrigger();
+
+                if (!(trigger != null && trigger is TriggerMouse))
+                {
+                    optMouseLeftClick.Checked = true;
+
+                    UpdateTrigger();
+                }
             }
         }
 
@@ -243,13 +254,24 @@ namespace Edit2D.TriggerControl
 
                 pnlScript.Left = pnlTime.Right;
 
-                UpdateTrigger();
+                TriggerBase trigger = GetCurrentTrigger();
+
+                if (!(trigger != null && trigger is TriggerTime))
+                {
+                    optTimeLoopAlways.Checked = true;
+                    numTimeLoop.Value = 1000;
+
+                    UpdateTrigger();
+                }
             }
         }
 
         private void treeViewCollision_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            UpdateTrigger();
+            if (treeViewCollision.IsCheckedByMouse)
+            {
+                UpdateTrigger();
+            }
         }
 
         private void treeViewValueChanged_AfterCheck(object sender, TreeViewEventArgs e)
@@ -293,73 +315,6 @@ namespace Edit2D.TriggerControl
         private void txtProp3_TextChanged(object sender, EventArgs e)
         {
             UpdateTrigger();
-        }
-
-        private void treeViewProperties_AfterCheck(object sender, TreeViewEventArgs e)
-        {
-            //if (e.Action == TreeViewAction.ByMouse || e.Action == TreeViewAction.ByKeyboard)
-            //{
-            //    if (e.Node.Tag is PropertyInfo)
-            //    {
-            //        //--- Décoche les custom properties
-            //        if (treeViewCustomProperties.Nodes != null & treeViewCustomProperties.Nodes.Count > 0)
-            //            ChangeNodeCheck(treeViewCustomProperties.Nodes[0], false);
-            //        //---
-
-            //        bool isChecked = e.Node.Checked;
-            //        for (int i = 0; i < treeViewProperties.Nodes.Count; i++)
-            //        {
-            //            ChangeNodeCheck(treeViewProperties, false);
-            //        }
-
-            //        ShowPropertyDetail((PropertyInfo)e.Node.Tag);
-            //        e.Node.Checked = isChecked;
-            //    }
-            //    else
-            //    {
-            //        e.Node.Checked = false;
-            //    }
-
-            //    //--- Visibilité du panneau de saisie des valeurs
-            //    pnlValueProp.Visible = GetCheckedNodesCount(treeViewProperties) + GetCheckedNodesCount(treeViewCustomProperties) > 0;
-            //    //---
-            //}
-
-            //UpdateTrigger();
-        }
-
-        private void treeViewCustomProperties_AfterCheck(object sender, TreeViewEventArgs e)
-        {
-            //if (e.Action == TreeViewAction.ByMouse || e.Action == TreeViewAction.ByKeyboard)
-            //{
-            //    if (e.Node.Tag is String)
-            //    {
-            //        //--- Décoche les properties
-            //        if (treeViewProperties.Nodes != null & treeViewProperties.Nodes.Count > 0)
-            //            ChangeNodeCheck(treeViewProperties.Nodes[0], false);
-            //        //---
-
-            //        bool isChecked = e.Node.Checked;
-            //        for (int i = 0; i < treeViewCustomProperties.Nodes.Count; i++)
-            //        {
-            //            ChangeNodeCheck(treeViewCustomProperties.Nodes[i], false);
-            //        }
-
-            //        //TODO
-            //        //ShowPropertyDetail((PropertyInfo)e.Node.Tag);
-            //        e.Node.Checked = isChecked;
-            //    }
-            //    else
-            //    {
-            //        e.Node.Checked = false;
-            //    }
-            //}
-
-            ////--- Visibilité du panneau de saisie des valeurs
-            //pnlValueProp.Visible = GetCheckedNodesCount(treeViewProperties) + GetCheckedNodesCount(treeViewCustomProperties) > 0;
-            ////---
-
-            //UpdateTrigger();
         }
 
         private void optMouseRightClick_CheckedChanged(object sender, EventArgs e)
@@ -422,6 +377,8 @@ namespace Edit2D.TriggerControl
                 triggerHandler = Repository.CurrentEntite;
             else if (Repository.CurrentObject != null && Repository.CurrentObject is ITriggerHandler)
                 triggerHandler = (ITriggerHandler)Repository.CurrentObject;
+            else if (Repository.CurrentTrigger != null)
+                triggerHandler = Repository.CurrentTrigger.TriggerHandler;
 
             return triggerHandler;
         }
@@ -434,6 +391,8 @@ namespace Edit2D.TriggerControl
 
             if (triggerHandler != null && listboxTrigger.SelectedIndex != -1)
                 trigger = triggerHandler.ListTrigger[listboxTrigger.SelectedIndex];
+            else if (Repository.CurrentTrigger != null)
+                trigger = Repository.CurrentTrigger;
 
             return trigger;
         }
@@ -456,7 +415,22 @@ namespace Edit2D.TriggerControl
             cmbProp1.SelectedIndex = 0;
             cmbProp2.SelectedIndex = 0;
             cmbProp3.SelectedIndex = 0;
+
+            lblProp1.Visible = false;
+            lblProp2.Visible = false;
+            lblProp3.Visible = false;
+
+            txtProp1.Visible = false;
+            txtProp2.Visible = false;
+            txtProp3.Visible = false;
+
+            cmbProp1.Visible = false;
+            cmbProp2.Visible = false;
+            cmbProp3.Visible = false;
             //---
+
+            if (propInfo == null)
+                return;
 
             if (propInfo.PropertyType.Name == "Vector2")
             {
@@ -556,7 +530,7 @@ namespace Edit2D.TriggerControl
         private void RefreshTreeViewScript(TriggerBase trigger)
         {
             //---
-            treeViewScript.RefreshView();
+            treeViewScript.RefreshView(false);
             //---
 
             //--- Liste des scripts
@@ -569,7 +543,7 @@ namespace Edit2D.TriggerControl
 
         private void SelectTrigger(TriggerBase trigger)
         {
-            ITriggerHandler triggerHandler = GetCurrentTriggerHandler();
+            Repository.CurrentTrigger = trigger;
 
             if (trigger == null)
             {
@@ -621,18 +595,19 @@ namespace Edit2D.TriggerControl
                 //--- Trigger ValueChanged
                 if (triggerVal.IsCustomProperty && !String.IsNullOrEmpty(triggerVal.PropertyName))
                 {
-                    //TreeNode treeNode = treeViewCustomProperties.Nodes.Find(triggerVal.PropertyName, true)[0];
-                    //treeNode.Checked = true;
-                    //treeViewValueChanged.CheckNode<PropertyInfo>(triggerVal.TriggerProperty);
                 }
-                else if (!triggerVal.IsCustomProperty && !String.IsNullOrEmpty(triggerVal.PropertyName))
+                else if (!triggerVal.IsCustomProperty)
                 {
-                    //TreeNode treeNode = treeViewProperties.Nodes.Find(triggerVal.PropertyName, true)[0];
-                    //treeNode.Checked = true;
-
-                    treeViewValueChanged.CheckNode<PropertyInfo>(triggerVal.TriggerProperty, triggerVal.Entite.TreeViewPath);
-                    //List<PropertyInfo> l = treeViewValueChanged.GetCheckedNodes<PropertyInfo>();
-                    ShowPropertyDetail(triggerVal.TriggerProperty);
+                    if (String.IsNullOrEmpty(triggerVal.PropertyName))
+                    {
+                        treeViewValueChanged.RefreshView(false);
+                        ShowPropertyDetail(null);
+                    }
+                    else
+                    {
+                        treeViewValueChanged.CheckNode<PropertyInfo>(triggerVal.TriggerProperty, triggerVal.Entite.TreeViewPath);
+                        ShowPropertyDetail(triggerVal.TriggerProperty);
+                    }
                 }
                 //---
             }
@@ -683,7 +658,7 @@ namespace Edit2D.TriggerControl
 
                 //--- Type de trigger
                 optTypeTriggerTime.Checked = true;
-                //optTypeTriggerTime_CheckedChanged(null, null);
+                optTypeTriggerTime_CheckedChanged(null, null);
                 //---
 
                 //--- Trigger Time
@@ -892,7 +867,7 @@ namespace Edit2D.TriggerControl
             //---
 
             //--- Rafraichissement de la liste des déclencheurs et de l'arborescence
-            RefreshTriggerList();
+            RefreshTriggerList(false);
             RefreshGlobalTreeView();
             //---
 
@@ -900,37 +875,55 @@ namespace Edit2D.TriggerControl
             listboxTrigger.SelectedIndex = listboxTrigger.Items.Count - 1;
             //---
             
-            optTypeTriggerTime_CheckedChanged(null, null);
+
+            //--- Vue par défaut du nouveau trigger
+            //optTypeTriggerTime_CheckedChanged(null, null);
+            //---
 
             return trigger;
         }
 
-        public void RefreshTriggerList()
+        public void RefreshTriggerList(bool selectTrigger)
         {
             listboxTrigger.Items.Clear();
-            ITriggerHandler triggerHandler = null;
+            txtTriggerName.Clear();
 
-            if (Repository.CurrentEntite != null)
-                triggerHandler = Repository.CurrentEntite;
-            else if (Repository.CurrentObject != null && Repository.CurrentObject is ITriggerHandler)
-                triggerHandler = (ITriggerHandler)Repository.CurrentObject;
+            ITriggerHandler triggerHandler = GetCurrentTriggerHandler();
 
-            if (triggerHandler == null)
+            if (triggerHandler != null)
             {
-                SelectTrigger(null);
-                return;
+                for (int i = 0; i < triggerHandler.ListTrigger.Count; i++)
+                {
+                    listboxTrigger.Items.Add(triggerHandler.ListTrigger[i].TriggerName);
+                }
             }
 
-            foreach (TriggerBase trigger in triggerHandler.ListTrigger)
+            if (selectTrigger)
             {
-                listboxTrigger.Items.Add(trigger.TriggerName);
-            }
+                TriggerBase trigger = GetCurrentTrigger();
 
-            //if (triggerHandler.ListTrigger.Count > 0)
-            //    listboxTrigger.SelectedIndex = 0;
-            //else
-            {
-                SelectTrigger(null);
+                if (trigger != null)
+                {
+                    RefreshGlobalTreeView<TriggerBase>(trigger);
+                    int index = listboxTrigger.FindString(trigger.TriggerName);
+                    listboxTrigger.SelectedIndex = index;
+                }
+                //---> Si le triggerHandler contient des déclencheurs, alors
+                //      L'arborescence est rafraichie
+                //      Le premier déclencheur est sélectionné
+                else if (triggerHandler.ListTrigger.Count > 0)
+                {
+                    RefreshGlobalTreeView(false);
+                    listboxTrigger.SelectedIndex = 0;
+                }
+                //---> Si le triggerHandler ne contient pas de déclencheurs, alors
+                //      L'arborescence est rafraichie en sélectionnant le triggerHandler
+                //      L'interface est vidée
+                else
+                {
+                    RefreshGlobalTreeView<ITriggerHandler>(triggerHandler);
+                    SelectTrigger(null);
+                }
             }
         }
         #endregion

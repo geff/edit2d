@@ -11,6 +11,7 @@ namespace Edit2DEngine
     {
         public static Dictionary<String, Texture2D> ListTexture2D = new Dictionary<string, Texture2D>();
         public static Dictionary<String, Texture2D> ListParticleTexture2D = new Dictionary<string, Texture2D>();
+        public static bool IsSimpleMode = true;
 
         public static void InitTextureManager(GraphicsDevice graphicsDevice)
         {
@@ -19,9 +20,10 @@ namespace Edit2DEngine
 
         public static void InitTextureManager(GraphicsDevice graphicsDevice, string dataPath, string patternFile)
         {
-            //LoadTextures(graphicsDevice, Path.Combine(dataPath, @"\Data\Pics\"), ref ListTexture2D);
             LoadTextures(graphicsDevice, dataPath + @"Data\Pics\", patternFile, ref ListTexture2D);
-            LoadTextures(graphicsDevice, dataPath + @"Data\Pics\Particles\", patternFile, ref ListParticleTexture2D);
+            
+            if(!IsSimpleMode)
+                LoadTextures(graphicsDevice, dataPath + @"Data\Pics\Particles\", patternFile, ref ListParticleTexture2D);
         }
 
         private static void LoadTextures(GraphicsDevice graphicsDevice, string path, string patternFile, ref Dictionary<String, Texture2D> listTexture)
@@ -31,8 +33,14 @@ namespace Edit2DEngine
 
             foreach (String file in files)
             {
-                Texture2D texture = Texture2D.FromFile(graphicsDevice, file);
-                listTexture.Add(Path.GetFileNameWithoutExtension(file), texture);
+                if ((   Path.GetFileNameWithoutExtension(file) == "BigRec" ||
+                        Path.GetFileNameWithoutExtension(file) == "Pin" ||
+                        Path.GetFileNameWithoutExtension(file) == "Pointer"
+                    ) || !IsSimpleMode)
+                {
+                    Texture2D texture = Texture2D.FromFile(graphicsDevice, file);
+                    listTexture.Add(Path.GetFileNameWithoutExtension(file), texture);
+                }
             }
         }
 

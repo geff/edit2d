@@ -599,7 +599,7 @@
             this.label7.Location = new System.Drawing.Point(6, 16);
             this.label7.Margin = new System.Windows.Forms.Padding(6);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(168, 19);
+            this.label7.Size = new System.Drawing.Size(169, 19);
             this.label7.TabIndex = 0;
             this.label7.Tag = "F2";
             this.label7.Text = "Type de déclencheur";
@@ -747,6 +747,7 @@
             // treeViewCollision
             // 
             this.treeViewCollision.AllowMultipleItemChecked = false;
+            this.treeViewCollision.AllowUncheckedNode = true;
             this.treeViewCollision.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.treeViewCollision.BackColor = System.Drawing.Color.Gray;
@@ -824,6 +825,7 @@
             // treeViewValueChanged
             // 
             this.treeViewValueChanged.AllowMultipleItemChecked = false;
+            this.treeViewValueChanged.AllowUncheckedNode = false;
             this.treeViewValueChanged.BackColor = System.Drawing.Color.Gray;
             this.treeViewValueChanged.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.treeViewValueChanged.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
@@ -926,7 +928,7 @@
             this.label11.Location = new System.Drawing.Point(6, 16);
             this.label11.Margin = new System.Windows.Forms.Padding(6);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(60, 19);
+            this.label11.Size = new System.Drawing.Size(61, 19);
             this.label11.TabIndex = 0;
             this.label11.Tag = "F2";
             this.label11.Text = "Temps";
@@ -949,7 +951,6 @@
             // 
             // treeViewScript
             // 
-            this.treeViewScript.AllowMultipleItemChecked = true;
             this.treeViewScript.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.treeViewScript.BackColor = System.Drawing.Color.Gray;
@@ -1015,10 +1016,10 @@
             this.Controls.Add(this.pnlScript);
             this.Controls.Add(this.pnlTrigger);
             this.Controls.Add(this.pnlTypeTrigger);
-            this.Controls.Add(this.pnlTime);
             this.Controls.Add(this.pnlEntityCollision);
             this.Controls.Add(this.pnlMouse);
             this.Controls.Add(this.pnlValueOverflow);
+            this.Controls.Add(this.pnlTime);
             this.Name = "TriggerControl";
             this.Size = new System.Drawing.Size(805, 304);
             this.Tag = "BG1";

@@ -92,7 +92,7 @@ namespace Edit2DEngine.Particles
                     if (action is ActionCurve)
                     {
                         ActionCurve curve = (ActionCurve)action;
-                        ActionCurve curveClone = new ActionCurve(scriptClone, curve.ActionName, curve.IsRelative, curve.IsLoop, typeof(Particle), curve.PropertyName);
+                        ActionCurve curveClone = new ActionCurve(scriptClone, curve.ActionName, curve.IsRelative, curve.IsLoop, curve.PropertyName);
 
                         scriptClone.ListAction.Add(curveClone);
 
