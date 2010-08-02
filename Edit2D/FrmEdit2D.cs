@@ -88,9 +88,10 @@ namespace Edit2D
 
             repository.World.GradientColor1 = Microsoft.Xna.Framework.Graphics.Color.White;
             repository.World.GradientColor2 = Microsoft.Xna.Framework.Graphics.Color.White;
+            this.WindowState = FormWindowState.Maximized;
 
             //--- Mode simplifié
-            //if (repository.IsSimpleMode)
+            if (repository.IsSimpleMode)
             {
 
                 pnlViewerModes.Panel2Collapsed = false;
@@ -151,8 +152,8 @@ namespace Edit2D
 
             btnScriptModeBar.PerformClick();
 
-            WinformVisualStyle.ApplyStyle(this, "LightGray");
-            //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
+            //WinformVisualStyle.ApplyStyle(this, "LightGray");
+            WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             AddEntity();
             repository.CurrentEntite = repository.listEntite[0];
@@ -476,18 +477,31 @@ namespace Edit2D
         private void EntiteSelectionChange(bool refreshTreeView, Entite oldEntite, Object newSelection)
         {
             repository.CurrentObject = newSelection;
+
             repository.CurrentEntite = null;
             repository.CurrentScript = null;
-            repository.CurrentParticleSystem = null;
             repository.CurrentTrigger = null;
+            repository.CurrentParticleSystem = null;
+            repository.CurrentActionHandler = null;
+            repository.CurrentTriggerHandler = null;
 
             if (newSelection is Particle)
             {
+                repository.CurrentParticleSystem = ((Particle)newSelection).ParticleSystem;
+                repository.CurrentTriggerHandler = (ITriggerHandler)newSelection;
+                repository.CurrentActionHandler = (IActionHandler)newSelection;
+
+                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem.Entite;
+
                 ShowParticleSystemMode();
             }
             else if (newSelection is Entite)
             {
                 repository.CurrentEntite = (Entite)newSelection;
+                repository.CurrentTriggerHandler = (ITriggerHandler)newSelection;
+                repository.CurrentActionHandler = (IActionHandler)newSelection;
+
+                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentEntite;
 
                 switch (repository.ViewingMode)
                 {
@@ -509,20 +523,63 @@ namespace Edit2D
             else if (newSelection is Script)
             {
                 repository.CurrentScript = (Script)newSelection;
+                repository.CurrentActionHandler = ((Script)newSelection).ActionHandler;
+
+                if (repository.CurrentActionHandler is ITriggerHandler)
+                    repository.CurrentTriggerHandler = (ITriggerHandler)repository.CurrentActionHandler;
+
+                if(repository.CurrentActionHandler is Entite &&
+                    !repository.CurrentActionHandler.GetType().IsSubclassOf(typeof(Entite)))
+                    propertyGrid.PropertyGrid.SelectedObject = repository.CurrentActionHandler;
 
                 ShowScriptMode();
             }
             else if (newSelection is TriggerBase)
             {
                 repository.CurrentTrigger = (TriggerBase)newSelection;
+                repository.CurrentTriggerHandler = ((TriggerBase)newSelection).TriggerHandler;
+
+                if (repository.CurrentTriggerHandler is IActionHandler)
+                    repository.CurrentActionHandler = (IActionHandler)repository.CurrentTriggerHandler;
+
+                if ((repository.CurrentTriggerHandler is Entite &&
+                    !repository.CurrentTriggerHandler.GetType().IsSubclassOf(typeof(Entite))) ||
+                    repository.CurrentTriggerHandler is World)
+                    propertyGrid.PropertyGrid.SelectedObject = repository.CurrentTriggerHandler;
 
                 ShowTriggerMode();
             }
             else if (newSelection is ParticleSystem)
             {
                 repository.CurrentParticleSystem = (ParticleSystem)newSelection;
+                repository.CurrentActionHandler = (IActionHandler)newSelection;
+
+                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem.Entite;
 
                 ShowParticleSystemMode();
+            }
+            else if (newSelection is World)
+            {
+                repository.CurrentTriggerHandler = (ITriggerHandler)newSelection;
+
+                propertyGrid.PropertyGrid.SelectedObject = repository.World;
+
+                switch (repository.ViewingMode)
+                {
+                    case ViewingMode.Nothing:
+                        break;
+                    case ViewingMode.Script:
+                        scriptControl.RefreshScriptControl(true);
+                        break;
+                    case ViewingMode.Trigger:
+                        triggerControl.RefreshTriggerList(true);
+                        break;
+                    case ViewingMode.ParticleSystem:
+                        particleControl.RefreshParticleControl();
+                        break;
+                    default:
+                        break;
+                }
             }
 
 
@@ -747,15 +804,15 @@ namespace Edit2D
         {
             if (repository.CurrentEntite != null)
             {
-                Script script = null;
+                //Script script = null;
 
-                if (btnScriptModeBar.Checked && (script = scriptControl.GetSelectedScript()) != null)
+                if (btnScriptModeBar.Checked && repository.CurrentScript != null)
                 {
-                    if (script.ListAction.Count > 0)
+                    if (repository.CurrentScript.ListAction.Count > 0)
                     {
                         ActionCurve actionCurve = null;
 
-                        if ((actionCurve = (ActionCurve)script.ListAction.Find(a => a.ActionName == "Position")) != null)
+                        if ((actionCurve = (ActionCurve)repository.CurrentScript.ListAction.Find(a => a.ActionName == "Position")) != null)
                         {
                             actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[0].Keys[0].Value));
                             actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[1].Keys[0].Value));
@@ -776,7 +833,7 @@ namespace Edit2D
 
                             actionCurve.CalcDuration();
                         }
-                        if ((actionCurve = (ActionCurve)script.ListAction.Find(a => a.ActionName == "Rotation")) != null)
+                        if ((actionCurve = (ActionCurve)repository.CurrentScript.ListAction.Find(a => a.ActionName == "Rotation")) != null)
                         {
                             actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[0].Keys[0].Value));
 
@@ -784,7 +841,7 @@ namespace Edit2D
 
                             actionCurve.CalcDuration();
                         }
-                        if ((actionCurve = (ActionCurve)script.ListAction.Find(a => a.ActionName == "Size")) != null)
+                        if ((actionCurve = (ActionCurve)repository.CurrentScript.ListAction.Find(a => a.ActionName == "Size")) != null)
                         {
                             actionCurve.ListCurve[0].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[0].Keys[0].Value));
                             actionCurve.ListCurve[1].Keys.Add(new CurveKey(scriptControl.TimeLineValue, actionCurve.ListCurve[1].Keys[0].Value));
@@ -857,35 +914,33 @@ namespace Edit2D
         {
             if (repository.CurrentEntite != null)
             {
-                Script script = null;
-
-                if (!(btnScriptModeBar.Checked && (script = scriptControl.GetSelectedScript()) != null))
+                if (!(btnScriptModeBar.Checked && repository.CurrentScript != null))
                 {
                     ShowScriptMode();
-                    script = this.scriptControl.AddScriptToCurrentEntity();
-                    if (script == null)
+                    repository.CurrentScript = this.scriptControl.AddScriptToCurrentEntity();
+                    if (repository.CurrentScript == null)
                         return;
                 }
 
-                if (script.ListAction.Count == 0)
+                if (repository.CurrentScript.ListAction.Count == 0)
                 {
                     //--- Position
-                    ActionCurve actionPosition = new ActionCurve(script, "Position", false, false, "Position");
-                    script.ListAction.Add(actionPosition);
+                    ActionCurve actionPosition = new ActionCurve(repository.CurrentScript, "Position", false, false, "Position");
+                    repository.CurrentScript.ListAction.Add(actionPosition);
                     //---
 
                     //--- Rotation
-                    ActionCurve actionRotation = new ActionCurve(script, "Rotation", false, false,  "Rotation");
-                    script.ListAction.Add(actionRotation);
+                    ActionCurve actionRotation = new ActionCurve(repository.CurrentScript, "Rotation", false, false, "Rotation");
+                    repository.CurrentScript.ListAction.Add(actionRotation);
                     //---
 
                     //--- Size
-                    ActionCurve actionSize = new ActionCurve(script, "Size", false, false, "Size");
-                    script.ListAction.Add(actionSize);
+                    ActionCurve actionSize = new ActionCurve(repository.CurrentScript, "Size", false, false, "Size");
+                    repository.CurrentScript.ListAction.Add(actionSize);
                     //---
                 }
 
-                foreach (ActionBase action in script.ListAction)
+                foreach (ActionBase action in repository.CurrentScript.ListAction)
                 {
                     if (action is ActionCurve)
                     {
@@ -1414,27 +1469,6 @@ namespace Edit2D
             RefreshTreeView();
         }
 
-        private void treeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            //if (e.Node != null && e.Node.Tag is Entite)
-            //{
-            //    EntiteSelectionChange(false, repository.CurrentEntite, e.Node.Tag);
-            //}
-            //else if (e.Node != null && e.Node.Tag is ParticleSystem)
-            //{
-            //    EntiteSelectionChange(false, repository.CurrentEntite, e.Node.Tag);
-            //    //repository.CurrentObject = e.Node.Tag;
-            //}
-            //else if (e.Node != null && e.Node.Tag is ITriggerHandler)
-            //{
-            //    EntiteSelectionChange(false, repository.CurrentEntite, e.Node.Tag);
-            //}
-            //else if (e.Node != null && e.Node.Tag is World)
-            //{
-            //    EntiteSelectionChange(false, repository.CurrentEntite, e.Node.Tag);
-            //}
-        }
-
         private void treeView_AfterCheck(object sender, TreeViewEventArgs e)
         {
             if (treeView.IsCheckedByMouse && e.Node.Checked)
@@ -1442,24 +1476,6 @@ namespace Edit2D
                 Object item = treeView.GetItemFromNode(e.Node);
 
                 EntiteSelectionChange(false, repository.CurrentEntite, item);
-
-
-                //if (item is Particle)
-                //{
-                //    EntiteSelectionChange(false, repository.CurrentEntite, item);
-                //}
-                //else if (item is Entite)
-                //{
-                //    EntiteSelectionChange(false, repository.CurrentEntite, item);
-                //}
-                //else if (item is ParticleSystem)
-                //{
-                //    EntiteSelectionChange(false, repository.CurrentEntite, item);
-                //}
-                //else if (item is ITriggerHandler)
-                //{
-                //    EntiteSelectionChange(false, repository.CurrentEntite, item);
-                //}
             }
         }
 
@@ -2126,18 +2142,6 @@ namespace Edit2D
             repository.ViewingMode = ViewingMode.Script;
 
             scriptControl.RefreshScriptControl(true);
-
-            //---
-            //IActionHandler actionHandler = null;
-
-            //////if (repository.CurrentEntite != null)
-            //////    actionHandler = repository.CurrentEntite;
-            //////else 
-            //if (repository.CurrentObject != null && repository.CurrentObject is IActionHandler)
-            //    actionHandler = (IActionHandler)repository.CurrentObject;
-
-            //EntiteSelectionChange(true, repository.CurrentEntite, actionHandler);
-            //---
         }
 
         private void ShowTriggerMode()
@@ -2155,17 +2159,6 @@ namespace Edit2D
             repository.ViewingMode = ViewingMode.Trigger;
 
             triggerControl.RefreshTriggerList(true);
-
-            //---
-            //ITriggerHandler triggerHandler = null;
-
-            //if (repository.CurrentEntite != null)
-            //    triggerHandler = repository.CurrentEntite;
-            //else if (repository.CurrentObject != null && repository.CurrentObject is ITriggerHandler)
-            //    triggerHandler = (ITriggerHandler)repository.CurrentObject;
-
-            //EntiteSelectionChange(true, repository.CurrentEntite, triggerHandler);
-            //---
         }
 
         private void ShowParticleSystemMode()
@@ -2182,7 +2175,7 @@ namespace Edit2D
 
             repository.ViewingMode = ViewingMode.ParticleSystem;
 
-            //EntiteSelectionChange(true, repository.CurrentEntite, repository.CurrentEntite);
+            particleControl.RefreshParticleControl();
         }
         #endregion
     }

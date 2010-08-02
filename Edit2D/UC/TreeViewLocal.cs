@@ -105,6 +105,20 @@ namespace Edit2D.UC
             nodeWorld.Tag = new Object[] { TreeViewLocalItemType.World, Repository.World };
             //---
 
+            //--- World Trigger
+            if ((ItemTypeShowed & TreeViewLocalItemType.Trigger) == TreeViewLocalItemType.Trigger)
+            {
+                TreeNode nodeTriggersWorld = nodeWorld.Nodes.Add(NODE_TRIGGER, NODE_TRIGGER, IMAGE_KEY_TRIGGER);
+                nodeTriggersWorld.Tag = new Object[] { TreeViewLocalItemType.Trigger };
+
+                foreach (TriggerBase trigger in Repository.World.ListTrigger)
+                {
+                    TreeNode nodeTriggerWorld = nodeTriggersWorld.Nodes.Add(trigger.TriggerName, trigger.TriggerName, IMAGE_KEY_EMPTY);
+                    nodeTriggerWorld.Tag = new Object[] { TreeViewLocalItemType.Trigger, trigger };
+                }
+            }
+            //---
+
             //--- Souris
             if ((ItemTypeShowed & TreeViewLocalItemType.Mouse) == TreeViewLocalItemType.Mouse)
             {
@@ -239,6 +253,9 @@ namespace Edit2D.UC
 
         private void ChangeNodeCheck(TreeNode node, bool isChecked)
         {
+            Boolean prevIsCheckedByMouse = this.IsCheckedByMouse;
+            this.IsCheckedByMouse = false;
+
             node.Checked = isChecked;
 
             for (int i = 0; i < node.Nodes.Count; i++)
@@ -247,6 +264,8 @@ namespace Edit2D.UC
 
                 ChangeNodeCheck(node.Nodes[i], isChecked);
             }
+
+            this.IsCheckedByMouse = prevIsCheckedByMouse;
         }
 
         public void CheckNode<T>(T nodeToCheck, string pathParent)
@@ -279,6 +298,9 @@ namespace Edit2D.UC
 
         public void CheckNode(TreeNode node, string fullPath)
         {
+            Boolean prevIsCheckedByMouse = this.IsCheckedByMouse;
+            this.IsCheckedByMouse = false;
+
             if (node == null)
                 return;
 
@@ -300,6 +322,8 @@ namespace Edit2D.UC
                     CheckNode(node.Nodes[i], fullPath);
                 }
             }
+
+            this.IsCheckedByMouse = prevIsCheckedByMouse;
         }
 
         public void CheckNode<T>(T nodeToCheck)
@@ -317,6 +341,9 @@ namespace Edit2D.UC
 
         public void CheckNode<T>(TreeNode node, T nodeToCheck)
         {
+            Boolean prevIsCheckedByMouse = this.IsCheckedByMouse;
+            this.IsCheckedByMouse = false;
+
             if (node == null)
                 return;
 
@@ -344,6 +371,8 @@ namespace Edit2D.UC
                     CheckNode(node.Nodes[i], nodeToCheck);
                 }
             }
+
+            this.IsCheckedByMouse = prevIsCheckedByMouse;
         }
 
         public void CheckNodes<T>(List<T> listNodesToCheck)
@@ -361,6 +390,9 @@ namespace Edit2D.UC
 
         public void CheckNodes<T>(TreeNode node, List<T> listNodesToCheck)
         {
+            Boolean prevIsCheckedByMouse = this.IsCheckedByMouse;
+            this.IsCheckedByMouse = false;
+
             if (node == null)
                 return;
 
@@ -387,6 +419,8 @@ namespace Edit2D.UC
                     CheckNodes(node.Nodes[i], listNodesToCheck);
                 }
             }
+
+            this.IsCheckedByMouse = prevIsCheckedByMouse;
         }
 
         public TreeNode GetNodeWithPath(string fullPath)

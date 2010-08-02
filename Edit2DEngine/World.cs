@@ -27,5 +27,21 @@ namespace Edit2DEngine
                 return "Monde";
             }
         }
+
+        public bool SupportTrigerChangedValue
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public bool SupportTrigerCollision
+        {
+            get
+            {
+                return false;
+            }
+        }
     }
 }

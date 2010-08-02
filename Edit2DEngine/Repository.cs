@@ -8,18 +8,19 @@ using Edit2DEngine.Particles;
 using System.Drawing;
 using System.Linq;
 using System.Diagnostics;
+using Edit2DEngine.Action;
+using Edit2DEngine.Trigger;
 
 namespace Edit2DEngine
 {
     public class Repository
     {
         public Entite tempEntite;
-        private Entite _currentEntite;
         private Random rnd;
         public static int EntityCount = 0;
-
         public bool Pause = false;
 
+        private Entite _currentEntite;
         public Entite CurrentEntite
         {
             get
@@ -31,59 +32,23 @@ namespace Edit2DEngine
                 listEntite.ForEach(ent => ent.Selected = false);
 
                 _currentEntite = value;
-                _currentObject = null;
 
                 if (value != null)
                     _currentEntite.Selected = true;
             }
         }
 
-        Object _currentObject = null;
-        public Object CurrentObject
-        {
-            get
-            {
-                return _currentObject;
-            }
-            set
-            {
-                _currentObject = value;
-                _currentEntite = null;
-            }
-        }
-
-        public ParticleSystem CurrentParticleSystem
-        {
-            get
-            {
-                if (CurrentObject != null && CurrentObject is ParticleSystem)
-                    return (ParticleSystem)CurrentObject;
-                else
-                    return null;
-            }
-            set
-            {
-                CurrentObject = value;
-            }
-        }
-
+        public Object CurrentObject { get; set; }
+        public IActionHandler CurrentActionHandler { get; set; }
+        public ITriggerHandler CurrentTriggerHandler { get; set; }
+        public ParticleSystem CurrentParticleSystem { get; set; }
         public World World { get; set; }
-
         public Entite currentEntite2;
-
-        //public Vector2 pointer = new Vector2();
-        //public Vector2 pointerDraw = new Vector2();
-
-        //public Vector2 pointer2 = new Vector2();
-        //public Vector2 pointerDraw2 = new Vector2();
-
         public List<Entite> listEntite;
+        public Camera Camera;
 
         public static PhysicsSimulator physicSimulator;
         public string CurrentTextureName;
-
-        public Camera Camera;
-
         public Stopwatch WatchLoading;
 
         public Repository()
@@ -95,8 +60,6 @@ namespace Edit2DEngine
             this.WatchLoading = new Stopwatch();
 
             Repository.physicSimulator = new PhysicsSimulator(new Vector2(0, 9.81f));
-            //Repository.physicSimulator.NarrowPhaseCollisionTime
-            //PhysicsSimulator.NarrowPhaseCollider = NarrowPhaseCollider.SAT;  
         }
 
         public Entite GetSelectedEntiteFromLocation(Vector2 location)
