@@ -299,6 +299,7 @@ namespace Edit2DEngine
             set;
         }
 
+        [Browsable(false)]
         public String TreeViewPath
         {
             get
@@ -307,6 +308,7 @@ namespace Edit2DEngine
             }
         }
 
+        [Browsable(false)]
         public bool SupportTrigerChangedValue
         {
             get
@@ -315,6 +317,7 @@ namespace Edit2DEngine
             }
         }
 
+        [Browsable(false)]
         public bool SupportTrigerCollision
         {
             get
@@ -781,7 +784,8 @@ namespace Edit2DEngine
                 clonePSystem.EmmittingAngle = pSystem.EmmittingAngle;
                 clonePSystem.EmmittingFromAllSurface = pSystem.EmmittingFromAllSurface;
                 clonePSystem.FieldAngle = pSystem.FieldAngle;
-                clonePSystem.ParticleSystemName = pSystem.ParticleSystemName;
+                clonePSystem.Name = pSystem.Name;
+                //clonePSystem.ParticleSystemName = pSystem.ParticleSystemName;
                 clonePSystem.Rate = pSystem.Rate;
                 clonePSystem.Velocity = pSystem.Velocity;
 

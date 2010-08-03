@@ -28,240 +28,395 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pnlParticleControl = new System.Windows.Forms.TableLayoutPanel();
-            this.listBoxParticleTemplate = new System.Windows.Forms.ListBox();
-            this.propParticleTemplate = new System.Windows.Forms.PropertyGrid();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnDelParticleTemplate = new System.Windows.Forms.Button();
-            this.btnAddParticleTemplate = new System.Windows.Forms.Button();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnDelParticleSystem = new System.Windows.Forms.Button();
-            this.btnAddParticleSystem = new System.Windows.Forms.Button();
-            this.listBoxParticleSystem = new System.Windows.Forms.ListBox();
-            this.propParticleSystem = new System.Windows.Forms.PropertyGrid();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.btnModifParticleTemplateTexture = new System.Windows.Forms.Button();
             this.cmbParticleTemplate = new System.Windows.Forms.ComboBox();
-            this.pnlParticleControl.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.lblAction = new System.Windows.Forms.Label();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.lblScript = new System.Windows.Forms.Label();
+            this.listBoxParticleSystem = new System.Windows.Forms.ListBox();
+            this.btnAddParticleSystem = new System.Windows.Forms.Button();
+            this.btnDelParticleSystem = new System.Windows.Forms.Button();
+            this.listBoxParticleTemplate = new System.Windows.Forms.ListBox();
+            this.btnParticleTemplate = new System.Windows.Forms.Button();
+            this.btnDelParticleTemplate = new System.Windows.Forms.Button();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.panel7 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.panel8 = new System.Windows.Forms.Panel();
+            this.panel9 = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel10 = new System.Windows.Forms.Panel();
+            this.propParticleTemplate = new Edit2D.UC.PropertyGridLocal();
+            this.propParticleSystem = new Edit2D.UC.PropertyGridLocal();
+            this.panel4.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.panel7.SuspendLayout();
+            this.panel9.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.panel10.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // pnlParticleControl
-            // 
-            this.pnlParticleControl.ColumnCount = 4;
-            this.pnlParticleControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.pnlParticleControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.pnlParticleControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.pnlParticleControl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.pnlParticleControl.Controls.Add(this.listBoxParticleTemplate, 2, 1);
-            this.pnlParticleControl.Controls.Add(this.propParticleTemplate, 3, 1);
-            this.pnlParticleControl.Controls.Add(this.tableLayoutPanel2, 2, 0);
-            this.pnlParticleControl.Controls.Add(this.tableLayoutPanel1, 0, 0);
-            this.pnlParticleControl.Controls.Add(this.listBoxParticleSystem, 0, 1);
-            this.pnlParticleControl.Controls.Add(this.propParticleSystem, 1, 0);
-            this.pnlParticleControl.Controls.Add(this.panel1, 3, 0);
-            this.pnlParticleControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlParticleControl.Location = new System.Drawing.Point(0, 0);
-            this.pnlParticleControl.Name = "pnlParticleControl";
-            this.pnlParticleControl.RowCount = 2;
-            this.pnlParticleControl.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 43F));
-            this.pnlParticleControl.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.pnlParticleControl.Size = new System.Drawing.Size(795, 194);
-            this.pnlParticleControl.TabIndex = 0;
-            // 
-            // listBoxParticleTemplate
-            // 
-            this.listBoxParticleTemplate.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listBoxParticleTemplate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBoxParticleTemplate.FormattingEnabled = true;
-            this.listBoxParticleTemplate.Location = new System.Drawing.Point(399, 46);
-            this.listBoxParticleTemplate.Name = "listBoxParticleTemplate";
-            this.listBoxParticleTemplate.Size = new System.Drawing.Size(192, 145);
-            this.listBoxParticleTemplate.TabIndex = 6;
-            this.listBoxParticleTemplate.SelectedIndexChanged += new System.EventHandler(this.listBoxParticleTemplate_SelectedIndexChanged);
-            // 
-            // propParticleTemplate
-            // 
-            this.propParticleTemplate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propParticleTemplate.HelpVisible = false;
-            this.propParticleTemplate.Location = new System.Drawing.Point(597, 46);
-            this.propParticleTemplate.Name = "propParticleTemplate";
-            this.propParticleTemplate.Size = new System.Drawing.Size(195, 145);
-            this.propParticleTemplate.TabIndex = 4;
-            // 
-            // tableLayoutPanel2
-            // 
-            this.tableLayoutPanel2.ColumnCount = 2;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.Controls.Add(this.btnDelParticleTemplate, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this.btnAddParticleTemplate, 0, 0);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(399, 3);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(192, 37);
-            this.tableLayoutPanel2.TabIndex = 1;
-            // 
-            // btnDelParticleTemplate
-            // 
-            this.btnDelParticleTemplate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnDelParticleTemplate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDelParticleTemplate.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
-            this.btnDelParticleTemplate.Location = new System.Drawing.Point(99, 3);
-            this.btnDelParticleTemplate.Name = "btnDelParticleTemplate";
-            this.btnDelParticleTemplate.Size = new System.Drawing.Size(90, 31);
-            this.btnDelParticleTemplate.TabIndex = 1;
-            this.btnDelParticleTemplate.Text = "-";
-            this.btnDelParticleTemplate.UseVisualStyleBackColor = true;
-            this.btnDelParticleTemplate.Click += new System.EventHandler(this.btnDelParticleTemplate_Click);
-            // 
-            // btnAddParticleTemplate
-            // 
-            this.btnAddParticleTemplate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnAddParticleTemplate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAddParticleTemplate.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
-            this.btnAddParticleTemplate.Location = new System.Drawing.Point(3, 3);
-            this.btnAddParticleTemplate.Name = "btnAddParticleTemplate";
-            this.btnAddParticleTemplate.Size = new System.Drawing.Size(90, 31);
-            this.btnAddParticleTemplate.TabIndex = 0;
-            this.btnAddParticleTemplate.Text = "+";
-            this.btnAddParticleTemplate.UseVisualStyleBackColor = true;
-            this.btnAddParticleTemplate.Click += new System.EventHandler(this.btnAddParticleTemplate_Click);
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Controls.Add(this.btnDelParticleSystem, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.btnAddParticleSystem, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(192, 37);
-            this.tableLayoutPanel1.TabIndex = 0;
-            // 
-            // btnDelParticleSystem
-            // 
-            this.btnDelParticleSystem.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnDelParticleSystem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDelParticleSystem.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
-            this.btnDelParticleSystem.Location = new System.Drawing.Point(99, 3);
-            this.btnDelParticleSystem.Name = "btnDelParticleSystem";
-            this.btnDelParticleSystem.Size = new System.Drawing.Size(90, 31);
-            this.btnDelParticleSystem.TabIndex = 1;
-            this.btnDelParticleSystem.Text = "-";
-            this.btnDelParticleSystem.UseVisualStyleBackColor = true;
-            this.btnDelParticleSystem.Click += new System.EventHandler(this.btnDelParticleSystem_Click);
-            // 
-            // btnAddParticleSystem
-            // 
-            this.btnAddParticleSystem.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnAddParticleSystem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAddParticleSystem.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
-            this.btnAddParticleSystem.Location = new System.Drawing.Point(3, 3);
-            this.btnAddParticleSystem.Name = "btnAddParticleSystem";
-            this.btnAddParticleSystem.Size = new System.Drawing.Size(90, 31);
-            this.btnAddParticleSystem.TabIndex = 0;
-            this.btnAddParticleSystem.Text = "+";
-            this.btnAddParticleSystem.UseVisualStyleBackColor = true;
-            this.btnAddParticleSystem.Click += new System.EventHandler(this.btnAddParticleSystem_Click);
-            // 
-            // listBoxParticleSystem
-            // 
-            this.listBoxParticleSystem.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listBoxParticleSystem.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBoxParticleSystem.FormattingEnabled = true;
-            this.listBoxParticleSystem.Location = new System.Drawing.Point(3, 46);
-            this.listBoxParticleSystem.Name = "listBoxParticleSystem";
-            this.listBoxParticleSystem.Size = new System.Drawing.Size(192, 145);
-            this.listBoxParticleSystem.TabIndex = 2;
-            this.listBoxParticleSystem.SelectedIndexChanged += new System.EventHandler(this.listBoxParticleSystem_SelectedIndexChanged);
-            // 
-            // propParticleSystem
-            // 
-            this.propParticleSystem.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propParticleSystem.HelpVisible = false;
-            this.propParticleSystem.Location = new System.Drawing.Point(201, 3);
-            this.propParticleSystem.Name = "propParticleSystem";
-            this.pnlParticleControl.SetRowSpan(this.propParticleSystem, 2);
-            this.propParticleSystem.Size = new System.Drawing.Size(192, 188);
-            this.propParticleSystem.TabIndex = 3;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.btnModifParticleTemplateTexture);
-            this.panel1.Controls.Add(this.cmbParticleTemplate);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(597, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(195, 37);
-            this.panel1.TabIndex = 7;
-            // 
-            // btnModifParticleTemplateTexture
-            // 
-            this.btnModifParticleTemplateTexture.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnModifParticleTemplateTexture.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnModifParticleTemplateTexture.Font = new System.Drawing.Font("Wingdings", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
-            this.btnModifParticleTemplateTexture.Location = new System.Drawing.Point(155, 0);
-            this.btnModifParticleTemplateTexture.Name = "btnModifParticleTemplateTexture";
-            this.btnModifParticleTemplateTexture.Size = new System.Drawing.Size(40, 37);
-            this.btnModifParticleTemplateTexture.TabIndex = 18;
-            this.btnModifParticleTemplateTexture.Text = "ü";
-            this.btnModifParticleTemplateTexture.UseVisualStyleBackColor = true;
-            this.btnModifParticleTemplateTexture.Click += new System.EventHandler(this.btnModifParticleTemplateTexture_Click);
             // 
             // cmbParticleTemplate
             // 
-            this.cmbParticleTemplate.Dock = System.Windows.Forms.DockStyle.Left;
             this.cmbParticleTemplate.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbParticleTemplate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbParticleTemplate.FormattingEnabled = true;
             this.cmbParticleTemplate.ItemHeight = 30;
-            this.cmbParticleTemplate.Location = new System.Drawing.Point(0, 0);
+            this.cmbParticleTemplate.Location = new System.Drawing.Point(421, 53);
             this.cmbParticleTemplate.Name = "cmbParticleTemplate";
-            this.cmbParticleTemplate.Size = new System.Drawing.Size(155, 36);
+            this.cmbParticleTemplate.Size = new System.Drawing.Size(168, 36);
             this.cmbParticleTemplate.TabIndex = 6;
             this.cmbParticleTemplate.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cmbParticleTemplate_DrawItem);
+            // 
+            // panel5
+            // 
+            this.panel5.BackColor = System.Drawing.Color.DarkGray;
+            this.panel5.Location = new System.Drawing.Point(186, 49);
+            this.panel5.Margin = new System.Windows.Forms.Padding(0);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(6, 256);
+            this.panel5.TabIndex = 7;
+            this.panel5.Tag = "B";
+            // 
+            // panel4
+            // 
+            this.panel4.BackColor = System.Drawing.Color.DarkGray;
+            this.panel4.Controls.Add(this.lblAction);
+            this.panel4.Location = new System.Drawing.Point(186, 10);
+            this.panel4.Margin = new System.Windows.Forms.Padding(0);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(232, 40);
+            this.panel4.TabIndex = 6;
+            this.panel4.Tag = "B";
+            // 
+            // lblAction
+            // 
+            this.lblAction.AutoSize = true;
+            this.lblAction.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAction.ForeColor = System.Drawing.Color.Black;
+            this.lblAction.Location = new System.Drawing.Point(6, 6);
+            this.lblAction.Margin = new System.Windows.Forms.Padding(6);
+            this.lblAction.Name = "lblAction";
+            this.lblAction.Size = new System.Drawing.Size(88, 19);
+            this.lblAction.TabIndex = 1;
+            this.lblAction.Tag = "F2";
+            this.lblAction.Text = "Propriétés";
+            // 
+            // panel3
+            // 
+            this.panel3.BackColor = System.Drawing.Color.Gray;
+            this.panel3.Location = new System.Drawing.Point(186, 0);
+            this.panel3.Margin = new System.Windows.Forms.Padding(0);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(232, 10);
+            this.panel3.TabIndex = 5;
+            this.panel3.Tag = "BG2";
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.Color.Gray;
+            this.panel2.Controls.Add(this.lblScript);
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Margin = new System.Windows.Forms.Padding(0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(186, 50);
+            this.panel2.TabIndex = 4;
+            this.panel2.Tag = "BG2";
+            // 
+            // lblScript
+            // 
+            this.lblScript.AutoSize = true;
+            this.lblScript.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblScript.ForeColor = System.Drawing.Color.Black;
+            this.lblScript.Location = new System.Drawing.Point(6, 16);
+            this.lblScript.Margin = new System.Windows.Forms.Padding(6);
+            this.lblScript.Name = "lblScript";
+            this.lblScript.Size = new System.Drawing.Size(177, 19);
+            this.lblScript.TabIndex = 0;
+            this.lblScript.Tag = "F2";
+            this.lblScript.Text = "Système de particules";
+            // 
+            // listBoxParticleSystem
+            // 
+            this.listBoxParticleSystem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.listBoxParticleSystem.BackColor = System.Drawing.Color.Gray;
+            this.listBoxParticleSystem.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.listBoxParticleSystem.FormattingEnabled = true;
+            this.listBoxParticleSystem.Items.AddRange(new object[] {
+            "test"});
+            this.listBoxParticleSystem.Location = new System.Drawing.Point(6, 41);
+            this.listBoxParticleSystem.Name = "listBoxParticleSystem";
+            this.listBoxParticleSystem.Size = new System.Drawing.Size(180, 208);
+            this.listBoxParticleSystem.TabIndex = 11;
+            this.listBoxParticleSystem.Tag = "BG2";
+            this.listBoxParticleSystem.SelectedIndexChanged += new System.EventHandler(this.listBoxParticleSystem_SelectedIndexChanged);
+            // 
+            // btnAddParticleSystem
+            // 
+            this.btnAddParticleSystem.BackColor = System.Drawing.Color.Gray;
+            this.btnAddParticleSystem.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.btnAddParticleSystem.FlatAppearance.BorderSize = 0;
+            this.btnAddParticleSystem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAddParticleSystem.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
+            this.btnAddParticleSystem.Location = new System.Drawing.Point(47, 3);
+            this.btnAddParticleSystem.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.btnAddParticleSystem.Name = "btnAddParticleSystem";
+            this.btnAddParticleSystem.Size = new System.Drawing.Size(42, 35);
+            this.btnAddParticleSystem.TabIndex = 9;
+            this.btnAddParticleSystem.Tag = "BG2";
+            this.btnAddParticleSystem.Text = "+";
+            this.btnAddParticleSystem.UseVisualStyleBackColor = false;
+            this.btnAddParticleSystem.Click += new System.EventHandler(this.btnAddParticleSystem_Click);
+            // 
+            // btnDelParticleSystem
+            // 
+            this.btnDelParticleSystem.BackColor = System.Drawing.Color.Gray;
+            this.btnDelParticleSystem.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.btnDelParticleSystem.FlatAppearance.BorderSize = 0;
+            this.btnDelParticleSystem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDelParticleSystem.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDelParticleSystem.Location = new System.Drawing.Point(89, 3);
+            this.btnDelParticleSystem.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.btnDelParticleSystem.Name = "btnDelParticleSystem";
+            this.btnDelParticleSystem.Size = new System.Drawing.Size(42, 35);
+            this.btnDelParticleSystem.TabIndex = 10;
+            this.btnDelParticleSystem.Tag = "BG2";
+            this.btnDelParticleSystem.Text = "-";
+            this.btnDelParticleSystem.UseVisualStyleBackColor = false;
+            this.btnDelParticleSystem.Click += new System.EventHandler(this.btnDelParticleSystem_Click);
+            // 
+            // listBoxParticleTemplate
+            // 
+            this.listBoxParticleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.listBoxParticleTemplate.BackColor = System.Drawing.Color.Gray;
+            this.listBoxParticleTemplate.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.listBoxParticleTemplate.FormattingEnabled = true;
+            this.listBoxParticleTemplate.Items.AddRange(new object[] {
+            "test"});
+            this.listBoxParticleTemplate.Location = new System.Drawing.Point(6, 41);
+            this.listBoxParticleTemplate.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.listBoxParticleTemplate.Name = "listBoxParticleTemplate";
+            this.listBoxParticleTemplate.Size = new System.Drawing.Size(168, 169);
+            this.listBoxParticleTemplate.TabIndex = 18;
+            this.listBoxParticleTemplate.Tag = "BG2";
+            this.listBoxParticleTemplate.SelectedIndexChanged += new System.EventHandler(this.listBoxParticleTemplate_SelectedIndexChanged);
+            // 
+            // btnParticleTemplate
+            // 
+            this.btnParticleTemplate.BackColor = System.Drawing.Color.Gray;
+            this.btnParticleTemplate.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.btnParticleTemplate.FlatAppearance.BorderSize = 0;
+            this.btnParticleTemplate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnParticleTemplate.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
+            this.btnParticleTemplate.Location = new System.Drawing.Point(47, 3);
+            this.btnParticleTemplate.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.btnParticleTemplate.Name = "btnParticleTemplate";
+            this.btnParticleTemplate.Size = new System.Drawing.Size(42, 35);
+            this.btnParticleTemplate.TabIndex = 16;
+            this.btnParticleTemplate.Tag = "BG2";
+            this.btnParticleTemplate.Text = "+";
+            this.btnParticleTemplate.UseVisualStyleBackColor = false;
+            this.btnParticleTemplate.Click += new System.EventHandler(this.btnAddParticleTemplate_Click);
+            // 
+            // btnDelParticleTemplate
+            // 
+            this.btnDelParticleTemplate.BackColor = System.Drawing.Color.Gray;
+            this.btnDelParticleTemplate.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.btnDelParticleTemplate.FlatAppearance.BorderSize = 0;
+            this.btnDelParticleTemplate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDelParticleTemplate.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDelParticleTemplate.Location = new System.Drawing.Point(89, 3);
+            this.btnDelParticleTemplate.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.btnDelParticleTemplate.Name = "btnDelParticleTemplate";
+            this.btnDelParticleTemplate.Size = new System.Drawing.Size(42, 35);
+            this.btnDelParticleTemplate.TabIndex = 17;
+            this.btnDelParticleTemplate.Tag = "BG2";
+            this.btnDelParticleTemplate.Text = "-";
+            this.btnDelParticleTemplate.UseVisualStyleBackColor = false;
+            this.btnDelParticleTemplate.Click += new System.EventHandler(this.btnDelParticleTemplate_Click);
+            // 
+            // panel6
+            // 
+            this.panel6.BackColor = System.Drawing.Color.DarkGray;
+            this.panel6.Location = new System.Drawing.Point(592, 49);
+            this.panel6.Margin = new System.Windows.Forms.Padding(0);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(6, 256);
+            this.panel6.TabIndex = 15;
+            this.panel6.Tag = "B";
+            // 
+            // panel7
+            // 
+            this.panel7.BackColor = System.Drawing.Color.DarkGray;
+            this.panel7.Controls.Add(this.label1);
+            this.panel7.Location = new System.Drawing.Point(592, 10);
+            this.panel7.Margin = new System.Windows.Forms.Padding(0);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(232, 40);
+            this.panel7.TabIndex = 14;
+            this.panel7.Tag = "B";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.Black;
+            this.label1.Location = new System.Drawing.Point(6, 6);
+            this.label1.Margin = new System.Windows.Forms.Padding(6);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(88, 19);
+            this.label1.TabIndex = 1;
+            this.label1.Tag = "F2";
+            this.label1.Text = "Propriétés";
+            // 
+            // panel8
+            // 
+            this.panel8.BackColor = System.Drawing.Color.Gray;
+            this.panel8.Location = new System.Drawing.Point(592, 0);
+            this.panel8.Margin = new System.Windows.Forms.Padding(0);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(232, 10);
+            this.panel8.TabIndex = 13;
+            this.panel8.Tag = "BG2";
+            // 
+            // panel9
+            // 
+            this.panel9.BackColor = System.Drawing.Color.Gray;
+            this.panel9.Controls.Add(this.label2);
+            this.panel9.Location = new System.Drawing.Point(418, 0);
+            this.panel9.Margin = new System.Windows.Forms.Padding(0);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(174, 50);
+            this.panel9.TabIndex = 12;
+            this.panel9.Tag = "BG2";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.Color.Black;
+            this.label2.Location = new System.Drawing.Point(6, 16);
+            this.label2.Margin = new System.Windows.Forms.Padding(6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(76, 19);
+            this.label2.TabIndex = 0;
+            this.label2.Tag = "F2";
+            this.label2.Text = "Particule";
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel1.Controls.Add(this.btnAddParticleSystem);
+            this.panel1.Controls.Add(this.btnDelParticleSystem);
+            this.panel1.Controls.Add(this.listBoxParticleSystem);
+            this.panel1.Location = new System.Drawing.Point(0, 54);
+            this.panel1.Margin = new System.Windows.Forms.Padding(0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(186, 251);
+            this.panel1.TabIndex = 19;
+            this.panel1.Tag = "B";
+            // 
+            // panel10
+            // 
+            this.panel10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel10.Controls.Add(this.btnParticleTemplate);
+            this.panel10.Controls.Add(this.btnDelParticleTemplate);
+            this.panel10.Controls.Add(this.listBoxParticleTemplate);
+            this.panel10.Location = new System.Drawing.Point(418, 93);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(174, 212);
+            this.panel10.TabIndex = 20;
+            this.panel10.Tag = "B";
+            // 
+            // propParticleTemplate
+            // 
+            this.propParticleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.propParticleTemplate.Location = new System.Drawing.Point(598, 50);
+            this.propParticleTemplate.Margin = new System.Windows.Forms.Padding(0);
+            this.propParticleTemplate.Name = "propParticleTemplate";
+            this.propParticleTemplate.Size = new System.Drawing.Size(226, 255);
+            this.propParticleTemplate.TabIndex = 2;
+            this.propParticleTemplate.Tag = "B";
+            this.propParticleTemplate.TagProp = "B";
+            // 
+            // propParticleSystem
+            // 
+            this.propParticleSystem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.propParticleSystem.Location = new System.Drawing.Point(192, 50);
+            this.propParticleSystem.Margin = new System.Windows.Forms.Padding(0);
+            this.propParticleSystem.Name = "propParticleSystem";
+            this.propParticleSystem.Size = new System.Drawing.Size(226, 255);
+            this.propParticleSystem.TabIndex = 1;
+            this.propParticleSystem.Tag = "B";
+            this.propParticleSystem.TagProp = "B";
             // 
             // ParticleControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.pnlParticleControl);
+            this.Controls.Add(this.panel6);
+            this.Controls.Add(this.panel5);
+            this.Controls.Add(this.panel10);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.cmbParticleTemplate);
+            this.Controls.Add(this.panel7);
+            this.Controls.Add(this.panel8);
+            this.Controls.Add(this.panel9);
+            this.Controls.Add(this.panel4);
+            this.Controls.Add(this.panel3);
+            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.propParticleTemplate);
+            this.Controls.Add(this.propParticleSystem);
             this.Name = "ParticleControl";
-            this.Size = new System.Drawing.Size(795, 194);
-            this.pnlParticleControl.ResumeLayout(false);
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.tableLayoutPanel1.ResumeLayout(false);
+            this.Size = new System.Drawing.Size(891, 305);
+            this.Tag = "BG1";
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            this.panel7.ResumeLayout(false);
+            this.panel7.PerformLayout();
+            this.panel9.ResumeLayout(false);
+            this.panel9.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.panel10.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TableLayoutPanel pnlParticleControl;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Button btnAddParticleSystem;
-        private System.Windows.Forms.PropertyGrid propParticleTemplate;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.Button btnDelParticleTemplate;
-        private System.Windows.Forms.Button btnAddParticleTemplate;
-        private System.Windows.Forms.Button btnDelParticleSystem;
-        private System.Windows.Forms.ListBox listBoxParticleSystem;
-        private System.Windows.Forms.PropertyGrid propParticleSystem;
-        private System.Windows.Forms.ListBox listBoxParticleTemplate;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ComboBox cmbParticleTemplate;
-        private System.Windows.Forms.Button btnModifParticleTemplateTexture;
+        private Edit2D.UC.PropertyGridLocal propParticleSystem;
+        private Edit2D.UC.PropertyGridLocal propParticleTemplate;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Label lblAction;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Label lblScript;
+        private System.Windows.Forms.ListBox listBoxParticleSystem;
+        private System.Windows.Forms.Button btnAddParticleSystem;
+        private System.Windows.Forms.Button btnDelParticleSystem;
+        private System.Windows.Forms.ListBox listBoxParticleTemplate;
+        private System.Windows.Forms.Button btnParticleTemplate;
+        private System.Windows.Forms.Button btnDelParticleTemplate;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.Panel panel7;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel panel8;
+        private System.Windows.Forms.Panel panel9;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel10;
     }
 }

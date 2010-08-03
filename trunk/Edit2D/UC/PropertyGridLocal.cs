@@ -15,5 +15,20 @@ namespace Edit2D.UC
         {
             InitializeComponent();
         }
+
+        public Object TagProp
+        {
+            get
+            {
+                Object tagProp = this.PropertyGrid.Tag;
+                return tagProp;
+            }
+            set
+            {
+                Object tagProp = value;
+                this.PropertyGrid.Tag = tagProp;
+            }
+
+        }
     }
 }

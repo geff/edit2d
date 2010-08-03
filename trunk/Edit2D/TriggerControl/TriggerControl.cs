@@ -86,36 +86,27 @@ namespace Edit2D.TriggerControl
 
         private void btnDelTrigger_Click(object sender, EventArgs e)
         {
-            if (Repository.CurrentTriggerHandler != null && Repository.CurrentTrigger != null)
-            {
-                Repository.CurrentTriggerHandler.ListTrigger.Remove(Repository.CurrentTrigger);
-                Repository.CurrentTrigger = null;
+            DeleteCurrentTrigger();
+        }
 
-                RefreshTriggerList(true);
+        private void btnDelTrigger_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                DeleteCurrentTrigger();
             }
         }
 
         private void btnChangeTriggerName_Click(object sender, EventArgs e)
         {
-            if (Repository.CurrentTrigger != null &&
-                !String.IsNullOrEmpty(txtTriggerName.Text) &&
-                txtTriggerName.Text != Repository.CurrentTrigger.TriggerName
-                )
-            {
-                if (Repository.CurrentTriggerHandler.ListTrigger.Exists(t => t.TriggerName == txtTriggerName.Text))
-                {
-                    MessageBox.Show(String.Format("Le nom du déclencheur '{0}' existe déja", txtTriggerName.Text), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-                else
-                {
-                    int previousIndexSelected = listboxTrigger.SelectedIndex;
-                    Repository.CurrentTrigger.TriggerName = txtTriggerName.Text;
-                    
-                    RefreshTriggerList(false);
-                    RefreshGlobalTreeView();
+            ChangeCurrentTriggerName();
+        }
 
-                    listboxTrigger.SelectedIndex = previousIndexSelected;
-                }
+        private void btnChangeTriggerName_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                ChangeCurrentTriggerName();
             }
         }
 
@@ -771,7 +762,7 @@ namespace Edit2D.TriggerControl
 
             if (String.IsNullOrEmpty(txtTriggerName.Text))
             {
-                triggerName = String.Format("Trigger{0}", Repository.CurrentTriggerHandler.ListTrigger.Count + 1);
+                triggerName = Common.CreateNewName<TriggerBase>(Repository.CurrentTriggerHandler.ListTrigger, "TriggerName", "Trigger{0}");
             }
             else
             {
@@ -802,6 +793,41 @@ namespace Edit2D.TriggerControl
             //---
             
             return trigger;
+        }
+
+        public void DeleteCurrentTrigger()
+        {
+            if (Repository.CurrentTriggerHandler != null && Repository.CurrentTrigger != null)
+            {
+                Repository.CurrentTriggerHandler.ListTrigger.Remove(Repository.CurrentTrigger);
+                Repository.CurrentTrigger = null;
+
+                RefreshTriggerList(true);
+            }
+        }
+
+        public void ChangeCurrentTriggerName()
+        {
+            if (Repository.CurrentTrigger != null &&
+                !String.IsNullOrEmpty(txtTriggerName.Text) &&
+                txtTriggerName.Text != Repository.CurrentTrigger.TriggerName
+                )
+            {
+                if (Repository.CurrentTriggerHandler.ListTrigger.Exists(t => t.TriggerName == txtTriggerName.Text))
+                {
+                    MessageBox.Show(String.Format("Le nom du déclencheur '{0}' existe déja", txtTriggerName.Text), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    int previousIndexSelected = listboxTrigger.SelectedIndex;
+                    Repository.CurrentTrigger.TriggerName = txtTriggerName.Text;
+
+                    RefreshTriggerList(false);
+                    RefreshGlobalTreeView();
+
+                    listboxTrigger.SelectedIndex = previousIndexSelected;
+                }
+            }
         }
 
         public void RefreshTriggerList(bool selectTrigger)

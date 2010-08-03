@@ -288,7 +288,7 @@ namespace Edit2DEngine
                             pSystem.EmmittingAngle = float.Parse(reader["EmmittingAngle"]);
                             pSystem.EmmittingFromAllSurface = bool.Parse(reader["EmmittingFromAllSurface"]);
                             pSystem.FieldAngle = float.Parse(reader["FieldAngle"]);
-                            pSystem.ParticleSystemName = reader["ParticleSystemName"];
+                            pSystem.Name = reader["Name"];//ParticleSystemName
                             pSystem.Rate = int.Parse(reader["Rate"]);
                             pSystem.Velocity = float.Parse(reader["Velocity"]);
 
@@ -518,7 +518,8 @@ namespace Edit2DEngine
             {
                 writer.WriteStartElement("ParticleSystem");
 
-                writer.WriteAttributeString("ParticleSystemName", psystem.ParticleSystemName);
+                writer.WriteAttributeString("Name", psystem.Name);
+                //writer.WriteAttributeString("ParticleSystemName", psystem.ParticleSystemName);
                 writer.WriteAttributeString("EmmittingAngle", WriteFloat(psystem.EmmittingAngle));
                 writer.WriteAttributeString("FieldAngle", WriteFloat(psystem.FieldAngle));
                 writer.WriteAttributeString("EmmittingFromAllSurface", psystem.EmmittingFromAllSurface.ToString());

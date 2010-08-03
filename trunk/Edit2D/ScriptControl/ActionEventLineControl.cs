@@ -325,7 +325,7 @@ namespace Edit2D.ScriptControl
                 for (int j = 0; j < entite.ListParticleSystem.Count; j++)
                 {
                     ParticleSystem pSystem = entite.ListParticleSystem[j];
-                    TreeNode nodePSystem = nodeEntite.Nodes.Add(entite.ListParticleSystem[j].ParticleSystemName);
+                    TreeNode nodePSystem = nodeEntite.Nodes.Add(entite.ListParticleSystem[j].Name);
                     nodePSystem.Tag = pSystem;
 
                     RefreshProperties(pSystem, nodeEntite);

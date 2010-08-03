@@ -173,7 +173,7 @@ namespace Edit2DEngine.Particles
                 clonePSystem.EmmittingAngle = pSystem.EmmittingAngle;
                 clonePSystem.EmmittingFromAllSurface = pSystem.EmmittingFromAllSurface;
                 clonePSystem.FieldAngle = pSystem.FieldAngle;
-                clonePSystem.ParticleSystemName = pSystem.ParticleSystemName;
+                clonePSystem.Name = pSystem.Name;
                 clonePSystem.Rate = pSystem.Rate;
                 clonePSystem.Velocity = pSystem.Velocity;
 

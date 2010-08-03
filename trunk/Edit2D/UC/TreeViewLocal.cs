@@ -89,6 +89,7 @@ namespace Edit2D.UC
 
             //--- Conserve les noeuds cochés et le positionnement vertical
             List<String> listCheckedNodesPath = GetCheckedNodesPath();
+            List<String> listCollapsedNodesPath = GetCollapsedNodesPath();
             TreeNode firstDrawingNode = this.GetNodeAt(0, 0);
             string firstDrawingNodePath = String.Empty;
 
@@ -175,32 +176,8 @@ namespace Edit2D.UC
                 //}
                 //---
 
-                //--- Script
-                if ((ItemTypeShowed & TreeViewLocalItemType.Script) == TreeViewLocalItemType.Script)
-                {
-                    TreeNode nodeScripts = nodeEntity.Nodes.Add(NODE_SCRIPT, NODE_SCRIPT, IMAGE_KEY_SCRIPT);
-                    nodeScripts.Tag = new Object[] { TreeViewLocalItemType.Script };
-
-                    foreach (Script script in entite.ListScript)
-                    {
-                        TreeNode nodeScript = nodeScripts.Nodes.Add(script.ScriptName, script.ScriptName, IMAGE_KEY_EMPTY);
-                        nodeScript.Tag = new Object[] { TreeViewLocalItemType.Script, script };
-                    }
-                }
-                //---
-
-                //--- Trigger
-                if ((ItemTypeShowed & TreeViewLocalItemType.Trigger) == TreeViewLocalItemType.Trigger)
-                {
-                    TreeNode nodeTriggers = nodeEntity.Nodes.Add(NODE_TRIGGER, NODE_TRIGGER, IMAGE_KEY_TRIGGER);
-                    nodeTriggers.Tag = new Object[] { TreeViewLocalItemType.Trigger };
-
-                    foreach (TriggerBase trigger in entite.ListTrigger)
-                    {
-                        TreeNode nodeTrigger = nodeTriggers.Nodes.Add(trigger.TriggerName, trigger.TriggerName, IMAGE_KEY_EMPTY);
-                        nodeTrigger.Tag = new Object[] { TreeViewLocalItemType.Trigger, trigger };
-                    }
-                }
+                //--- Script et Trigger
+                AddScriptAndTriggerNode(entite, nodeEntity);
                 //---
 
                 //--- ParticleSystem
@@ -211,13 +188,18 @@ namespace Edit2D.UC
 
                     foreach (ParticleSystem particleSystem in entite.ListParticleSystem)
                     {
-                        TreeNode nodeParticleSystem = nodeParticleSystems.Nodes.Add(particleSystem.ParticleSystemName, particleSystem.ParticleSystemName, IMAGE_KEY_EMPTY);
+                        TreeNode nodeParticleSystem = nodeParticleSystems.Nodes.Add(particleSystem.Name, particleSystem.Name, IMAGE_KEY_EMPTY);
+                        //TreeNode nodeParticleSystem = nodeParticleSystems.Nodes.Add(particleSystem.ParticleSystemName, particleSystem.ParticleSystemName, IMAGE_KEY_EMPTY);
                         nodeParticleSystem.Tag = new Object[] { TreeViewLocalItemType.ParticleSystem, particleSystem };
 
                         foreach (Particle particle in particleSystem.ListParticleTemplate)
                         {
                             TreeNode nodeParticle = nodeParticleSystem.Nodes.Add(particle.Name, particle.Name, IMAGE_KEY_EMPTY);
                             nodeParticle.Tag = new Object[] { TreeViewLocalItemType.ParticleSystem, particle };
+
+                            //--- Script et Trigger
+                            AddScriptAndTriggerNode(particle, nodeParticle);
+                            //---
                         }
                     }
                 }
@@ -237,6 +219,16 @@ namespace Edit2D.UC
             }
             //---
 
+            //--- Garde les noeuds pliés selon l'état précédent le rafraichissement
+            foreach (String nodePath in listCollapsedNodesPath)
+            {
+                TreeNode nodeToCollapse = GetNodeWithPath(nodePath);
+
+                if (nodeToCollapse != null)
+                    nodeToCollapse.Collapse();
+            }
+            //---
+
             //--- Positionne verticalement l'arborescence selon son état précédent le rafraichissement
             if (!String.IsNullOrEmpty(firstDrawingNodePath))
             {
@@ -249,6 +241,37 @@ namespace Edit2D.UC
 
             this.EndUpdate();
             this.IsRefreshing = false;
+        }
+
+        private void AddScriptAndTriggerNode(Entite entite, TreeNode nodeEntity)
+        {
+            //--- Script
+            if ((ItemTypeShowed & TreeViewLocalItemType.Script) == TreeViewLocalItemType.Script)
+            {
+                TreeNode nodeScripts = nodeEntity.Nodes.Add(NODE_SCRIPT, NODE_SCRIPT, IMAGE_KEY_SCRIPT);
+                nodeScripts.Tag = new Object[] { TreeViewLocalItemType.Script };
+
+                foreach (Script script in entite.ListScript)
+                {
+                    TreeNode nodeScript = nodeScripts.Nodes.Add(script.ScriptName, script.ScriptName, IMAGE_KEY_EMPTY);
+                    nodeScript.Tag = new Object[] { TreeViewLocalItemType.Script, script };
+                }
+            }
+            //---
+
+            //--- Trigger
+            if ((ItemTypeShowed & TreeViewLocalItemType.Trigger) == TreeViewLocalItemType.Trigger)
+            {
+                TreeNode nodeTriggers = nodeEntity.Nodes.Add(NODE_TRIGGER, NODE_TRIGGER, IMAGE_KEY_TRIGGER);
+                nodeTriggers.Tag = new Object[] { TreeViewLocalItemType.Trigger };
+
+                foreach (TriggerBase trigger in entite.ListTrigger)
+                {
+                    TreeNode nodeTrigger = nodeTriggers.Nodes.Add(trigger.TriggerName, trigger.TriggerName, IMAGE_KEY_EMPTY);
+                    nodeTrigger.Tag = new Object[] { TreeViewLocalItemType.Trigger, trigger };
+                }
+            }
+            //---
         }
 
         private void ChangeNodeCheck(TreeNode node, bool isChecked)
@@ -484,6 +507,42 @@ namespace Edit2D.UC
             }
         }
 
+
+        public List<String> GetCollapsedNodesPath()
+        {
+            List<String> listCollapsedNodesPath = new List<String>();
+            List<TreeNode> listCollapsedNodes = new List<TreeNode>();
+
+            if (Nodes.Count > 0)
+                GetCollapsedNodes(Nodes[0], listCollapsedNodes);
+
+            foreach (TreeNode node in listCollapsedNodes)
+            {
+                listCollapsedNodesPath.Add(node.FullPath);
+            }
+
+            return listCollapsedNodesPath;
+        }
+
+        public void GetCollapsedNodes(TreeNode node, List<TreeNode> listCollapsedNodes)
+        {
+            if (node == null)
+                return;
+
+            if (!node.IsExpanded && node.Nodes.Count>0)
+            {
+                listCollapsedNodes.Add(node);
+            }
+
+            if (node.Nodes.Count > 0)
+            {
+                for (int i = 0; i < node.Nodes.Count; i++)
+                {
+                    GetCollapsedNodes(node.Nodes[i], listCollapsedNodes);
+                }
+            }
+        }
+
         public List<String> GetCheckedNodesPath()
         {
             List<String> listCheckedNodesPath = new List<String>();
@@ -669,9 +728,17 @@ namespace Edit2D.UC
                 }
                 //---
 
-                if (itemType != TreeViewLocalItemType.None &&
-                    (itemType & ItemTypeCheckBoxed) == itemType &&
-                    !isHeadNode)
+                //--- Détection de la position de la flèche
+                Rectangle recArrow = new Rectangle(e.Node.Level * this.Indent - 8, e.Node.Bounds.Y, 16, this.ItemHeight);
+                //---
+
+                if (recArrow.Contains(e.Location))
+                {
+                    e.Node.Toggle();
+                }
+                else if (itemType != TreeViewLocalItemType.None &&
+                        (itemType & ItemTypeCheckBoxed) == itemType &&
+                        !isHeadNode)
                 {
                     Boolean prevCheckState = e.Node.Checked;
 

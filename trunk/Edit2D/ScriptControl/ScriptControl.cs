@@ -56,7 +56,6 @@ namespace Edit2D.ScriptControl
         {
             if (e.Button == MouseButtons.Middle)
             {
-
                 txtScriptName.ResetText();
                 txtScriptName.Focus();
                 txtScriptName.Update();
@@ -79,34 +78,27 @@ namespace Edit2D.ScriptControl
 
         private void btnDelScript_Click(object sender, EventArgs e)
         {
-            if (Repository.CurrentActionHandler != null && Repository.CurrentScript != null)
+            DeleteCurrentScript();
+        }
+
+        private void btnDelSrcipt_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
             {
-                Repository.CurrentActionHandler.ListScript.Remove(Repository.CurrentScript);
-
-                Repository.CurrentScript = null;
-
-                RefreshScriptView(true);
+                DeleteCurrentScript();
             }
         }
 
         private void btnChangeScriptName_Click(object sender, EventArgs e)
         {
-            if (Repository.CurrentScript != null &&
-                !String.IsNullOrEmpty(txtScriptName.Text) &&
-                txtScriptName.Text != Repository.CurrentScript.ScriptName
-                )
-            {
-                if (Repository.CurrentActionHandler.ListScript.Exists(s => s.ScriptName == txtScriptName.Text))
-                {
-                    MessageBox.Show(String.Format("Le nom de script '{0}' existe déja", txtScriptName.Text), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-                else
-                {
-                    Repository.CurrentScript.ScriptName = txtScriptName.Text;
+            ChangeCurrentScriptName();
+        }
 
-                    RefreshScriptView(true);
-                    RefreshGlobalTreeView();
-                }
+        private void btnChangeScriptName_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                ChangeCurrentScriptName();
             }
         }
 
@@ -793,7 +785,7 @@ namespace Edit2D.ScriptControl
 
             if (String.IsNullOrEmpty(txtScriptName.Text))
             {
-                scriptName = String.Format("Script{0}", Repository.CurrentActionHandler.ListScript.Count + 1);
+                scriptName = Common.CreateNewName<Script>(Repository.CurrentActionHandler.ListScript, "ScriptName", "Script{0}");
             }
             else
             {
@@ -823,6 +815,39 @@ namespace Edit2D.ScriptControl
             //---
 
             return script;
+        }
+
+        public void DeleteCurrentScript()
+        {
+            if (Repository.CurrentActionHandler != null && Repository.CurrentScript != null)
+            {
+                Repository.CurrentActionHandler.ListScript.Remove(Repository.CurrentScript);
+
+                Repository.CurrentScript = null;
+
+                RefreshScriptView(true);
+            }
+        }
+
+        public void ChangeCurrentScriptName()
+        {
+            if (Repository.CurrentScript != null &&
+                !String.IsNullOrEmpty(txtScriptName.Text) &&
+                txtScriptName.Text != Repository.CurrentScript.ScriptName
+                )
+            {
+                if (Repository.CurrentActionHandler.ListScript.Exists(s => s.ScriptName == txtScriptName.Text))
+                {
+                    MessageBox.Show(String.Format("Le nom de script '{0}' existe déja", txtScriptName.Text), "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    Repository.CurrentScript.ScriptName = txtScriptName.Text;
+
+                    RefreshScriptView(true);
+                    RefreshGlobalTreeView();
+                }
+            }
         }
 
         public void RefreshScriptControl(bool selectScript)

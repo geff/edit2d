@@ -300,6 +300,7 @@
             this.btnChangeScriptName.Text = "ü";
             this.btnChangeScriptName.UseVisualStyleBackColor = false;
             this.btnChangeScriptName.Click += new System.EventHandler(this.btnChangeScriptName_Click);
+            this.btnChangeScriptName.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnChangeScriptName_MouseDown);
             // 
             // listboxScript
             // 
@@ -352,6 +353,7 @@
             this.btnDelSrcipt.Text = "-";
             this.btnDelSrcipt.UseVisualStyleBackColor = false;
             this.btnDelSrcipt.Click += new System.EventHandler(this.btnDelScript_Click);
+            this.btnDelSrcipt.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnDelSrcipt_MouseDown);
             // 
             // btnPlayScript
             // 

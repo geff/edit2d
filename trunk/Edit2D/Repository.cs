@@ -95,7 +95,7 @@ namespace Edit2D
         {
             get
             {
-                return System.Environment.MachineName == "P64VBIBIAB2";
+                return System.Environment.MachineName == "P64L03BIB09";
                 //return true;
             }
         }
