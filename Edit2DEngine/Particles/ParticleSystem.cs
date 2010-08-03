@@ -12,8 +12,9 @@ namespace Edit2DEngine.Particles
     {
         [Browsable(false)]
         public Entite Entite { get; set; }
-        public String Name { get { return String.Format("{0}-{1}", Entite.Name, ParticleSystemName); } set{} }
-        public String ParticleSystemName { get; set; }
+
+        //public String Name { get { return String.Format("{0}-{1}", Entite.Name, ParticleSystemName); } set{} }
+        public String Name { get; set; }
         [Browsable(false)]
         public List<Particle> ListParticle { get; set; }
         [Browsable(false)]
@@ -47,7 +48,8 @@ namespace Edit2DEngine.Particles
             this.Velocity = 1500f;
             this.Enabled = true;
 
-            this.Entite.geom.CollisionGroup = this.Entite.UniqueId;
+            //TODO gérer les collisions exlusives
+            //this.Entite.geom.CollisionGroup = this.Entite.UniqueId;
             this.lastEmitting = DateTime.Now.TimeOfDay;
             this.rnd = new Random();
             this.ListScript = new List<Script>();
@@ -135,7 +137,8 @@ namespace Edit2DEngine.Particles
             pSystemClone.EmmittingAngle = this.EmmittingAngle;
             pSystemClone.EmmittingFromAllSurface = this.EmmittingFromAllSurface;
             pSystemClone.FieldAngle = this.FieldAngle;
-            pSystemClone.ParticleSystemName = this.ParticleSystemName;
+            //pSystemClone.ParticleSystemName = this.ParticleSystemName;
+            pSystemClone.Name = this.Name;
             pSystemClone.Rate = this.Rate;
             pSystemClone.Velocity = this.Velocity;
             pSystemClone.Enabled = this.Enabled;

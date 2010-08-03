@@ -88,12 +88,12 @@ namespace Edit2D
 
             repository.World.GradientColor1 = Microsoft.Xna.Framework.Graphics.Color.White;
             repository.World.GradientColor2 = Microsoft.Xna.Framework.Graphics.Color.White;
-            this.WindowState = FormWindowState.Maximized;
+            
+            //this.WindowState = FormWindowState.Maximized;
 
             //--- Mode simplifié
             if (repository.IsSimpleMode)
             {
-
                 pnlViewerModes.Panel2Collapsed = false;
                 pnlMain.Panel2Collapsed = false;
 
@@ -152,8 +152,8 @@ namespace Edit2D
 
             btnScriptModeBar.PerformClick();
 
-            //WinformVisualStyle.ApplyStyle(this, "LightGray");
-            WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
+            WinformVisualStyle.ApplyStyle(this, "LightGray");
+            //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             AddEntity();
             repository.CurrentEntite = repository.listEntite[0];
@@ -348,7 +348,8 @@ namespace Edit2D
                 Repository.physicSimulator.Update(0.0000001f);
 
                 EntiteSelectionChange(repository.CurrentEntite, null);
-                //RefreshTreeView();
+                
+                RefreshTreeView();
             }
         }
         #endregion
@@ -487,6 +488,7 @@ namespace Edit2D
 
             if (newSelection is Particle)
             {
+                repository.CurrentEntite = ((Particle)newSelection).ParticleSystem.Entite;
                 repository.CurrentParticleSystem = ((Particle)newSelection).ParticleSystem;
                 repository.CurrentTriggerHandler = (ITriggerHandler)newSelection;
                 repository.CurrentActionHandler = (IActionHandler)newSelection;
@@ -551,6 +553,7 @@ namespace Edit2D
             }
             else if (newSelection is ParticleSystem)
             {
+                repository.CurrentEntite = ((ParticleSystem)newSelection).Entite;
                 repository.CurrentParticleSystem = (ParticleSystem)newSelection;
                 repository.CurrentActionHandler = (IActionHandler)newSelection;
 
@@ -582,6 +585,10 @@ namespace Edit2D
                 }
             }
 
+            EnableMode(
+                repository.CurrentActionHandler != null, 
+                repository.CurrentTriggerHandler != null, 
+                repository.CurrentEntite!=null);
 
             //if (newSelection is Entite)
             //    repository.CurrentEntite = (Entite)newSelection;
@@ -646,6 +653,13 @@ namespace Edit2D
             //{
             //    treeView.SelectedNode = null;
             //}
+        }
+
+        private void EnableMode(bool enabledModeScript, bool enabledModeTrigger, bool enabledModeParticleSystem)
+        {
+            btnScriptModeBar.Enabled = enabledModeScript;
+            btnTriggerModeBar.Enabled = enabledModeTrigger;
+            btnParticleSystemModeBar.Enabled = enabledModeParticleSystem;
         }
 
         private void RefreshTreeView()
@@ -2028,11 +2042,9 @@ namespace Edit2D
             if (!repository.Pause && !btnGameClickableOnPlay.Checked)
                 return;
 
-            if (btnParticleSystemModeBar.Checked && repository.keyShiftPressed && particleControl.GetCurrentParticleSystem() != null)
+            if (btnParticleSystemModeBar.Checked && repository.keyShiftPressed && repository.CurrentParticleSystem != null)
             {
-                ParticleSystem pSystem = particleControl.GetCurrentParticleSystem();
-
-                pSystem.FieldAngle += (float)e.Delta / 960f;
+                repository.CurrentParticleSystem.FieldAngle += (float)e.Delta / 960f;
             }
             else
             {

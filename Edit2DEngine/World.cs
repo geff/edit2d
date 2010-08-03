@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using Edit2DEngine.Trigger;
 using Microsoft.Xna.Framework.Graphics;
+using System.ComponentModel;
 
 namespace Edit2DEngine
 {
     public class World : ITriggerHandler
     {
+        [Browsable(false)]
         public List<TriggerBase> ListTrigger { get; set; }
+
         public Color GradientColor1 { get; set; }
         public Color GradientColor2 { get; set; }
 
@@ -20,6 +23,7 @@ namespace Edit2DEngine
             this.GradientColor2 = Color.MistyRose;
         }
 
+        [Browsable(false)]
         public String TreeViewPath
         {
             get
@@ -28,6 +32,7 @@ namespace Edit2DEngine
             }
         }
 
+        [Browsable(false)]
         public bool SupportTrigerChangedValue
         {
             get
@@ -36,6 +41,7 @@ namespace Edit2DEngine
             }
         }
 
+        [Browsable(false)]
         public bool SupportTrigerCollision
         {
             get

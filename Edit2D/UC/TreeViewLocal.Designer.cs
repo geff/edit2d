@@ -62,6 +62,8 @@
             this.ItemHeight = 25;
             this.LineColor = System.Drawing.Color.Black;
             this.SelectedImageIndex = 0;
+            this.ShowPlusMinus = false;
+            this.ShowRootLines = false;
             this.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeViewLocal_NodeMouseDoubleClick);
             this.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeViewLocal_NodeMouseClick);
             this.ResumeLayout(false);

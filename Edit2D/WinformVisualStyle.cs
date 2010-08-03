@@ -57,7 +57,7 @@ namespace Edit2D
 
         private static void ApplyStyleOnControl(Control ctrl, Control ctrlParent)
         {
-            if (!(ctrl is GridControl))
+            if (!(ctrl is GridControl || ctrlParent is PropertyGrid))
                 ApplyStyleControl(ctrl);
 
             if (ctrl is ButtonBase)
@@ -144,7 +144,7 @@ namespace Edit2D
 
             Color borderColorLight = BackColorLight;
             int offset = 7;
-            borderColorLight = Color.FromArgb(Math.Min(BackColorLight.R + offset,255), Math.Min(BackColorLight.G + offset, 255), Math.Min(BackColorLight.B + offset,255));
+            borderColorLight = Color.FromArgb(Math.Min(BackColorLight.R + offset, 255), Math.Min(BackColorLight.G + offset, 255), Math.Min(BackColorLight.B + offset, 255));
 
             button.FlatAppearance.BorderColor = borderColorLight;
 
@@ -186,8 +186,16 @@ namespace Edit2D
             propertyGrid.LineColor = BackColorDark;
             propertyGrid.CommandsForeColor = ForeColor1;
             propertyGrid.CategoryForeColor = ForeColor2;
-            propertyGrid.ViewBackColor = BackColorDark;
             propertyGrid.ViewForeColor = BackColorDark;
+
+            if (propertyGrid.Tag!= null && propertyGrid.Tag.ToString() == "B")
+                propertyGrid.ViewBackColor = BorderColor;
+            else if (propertyGrid.Tag != null && propertyGrid.Tag.ToString() == "BG1")
+                propertyGrid.ViewBackColor = BackColorDark;
+            else if (propertyGrid.Tag != null && propertyGrid.Tag.ToString() == "BG2")
+                propertyGrid.ViewBackColor = BackColorLight;
+            else
+                propertyGrid.ViewBackColor = BackColorDark;
         }
 
         private static void ApplyStyleActionEventLine(TableLayoutPanel panel)

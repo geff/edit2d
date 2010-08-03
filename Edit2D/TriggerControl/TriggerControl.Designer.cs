@@ -425,6 +425,7 @@
             this.btnChangeTriggerName.Text = "ü";
             this.btnChangeTriggerName.UseVisualStyleBackColor = false;
             this.btnChangeTriggerName.Click += new System.EventHandler(this.btnChangeTriggerName_Click);
+            this.btnChangeTriggerName.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnChangeTriggerName_MouseDown);
             // 
             // btnAddTrigger
             // 
@@ -460,6 +461,7 @@
             this.btnDelTrigger.Text = "-";
             this.btnDelTrigger.UseVisualStyleBackColor = false;
             this.btnDelTrigger.Click += new System.EventHandler(this.btnDelTrigger_Click);
+            this.btnDelTrigger.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnDelTrigger_MouseDown);
             // 
             // pnlTypeTrigger
             // 
@@ -747,7 +749,6 @@
             // treeViewCollision
             // 
             this.treeViewCollision.AllowMultipleItemChecked = false;
-            this.treeViewCollision.AllowUncheckedNode = true;
             this.treeViewCollision.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.treeViewCollision.BackColor = System.Drawing.Color.Gray;
@@ -951,6 +952,8 @@
             // 
             // treeViewScript
             // 
+            this.treeViewScript.AllowMultipleItemChecked = false;
+            this.treeViewScript.AllowUncheckedNode = false;
             this.treeViewScript.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.treeViewScript.BackColor = System.Drawing.Color.Gray;
