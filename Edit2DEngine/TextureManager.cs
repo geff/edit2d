@@ -21,9 +21,8 @@ namespace Edit2DEngine
         public static void InitTextureManager(GraphicsDevice graphicsDevice, string dataPath, string patternFile)
         {
             LoadTextures(graphicsDevice, dataPath + @"Data\Pics\", patternFile, ref ListTexture2D);
-            
-            if(!IsSimpleMode)
-                LoadTextures(graphicsDevice, dataPath + @"Data\Pics\Particles\", patternFile, ref ListParticleTexture2D);
+
+            LoadTextures(graphicsDevice, dataPath + @"Data\Pics\Particles\", patternFile, ref ListParticleTexture2D);
         }
 
         private static void LoadTextures(GraphicsDevice graphicsDevice, string path, string patternFile, ref Dictionary<String, Texture2D> listTexture)
@@ -33,7 +32,7 @@ namespace Edit2DEngine
 
             foreach (String file in files)
             {
-                if ((   Path.GetFileNameWithoutExtension(file) == "BigRec" ||
+                if ((Path.GetFileNameWithoutExtension(file) == "BigRec" ||
                         Path.GetFileNameWithoutExtension(file) == "Pin" ||
                         Path.GetFileNameWithoutExtension(file) == "Pointer"
                     ) || !IsSimpleMode)

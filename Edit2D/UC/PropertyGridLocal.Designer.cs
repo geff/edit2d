@@ -37,6 +37,7 @@
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.PropertyGrid.HelpVisible = false;
+            this.PropertyGrid.LineColor = System.Drawing.Color.DimGray;
             this.PropertyGrid.Location = new System.Drawing.Point(-1, -1);
             this.PropertyGrid.Margin = new System.Windows.Forms.Padding(0);
             this.PropertyGrid.Name = "PropertyGrid";
@@ -44,6 +45,8 @@
             this.PropertyGrid.Size = new System.Drawing.Size(252, 254);
             this.PropertyGrid.TabIndex = 0;
             this.PropertyGrid.ToolbarVisible = false;
+            this.PropertyGrid.ViewBackColor = System.Drawing.Color.Gray;
+            this.PropertyGrid.ViewForeColor = System.Drawing.SystemColors.MenuHighlight;
             // 
             // PropertyGridLocal
             // 
@@ -52,6 +55,8 @@
             this.Controls.Add(this.PropertyGrid);
             this.Name = "PropertyGridLocal";
             this.Size = new System.Drawing.Size(250, 252);
+            this.BackColorChanged += new System.EventHandler(this.PropertyGridLocal_BackColorChanged);
+            this.ForeColorChanged += new System.EventHandler(this.PropertyGridLocal_ForeColorChanged);
             this.ResumeLayout(false);
 
         }

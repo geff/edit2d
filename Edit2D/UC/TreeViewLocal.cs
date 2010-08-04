@@ -10,6 +10,7 @@ using Edit2DEngine;
 using Edit2DEngine.Trigger;
 using Edit2DEngine.Particles;
 using System.Reflection;
+using Edit2DEngine.Action;
 
 namespace Edit2D.UC
 {
@@ -177,11 +178,13 @@ namespace Edit2D.UC
                 //---
 
                 //--- Script et Trigger
-                AddScriptAndTriggerNode(entite, nodeEntity);
+                AddScriptAndTriggerNode((IActionHandler)entite, (ITriggerHandler)entite, nodeEntity);
                 //---
 
                 //--- ParticleSystem
-                if ((ItemTypeShowed & TreeViewLocalItemType.ParticleSystem) == TreeViewLocalItemType.ParticleSystem)
+                if ((ItemTypeShowed & TreeViewLocalItemType.ParticleSystem) == TreeViewLocalItemType.ParticleSystem ||
+                    (ItemTypeShowed & TreeViewLocalItemType.Script) == TreeViewLocalItemType.Script ||
+                    (ItemTypeShowed & TreeViewLocalItemType.Trigger) == TreeViewLocalItemType.Trigger)
                 {
                     TreeNode nodeParticleSystems = nodeEntity.Nodes.Add(NODE_PARTICLESYSTEM, NODE_PARTICLESYSTEM, IMAGE_KEY_PARTICLE_SYSTEM);
                     nodeParticleSystems.Tag = new Object[] { TreeViewLocalItemType.ParticleSystem };
@@ -189,8 +192,11 @@ namespace Edit2D.UC
                     foreach (ParticleSystem particleSystem in entite.ListParticleSystem)
                     {
                         TreeNode nodeParticleSystem = nodeParticleSystems.Nodes.Add(particleSystem.Name, particleSystem.Name, IMAGE_KEY_EMPTY);
-                        //TreeNode nodeParticleSystem = nodeParticleSystems.Nodes.Add(particleSystem.ParticleSystemName, particleSystem.ParticleSystemName, IMAGE_KEY_EMPTY);
                         nodeParticleSystem.Tag = new Object[] { TreeViewLocalItemType.ParticleSystem, particleSystem };
+
+                        //--- Script
+                        AddScriptAndTriggerNode((IActionHandler)particleSystem, null, nodeParticleSystem);
+                        //---
 
                         foreach (Particle particle in particleSystem.ListParticleTemplate)
                         {
@@ -198,7 +204,7 @@ namespace Edit2D.UC
                             nodeParticle.Tag = new Object[] { TreeViewLocalItemType.ParticleSystem, particle };
 
                             //--- Script et Trigger
-                            AddScriptAndTriggerNode(particle, nodeParticle);
+                            AddScriptAndTriggerNode((IActionHandler)particle, (ITriggerHandler)particle, nodeParticle);
                             //---
                         }
                     }
@@ -243,15 +249,15 @@ namespace Edit2D.UC
             this.IsRefreshing = false;
         }
 
-        private void AddScriptAndTriggerNode(Entite entite, TreeNode nodeEntity)
+        private void AddScriptAndTriggerNode(IActionHandler actionHandler, ITriggerHandler triggerHandler, TreeNode nodeEntity)
         {
             //--- Script
-            if ((ItemTypeShowed & TreeViewLocalItemType.Script) == TreeViewLocalItemType.Script)
+            if (actionHandler != null && (ItemTypeShowed & TreeViewLocalItemType.Script) == TreeViewLocalItemType.Script)
             {
                 TreeNode nodeScripts = nodeEntity.Nodes.Add(NODE_SCRIPT, NODE_SCRIPT, IMAGE_KEY_SCRIPT);
                 nodeScripts.Tag = new Object[] { TreeViewLocalItemType.Script };
 
-                foreach (Script script in entite.ListScript)
+                foreach (Script script in actionHandler.ListScript)
                 {
                     TreeNode nodeScript = nodeScripts.Nodes.Add(script.ScriptName, script.ScriptName, IMAGE_KEY_EMPTY);
                     nodeScript.Tag = new Object[] { TreeViewLocalItemType.Script, script };
@@ -260,12 +266,12 @@ namespace Edit2D.UC
             //---
 
             //--- Trigger
-            if ((ItemTypeShowed & TreeViewLocalItemType.Trigger) == TreeViewLocalItemType.Trigger)
+            if (triggerHandler != null && (ItemTypeShowed & TreeViewLocalItemType.Trigger) == TreeViewLocalItemType.Trigger)
             {
                 TreeNode nodeTriggers = nodeEntity.Nodes.Add(NODE_TRIGGER, NODE_TRIGGER, IMAGE_KEY_TRIGGER);
                 nodeTriggers.Tag = new Object[] { TreeViewLocalItemType.Trigger };
 
-                foreach (TriggerBase trigger in entite.ListTrigger)
+                foreach (TriggerBase trigger in triggerHandler.ListTrigger)
                 {
                     TreeNode nodeTrigger = nodeTriggers.Nodes.Add(trigger.TriggerName, trigger.TriggerName, IMAGE_KEY_EMPTY);
                     nodeTrigger.Tag = new Object[] { TreeViewLocalItemType.Trigger, trigger };
@@ -529,7 +535,7 @@ namespace Edit2D.UC
             if (node == null)
                 return;
 
-            if (!node.IsExpanded && node.Nodes.Count>0)
+            if (!node.IsExpanded && node.Nodes.Count > 0)
             {
                 listCollapsedNodes.Add(node);
             }

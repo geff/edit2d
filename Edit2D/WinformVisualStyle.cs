@@ -76,9 +76,9 @@ namespace Edit2D
             {
                 ApplyStyleList((ListControl)ctrl);
             }
-            else if (ctrl is PropertyGrid)
+            else if (ctrl is PropertyGridLocal)
             {
-                ApplyStylePropertyGrid((PropertyGrid)ctrl);
+                ApplyStylePropertyGrid((PropertyGridLocal)ctrl);
             }
             else if (ctrl is TabPage)
             {
@@ -113,17 +113,35 @@ namespace Edit2D
         {
             if (ctrl.Tag != null)
             {
-                if (ctrl.Tag.ToString() == "B")
-                    ctrl.BackColor = BorderColor;
-                if (ctrl.Tag.ToString() == "BG1")
-                    ctrl.BackColor = BackColorDark;
-                if (ctrl.Tag.ToString() == "BG2")
-                    ctrl.BackColor = BackColorLight;
+                string[] tags = ctrl.Tag.ToString().Split(new String[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
 
-                if (ctrl.Tag.ToString() == "F1")
-                    ctrl.ForeColor = ForeColor1;
-                if (ctrl.Tag.ToString() == "F2")
-                    ctrl.ForeColor = ForeColor2;
+                foreach (String tag in tags)
+	            {
+                    if (tag == "B")
+                        ctrl.BackColor = BorderColor;
+                    if (tag == "BG1")
+                        ctrl.BackColor = BackColorDark;
+                    if (tag == "BG2")
+                        ctrl.BackColor = BackColorLight;
+
+                    if (tag == "F1")
+                        ctrl.ForeColor = ForeColor1;
+                    if (tag == "F2")
+                        ctrl.ForeColor = ForeColor2;
+	            }
+            }
+        }
+
+        private static void ApplyStylePropertyGrid(PropertyGridLocal ctrl)
+        {
+            if (!String.IsNullOrEmpty(ctrl.TagLineColor))
+            {
+                if (ctrl.TagLineColor == "B")
+                    ctrl.PropertyGrid.LineColor = BorderColor;
+                if (ctrl.TagLineColor == "BG1")
+                    ctrl.PropertyGrid.LineColor = BackColorDark;
+                if (ctrl.TagLineColor == "BG2")
+                    ctrl.PropertyGrid.LineColor = BackColorLight;
             }
         }
 
@@ -175,27 +193,6 @@ namespace Edit2D
             list.Margin = new Padding(1);
             list.BackColor = BackColorLight;
             list.ForeColor = ForeColor1;
-        }
-
-        private static void ApplyStylePropertyGrid(PropertyGrid propertyGrid)
-        {
-            propertyGrid.Margin = new Padding(1);
-            propertyGrid.BackColor = BackColorLight;
-            propertyGrid.ForeColor = ForeColor1;
-
-            propertyGrid.LineColor = BackColorDark;
-            propertyGrid.CommandsForeColor = ForeColor1;
-            propertyGrid.CategoryForeColor = ForeColor2;
-            propertyGrid.ViewForeColor = BackColorDark;
-
-            if (propertyGrid.Tag!= null && propertyGrid.Tag.ToString() == "B")
-                propertyGrid.ViewBackColor = BorderColor;
-            else if (propertyGrid.Tag != null && propertyGrid.Tag.ToString() == "BG1")
-                propertyGrid.ViewBackColor = BackColorDark;
-            else if (propertyGrid.Tag != null && propertyGrid.Tag.ToString() == "BG2")
-                propertyGrid.ViewBackColor = BackColorLight;
-            else
-                propertyGrid.ViewBackColor = BackColorDark;
         }
 
         private static void ApplyStyleActionEventLine(TableLayoutPanel panel)

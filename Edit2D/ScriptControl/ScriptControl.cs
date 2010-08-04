@@ -128,17 +128,12 @@ namespace Edit2D.ScriptControl
             if (listboxScript.SelectedIndex != -1)
                 Repository.CurrentScript = Repository.CurrentActionHandler.ListScript[listboxScript.SelectedIndex];
 
-            RefreshActionView();
+            RefreshActionView(true);
             CheckNodeGlobalTreeView<Script>(Repository.CurrentScript);
 
             if (Repository.CurrentScript != null)
             {
                 txtScriptName.Text = Repository.CurrentScript.ScriptName;
-
-                if (treeViewAction.Nodes.Count > 0)
-                {
-                    treeViewAction.SelectedNode = treeViewAction.Nodes[0];
-                }
             }
         }
 
@@ -175,10 +170,9 @@ namespace Edit2D.ScriptControl
                 Repository.CurrentScript.ListAction.Add(act);
 
                 RefreshScriptView(true);
-                RefreshActionView();
+                RefreshActionView(true);
 
-                currentSubAction = 0;
-                treeViewAction.SelectedNode = treeViewAction.Nodes[treeViewAction.Nodes.Count - 1];
+                //treeViewAction.SelectedNode = treeViewAction.Nodes[treeViewAction.Nodes.Count - 1];
             }
         }
 
@@ -191,7 +185,7 @@ namespace Edit2D.ScriptControl
                 currentSubAction = -1;
 
                 RefreshScriptView(true);
-                RefreshActionView();
+                RefreshActionView(true);
             }
         }
 
@@ -310,7 +304,7 @@ namespace Edit2D.ScriptControl
 
         private void PropertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            RefreshActionView();
+            RefreshActionView(false);
         }
         #endregion
 
@@ -351,7 +345,7 @@ namespace Edit2D.ScriptControl
                 }
                 else
                 {
-                    RefreshActionView();
+                    RefreshActionView(true);
 
                     RefreshGlobalTreeView<IActionHandler>(Repository.CurrentActionHandler);
                 }
@@ -378,13 +372,14 @@ namespace Edit2D.ScriptControl
             lblAction.Enabled = true;
         }
 
-        private void RefreshActionView()
+        private void RefreshActionView(bool selectAction )
         {
             treeViewAction.Nodes.Clear();
 
             pnlCurve.Visible = false;
             pnlActionEvent.Visible = false;
             actionSoundControl.Visible = false;
+            propAction.Visible = false;
 
             if (Repository.CurrentActionHandler != null && Repository.CurrentScript != null)
             {
@@ -470,6 +465,28 @@ namespace Edit2D.ScriptControl
             else
             {
                 HideActionView();
+            }
+
+            if (selectAction)
+            {
+                if (currentAction > -1)
+                {
+                    treeViewAction.SelectedNode = treeViewAction.Nodes[currentAction];
+                    currentSubAction = 0;
+                    propAction.Visible = true;
+
+                }
+                if (treeViewAction.Nodes.Count > 0)
+                {
+                    treeViewAction.SelectedNode = treeViewAction.Nodes[0];
+                    currentSubAction = 0;
+                    propAction.Visible = true;
+                }
+                else
+                {
+                    treeViewAction.SelectedNode = null;
+                    currentSubAction = -1;
+                }
             }
         }
 

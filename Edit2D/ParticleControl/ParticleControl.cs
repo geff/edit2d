@@ -9,19 +9,33 @@ using System.Windows.Forms;
 using Microsoft.Xna.Framework.Graphics;
 using Edit2DEngine.Particles;
 using Edit2DEngine;
+using Edit2D.UC;
 
 namespace Edit2D.ParticleControl
 {
-    public partial class ParticleControl : UserControl
+    public partial class ParticleControl : UserControlLocal
     {
         public Repository Repository { get; set; }
 
         public ParticleControl()
         {
             InitializeComponent();
+
+            propParticleSystem.PropertyGrid.PropertyValueChanged += new PropertyValueChangedEventHandler(PropertyGrid_PropertyValueChanged);
+            propParticleTemplate.PropertyGrid.PropertyValueChanged += new PropertyValueChangedEventHandler(PropertyGrid_PropertyValueChanged);
         }
 
         #region Events
+        private void ParticleControl_Load(object sender, EventArgs e)
+        {
+            InitComboParticleTexture();
+        }
+
+        private void PropertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
+        {
+            RefreshGlobalTreeView();
+        }
+
         private void btnAddParticleSystem_Click(object sender, EventArgs e)
         {
             AddParticleSystem();
@@ -41,61 +55,51 @@ namespace Edit2D.ParticleControl
                 Repository.CurrentParticleSystem = Repository.CurrentEntite.ListParticleSystem[listBoxParticleSystem.SelectedIndex];
             }
 
+            CheckNodeGlobalTreeView<ParticleSystem>(Repository.CurrentParticleSystem);
             propParticleSystem.PropertyGrid.SelectedObject = Repository.CurrentParticleSystem;
 
-            RefreshParticleTemplateListBox();
-
-            if (listBoxParticleTemplate.Items.Count > 0)
-                listBoxParticleTemplate.SelectedIndex = 0;
+            RefreshParticleTemplateListBox(true);
         }
 
         private void btnAddParticleTemplate_Click(object sender, EventArgs e)
         {
-            //ParticleSystem particleSystem = GetCurrentParticleSystem();
-
-            if (Repository.CurrentParticleSystem != null)
-            {
-                Bitmap bmp = null;
-
-                if (cmbParticleTemplate.SelectedIndex != -1)
-                {
-                    bmp = (Bitmap)cmbParticleTemplate.SelectedItem;
-                }
-                else
-                {
-                    bmp = (Bitmap)cmbParticleTemplate.Items[0];
-                }
-
-                string particleName = Common.CreateNewName<Particle>(Repository.CurrentParticleSystem.ListParticleTemplate, "Name", "Particle{0}");
-
-                Particle particleTemplate = new Particle(false, bmp.Tag.ToString(), particleName, Repository.CurrentParticleSystem);
-
-                Repository.CurrentParticleSystem.ListParticleTemplate.Add(particleTemplate);
-
-                RefreshParticleTemplateListBox();
-                listBoxParticleTemplate.SelectedIndex = listBoxParticleTemplate.Items.Count - 1;
-                cmbParticleTemplate.SelectedItem = bmp;
-            }
+            AddParticleTemplate();
         }
 
         private void btnDelParticleTemplate_Click(object sender, EventArgs e)
         {
-            Particle particleTemplate = GetCurrentParticleTemplate();
+            DeleteParticleTemplate();
+        }
 
-            if (particleTemplate != null)
+        private void btnAddParticleSystem_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
             {
-                particleTemplate.ParticleSystem.ListParticleTemplate.Remove(particleTemplate);
+                AddParticleSystem();
+            }
+        }
 
-                RefreshParticleTemplateListBox();
+        private void btnDelParticleSystem_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                DeleteParticleSystem();
+            }
+        }
 
-                if (listBoxParticleTemplate.Items.Count > 0)
-                    listBoxParticleTemplate.SelectedIndex = 0;
-                else
-                {
-                    cmbParticleTemplate.SelectedIndex = 0;
-                    propParticleTemplate.PropertyGrid.SelectedObject = null;
-                    listBoxParticleTemplate.SelectedIndex = -1;
-                }
+        private void btnParticleTemplate_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                AddParticleTemplate();
+            }
+        }
+
+        private void btnDelParticleTemplate_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                DeleteParticleTemplate();
             }
         }
 
@@ -142,7 +146,7 @@ namespace Edit2D.ParticleControl
             {
                 if (e.State == DrawItemState.Focus)
                 {
-                    e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds);
+                    e.Graphics.FillRectangle(WinformVisualStyle.BrushMouseOverColor, e.Bounds);
                 }
                 else
                 {
@@ -153,7 +157,7 @@ namespace Edit2D.ParticleControl
                 Rectangle rec = new Rectangle(10, e.Bounds.Top, e.Bounds.Height, e.Bounds.Height);
                 e.Graphics.DrawImage(bmp, rec);
 
-                e.Graphics.DrawString(bmp.Tag.ToString(), cmbParticleTemplate.Font, Brushes.Black, new Point(e.Bounds.Location.X + 50, e.Bounds.Location.Y + 10));
+                e.Graphics.DrawString(bmp.Tag.ToString(), cmbParticleTemplate.Font, WinformVisualStyle.BrushForeColor1, new Point(e.Bounds.Location.X + 50, e.Bounds.Location.Y + 10));
             }
         }
         #endregion
@@ -186,27 +190,59 @@ namespace Edit2D.ParticleControl
 
             if (selectParticleSystem)
             {
-                if (listBoxParticleSystem.Items.Count > 0)
+                if (Repository.CurrentObject is Particle)
+                {
+                    listBoxParticleSystem.SelectedIndex = listBoxParticleSystem.FindString(Repository.CurrentParticleSystem.Name);
+                    RefreshParticleTemplateListBox(true);
+                }
+                else if (Repository.CurrentParticleSystem != null)
+                {
+                    listBoxParticleSystem.SelectedIndex = listBoxParticleSystem.FindString(Repository.CurrentParticleSystem.Name);
+                }
+                else if (listBoxParticleSystem.Items.Count > 0)
+                {
+                    RefreshGlobalTreeView();
                     listBoxParticleSystem.SelectedIndex = 0;
+                }
                 else
                 {
                     propParticleSystem.PropertyGrid.SelectedObject = null;
                     listBoxParticleSystem.SelectedIndex = -1;
+                    RefreshParticleTemplateListBox(true);
+
+                    RefreshGlobalTreeView<Entite>(Repository.CurrentEntite);
                 }
             }
         }
 
-        private void RefreshParticleTemplateListBox()
+        private void RefreshParticleTemplateListBox(bool selectParticleTemplate)
         {
             listBoxParticleTemplate.Items.Clear();
-
-            //ParticleSystem particleSystem = GetCurrentParticleSystem();
 
             if (Repository.CurrentParticleSystem != null)
             {
                 foreach (Particle particleTemplate in Repository.CurrentParticleSystem.ListParticleTemplate)
                 {
                     listBoxParticleTemplate.Items.Add(particleTemplate.Name);
+                }
+            }
+
+            if (selectParticleTemplate)
+            {
+                if (Repository.CurrentObject is Particle)
+                {
+                    listBoxParticleTemplate.SelectedIndex = listBoxParticleTemplate.FindString(((Particle)Repository.CurrentObject).Name);
+                    RefreshGlobalTreeView<Particle>((Particle)Repository.CurrentObject);
+                }
+                else if (listBoxParticleTemplate.Items.Count > 0)
+                {
+                    listBoxParticleTemplate.SelectedIndex = 0;
+                }
+                else
+                {
+                    listBoxParticleTemplate.SelectedIndex = -1;
+                    propParticleTemplate.PropertyGrid.SelectedObject = null;
+                    listBoxParticleTemplate.SelectedIndex = -1;
                 }
             }
         }
@@ -218,29 +254,12 @@ namespace Edit2D.ParticleControl
             InitComboParticleTexture();
         }
 
-        public void RefreshParticleControl()
+        public void RefreshParticleControl(bool selectParticleSystem)
         {
-            if (Repository.CurrentEntite == null)
-            {
-                this.Visible = false;
-                return;
-            }
-            else
-            {
-                this.Visible = true;
-            }
 
-            RefreshParticleSystemListBox(true);
+            RefreshParticleSystemListBox(selectParticleSystem);
 
-            //if (listBoxParticleSystem.Items.Count > 0)
-            //    listBoxParticleSystem.SelectedIndex = 0;
-            //else
-            //{
-            //    RefreshParticleTemplateListBox();
-            //    propParticleSystem.PropertyGrid.SelectedObject = null;
-            //    propParticleTemplate.PropertyGrid.SelectedObject = null;
-            //    cmbParticleTemplate.SelectedIndex = 0;
-            //}
+            this.Visible = (Repository.CurrentEntite != null);
         }
 
         public void AddParticleSystem()
@@ -252,35 +271,83 @@ namespace Edit2D.ParticleControl
 
                 Repository.CurrentEntite.ListParticleSystem.Add(particleSystem);
 
+                //--- Rafraichissement de la liste des scripts et de l'arborescence
                 RefreshParticleSystemListBox(false);
+                RefreshGlobalTreeView();
+                //---
+
+                //--- Sélectionne le nouveau système de particules
                 listBoxParticleSystem.SelectedIndex = listBoxParticleSystem.Items.Count - 1;
+                //---
             }
         }
 
         public void DeleteParticleSystem()
         {
-            if (Repository.CurrentParticleSystem != null)
+            if (Repository.CurrentEntite != null && Repository.CurrentParticleSystem != null)
             {
                 Repository.CurrentEntite.ListParticleSystem.Remove(Repository.CurrentParticleSystem);
+
+                Repository.CurrentParticleSystem = null;
 
                 RefreshParticleSystemListBox(true);
             }
         }
 
-        //public ParticleSystem GetCurrentParticleSystem()
-        //{
-        //    if (Repository.CurrentEntite != null && listBoxParticleSystem.SelectedIndex != -1)
-        //    {
-        //        return Repository.CurrentEntite.ListParticleSystem[listBoxParticleSystem.SelectedIndex];
-        //    }
+        public Particle AddParticleTemplate()
+        {
+            Particle particleTemplate = null;
 
-        //    return null;
-        //}
+            if (Repository.CurrentParticleSystem != null)
+            {
+                Bitmap bmp = null;
+
+                if (cmbParticleTemplate.SelectedIndex != -1)
+                {
+                    bmp = (Bitmap)cmbParticleTemplate.SelectedItem;
+                }
+                else
+                {
+                    bmp = (Bitmap)cmbParticleTemplate.Items[0];
+                }
+
+                string particleName = Common.CreateNewName<Particle>(Repository.CurrentParticleSystem.ListParticleTemplate, "Name", "Particle{0}");
+
+                particleTemplate = new Particle(false, bmp.Tag.ToString(), particleName, Repository.CurrentParticleSystem);
+
+                Repository.CurrentParticleSystem.ListParticleTemplate.Add(particleTemplate);
+
+                RefreshParticleTemplateListBox(false);
+                listBoxParticleTemplate.SelectedIndex = listBoxParticleTemplate.Items.Count - 1;
+                cmbParticleTemplate.SelectedItem = bmp;
+
+                RefreshGlobalTreeView();
+            }
+
+            return particleTemplate;
+        }
+
+        public void DeleteParticleTemplate()
+        {
+            Particle particleTemplate = GetCurrentParticleTemplate();
+
+            if (particleTemplate != null)
+            {
+                particleTemplate.ParticleSystem.ListParticleTemplate.Remove(particleTemplate);
+
+                if (Repository.CurrentObject is Particle)
+                {
+                    Repository.CurrentObject = null;
+                }
+
+                RefreshParticleTemplateListBox(true);
+
+                RefreshGlobalTreeView<ParticleSystem>(Repository.CurrentParticleSystem);
+            }
+        }
 
         public Particle GetCurrentParticleTemplate()
         {
-            //ParticleSystem particleSystem = GetCurrentParticleSystem();
-
             if (Repository.CurrentParticleSystem != null && listBoxParticleTemplate.SelectedIndex != -1)
             {
                 return Repository.CurrentParticleSystem.ListParticleTemplate[listBoxParticleTemplate.SelectedIndex];

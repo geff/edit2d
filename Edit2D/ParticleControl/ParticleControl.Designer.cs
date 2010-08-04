@@ -49,6 +49,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel10 = new System.Windows.Forms.Panel();
+            this.panel11 = new System.Windows.Forms.Panel();
             this.propParticleTemplate = new Edit2D.UC.PropertyGridLocal();
             this.propParticleSystem = new Edit2D.UC.PropertyGridLocal();
             this.panel4.SuspendLayout();
@@ -65,21 +66,23 @@
             this.cmbParticleTemplate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbParticleTemplate.FormattingEnabled = true;
             this.cmbParticleTemplate.ItemHeight = 30;
-            this.cmbParticleTemplate.Location = new System.Drawing.Point(421, 53);
+            this.cmbParticleTemplate.Location = new System.Drawing.Point(424, 56);
             this.cmbParticleTemplate.Name = "cmbParticleTemplate";
-            this.cmbParticleTemplate.Size = new System.Drawing.Size(168, 36);
+            this.cmbParticleTemplate.Size = new System.Drawing.Size(162, 36);
             this.cmbParticleTemplate.TabIndex = 6;
             this.cmbParticleTemplate.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.cmbParticleTemplate_DrawItem);
             // 
             // panel5
             // 
+            this.panel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
             this.panel5.BackColor = System.Drawing.Color.DarkGray;
-            this.panel5.Location = new System.Drawing.Point(186, 49);
+            this.panel5.Location = new System.Drawing.Point(180, 50);
             this.panel5.Margin = new System.Windows.Forms.Padding(0);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(6, 256);
             this.panel5.TabIndex = 7;
-            this.panel5.Tag = "B";
+            this.panel5.Tag = "BG1";
             // 
             // panel4
             // 
@@ -146,11 +149,9 @@
             this.listBoxParticleSystem.BackColor = System.Drawing.Color.Gray;
             this.listBoxParticleSystem.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listBoxParticleSystem.FormattingEnabled = true;
-            this.listBoxParticleSystem.Items.AddRange(new object[] {
-            "test"});
-            this.listBoxParticleSystem.Location = new System.Drawing.Point(6, 41);
+            this.listBoxParticleSystem.Location = new System.Drawing.Point(0, 41);
             this.listBoxParticleSystem.Name = "listBoxParticleSystem";
-            this.listBoxParticleSystem.Size = new System.Drawing.Size(180, 208);
+            this.listBoxParticleSystem.Size = new System.Drawing.Size(183, 208);
             this.listBoxParticleSystem.TabIndex = 11;
             this.listBoxParticleSystem.Tag = "BG2";
             this.listBoxParticleSystem.SelectedIndexChanged += new System.EventHandler(this.listBoxParticleSystem_SelectedIndexChanged);
@@ -171,6 +172,7 @@
             this.btnAddParticleSystem.Text = "+";
             this.btnAddParticleSystem.UseVisualStyleBackColor = false;
             this.btnAddParticleSystem.Click += new System.EventHandler(this.btnAddParticleSystem_Click);
+            this.btnAddParticleSystem.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnAddParticleSystem_MouseDown);
             // 
             // btnDelParticleSystem
             // 
@@ -188,6 +190,7 @@
             this.btnDelParticleSystem.Text = "-";
             this.btnDelParticleSystem.UseVisualStyleBackColor = false;
             this.btnDelParticleSystem.Click += new System.EventHandler(this.btnDelParticleSystem_Click);
+            this.btnDelParticleSystem.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnDelParticleSystem_MouseDown);
             // 
             // listBoxParticleTemplate
             // 
@@ -196,12 +199,10 @@
             this.listBoxParticleTemplate.BackColor = System.Drawing.Color.Gray;
             this.listBoxParticleTemplate.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listBoxParticleTemplate.FormattingEnabled = true;
-            this.listBoxParticleTemplate.Items.AddRange(new object[] {
-            "test"});
             this.listBoxParticleTemplate.Location = new System.Drawing.Point(6, 41);
             this.listBoxParticleTemplate.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.listBoxParticleTemplate.Name = "listBoxParticleTemplate";
-            this.listBoxParticleTemplate.Size = new System.Drawing.Size(168, 169);
+            this.listBoxParticleTemplate.Size = new System.Drawing.Size(162, 169);
             this.listBoxParticleTemplate.TabIndex = 18;
             this.listBoxParticleTemplate.Tag = "BG2";
             this.listBoxParticleTemplate.SelectedIndexChanged += new System.EventHandler(this.listBoxParticleTemplate_SelectedIndexChanged);
@@ -213,7 +214,7 @@
             this.btnParticleTemplate.FlatAppearance.BorderSize = 0;
             this.btnParticleTemplate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnParticleTemplate.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold);
-            this.btnParticleTemplate.Location = new System.Drawing.Point(47, 3);
+            this.btnParticleTemplate.Location = new System.Drawing.Point(42, 3);
             this.btnParticleTemplate.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.btnParticleTemplate.Name = "btnParticleTemplate";
             this.btnParticleTemplate.Size = new System.Drawing.Size(42, 35);
@@ -222,6 +223,7 @@
             this.btnParticleTemplate.Text = "+";
             this.btnParticleTemplate.UseVisualStyleBackColor = false;
             this.btnParticleTemplate.Click += new System.EventHandler(this.btnAddParticleTemplate_Click);
+            this.btnParticleTemplate.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnParticleTemplate_MouseDown);
             // 
             // btnDelParticleTemplate
             // 
@@ -230,7 +232,7 @@
             this.btnDelParticleTemplate.FlatAppearance.BorderSize = 0;
             this.btnDelParticleTemplate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDelParticleTemplate.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDelParticleTemplate.Location = new System.Drawing.Point(89, 3);
+            this.btnDelParticleTemplate.Location = new System.Drawing.Point(84, 3);
             this.btnDelParticleTemplate.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.btnDelParticleTemplate.Name = "btnDelParticleTemplate";
             this.btnDelParticleTemplate.Size = new System.Drawing.Size(42, 35);
@@ -239,16 +241,19 @@
             this.btnDelParticleTemplate.Text = "-";
             this.btnDelParticleTemplate.UseVisualStyleBackColor = false;
             this.btnDelParticleTemplate.Click += new System.EventHandler(this.btnDelParticleTemplate_Click);
+            this.btnDelParticleTemplate.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnDelParticleTemplate_MouseDown);
             // 
             // panel6
             // 
+            this.panel6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
             this.panel6.BackColor = System.Drawing.Color.DarkGray;
-            this.panel6.Location = new System.Drawing.Point(592, 49);
+            this.panel6.Location = new System.Drawing.Point(168, 0);
             this.panel6.Margin = new System.Windows.Forms.Padding(0);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(6, 256);
+            this.panel6.Size = new System.Drawing.Size(6, 208);
             this.panel6.TabIndex = 15;
-            this.panel6.Tag = "B";
+            this.panel6.Tag = "BG1";
             // 
             // panel7
             // 
@@ -315,10 +320,10 @@
             this.panel1.Controls.Add(this.btnAddParticleSystem);
             this.panel1.Controls.Add(this.btnDelParticleSystem);
             this.panel1.Controls.Add(this.listBoxParticleSystem);
-            this.panel1.Location = new System.Drawing.Point(0, 54);
+            this.panel1.Location = new System.Drawing.Point(0, 56);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(186, 251);
+            this.panel1.Size = new System.Drawing.Size(186, 249);
             this.panel1.TabIndex = 19;
             this.panel1.Tag = "B";
             // 
@@ -326,44 +331,59 @@
             // 
             this.panel10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel10.Controls.Add(this.panel6);
+            this.panel10.Controls.Add(this.panel11);
             this.panel10.Controls.Add(this.btnParticleTemplate);
             this.panel10.Controls.Add(this.btnDelParticleTemplate);
             this.panel10.Controls.Add(this.listBoxParticleTemplate);
-            this.panel10.Location = new System.Drawing.Point(418, 93);
+            this.panel10.Location = new System.Drawing.Point(418, 98);
             this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(174, 212);
+            this.panel10.Size = new System.Drawing.Size(174, 207);
             this.panel10.TabIndex = 20;
             this.panel10.Tag = "B";
+            // 
+            // panel11
+            // 
+            this.panel11.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel11.BackColor = System.Drawing.Color.DarkGray;
+            this.panel11.Location = new System.Drawing.Point(0, 0);
+            this.panel11.Margin = new System.Windows.Forms.Padding(0);
+            this.panel11.Name = "panel11";
+            this.panel11.Size = new System.Drawing.Size(6, 208);
+            this.panel11.TabIndex = 19;
+            this.panel11.Tag = "BG1";
             // 
             // propParticleTemplate
             // 
             this.propParticleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
-            this.propParticleTemplate.Location = new System.Drawing.Point(598, 50);
+            this.propParticleTemplate.Location = new System.Drawing.Point(592, 50);
             this.propParticleTemplate.Margin = new System.Windows.Forms.Padding(0);
             this.propParticleTemplate.Name = "propParticleTemplate";
-            this.propParticleTemplate.Size = new System.Drawing.Size(226, 255);
+            this.propParticleTemplate.Size = new System.Drawing.Size(232, 255);
             this.propParticleTemplate.TabIndex = 2;
-            this.propParticleTemplate.Tag = "B";
-            this.propParticleTemplate.TagProp = "B";
+            this.propParticleTemplate.Tag = "B;F1";
+            this.propParticleTemplate.TagLineColor = "BG2";
             // 
             // propParticleSystem
             // 
             this.propParticleSystem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
-            this.propParticleSystem.Location = new System.Drawing.Point(192, 50);
+            this.propParticleSystem.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.propParticleSystem.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.propParticleSystem.Location = new System.Drawing.Point(186, 50);
             this.propParticleSystem.Margin = new System.Windows.Forms.Padding(0);
             this.propParticleSystem.Name = "propParticleSystem";
-            this.propParticleSystem.Size = new System.Drawing.Size(226, 255);
+            this.propParticleSystem.Size = new System.Drawing.Size(232, 255);
             this.propParticleSystem.TabIndex = 1;
-            this.propParticleSystem.Tag = "B";
-            this.propParticleSystem.TagProp = "B";
+            this.propParticleSystem.Tag = "B;F1";
+            this.propParticleSystem.TagLineColor = "BG2";
             // 
             // ParticleControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.panel6);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel10);
             this.Controls.Add(this.panel1);
@@ -379,6 +399,7 @@
             this.Name = "ParticleControl";
             this.Size = new System.Drawing.Size(891, 305);
             this.Tag = "BG1";
+            this.Load += new System.EventHandler(this.ParticleControl_Load);
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -418,5 +439,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel10;
+        private System.Windows.Forms.Panel panel11;
     }
 }

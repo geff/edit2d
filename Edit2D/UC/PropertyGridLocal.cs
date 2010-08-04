@@ -16,19 +16,16 @@ namespace Edit2D.UC
             InitializeComponent();
         }
 
-        public Object TagProp
-        {
-            get
-            {
-                Object tagProp = this.PropertyGrid.Tag;
-                return tagProp;
-            }
-            set
-            {
-                Object tagProp = value;
-                this.PropertyGrid.Tag = tagProp;
-            }
+        public String TagLineColor { get; set; }
 
+        private void PropertyGridLocal_BackColorChanged(object sender, EventArgs e)
+        {
+            this.PropertyGrid.ViewBackColor = this.BackColor;
+        }
+
+        private void PropertyGridLocal_ForeColorChanged(object sender, EventArgs e)
+        {
+            this.PropertyGrid.ViewForeColor = this.ForeColor;
         }
     }
 }

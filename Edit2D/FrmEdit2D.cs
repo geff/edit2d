@@ -119,8 +119,6 @@ namespace Edit2D
             }
             //---
 
-
-
             InitListViewImage();
 
             triggerControl.Repository = repository;
@@ -320,7 +318,7 @@ namespace Edit2D
             if (!String.IsNullOrEmpty(repository.CurrentTextureName))
             {
                 //--- Calcul le nom de l'entité
-                string name = repository.FoundNewName(repository.CurrentTextureName);
+                string name = Common.CreateNewName<Entite>(repository.listEntite, "Name", repository.CurrentTextureName + "{0}");
                 //---
 
                 Entite entite = new Entite(true, false, repository.CurrentTextureName.ToString(), name);
@@ -446,7 +444,7 @@ namespace Edit2D
             bool nameChanged = false;
             int countFound = repository.listEntite.FindAll(ent => ent.Name == newName.ToString() && ent != entite).Count;
 
-            string nameFound = repository.FoundNewName(entite.TextureName);
+            string nameFound = Common.CreateNewName<Entite>(repository.listEntite, "Name", entite.TextureName + "{0}");
 
             if (countFound > 0)
             {
@@ -516,7 +514,7 @@ namespace Edit2D
                         triggerControl.RefreshTriggerList(true);
                         break;
                     case ViewingMode.ParticleSystem:
-                        particleControl.RefreshParticleControl();
+                        particleControl.RefreshParticleControl(true);
                         break;
                     default:
                         break;
@@ -534,6 +532,9 @@ namespace Edit2D
                     !repository.CurrentActionHandler.GetType().IsSubclassOf(typeof(Entite)))
                     propertyGrid.PropertyGrid.SelectedObject = repository.CurrentActionHandler;
 
+                if (repository.CurrentTriggerHandler is Entite)
+                    repository.CurrentEntite = (Entite)repository.CurrentTriggerHandler;
+
                 ShowScriptMode();
             }
             else if (newSelection is TriggerBase)
@@ -548,6 +549,9 @@ namespace Edit2D
                     !repository.CurrentTriggerHandler.GetType().IsSubclassOf(typeof(Entite))) ||
                     repository.CurrentTriggerHandler is World)
                     propertyGrid.PropertyGrid.SelectedObject = repository.CurrentTriggerHandler;
+
+                if (repository.CurrentTriggerHandler is Entite)
+                    repository.CurrentEntite = (Entite)repository.CurrentTriggerHandler;
 
                 ShowTriggerMode();
             }
@@ -567,22 +571,7 @@ namespace Edit2D
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.World;
 
-                switch (repository.ViewingMode)
-                {
-                    case ViewingMode.Nothing:
-                        break;
-                    case ViewingMode.Script:
-                        scriptControl.RefreshScriptControl(true);
-                        break;
-                    case ViewingMode.Trigger:
-                        triggerControl.RefreshTriggerList(true);
-                        break;
-                    case ViewingMode.ParticleSystem:
-                        particleControl.RefreshParticleControl();
-                        break;
-                    default:
-                        break;
-                }
+                ShowTriggerMode();
             }
 
             EnableMode(
@@ -590,69 +579,10 @@ namespace Edit2D
                 repository.CurrentTriggerHandler != null, 
                 repository.CurrentEntite!=null);
 
-            //if (newSelection is Entite)
-            //    repository.CurrentEntite = (Entite)newSelection;
-            //else
-            //    repository.CurrentObject = newSelection;
-
-            //if (refreshTreeView)
-            //    RefreshTreeView();
-
-            //if (repository.CurrentEntite != null)
-            //{
-            //    propertyGrid.PropertyGrid.SelectedObject = repository.CurrentEntite;
-            //    btnPinStatic.Checked = repository.CurrentEntite.IsStatic;
-            //    btnColisionable.Checked = repository.CurrentEntite.IsColisionable;
-
-            //    //--- Affiche le nom de l'entité courante dans la statusStrip
-            //    toolStripTextBoxEntityName.Text = repository.CurrentEntite.Name;
-            //    //---
-            //}
-            //else if (repository.CurrentParticleSystem != null)
-            //{
-            //    propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem;
-            //}
-            //else if (newSelection is World)
-            //{
-            //    propertyGrid.PropertyGrid.SelectedObject = (World)newSelection;
-            //}
-
-            ////--- Rafraichi le contrôle du mode courant
-            //if (btnTriggerModeBar.Checked)
-            //{
-            //    triggerControl.RefreshTriggerList();
-            //}
-            //else if (btnScriptModeBar.Checked)
-            //{
-            //    scriptControl.RefreshScriptControl();
-            //}
-            //else if (btnParticleSystemModeBar.Checked)
-            //{
-            //    particleControl.RefreshParticleControl();
-            //}
-            ////---
-
-            //if (repository.CurrentEntite != null)
-            //{
-            //    //String nodeKey = String.Empty;
-
-            //    //if (repository.CurrentEntite is Particle)
-            //    //{
-            //    //    treeView.CheckNode<Particle>((Particle)repository.CurrentEntite);
-            //    //}
-            //    //else
-            //    {
-            //        treeView.CheckNode<Entite>(repository.CurrentEntite);
-            //    }
-            //}
-            //else if (repository.CurrentParticleSystem != null)
-            //{
-            //    treeView.CheckNode<ParticleSystem>(repository.CurrentParticleSystem);
-            //}
-            //else
-            //{
-            //    treeView.SelectedNode = null;
-            //}
+            VisibleMode(
+                repository.CurrentActionHandler != null,
+                repository.CurrentTriggerHandler != null,
+                repository.CurrentEntite != null);
         }
 
         private void EnableMode(bool enabledModeScript, bool enabledModeTrigger, bool enabledModeParticleSystem)
@@ -660,6 +590,13 @@ namespace Edit2D
             btnScriptModeBar.Enabled = enabledModeScript;
             btnTriggerModeBar.Enabled = enabledModeTrigger;
             btnParticleSystemModeBar.Enabled = enabledModeParticleSystem;
+        }
+
+        private void VisibleMode(bool visibleModeScript, bool visibleModeTrigger, bool visibleModeParticleSystem)
+        {
+            scriptControl.Visible = visibleModeScript & repository.ViewingMode == ViewingMode.Script;
+            triggerControl.Visible = visibleModeTrigger & repository.ViewingMode == ViewingMode.Trigger;
+            particleControl.Visible = visibleModeParticleSystem & repository.ViewingMode == ViewingMode.ParticleSystem;
         }
 
         private void RefreshTreeView()
@@ -2187,7 +2124,7 @@ namespace Edit2D
 
             repository.ViewingMode = ViewingMode.ParticleSystem;
 
-            particleControl.RefreshParticleControl();
+            particleControl.RefreshParticleControl(true);
         }
         #endregion
     }
