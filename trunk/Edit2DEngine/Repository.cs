@@ -125,28 +125,28 @@ namespace Edit2DEngine
             return minValue + (float)rnd.NextDouble() * (maxValue - minValue);
         }
 
-        public string FoundNewName(string textureName)
-        {
-            string name = String.Empty;
+        //public string FoundNewName(string textureName)
+        //{
+        //    string name = String.Empty;
 
-            bool found = false;
-            int count = this.listEntite.FindAll(e => e.TextureName == textureName).Count;
-            int number = 0;
+        //    bool found = false;
+        //    int count = this.listEntite.FindAll(e => e.TextureName == textureName).Count;
+        //    int number = 0;
 
-            while (!found)
-            {
-                number++;
-                string newName = String.Format("{0}{1}", textureName, number);
+        //    while (!found)
+        //    {
+        //        number++;
+        //        string newName = String.Format("{0}{1}", textureName, number);
 
-                if (this.listEntite.Find(e => e.Name == newName) == null)
-                {
-                    found = true;
-                    name = newName;
-                }
-            }
+        //        if (this.listEntite.Find(e => e.Name == newName) == null)
+        //        {
+        //            found = true;
+        //            name = newName;
+        //        }
+        //    }
 
-            return name;
-        }
+        //    return name;
+        //}
 
         public Entite ChangeEntitySize(Entite currentEntite, Size oldSize)
         {
