@@ -632,7 +632,7 @@ namespace Edit2D.UC
 
         protected override void OnDrawNode(DrawTreeNodeEventArgs e)
         {
-            if (this.IsRefreshing)
+            if (this.IsRefreshing || !e.Node.IsVisible)
                 return;
 
             int deltaY = 0;

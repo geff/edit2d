@@ -591,6 +591,8 @@ namespace Edit2D.ScriptControl
                 numDuration.Value = 0;
             }
 
+            chkRelative.Checked = ActionEvent.IsRelative[ActionEventIndex];
+
             IsInitialized = true;
         }
         #endregion

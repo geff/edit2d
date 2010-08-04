@@ -823,6 +823,7 @@ namespace Edit2D.ScriptControl
             //---
 
             //--- Rafraichissement de la liste des scripts et de l'arborescence
+            currentAction = -1;
             RefreshScriptView(false);
             RefreshGlobalTreeView();
             //---
