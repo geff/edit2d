@@ -100,14 +100,15 @@ namespace Edit2D
                 pnlMain.SplitterDistance = 650;
                 pnlRight.SplitterDistance = 100;
 
-                this.Size = new Size(900, 400);
+                this.Size = new Size(1000, 600);
                 this.Left = Screen.PrimaryScreen.WorkingArea.Width - this.Size.Width;
                 this.Top = Screen.PrimaryScreen.WorkingArea.Height - this.Size.Height;
                 this.ShowIcon = false;
                 modelViewerControl.ChangeViewPortSize = true;
                 repository.CurrentPointer2.WorldPosition = new Vector2(10, 10);
                 repository.CurrentPointer.WorldPosition = new Vector2(100, 100);
-                toolStripMenu.Visible = false;
+                
+                //toolStripMenu.Visible = false;
 
                 //foreach (ToolStripItem item in toolStripMenu.Items)
                 //{
@@ -604,6 +605,15 @@ namespace Edit2D
             treeView.RefreshView();
         }
 
+        private void SetRepository()
+        {
+            render.Repository = repository;
+            scriptControl.Repository = repository;
+            triggerControl.Repository = repository;
+            particleControl.Repository = repository;
+            treeView.Repository = repository;
+        }
+
         private void New()
         {
             Repository.physicSimulator = new FarseerGames.FarseerPhysics.PhysicsSimulator(new Vector2(0, 9.81f));
@@ -634,11 +644,10 @@ namespace Edit2D
             repository.FrmEdit2D = this;
 
             render.UpdatePhysic();
-            RefreshTreeView();
 
-            triggerControl.Repository = repository;
-            scriptControl.Repository = repository;
-            particleControl.Repository = repository;
+            SetRepository();
+
+            RefreshTreeView();
         }
 
         private void Open()
@@ -655,8 +664,8 @@ namespace Edit2D
 
                 FileSystem.Open(dlg.FileName, this.repository);
 
-                triggerControl.Repository = repository;
-                render.Repository = repository;
+                SetRepository();
+
                 repository.ShowDebugMode = showDebugMode;
             }
 
@@ -665,6 +674,7 @@ namespace Edit2D
             repository.WatchLoading.Start();
 
             RefreshTreeView();
+
             render.UpdatePhysic();
         }
 

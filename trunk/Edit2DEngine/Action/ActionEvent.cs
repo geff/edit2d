@@ -35,7 +35,7 @@ namespace Edit2DEngine.Action
         [Browsable(false)]
         public bool[] IsRelative { get; set; }
         [Browsable(false)]
-        private TimeSpan[] startTimes;
+        private TimeSpan startTime;
         [Browsable(false)]
         public Entite[] EntiteBindings { get; set; }
         //[Browsable(false)]
@@ -95,7 +95,7 @@ namespace Edit2DEngine.Action
             this.Speeds = new int[count];
             this.IsRelative = new bool[count];
             this.ActionEventTypes = new ActionEventType[count];
-            this.startTimes = new TimeSpan[count];
+            this.startTime =  TimeSpan.Zero;
             this.initialized = new bool[count];
             this.rndStartValue = new float[count];
             this.deltaMs = new int[count];
@@ -104,9 +104,14 @@ namespace Edit2DEngine.Action
 
         public override void InitAction()
         {
+            startTime = TimeSpan.Zero;
+
             for (int i = 0; i < this.ActionEventTypes.Length; i++)
             {
+                deltaMs[i] = 0;
+                pct[i] = 0f;
                 initialized[i] = false;
+                Playing = false;
             }
         }
 
@@ -132,6 +137,7 @@ namespace Edit2DEngine.Action
         bool[] initialized;
         int[] deltaMs;
         float[] pct;
+        float distance = 0f;
 
         private float GetPropertyValue(int index)
         {
@@ -233,38 +239,78 @@ namespace Edit2DEngine.Action
             initialized[i] = true;
         }
 
+        private void StartActionEvent(TimeSpan time, Repository repository)
+        {
+            //--- Initialisation du timer
+            startTime = time;
+            //---
+
+            for (int i = 0; i < this.ActionEventTypes.Length; i++)
+            {
+                //---
+                deltaMs[i] = 0;
+                pct[i] = 0f;
+                //---
+
+                if (repository != null)
+                    GetPropertyValue(repository, i);
+
+                if (repository != null && ActionEventTypes[i] == ActionEventType.MouseX)
+                {
+                    this.FloatValues[i] = repository.GetMousePosition().X - (float)startValues[i];
+                }
+                else if (repository != null && ActionEventTypes[i] == ActionEventType.MouseY)
+                {
+                    this.FloatValues[i] = repository.GetMousePosition().Y - (float)startValues[i];
+                }
+            }
+
+            //--- Calcul de la distance
+            //---
+        }
+
         public void UpdateValue(Repository repository)
         {
             TimeSpan timeNow = DateTime.Now.TimeOfDay;
 
             bool playing = true;
 
+            //---
+            if (startTime == TimeSpan.Zero)
+            {
+                StartActionEvent(timeNow, repository);
+            }
+            //---
+
             for (int i = 0; i < this.ActionEventTypes.Length; i++)
             {
                 updateValues[i] = 0;
 
                 //--- Durée
-                if (Durations[i] != 0)
+                if (Durations[i] != 0 || Speeds[i] != 0)
                 {
-                    if (startTimes[i] == TimeSpan.Zero)
-                    {
-                        //--- Initialisation du timer
-                        startTimes[i] = timeNow;
-                        deltaMs[i] = 0;
-                        pct[i] = 0f;
-                        //---
-                    }
-                    else
-                    {
-                        deltaMs[i] = (int)timeNow.Subtract(startTimes[i]).TotalMilliseconds;
+                    //if (startTimes[i] == TimeSpan.Zero)
+                    //{
+                    //    //StartActionEvent(i, timeNow, repository);
+                    //    //initialized[i] = true;
+                    //}
+                    //else
+                    //{
+                        deltaMs[i] = (int)timeNow.Subtract(startTime).TotalMilliseconds;
 
-                        pct[i] = (float)deltaMs[i] / (float)Durations[i];
-                    }
+                        if (Durations[i] != 0)
+                            pct[i] = (float)deltaMs[i] / (float)Durations[i];
+                        else if (Speeds[i] != 0)
+                            pct[i] = (float)Speeds[i] * deltaMs[i] / 1000f / this.FloatValues[i];
+
+                        if (pct[i] > 1f)
+                            pct[i] = 1f;
+                    //}
                 }
                 else
                 {
-                    if (Speeds[i] == 0)
-                        deltaMs[i] = 0;
+                    deltaMs[i] = 0;
+                    pct[i] = 0f;
 
                     initialized[i] = true;
                 }
@@ -273,30 +319,29 @@ namespace Edit2DEngine.Action
                 float calcValue = 0f;
 
                 //--- Calcul de la valeur
-                
-                    switch (this.ActionEventTypes[i])
-                    {
-                        case ActionEventType.Deactivated:
-                            calcValue = startValues[i];
-                            break;
-                        case ActionEventType.FixedValue:
-                            calcValue = this.FloatValues[i];
-                            break;
-                        case ActionEventType.MouseX:
-                            calcValue = repository.GetMousePosition().X - startValues[i];
-                            break;
-                        case ActionEventType.MouseY:
-                            calcValue = repository.GetMousePosition().Y - startValues[i];
-                            break;
-                        case ActionEventType.EntityBinding:
-                            calcValue = GetPropertyValue(i);
-                            break;
-                        case ActionEventType.Random:
-                            calcValue = rndStartValue[i];
-                            break;
-                        default:
-                            break;
-                    }
+                switch (this.ActionEventTypes[i])
+                {
+                    case ActionEventType.Deactivated:
+                        calcValue = startValues[i];
+                        break;
+                    case ActionEventType.FixedValue:
+                        calcValue = this.FloatValues[i];
+                        break;
+                    case ActionEventType.MouseX:
+                        calcValue = this.FloatValues[i];// repository.GetMousePosition().X - startValues[i];
+                        break;
+                    case ActionEventType.MouseY:
+                        calcValue = this.FloatValues[i];// repository.GetMousePosition().Y - startValues[i];
+                        break;
+                    case ActionEventType.EntityBinding:
+                        calcValue = GetPropertyValue(i);
+                        break;
+                    case ActionEventType.Random:
+                        calcValue = rndStartValue[i];
+                        break;
+                    default:
+                        break;
+                }
                 //---
 
                 //--- Relatives & Durations
@@ -305,7 +350,7 @@ namespace Edit2DEngine.Action
                     updateValues[i] = startValues[i];
                 }
 
-                if (Durations[i] != 0)
+                if (Durations[i] != 0 || Speeds[i] != 0)
                 {
                     updateValues[i] += MathHelper.Lerp(0f, calcValue, pct[i]);
                 }
@@ -318,17 +363,25 @@ namespace Edit2DEngine.Action
                 //--- Durée
                 if (Durations[i] != 0)
                 {
-                    if (startTimes[i] != TimeSpan.Zero)
+                    //if (startTimes[i] != TimeSpan.Zero)
                     {
-                        deltaMs[i] = (int)timeNow.Subtract(startTimes[i]).TotalMilliseconds;
+                        //deltaMs[i] = (int)timeNow.Subtract(startTimes[i]).TotalMilliseconds;
 
                         //--- Si le temps d'animation est écoulé, quitter la procédure de mise à jour
                         if (deltaMs[i] >= Durations[i])
                         {
-                            startTimes[i] = TimeSpan.Zero;
+                            startTime = TimeSpan.Zero;
                             initialized[i] = false;
                         }
                         //---
+                    }
+                }
+                else if(Speeds[i] != 0)
+                {
+                    if(pct[i] > 0.95f)
+                    {
+                        startTime = TimeSpan.Zero;
+                        initialized[i] = false;
                     }
                 }
                 //---
