@@ -19,8 +19,8 @@ namespace Edit2DEngine
         public World()
         {
             this.ListTrigger = new List<TriggerBase>();
-            this.GradientColor1 = Color.MidnightBlue;
-            this.GradientColor2 = Color.MistyRose;
+            this.GradientColor1 = Color.White;
+            this.GradientColor2 = Color.White;
         }
 
         [Browsable(false)]

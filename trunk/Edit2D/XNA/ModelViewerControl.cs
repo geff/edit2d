@@ -165,32 +165,35 @@ namespace WinFormsContentLoading
 
         private void DrawRadialBlur(float radialBlurWidth)
         {
-            //--- Initialisation RenderTarget
-            ResolveTexture2D textureScene = new ResolveTexture2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 1, SurfaceFormat.Color);
-            GraphicsDevice.ResolveBackBuffer(textureScene);
-            //---
+            if (GraphicsDevice.GraphicsDeviceCapabilities.DeviceCapabilities.SupportsTextureSystemMemory)
+            {
+                //--- Initialisation RenderTarget
+                ResolveTexture2D textureScene = new ResolveTexture2D(GraphicsDevice, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 1, SurfaceFormat.Color);
+                GraphicsDevice.ResolveBackBuffer(textureScene);
+                //---
 
-            //--- Affectionat de la technique graphique
-            effect.CurrentTechnique = effect.Techniques["RadialBlur"];
-            //---
+                //--- Affectionat de la technique graphique
+                effect.CurrentTechnique = effect.Techniques["RadialBlur"];
+                //---
 
-            //--- Paramètres shader
-            effect.Parameters["timeMS"].SetValue((int)DateTime.Now.TimeOfDay.TotalMilliseconds);
-            effect.Parameters["BlurWidth"].SetValue(radialBlurWidth);
-            //---
+                //--- Paramètres shader
+                effect.Parameters["timeMS"].SetValue((int)DateTime.Now.TimeOfDay.TotalMilliseconds);
+                effect.Parameters["BlurWidth"].SetValue(radialBlurWidth);
+                //---
 
-            //--- Affichage
-            this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+                //--- Affichage
+                this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
-            effect.Begin();
-            effect.CurrentTechnique.Passes[0].Begin();
-            Vector2 center = Vector2.Zero;// new Vector2((float)textureScene.Width / 2f, (float)textureScene.Height / 2f);
-            this.spriteBatch.Draw((Texture2D)textureScene, Vector2.Zero, null, Color.Black, 0f, center, 1f, SpriteEffects.None, 0);
-            this.spriteBatch.End();
+                effect.Begin();
+                effect.CurrentTechnique.Passes[0].Begin();
+                Vector2 center = Vector2.Zero;// new Vector2((float)textureScene.Width / 2f, (float)textureScene.Height / 2f);
+                this.spriteBatch.Draw((Texture2D)textureScene, Vector2.Zero, null, Color.Black, 0f, center, 1f, SpriteEffects.None, 0);
+                this.spriteBatch.End();
 
-            effect.CurrentTechnique.Passes[0].End();
-            effect.End();
-            //---
+                effect.CurrentTechnique.Passes[0].End();
+                effect.End();
+                //---
+            }
         }
 
         private void CalcNormalMap(Entite entite)
