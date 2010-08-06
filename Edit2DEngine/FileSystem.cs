@@ -61,8 +61,8 @@ namespace Edit2DEngine
             //    repository.ChangeEntitySize(entite, new Size(texture.Width, texture.Height));
 
             entite.TextureName = reader["TextureName"];
-            
-            bool ist  =entite.geom.Body == entite.Body;
+
+            bool ist = entite.geom.Body == entite.Body;
         }
 
         public static void Open(string fileName, Repository repository)
@@ -72,6 +72,7 @@ namespace Edit2DEngine
 
                 Entite entite = null;
                 int indexPoints = 0;
+                int curActionEventIndex = 0;
 
                 repository.listEntite = new List<Entite>();
                 Repository.physicSimulator.Clear();
@@ -189,32 +190,71 @@ namespace Edit2DEngine
                         }
                         else if (reader.Name == "Event")
                         {
-                            //Entite ent = repository.listEntite.Last();
-                            //Script scr = ent.ListScript.Last();
+                            Script scr = currentActionHandler.ListScript.Last();
 
-                            //ActionEvent actionEvent = new ActionEvent(scr, reader["ActionName"], bool.Parse(reader["IsRelative"]), reader["PropertyName"]);
+                            ActionEvent actionEvent = new ActionEvent(scr, reader["ActionName"], reader["PropertyName"]);
 
-                            //if (actionEvent.PropertyType.Name == "Color")
-                            //{
-                            //    actionEvent.Value = reader["Color"].ToColor();
-                            //}
-                            //else if (actionEvent.PropertyType.Name == "Single")
-                            //{
-                            //    actionEvent.Value = float.Parse(reader["Value"]);
-                            //}
-                            //else if (actionEvent.PropertyType.Name == "Vector2")
-                            //{
-                            //    actionEvent.Value = reader["Value"].ToVector2();
-                            //}
+                            scr.ListAction.Add(actionEvent);
+                        }
+                        else if (reader.Name == "EventDetail")
+                        {
+                            Script scr = currentActionHandler.ListScript.Last();
 
-                            ////if (reader["ChangeValue"] != null)
-                            ////{
-                            ////    actionEvent.ChangeValue = reader["ChangeValue"].ToBools();
-                            ////}
+                            ActionEvent actionEvent = (ActionEvent)scr.ListAction.Last();
 
-                            //scr.ListAction.Add(actionEvent);
+                            curActionEventIndex = int.Parse(reader["EventIndex"]);
 
-                            //indexPoints = -1;
+                            actionEvent.IsRelative[curActionEventIndex] = bool.Parse(reader["IsRelative"]);
+                            actionEvent.Durations[curActionEventIndex] = int.Parse(reader["Duration"]);
+                            actionEvent.Speeds[curActionEventIndex] = int.Parse(reader["Speed"]);
+                        }
+                        else if (reader.Name == "Deactivated")
+                        {
+                            Script scr = currentActionHandler.ListScript.Last();
+                            ActionEvent actionEvent = (ActionEvent)scr.ListAction.Last();
+
+                            actionEvent.ActionEventTypes[curActionEventIndex] = ActionEventType.Deactivated;
+                        }
+                        else if (reader.Name == "FixedValue")
+                        {
+                            Script scr = currentActionHandler.ListScript.Last();
+                            ActionEvent actionEvent = (ActionEvent)scr.ListAction.Last();
+
+                            actionEvent.ActionEventTypes[curActionEventIndex] = ActionEventType.FixedValue;
+                            actionEvent.FloatValues[curActionEventIndex] = float.Parse(reader["Value"]);
+                        }
+                        else if (reader.Name == "MouseX")
+                        {
+                            Script scr = currentActionHandler.ListScript.Last();
+                            ActionEvent actionEvent = (ActionEvent)scr.ListAction.Last();
+
+                            actionEvent.ActionEventTypes[curActionEventIndex] = ActionEventType.MouseX;
+                        }
+                        else if (reader.Name == "MouseY")
+                        {
+                            Script scr = currentActionHandler.ListScript.Last();
+                            ActionEvent actionEvent = (ActionEvent)scr.ListAction.Last();
+
+                            actionEvent.ActionEventTypes[curActionEventIndex] = ActionEventType.MouseY;
+                        }
+                        else if (reader.Name == "EntityBinding")
+                        {
+                            Script scr = currentActionHandler.ListScript.Last();
+                            ActionEvent actionEvent = (ActionEvent)scr.ListAction.Last();
+
+                            actionEvent.ActionEventTypes[curActionEventIndex] = ActionEventType.EntityBinding;
+                            actionEvent.EntiteBindingNames[curActionEventIndex] = reader["EntityName"];
+                            actionEvent.EntiteBindingPropertyNames[curActionEventIndex] = reader["PropertyName"];
+                            actionEvent.EntiteBindingPropertyId[curActionEventIndex] = int.Parse(reader["PropertyIndex"]);
+                        }
+                        else if (reader.Name == "Random")
+                        {
+                            Script scr = currentActionHandler.ListScript.Last();
+                            ActionEvent actionEvent = (ActionEvent)scr.ListAction.Last();
+
+                            actionEvent.ActionEventTypes[curActionEventIndex] = ActionEventType.Random;
+                            actionEvent.RndMinValues[curActionEventIndex] = int.Parse(reader["RandomMinValue"]);
+                            actionEvent.RndMaxValues[curActionEventIndex] = int.Parse(reader["RandomMaxValue"]);
                         }
                         else if (reader.Name == "TriggerCollision")
                         {
@@ -485,19 +525,54 @@ namespace Edit2DEngine
                     }
                     else if (action is ActionEvent)
                     {
-                        //writer.WriteStartElement("Event");
+                        writer.WriteStartElement("Event");
 
-                        //ActionEvent actionEvent = (ActionEvent)action;
+                        ActionEvent actionEvent = (ActionEvent)action;
 
-                        //writer.WriteAttributeString("ActionName", actionEvent.ActionName);
-                        //writer.WriteAttributeString("PropertyName", actionEvent.PropertyName);
-                        //writer.WriteAttributeString("IsRelative", actionEvent.IsRelative.ToString());
+                        writer.WriteAttributeString("ActionName", actionEvent.ActionName);
+                        writer.WriteAttributeString("PropertyName", actionEvent.PropertyName);
 
-                        //writer.WriteAttributeString("ChangeValue", actionEvent.ChangeValue.ArrayToString());
+                        for (int i = 0; i < actionEvent.ActionEventTypes.Length; i++)
+                        {
+                            writer.WriteStartElement("EventDetail");
+                            writer.WriteAttributeString("EventIndex", i.ToString());
+                            writer.WriteAttributeString("IsRelative", actionEvent.IsRelative[i].ToString());
+                            writer.WriteAttributeString("Duration", actionEvent.Durations[i].ToString());
+                            writer.WriteAttributeString("Speed", actionEvent.Speeds[i].ToString());
 
-                        //writer.WriteAttributeString("Value", actionEvent.Value.ToString());
+                            switch (actionEvent.ActionEventTypes[i])
+                            {
+                                case ActionEventType.Deactivated:
+                                    writer.WriteStartElement("Deactivated");
+                                    break;
+                                case ActionEventType.FixedValue:
+                                    writer.WriteStartElement("FixedValue");
+                                    writer.WriteAttributeString("Value", WriteFloat(actionEvent.FloatValues[i]));
+                                    break;
+                                case ActionEventType.MouseX:
+                                    writer.WriteStartElement("MouseX");
+                                    break;
+                                case ActionEventType.MouseY:
+                                    writer.WriteStartElement("MouseY");
+                                    break;
+                                case ActionEventType.EntityBinding:
+                                    writer.WriteStartElement("EntityBinding");
+                                    writer.WriteAttributeString("EntityName", actionEvent.EntiteBindings[i].Name);
+                                    writer.WriteAttributeString("PropertyName", actionEvent.EntiteBindingProperties[i].Name);
+                                    writer.WriteAttributeString("PropertyIndex", actionEvent.EntiteBindingPropertyId[i].ToString());
+                                    break;
+                                case ActionEventType.Random:
+                                    writer.WriteStartElement("Random");
+                                    writer.WriteAttributeString("RandomMinValue", WriteFloat(actionEvent.RndMinValues[i]));
+                                    writer.WriteAttributeString("RandomMaxValue", WriteFloat(actionEvent.RndMaxValues[i]));
+                                    break;
+                                default:
+                                    break;
+                            }
 
-                        //writer.WriteEndElement();
+                            writer.WriteEndElement();
+                            writer.WriteEndElement();
+                        }
                     }
                 }
                 writer.WriteEndElement();
@@ -627,9 +702,9 @@ namespace Edit2DEngine
             //--- World
             writer.WriteStartElement("World");
             for (int i = 0; i < repository.World.ListTrigger.Count; i++)
-			{
+            {
                 SaveTrigger(writer, repository.World.ListTrigger[i]);
-			}
+            }
             writer.WriteEndElement();
             //---
 

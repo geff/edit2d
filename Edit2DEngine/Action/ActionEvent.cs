@@ -38,8 +38,12 @@ namespace Edit2DEngine.Action
         private TimeSpan startTime;
         [Browsable(false)]
         public Entite[] EntiteBindings { get; set; }
-        //[Browsable(false)]
-        //public String[] EntiteBindingPropertyNames { get; set; }
+
+        [Browsable(false)]
+        public String[] EntiteBindingNames { get; set; }
+        [Browsable(false)]
+        public String[] EntiteBindingPropertyNames { get; set; }
+
         [Browsable(false)]
         public int[] EntiteBindingPropertyId { get; set; }
         [Browsable(false)]
@@ -47,8 +51,16 @@ namespace Edit2DEngine.Action
         [Browsable(false)]
         public Boolean Playing { get; set; }
 
+        bool[] initialized;
+        int[] deltaMs;
+        float[] pct;
+
+        float[] calcFloatValues;
         float[] updateValues;
         float[] startValues;
+
+        public int[] calcDurations;
+
 
         public ActionEvent(Script script, string actionName, string propertyName)
         {
@@ -95,11 +107,12 @@ namespace Edit2DEngine.Action
             this.Speeds = new int[count];
             this.IsRelative = new bool[count];
             this.ActionEventTypes = new ActionEventType[count];
-            this.startTime =  TimeSpan.Zero;
+            this.startTime = TimeSpan.Zero;
             this.initialized = new bool[count];
-            this.rndStartValue = new float[count];
+            this.calcFloatValues = new float[count];
             this.deltaMs = new int[count];
             this.pct = new float[count];
+            this.calcDurations = new int[count];
         }
 
         public override void InitAction()
@@ -110,34 +123,10 @@ namespace Edit2DEngine.Action
             {
                 deltaMs[i] = 0;
                 pct[i] = 0f;
-                initialized[i] = false;
+                //initialized[i] = false;
                 Playing = false;
             }
         }
-
-        ////--- Start values
-        //Vector2 vecStartValue = Vector2.Zero;
-        //float floatStartValue = 0f;
-        //Size sizeStartValue = Size.Empty;
-        //Microsoft.Xna.Framework.Graphics.Color colorStartValue = Microsoft.Xna.Framework.Graphics.Color.Black;
-        //bool boolStartValue = false;
-        float[] rndStartValue;
-        float rndStartValueBoolean;
-        ////---
-
-        ////--- Actual values
-        //Vector2 vecActualValue = Vector2.Zero;
-        //float floatActualValue = 0f;
-        //Size sizeActualValue = Size.Empty;
-        //Microsoft.Xna.Framework.Graphics.Color colorActualValue = Microsoft.Xna.Framework.Graphics.Color.Black;
-        //bool boolActualValue = false;
-        //float[] rndActualValue;
-        ////---
-
-        bool[] initialized;
-        int[] deltaMs;
-        float[] pct;
-        float distance = 0f;
 
         private float GetPropertyValue(int index)
         {
@@ -179,7 +168,7 @@ namespace Edit2DEngine.Action
             return value;
         }
 
-        private void GetPropertyValue(Repository repository, int i)
+        private void GetStartPropertyValue(Repository repository, int i)
         {
             if (this.PropertyType.Name == "Vector2")
             {
@@ -225,98 +214,133 @@ namespace Edit2DEngine.Action
                 if (this.PropertyType.Name == "Boolean")
                 {
                     if (repository.GetRandomValue(0f, 10f) <= 5f)
-                        rndStartValue[i] = Convert.ToSingle(true);
+                        calcFloatValues[i] = Convert.ToSingle(true);
                     else
-                        rndStartValue[i] = Convert.ToSingle(false);
+                        calcFloatValues[i] = Convert.ToSingle(false);
                 }
                 else
                 {
-                    rndStartValue[i] = repository.GetRandomValue(RndMinValues[i], RndMaxValues[i]);
+                    calcFloatValues[i] = repository.GetRandomValue(RndMinValues[i], RndMaxValues[i]);
                 }
             }
             //---
-
-            initialized[i] = true;
         }
 
-        private void StartActionEvent(TimeSpan time, Repository repository)
+        private void CalcActionEvent(Repository repository)
         {
-            //--- Initialisation du timer
-            startTime = time;
+            //--- Initialisation du timer et de la durée calculée
+            float maxDuration = 0f;
             //---
 
             for (int i = 0; i < this.ActionEventTypes.Length; i++)
             {
-                //---
-                deltaMs[i] = 0;
-                pct[i] = 0f;
-                //---
-
                 if (repository != null)
-                    GetPropertyValue(repository, i);
+                {
+                    GetStartPropertyValue(repository, i);
 
-                if (repository != null && ActionEventTypes[i] == ActionEventType.MouseX)
-                {
-                    this.FloatValues[i] = repository.GetMousePosition().X - (float)startValues[i];
-                }
-                else if (repository != null && ActionEventTypes[i] == ActionEventType.MouseY)
-                {
-                    this.FloatValues[i] = repository.GetMousePosition().Y - (float)startValues[i];
+                    //--- Calcul la distance à parcourir pendant la transition
+                    switch (this.ActionEventTypes[i])
+                    {
+                        case ActionEventType.Deactivated:
+                            calcFloatValues[i] = 0;
+                            break;
+                        case ActionEventType.FixedValue:
+                            calcFloatValues[i] = this.FloatValues[i] - (this.IsRelative[i] ? startValues[i] : 0);
+                            break;
+                        case ActionEventType.MouseX:
+                            calcFloatValues[i] = repository.GetMousePosition().X - (this.IsRelative[i] ? startValues[i] : 0);
+                            break;
+                        case ActionEventType.MouseY:
+                            calcFloatValues[i] = repository.GetMousePosition().Y - (this.IsRelative[i] ? startValues[i] : 0);
+                            break;
+                        case ActionEventType.EntityBinding:
+                            calcFloatValues[i] = GetPropertyValue(i) - (this.IsRelative[i] ? startValues[i] : 0);
+                            break;
+                        case ActionEventType.Random:
+                            calcFloatValues[i] = calcFloatValues[i] - (this.IsRelative[i] ? startValues[i] : 0);
+                            break;
+                        default:
+                            break;
+                    }
+                    //----
+
+                    //--- Calcul de la durée maximale si la transition 'Vitesse' est activée
+                    if (Speeds[i] != 0)
+                    {
+                        float newMaxDuration = Math.Abs(calcFloatValues[i]) / (float)Speeds[i] * 1000f;
+
+                        if (newMaxDuration > maxDuration)
+                            maxDuration = newMaxDuration;
+                    }
+                    //---
+
+                    //--- Applique la durée si la transition 'Durée' est activée
+                    if (this.Durations[i] != 0)
+                    {
+                        calcDurations[i] = this.Durations[i];
+                    }
+                    //---
                 }
             }
 
-            //--- Calcul de la distance
+            //--- Applique la durée si la transition 'Vitesse' est activée
+            for (int i = 0; i < this.ActionEventTypes.Length; i++)
+            {
+                if (Speeds[i] != 0)
+                {
+                    calcDurations[i] = (int)maxDuration;
+                }
+            }
             //---
         }
+
+        TimeSpan prevTime = TimeSpan.Zero;
 
         public void UpdateValue(Repository repository)
         {
             TimeSpan timeNow = DateTime.Now.TimeOfDay;
+            float calcValue = 0f;
 
-            bool playing = true;
-
-            //---
+            //--- Démarrage de l'action
             if (startTime == TimeSpan.Zero)
             {
-                StartActionEvent(timeNow, repository);
+                prevTime = timeNow;
+                startTime = timeNow;
             }
+            //---
+
+            //--- Met à jour les valeurs à atteindre et la durée
+            CalcActionEvent(repository);
             //---
 
             for (int i = 0; i < this.ActionEventTypes.Length; i++)
             {
-                updateValues[i] = 0;
-
                 //--- Durée
-                if (Durations[i] != 0 || Speeds[i] != 0)
+                if (calcDurations[i] != 0)
                 {
-                    //if (startTimes[i] == TimeSpan.Zero)
-                    //{
-                    //    //StartActionEvent(i, timeNow, repository);
-                    //    //initialized[i] = true;
-                    //}
-                    //else
-                    //{
-                        deltaMs[i] = (int)timeNow.Subtract(startTime).TotalMilliseconds;
+                    deltaMs[i] = (int)timeNow.Subtract(prevTime).TotalMilliseconds;
 
-                        if (Durations[i] != 0)
-                            pct[i] = (float)deltaMs[i] / (float)Durations[i];
-                        else if (Speeds[i] != 0)
-                            pct[i] = (float)Speeds[i] * deltaMs[i] / 1000f / this.FloatValues[i];
+                    pct[i] = (float)deltaMs[i] / (float)calcDurations[i];
 
-                        if (pct[i] > 1f)
-                            pct[i] = 1f;
-                    //}
+                    if (pct[i] > 1f)
+                        pct[i] = 1f;
+
+                    //--- Si le temps d'animation est écoulé, l'action va s'arrêter
+                    if (deltaMs[i] >= calcDurations[i])
+                    {
+                        startTime = TimeSpan.Zero;
+                        this.Playing = false;
+                    }
+                    //---
                 }
                 else
                 {
                     deltaMs[i] = 0;
                     pct[i] = 0f;
-
-                    initialized[i] = true;
+                    startTime = TimeSpan.Zero;
+                    this.Playing = false;
                 }
                 //---
-
-                float calcValue = 0f;
 
                 //--- Calcul de la valeur
                 switch (this.ActionEventTypes[i])
@@ -325,19 +349,19 @@ namespace Edit2DEngine.Action
                         calcValue = startValues[i];
                         break;
                     case ActionEventType.FixedValue:
-                        calcValue = this.FloatValues[i];
+                        calcValue = calcFloatValues[i];
                         break;
                     case ActionEventType.MouseX:
-                        calcValue = this.FloatValues[i];// repository.GetMousePosition().X - startValues[i];
+                        calcValue = calcFloatValues[i];
                         break;
                     case ActionEventType.MouseY:
-                        calcValue = this.FloatValues[i];// repository.GetMousePosition().Y - startValues[i];
+                        calcValue = calcFloatValues[i];
                         break;
                     case ActionEventType.EntityBinding:
-                        calcValue = GetPropertyValue(i);
+                        calcValue = calcFloatValues[i];
                         break;
                     case ActionEventType.Random:
-                        calcValue = rndStartValue[i];
+                        calcValue = calcFloatValues[i];
                         break;
                     default:
                         break;
@@ -345,12 +369,14 @@ namespace Edit2DEngine.Action
                 //---
 
                 //--- Relatives & Durations
+                updateValues[i] = 0;
+
                 if (this.IsRelative[i])
                 {
                     updateValues[i] = startValues[i];
                 }
 
-                if (Durations[i] != 0 || Speeds[i] != 0)
+                if (calcDurations[i] != 0)
                 {
                     updateValues[i] += MathHelper.Lerp(0f, calcValue, pct[i]);
                 }
@@ -359,37 +385,9 @@ namespace Edit2DEngine.Action
                     updateValues[i] += calcValue;
                 }
                 //----
-
-                //--- Durée
-                if (Durations[i] != 0)
-                {
-                    //if (startTimes[i] != TimeSpan.Zero)
-                    {
-                        //deltaMs[i] = (int)timeNow.Subtract(startTimes[i]).TotalMilliseconds;
-
-                        //--- Si le temps d'animation est écoulé, quitter la procédure de mise à jour
-                        if (deltaMs[i] >= Durations[i])
-                        {
-                            startTime = TimeSpan.Zero;
-                            initialized[i] = false;
-                        }
-                        //---
-                    }
-                }
-                else if(Speeds[i] != 0)
-                {
-                    if(pct[i] > 0.95f)
-                    {
-                        startTime = TimeSpan.Zero;
-                        initialized[i] = false;
-                    }
-                }
-                //---
-
-                playing &= initialized[i];
             }
 
-            this.Playing = playing;
+            prevTime = timeNow;
 
             if (this.PropertyType.Name == "Vector2")
             {
