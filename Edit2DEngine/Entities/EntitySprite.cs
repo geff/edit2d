@@ -1,22 +1,23 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.ComponentModel;
+using Microsoft.Xna.Framework;
+using System.Drawing;
 using FarseerGames.FarseerPhysics.Collisions;
 using FarseerGames.FarseerPhysics.Dynamics;
-using FarseerGames.FarseerPhysics.Factories;
 using FarseerGames.FarseerPhysics;
 using FarseerGames.FarseerPhysics.Dynamics.Springs;
-using Microsoft.Xna.Framework;
 using FarseerGames.FarseerPhysics.Dynamics.Joints;
-using System.ComponentModel;
-using Microsoft.Xna.Framework.Graphics;
 using Edit2DEngine.Trigger;
-using Edit2DEngine.Action;
-using Edit2DEngine.Particles;
-using System.Drawing;
+using Edit2DEngine.Entities.Particles;
+using Microsoft.Xna.Framework.Graphics;
+using Edit2DEngine.Tools;
 
-namespace Edit2DEngine
+namespace Edit2DEngine.Entities
 {
-    public class Entite : ICloneable, IActionHandler, ITriggerHandler
+    public class EntitySprite : IEntityComponent
     {
         private String _name;
         private Size _size;
@@ -40,15 +41,6 @@ namespace Edit2DEngine
         public List<RevoluteJoint> ListRevoluteJointJoint { get; set; }
         [Category("Joint")]
         public List<FixedRevoluteJoint> ListFixedRevoluteJoint { get; set; }
-
-        [Browsable(false)]
-        public List<Script> ListScript { get; set; }
-        [Browsable(false)]
-        public List<TriggerBase> ListTrigger { get; set; }
-        [Browsable(false)]
-        public Dictionary<String, Object> ListCustomProperties { get; set; }
-        [Browsable(false)]
-        public List<ParticleSystem> ListParticleSystem { get; set; }
 
         [Browsable(false)]
         public int UniqueId { get; set; }
@@ -130,27 +122,6 @@ namespace Edit2DEngine
             }
         }
 
-        private int _layer;
-        [Browsable(true)]
-        public int Layer
-        {
-            get
-            {
-                return _layer;
-            }
-            set
-            {
-                _layer = value;
-
-                if (geom != null)
-                {
-                    //---> 17 car il s'agit du milieu de l'ensemble des valeurs possible pour l'enum CollisionCategory
-                    geom.CollisionCategories = (CollisionCategory)(2 ^ (17 + _layer));
-                    geom.CollidesWith = geom.CollisionCategories;
-                }
-            }
-        }
-
         [Browsable(true), AttributeAction]
         public Microsoft.Xna.Framework.Vector2 Position
         {
@@ -164,6 +135,15 @@ namespace Edit2DEngine
             set
             {
                 SetPosition(value);
+            }
+        }
+
+        [Browsable(false)]
+        public Microsoft.Xna.Framework.Vector2 AbsolutePosition
+        {
+            get
+            {
+                return new Microsoft.Xna.Framework.Vector2(body.Position.X, body.Position.Y) + this.EntityParent.Position;
             }
         }
 
@@ -192,23 +172,6 @@ namespace Edit2DEngine
 
         [Browsable(true), DefaultValue(0.0f), AttributeAction, Category("Graphics")]
         public float BlurFactor { get; set; }
-
-        [Browsable(true), AttributeAction, Category("Physic")]
-        public Boolean IsStatic
-        {
-            get
-            {
-                if (this.body == null)
-                    return false;
-
-                return this.body.IsStatic;
-            }
-            set
-            {
-                if (body != null)
-                    this.body.IsStatic = value;
-            }
-        }
 
         [Browsable(true), AttributeAction, Category("Physic")]
         public Boolean IsColisionable
@@ -304,34 +267,34 @@ namespace Edit2DEngine
         {
             get
             {
-                return "Monde\\Entités\\" + this.Name;
+                return "Monde\\EntitÃ©s\\" + this.EntityParent.Name + this.Name;
             }
         }
 
-        [Browsable(false)]
-        public bool SupportTrigerChangedValue
-        {
-            get
-            {
-                return true;
-            }
-        }
+        //[Browsable(false)]
+        //public bool SupportTrigerChangedValue
+        //{
+        //    get
+        //    {
+        //        return true;
+        //    }
+        //}
 
-        [Browsable(false)]
-        public bool SupportTrigerCollision
-        {
-            get
-            {
-                return true;
-            }
-        }
+        //[Browsable(false)]
+        //public bool SupportTrigerCollision
+        //{
+        //    get
+        //    {
+        //        return true;
+        //    }
+        //}
 
-        public Entite(bool linkToPhysiSimulator, bool isCollisionable, string textureName, string name)
+        public EntitySprite(bool linkToPhysiSimulator, bool isCollisionable, string textureName, string name)
         {
             Constructor(linkToPhysiSimulator, isCollisionable, textureName, name);
         }
 
-        public Entite(bool linkToPhysiSimulator, string textureName, string name)
+        public EntitySprite(bool linkToPhysiSimulator, string textureName, string name)
         {
             Constructor(linkToPhysiSimulator, true, textureName, name);
         }
@@ -483,7 +446,7 @@ namespace Edit2DEngine
                 polygonBody = BodyFactory.Instance.CreatePolygonBody(verts, 5);
                 polygonGeom = GeomFactory.Instance.CreatePolygonGeom(polygonBody, verts, 0f);
 
-                //--- Si l'entité n'est pas ajouté au moteur physique, ne pas créer le Body et le Geom
+                //--- Si l'entitÃ© n'est pas ajoutÃ© au moteur physique, ne pas crÃ©er le Body et le Geom
                 //polygonBody = null;
                 //polygonGeom = null;
                 //---
@@ -558,9 +521,9 @@ namespace Edit2DEngine
         }
 
         #region Springs, Joints
-        public void AddLinearSpring(Entite entite, Microsoft.Xna.Framework.Vector2 vec1, Microsoft.Xna.Framework.Vector2 vec2)
+        public void AddLinearSpring(Entity entity, Microsoft.Xna.Framework.Vector2 vec1, Microsoft.Xna.Framework.Vector2 vec2)
         {
-            LinearSpring linearSpring = SpringFactory.Instance.CreateLinearSpring(Repository.physicSimulator, body, vec1, entite.body, vec2, 10f, 10f);
+            LinearSpring linearSpring = SpringFactory.Instance.CreateLinearSpring(Repository.physicSimulator, body, vec1, entity.body, vec2, 10f, 10f);
 
             ListLinearSpring.Add(linearSpring);
         }
@@ -572,10 +535,9 @@ namespace Edit2DEngine
             ListFixedLinearSpring.Add(fixedLinearSpring);
         }
 
-
-        public void AddAngleSpring(Entite entite)
+        public void AddAngleSpring(Entity entity)
         {
-            AngleSpring angleSpring = SpringFactory.Instance.CreateAngleSpring(Repository.physicSimulator, body, entite.body, 1000f, 500f);
+            AngleSpring angleSpring = SpringFactory.Instance.CreateAngleSpring(Repository.physicSimulator, body, entity.body, 1000f, 500f);
 
             ListAngleSpring.Add(angleSpring);
         }
@@ -587,16 +549,16 @@ namespace Edit2DEngine
             ListFixedAngleSpring.Add(fixedAngleSpring);
         }
 
-        public void AddPinJoint(Entite entite, Microsoft.Xna.Framework.Vector2 vec1, Microsoft.Xna.Framework.Vector2 vec2)
+        public void AddPinJoint(Entity entity, Microsoft.Xna.Framework.Vector2 vec1, Microsoft.Xna.Framework.Vector2 vec2)
         {
-            PinJoint pinJoint = JointFactory.Instance.CreatePinJoint(Repository.physicSimulator, this.body, vec1, entite.body, vec2);
+            PinJoint pinJoint = JointFactory.Instance.CreatePinJoint(Repository.physicSimulator, this.body, vec1, entity.body, vec2);
 
             ListPinJoint.Add(pinJoint);
         }
 
-        public void AddRevoluteJoint(Entite entite, Vector2 vec1)
+        public void AddRevoluteJoint(Entity entity, Vector2 vec1)
         {
-            RevoluteJoint revoluteJoint = JointFactory.Instance.CreateRevoluteJoint(Repository.physicSimulator, this.body, entite.body, vec1);
+            RevoluteJoint revoluteJoint = JointFactory.Instance.CreateRevoluteJoint(Repository.physicSimulator, this.body, entity.body, vec1);
 
             ListRevoluteJointJoint.Add(revoluteJoint);
         }
@@ -629,8 +591,6 @@ namespace Edit2DEngine
             //TexVertices[3].Position += new Vector3(deltaPosition + new Vector2(50f), 0f);
             ////---
 
-
-
             DistanceGrid.Instance.RemoveDistanceGrid(this.geom);
             DistanceGrid.Instance.CreateDistanceGrid(this.geom);
 
@@ -659,7 +619,7 @@ namespace Edit2DEngine
 
         public object Clone(bool addToPhysicSimulator)
         {
-            Entite clone = new Entite(addToPhysicSimulator, this.TextureName, this.Name);
+            Entity clone = new Entity(addToPhysicSimulator, this.TextureName, this.Name);
 
             clone.ChangeSize(this.Size.Width, this.Size.Height, addToPhysicSimulator);
 
@@ -681,7 +641,7 @@ namespace Edit2DEngine
             clone.FrictionCoefficient = this.FrictionCoefficient;
             clone.RestitutionCoefficient = this.RestitutionCoefficient;
 
-            //--- Centre de l'entité
+            //--- Centre de l'entitÃ©
             Vector2 deltaPosition = this.Center - clone.Center;
             if (deltaPosition != Vector2.Zero)
                 clone.SetNewCenter(deltaPosition, false);
@@ -739,7 +699,7 @@ namespace Edit2DEngine
                 if (trigger is TriggerCollision)
                 {
                     TriggerCollision triggerCol = (TriggerCollision)trigger;
-                    TriggerCollision cloneTrigger = new TriggerCollision(triggerCol.TriggerName, clone, triggerCol.TargetEntite);
+                    TriggerCollision cloneTrigger = new TriggerCollision(triggerCol.TriggerName, clone, triggerCol.TargetEntity);
 
                     cloneTrigger.ListScript = triggerCol.ListScript;
 
@@ -801,6 +761,26 @@ namespace Edit2DEngine
             //---
 
             return clone;
+        }
+
+        public void ChangeLayer()
+        {
+            if (geom != null)
+            {
+                //---> 17 car il s'agit du milieu de l'ensemble des valeurs possible pour l'enum CollisionCategory
+                geom.CollisionCategories = (CollisionCategory)(2 ^ (17 + _layer));
+                geom.CollidesWith = geom.CollisionCategories;
+            }
+        }
+
+        #endregion
+
+        #region IEntityComponent Members
+
+        public Entity EntityParent
+        {
+            get;
+            set;
         }
 
         #endregion

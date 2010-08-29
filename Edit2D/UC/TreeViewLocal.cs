@@ -8,9 +8,10 @@ using System.Text;
 using System.Windows.Forms;
 using Edit2DEngine;
 using Edit2DEngine.Trigger;
-using Edit2DEngine.Particles;
 using System.Reflection;
 using Edit2DEngine.Action;
+using Edit2DEngine.Entities;
+using Edit2DEngine.Entities.Particles;
 
 namespace Edit2D.UC
 {
@@ -140,10 +141,10 @@ namespace Edit2D.UC
             //---
 
             //--- Entité
-            foreach (Entite entite in Repository.listEntite)
+            foreach (Entity entity in Repository.listEntity)
             {
-                TreeNode nodeEntity = nodeEntities.Nodes.Add(entite.Name, entite.Name, IMAGE_KEY_EMPTY);
-                nodeEntity.Tag = new Object[] { TreeViewLocalItemType.Entity, entite };
+                TreeNode nodeEntity = nodeEntities.Nodes.Add(entity.Name, entity.Name, IMAGE_KEY_EMPTY);
+                nodeEntity.Tag = new Object[] { TreeViewLocalItemType.Entity, entity };
 
                 //--- Propriétés
                 if ((ItemTypeShowed & TreeViewLocalItemType.EntityProperties) == TreeViewLocalItemType.EntityProperties)
@@ -151,7 +152,7 @@ namespace Edit2D.UC
                     TreeNode nodeProperties = nodeEntity.Nodes.Add(NODE_PROPERTIES, NODE_PROPERTIES, IMAGE_KEY_PROPERTY);
                     nodeProperties.Tag = new Object[] { TreeViewLocalItemType.EntityProperties };
 
-                    PropertyInfo[] propertiesInfo = entite.GetType().GetProperties();
+                    PropertyInfo[] propertiesInfo = entity.GetType().GetProperties();
 
                     foreach (PropertyInfo propertyInfo in propertiesInfo)
                     {
@@ -166,9 +167,9 @@ namespace Edit2D.UC
 
                 //TODO : gérer les propriétés personalisées
                 //--- Propriétés personalisées
-                //for (int i = 0; i < entite.ListCustomProperties.Count; i++)
+                //for (int i = 0; i < entity.ListCustomProperties.Count; i++)
                 //{
-                //    KeyValuePair<String, Object> customProp = entite.ListCustomProperties.ElementAt(i);
+                //    KeyValuePair<String, Object> customProp = entity.ListCustomProperties.ElementAt(i);
 
                 //    TreeNode node = new TreeNode(customProp.Key);
                 //    node.Tag = customProp.Key;
@@ -178,7 +179,7 @@ namespace Edit2D.UC
                 //---
 
                 //--- Script et Trigger
-                AddScriptAndTriggerNode((IActionHandler)entite, (ITriggerHandler)entite, nodeEntity);
+                AddScriptAndTriggerNode((IActionHandler)entity, (ITriggerHandler)entity, nodeEntity);
                 //---
 
                 //--- ParticleSystem
@@ -189,7 +190,7 @@ namespace Edit2D.UC
                     TreeNode nodeParticleSystems = nodeEntity.Nodes.Add(NODE_PARTICLESYSTEM, NODE_PARTICLESYSTEM, IMAGE_KEY_PARTICLE_SYSTEM);
                     nodeParticleSystems.Tag = new Object[] { TreeViewLocalItemType.ParticleSystem };
 
-                    foreach (ParticleSystem particleSystem in entite.ListParticleSystem)
+                    foreach (ParticleSystem particleSystem in entity.ListParticleSystem)
                     {
                         TreeNode nodeParticleSystem = nodeParticleSystems.Nodes.Add(particleSystem.Name, particleSystem.Name, IMAGE_KEY_EMPTY);
                         nodeParticleSystem.Tag = new Object[] { TreeViewLocalItemType.ParticleSystem, particleSystem };
@@ -591,7 +592,7 @@ namespace Edit2D.UC
             }
         }
 
-        public TreeNode GetNodeWithTag(TreeNode nodeParent, Entite entite, PropertyInfo propertyInfo, int index)
+        public TreeNode GetNodeWithTag(TreeNode nodeParent, Entity entity, PropertyInfo propertyInfo, int index)
         {
             TreeNode node = null;
 
@@ -599,7 +600,7 @@ namespace Edit2D.UC
             {
                 if (node == null &&
                     (nodeChild.Tag is Object[]) &&
-                    nodeParent.Tag == entite &&
+                    nodeParent.Tag == entity &&
                     ((PropertyInfo)((Object[])nodeChild.Tag)[0]).Name == propertyInfo.Name &&
                      ((int)((Object[])nodeChild.Tag)[1]) == index)
                 {
@@ -608,7 +609,7 @@ namespace Edit2D.UC
 
                 if (node == null)
                 {
-                    node = GetNodeWithTag(nodeChild, entite, propertyInfo, index);
+                    node = GetNodeWithTag(nodeChild, entity, propertyInfo, index);
                 }
             }
 

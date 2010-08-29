@@ -1,0 +1,16 @@
+Edit2D TODOLIST :
+
+* Création de l'objet Entity composé d'une liste de IEntityComponent (EntityText, Entitysprite, Entity3DModel)
+* Renommer l'action ActionEvent en ActionValue
+* Compléter l'ActionValue avec ActionValueDetail et ActionValueOperation pour imbriquer les opérations
+* Modifier l'UC ActionValue (ancien ActionEvent)
+* Création de l'action ActionEvent
+* Création des CustomProperty
+* Création de l'UC CustomProperty
+* Modification du système de trigger en gérant une liste de déclencheur (TriggerBase)
+* Création du trigger TriggerDistance
+* Création du trigger TriggerKeyboard
+* Création des ancres (IAnchor, Anchor, AnchorLink, ScreenAchor)  et de l'algo d'organisation automatique selon les ancres
+* Création de l'action ActionLoadScene
+* Ajout des propriétés Count, EnabledCount, Probability à l'objet Particle
+* Création des caméras

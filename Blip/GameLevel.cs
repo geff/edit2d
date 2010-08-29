@@ -9,6 +9,8 @@ using Edit2DEngine.Render;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using FarseerGames.FarseerPhysics.Collisions;
+using Edit2DEngine.Entities;
+using Edit2DEngine.Tools;
 
 namespace Blip
 {
@@ -19,7 +21,7 @@ namespace Blip
         private Render render;
         private string currentLevelFileName;
 
-        private Entite blip;
+        private Entity blip;
         private float speed = 10f;
         #endregion
 
@@ -127,7 +129,7 @@ namespace Blip
 
         private void InitLevel()
         {
-            blip = repository.listEntite.Find(e => e.Name == "Blip1");
+            blip = repository.listEntity.Find(e => e.Name == "Blip1");
         }
 
         #endregion

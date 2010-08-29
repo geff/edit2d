@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using System.IO;
 using System.Drawing;
 
-namespace Edit2DEngine
+namespace Edit2DEngine.Tools
 {
     public static class TextureManager
     {

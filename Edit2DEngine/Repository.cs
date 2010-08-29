@@ -4,7 +4,8 @@ using Microsoft.Xna.Framework;
 using FarseerGames.FarseerPhysics;
 using FarseerGames.FarseerPhysics.Collisions;
 using Microsoft.Xna.Framework.Input;
-using Edit2DEngine.Particles;
+using Edit2DEngine.Entities.Particles;
+using Edit2DEngine.Entities;
 using System.Drawing;
 using System.Linq;
 using System.Diagnostics;
@@ -15,26 +16,26 @@ namespace Edit2DEngine
 {
     public class Repository
     {
-        public Entite tempEntite;
+        public Entity tempEntity;
         private Random rnd;
         public static int EntityCount = 0;
         public bool Pause = false;
 
-        private Entite _currentEntite;
-        public Entite CurrentEntite
+        private Entity _currentEntity;
+        public Entity CurrentEntity
         {
             get
             {
-                return _currentEntite;
+                return _currentEntity;
             }
             set
             {
-                listEntite.ForEach(ent => ent.Selected = false);
+                listEntity.ForEach(ent => ent.Selected = false);
 
-                _currentEntite = value;
+                _currentEntity = value;
 
                 if (value != null)
-                    _currentEntite.Selected = true;
+                    _currentEntity.Selected = true;
             }
         }
 
@@ -43,8 +44,8 @@ namespace Edit2DEngine
         public ITriggerHandler CurrentTriggerHandler { get; set; }
         public ParticleSystem CurrentParticleSystem { get; set; }
         public World World { get; set; }
-        public Entite currentEntite2;
-        public List<Entite> listEntite;
+        public Entity currentEntity2;
+        public List<Entity> listEntity;
         public Camera Camera;
 
         public static PhysicsSimulator physicSimulator;
@@ -53,7 +54,7 @@ namespace Edit2DEngine
 
         public Repository()
         {
-            listEntite = new List<Entite>();
+            listEntity = new List<Entity>();
             rnd = new Random();
             World = new World();
             this.Camera = new Camera();
@@ -62,40 +63,40 @@ namespace Edit2DEngine
             Repository.physicSimulator = new PhysicsSimulator(new Vector2(0, 9.81f));
         }
 
-        public Entite GetSelectedEntiteFromLocation(Vector2 location)
+        public Entity GetSelectedEntityFromLocation(Vector2 location)
         {
             List<Geom> listGeom = Repository.physicSimulator.CollideAll(location);
 
             if (listGeom != null && listGeom.Count > 0)
             {
-                Entite selectedEntite = null;
+                Entity selectedEntity = null;
                 int minIndex = 0;
 
                 for (int i = 0; i < listGeom.Count; i++)
                 {
-                    Entite curEntite = listEntite.Find(e => e.geom == listGeom[i]);
-                    int index = listEntite.IndexOf(curEntite);
+                    Entity curEntity = listEntity.Find(e => e.geom == listGeom[i]);
+                    int index = listEntity.IndexOf(curEntity);
 
-                    if (selectedEntite == null || (index > minIndex))
+                    if (selectedEntity == null || (index > minIndex))
                     {
-                        selectedEntite = curEntite;
+                        selectedEntity = curEntity;
                         minIndex = index;
                     }
                 }
 
-                return selectedEntite;
+                return selectedEntity;
             }
 
             return null;
         }
 
-        public Entite GetEntiteFromBody(FarseerGames.FarseerPhysics.Dynamics.Body body)
+        public Entity GetEntityFromBody(FarseerGames.FarseerPhysics.Dynamics.Body body)
         {
-            if (this.listEntite != null && listEntite.Count > 0)
+            if (this.listEntity != null && listEntity.Count > 0)
             {
-                Entite entite = this.listEntite.Find(e => e.Body == body);
+                Entity entity = this.listEntity.Find(e => e.ListEntityComponent.Find(ec=> ec is EntitySprite &&  ((EntitySprite)ec).Body == body));
 
-                return entite;
+                return entity;
             }
 
             return null;
@@ -130,7 +131,7 @@ namespace Edit2DEngine
         //    string name = String.Empty;
 
         //    bool found = false;
-        //    int count = this.listEntite.FindAll(e => e.TextureName == textureName).Count;
+        //    int count = this.listEntity.FindAll(e => e.TextureName == textureName).Count;
         //    int number = 0;
 
         //    while (!found)
@@ -138,7 +139,7 @@ namespace Edit2DEngine
         //        number++;
         //        string newName = String.Format("{0}{1}", textureName, number);
 
-        //        if (this.listEntite.Find(e => e.Name == newName) == null)
+        //        if (this.listEntity.Find(e => e.Name == newName) == null)
         //        {
         //            found = true;
         //            name = newName;
@@ -148,100 +149,100 @@ namespace Edit2DEngine
         //    return name;
         //}
 
-        public Entite ChangeEntitySize(Entite currentEntite, Size oldSize)
+        public Entity ChangeEntitySize(Entity currentEntity, Size oldSize)
         {
             //--- Suppression du Body et du Geom
-            Repository.physicSimulator.BodyList.Remove(currentEntite.Body);
-            Repository.physicSimulator.GeomList.Remove(currentEntite.geom);
+            Repository.physicSimulator.BodyList.Remove(currentEntity.Body);
+            Repository.physicSimulator.GeomList.Remove(currentEntity.geom);
             //---
 
             //--- Clone + Size
-            Entite entite = (Entite)currentEntite.Clone(false);
-            //entite.Size = new Size(currentEntite.Size.Width, currentEntite.Size.Height);
-            entite.ChangeSize(currentEntite.Size.Width, currentEntite.Size.Height, false);
+            Entity entity = (Entity)currentEntity.Clone(false);
+            //entity.Size = new Size(currentEntity.Size.Width, currentEntity.Size.Height);
+            entity.ChangeSize(currentEntity.Size.Width, currentEntity.Size.Height, false);
             //---
 
             //--- Suppression du Body et du Geom
-            Repository.physicSimulator.Remove(currentEntite.Body);
-            Repository.physicSimulator.Remove(currentEntite.geom);
+            Repository.physicSimulator.Remove(currentEntity.Body);
+            Repository.physicSimulator.Remove(currentEntity.geom);
             //---
 
             //--- Suppression de l'entité passée en paramètrer si elle est dans le repository
             //    Puis ajout
-            if (this.listEntite.Contains(currentEntite))
+            if (this.listEntity.Contains(currentEntity))
             {
-                this.listEntite.Remove(currentEntite);
-                this.listEntite.Add(entite);
+                this.listEntity.Remove(currentEntity);
+                this.listEntity.Add(entity);
             }
             //---
 
             //--- Ajoute le Body et le Geom cloné
-            Repository.physicSimulator.Add(entite.Body);
-            Repository.physicSimulator.Add(entite.geom);
+            Repository.physicSimulator.Add(entity.Body);
+            Repository.physicSimulator.Add(entity.geom);
             //---
 
             //--- Fixe les valeurs
-            entite.SetPosition(currentEntite.Position);
-            entite.Rotation = currentEntite.Rotation;
-            entite.IsColisionable = currentEntite.IsColisionable;
-            entite.IsStatic = currentEntite.IsStatic;
+            entity.SetPosition(currentEntity.Position);
+            entity.Rotation = currentEntity.Rotation;
+            entity.IsColisionable = currentEntity.IsColisionable;
+            entity.IsStatic = currentEntity.IsStatic;
             //---
 
             //--- Change la sélection si l'entité courante est la même que l'entité passée en paramètre
-            //if (this.currentEntite == currentEntite)
+            //if (this.currentEntity == currentEntity)
             //{
-            //    EntiteSelectionChange(repository.currentEntite, entite);
+            //    EntitySelectionChange(repository.currentEntity, entity);
             //}
             //---
 
             //--- Calcul du ratio de taille
-            float ratioX = (float)currentEntite.Size.Width / (float)oldSize.Width;
-            float ratioY = (float)currentEntite.Size.Height / (float)oldSize.Height;
+            float ratioX = (float)currentEntity.Size.Width / (float)oldSize.Width;
+            float ratioY = (float)currentEntity.Size.Height / (float)oldSize.Height;
             //---
 
             //--- Clone les Spring
-            for (int i = 0; i < currentEntite.ListFixedLinearSpring.Count; i++)
+            for (int i = 0; i < currentEntity.ListFixedLinearSpring.Count; i++)
             {
                 Vector2 vecBody = new Vector2();
-                vecBody.X = currentEntite.ListFixedLinearSpring[i].BodyAttachPoint.X * ratioX;
-                vecBody.Y = currentEntite.ListFixedLinearSpring[i].BodyAttachPoint.Y * ratioY;
+                vecBody.X = currentEntity.ListFixedLinearSpring[i].BodyAttachPoint.X * ratioX;
+                vecBody.Y = currentEntity.ListFixedLinearSpring[i].BodyAttachPoint.Y * ratioY;
 
-                entite.AddFixedLinearSpring(vecBody, currentEntite.ListFixedLinearSpring[i].WorldAttachPoint);
+                entity.AddFixedLinearSpring(vecBody, currentEntity.ListFixedLinearSpring[i].WorldAttachPoint);
 
-                Repository.physicSimulator.Remove(currentEntite.ListFixedLinearSpring[i]);
+                Repository.physicSimulator.Remove(currentEntity.ListFixedLinearSpring[i]);
             }
             //---
 
-            return entite;
+            return entity;
         }
 
-        public void OrderEntite()
+        public void OrderEntity()
         {
-            Dictionary<int, List<Entite>> dicEntite = new Dictionary<int, List<Entite>>();
+            Dictionary<int, List<Entity>> dicEntity = new Dictionary<int, List<Entity>>();
 
-            for (int i = 0; i < listEntite.Count; i++)
+            for (int i = 0; i < listEntity.Count; i++)
             {
-                Entite entite = listEntite[i];
+                Entity entity = listEntity[i];
 
-                if (!dicEntite.ContainsKey(entite.Layer))
+                if (!dicEntity.ContainsKey(entity.Layer))
                 {
-                    dicEntite.Add(entite.Layer, new List<Entite>());
+                    dicEntity.Add(entity.Layer, new List<Entity>());
                 }
 
-                dicEntite[entite.Layer].Add(entite);
+                dicEntity[entity.Layer].Add(entity);
             }
 
-            List<Entite> listEntite2 = new List<Entite>();
+            List<Entity> listEntity2 = new List<Entity>();
 
-            foreach (int key in dicEntite.Keys.OrderBy(key => key))
+            foreach (int key in dicEntity.Keys.OrderBy(key => key))
             {
-                for (int j = 0; j < dicEntite[key].Count; j++)
+                for (int j = 0; j < dicEntity[key].Count; j++)
                 {
-                    listEntite2.Add(dicEntite[key][j]);
+                    listEntity2.Add(dicEntity[key][j]);
                 }
             }
 
-            listEntite = listEntite2;
+            listEntity = listEntity2;
         }
     }
 }

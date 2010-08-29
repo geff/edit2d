@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Edit2DEngine.Action;
-using Edit2DEngine.Particles;
+using Edit2DEngine.Entities.Particles;
 using System.Reflection;
 using Edit2DEngine;
 using Edit2D.UC;
+using Edit2DEngine.Entities;
 
 namespace Edit2D.ScriptControl
 {
@@ -39,7 +40,7 @@ namespace Edit2D.ScriptControl
 
             Init(fixedValue, fixedMinValue, fixedMaxValue, rndMinValue, rndMinMinValue, rndMinMaxValue, rndMaxValue, rndMaxMinValue, rndMaxMaxValue);
 
-            RefreshTreeViewEntite(treeViewBoundEntity);
+            RefreshTreeViewEntity(treeViewBoundEntity);
         }
 
         #region Evènements
@@ -299,7 +300,7 @@ namespace Edit2D.ScriptControl
             }
         }
 
-        private void RefreshTreeViewEntite(TreeView treeView)
+        private void RefreshTreeViewEntity(TreeView treeView)
         {
             treeView.Nodes.Clear();
             TreeNode nodeRoot = treeView.Nodes.Add("World");
@@ -312,23 +313,23 @@ namespace Edit2D.ScriptControl
             nodeMouseY.Tag = MOUSE_Y_TAG;
             //---
 
-            for (int i = 0; i < repository.listEntite.Count; i++)
+            for (int i = 0; i < repository.listEntity.Count; i++)
             {
-                Entite entite = repository.listEntite[i];
+                Entity entity = repository.listEntity[i];
 
-                TreeNode nodeEntite = nodeRoot.Nodes.Add(entite.Name, entite.Name);
-                nodeEntite.Tag = entite;
+                TreeNode nodeEntity = nodeRoot.Nodes.Add(entity.Name, entity.Name);
+                nodeEntity.Tag = entity;
 
-                RefreshProperties(entite, nodeEntite);
+                RefreshProperties(entity, nodeEntity);
 
                 //--- ParticleSystem
-                for (int j = 0; j < entite.ListParticleSystem.Count; j++)
+                for (int j = 0; j < entity.ListParticleSystem.Count; j++)
                 {
-                    ParticleSystem pSystem = entite.ListParticleSystem[j];
-                    TreeNode nodePSystem = nodeEntite.Nodes.Add(entite.ListParticleSystem[j].Name);
+                    ParticleSystem pSystem = entity.ListParticleSystem[j];
+                    TreeNode nodePSystem = nodeEntity.Nodes.Add(entity.ListParticleSystem[j].Name);
                     nodePSystem.Tag = pSystem;
 
-                    RefreshProperties(pSystem, nodeEntite);
+                    RefreshProperties(pSystem, nodeEntity);
 
                     //---> ParticleTemplate
                     //for (int k = 0; k < pSystem.ListParticleTemplate.Count; k++)
@@ -337,7 +338,7 @@ namespace Edit2D.ScriptControl
 
                     //    if (nodePSystem == null)
                     //    {
-                    //        nodePSystem = nodeEntite.Nodes.Add(entite.ListParticleSystem[j].ParticleSystemName);
+                    //        nodePSystem = nodeEntity.Nodes.Add(entity.ListParticleSystem[j].ParticleSystemName);
                     //    }
                     //    TreeNode nodePTemplate = nodePSystem.Nodes.Add(particle.Name);
                     //    nodePTemplate.Tag = particle;
@@ -412,7 +413,7 @@ namespace Edit2D.ScriptControl
             }
         }
 
-        private TreeNode GetNodeWithTag(TreeNode nodeParent, Entite entite, PropertyInfo propertyInfo, int index)
+        private TreeNode GetNodeWithTag(TreeNode nodeParent, Entity entity, PropertyInfo propertyInfo, int index)
         {
             TreeNode node = null;
 
@@ -420,7 +421,7 @@ namespace Edit2D.ScriptControl
             {
                 if (node == null &&
                     (nodeChild.Tag is Object[]) &&
-                    nodeParent.Tag == entite &&
+                    nodeParent.Tag == entity &&
                     ((PropertyInfo)((Object[])nodeChild.Tag)[0]).Name == propertyInfo.Name &&
                      ((int)((Object[])nodeChild.Tag)[1]) == index)
                 {
@@ -429,7 +430,7 @@ namespace Edit2D.ScriptControl
 
                 if (node == null)
                 {
-                    node = GetNodeWithTag(nodeChild, entite, propertyInfo, index);
+                    node = GetNodeWithTag(nodeChild, entity, propertyInfo, index);
                 }
             }
 
@@ -478,9 +479,9 @@ namespace Edit2D.ScriptControl
                         //---> Propriété liée à une entité
                         else
                         {
-                            ActionEvent.EntiteBindingProperties[ActionEventIndex] = (PropertyInfo)((Object[])propNodes[0].Tag)[0];
-                            ActionEvent.EntiteBindingPropertyId[ActionEventIndex] = (int)((Object[])propNodes[0].Tag)[1];
-                            ActionEvent.EntiteBindings[ActionEventIndex] = ((Entite)propNodes[0].Parent.Tag);
+                            ActionEvent.EntityBindingProperties[ActionEventIndex] = (PropertyInfo)((Object[])propNodes[0].Tag)[0];
+                            ActionEvent.EntityBindingPropertyId[ActionEventIndex] = (int)((Object[])propNodes[0].Tag)[1];
+                            ActionEvent.EntityBindings[ActionEventIndex] = ((Entity)propNodes[0].Parent.Tag);
                         }
                     }
                 }
@@ -560,9 +561,9 @@ namespace Edit2D.ScriptControl
                     optActionEventLineEntity.Checked = true;
 
                     TreeNode node = GetNodeWithTag( treeViewBoundEntity.Nodes[0], 
-                                                    ActionEvent.EntiteBindings[ActionEventIndex],
-                                                    ActionEvent.EntiteBindingProperties[ActionEventIndex], 
-                                                    ActionEvent.EntiteBindingPropertyId[ActionEventIndex]);
+                                                    ActionEvent.EntityBindings[ActionEventIndex],
+                                                    ActionEvent.EntityBindingProperties[ActionEventIndex], 
+                                                    ActionEvent.EntityBindingPropertyId[ActionEventIndex]);
                     node.Checked = true;
 
                     break;
