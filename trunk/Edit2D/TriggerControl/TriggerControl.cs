@@ -9,9 +9,10 @@ using System.Windows.Forms;
 using Edit2DEngine.Trigger;
 using System.Reflection;
 using Microsoft.Xna.Framework;
-using Edit2DEngine.Particles;
+using Edit2DEngine.Entities.Particles;
 using Edit2DEngine;
 using Edit2D.UC;
+using Edit2DEngine.Entities;
 
 namespace Edit2D.TriggerControl
 {
@@ -133,7 +134,7 @@ namespace Edit2D.TriggerControl
                 pnlScript.Left = pnlEntityCollision.Right;
 
                 if (Repository.CurrentTrigger != null && Repository.CurrentTrigger is TriggerCollision)
-                    treeViewCollision.RefreshView<Entite>(((TriggerCollision)Repository.CurrentTrigger).TargetEntite);
+                    treeViewCollision.RefreshView<Entity>(((TriggerCollision)Repository.CurrentTrigger).TargetEntity);
                 else
                 {
                     treeViewCollision.RefreshView(false);
@@ -154,7 +155,7 @@ namespace Edit2D.TriggerControl
                 pnlScript.Left = pnlEntityCollision.Right;
 
                 if (Repository.CurrentTrigger != null && Repository.CurrentTrigger is TriggerCollision)
-                    treeViewCollision.RefreshView<Entite>(((TriggerCollision)Repository.CurrentTrigger).TargetEntite);
+                    treeViewCollision.RefreshView<Entity>(((TriggerCollision)Repository.CurrentTrigger).TargetEntity);
                 else
                 {
                     treeViewCollision.RefreshView(false);
@@ -525,7 +526,7 @@ namespace Edit2D.TriggerControl
                 //---
 
                 //--- Trigger collision
-                treeViewCollision.CheckNode<Entite>(triggerCol.TargetEntite);
+                treeViewCollision.CheckNode<Entity>(triggerCol.TargetEntity);
                 //---
             }
             else if (trigger is TriggerValueChanged)
@@ -549,7 +550,7 @@ namespace Edit2D.TriggerControl
                     }
                     else
                     {
-                        treeViewValueChanged.CheckNode<PropertyInfo>(triggerVal.TriggerProperty, triggerVal.Entite.TreeViewPath);
+                        treeViewValueChanged.CheckNode<PropertyInfo>(triggerVal.TriggerProperty, triggerVal.Entity.TreeViewPath);
                         ShowPropertyDetail(triggerVal.TriggerProperty);
                     }
                 }
@@ -631,14 +632,14 @@ namespace Edit2D.TriggerControl
 
                  if (optTypeTriggerCollision.Checked)
                 {
-                    List<Entite> listEntite = treeViewCollision.GetCheckedNodes<Entite>();
+                    List<Entity> listEntity = treeViewCollision.GetCheckedNodes<Entity>();
 
-                    Entite targetEntiteCollision = null;
+                    Entity targetEntityCollision = null;
 
-                    if (listEntite.Count > 0)
-                        targetEntiteCollision = listEntite[0];
+                    if (listEntity.Count > 0)
+                        targetEntityCollision = listEntity[0];
 
-                    newTrigger = new TriggerCollision(Repository.CurrentTrigger.TriggerName, Repository.CurrentTrigger.TriggerHandler, targetEntiteCollision);
+                    newTrigger = new TriggerCollision(Repository.CurrentTrigger.TriggerName, Repository.CurrentTrigger.TriggerHandler, targetEntityCollision);
                     newTrigger.ListScript = Repository.CurrentTrigger.ListScript;
 
                     Repository.CurrentTriggerHandler.ListTrigger[listboxTrigger.SelectedIndex] = newTrigger;
@@ -843,9 +844,9 @@ namespace Edit2D.TriggerControl
                 }
 
                 //--- Afffiche les types de trigger selon les spécificités du triggerHandler
-                optTypeTriggerValueOverflow.Visible = (Repository.CurrentTriggerHandler.SupportTrigerChangedValue);
-                optTypeTriggerCollision.Visible = (Repository.CurrentTriggerHandler.SupportTrigerCollision);
-                optTypeTriggerNoCollision.Visible = (Repository.CurrentTriggerHandler.SupportTrigerCollision);
+                optTypeTriggerValueOverflow.Visible = (Repository.CurrentTriggerHandler.SupportTriggerChangedValue);
+                optTypeTriggerCollision.Visible = (Repository.CurrentTriggerHandler.SupportTriggerCollision);
+                optTypeTriggerNoCollision.Visible = (Repository.CurrentTriggerHandler.SupportTriggerCollision);
                 //---
             }
 

@@ -33,7 +33,7 @@ namespace Edit2DEngine
         }
 
         [Browsable(false)]
-        public bool SupportTrigerChangedValue
+        public bool SupportTriggerChangedValue
         {
             get
             {
@@ -42,7 +42,7 @@ namespace Edit2DEngine
         }
 
         [Browsable(false)]
-        public bool SupportTrigerCollision
+        public bool SupportTriggerCollision
         {
             get
             {

@@ -10,9 +10,10 @@ using Edit2DEngine.Action;
 using Microsoft.Xna.Framework;
 using Xna.Tools;
 using System.Reflection;
-using Edit2DEngine.Particles;
+using Edit2DEngine.Entities.Particles;
 using Edit2DEngine;
 using Edit2D.UC;
+using Edit2DEngine.Entities;
 
 namespace Edit2D.ScriptControl
 {
@@ -193,7 +194,7 @@ namespace Edit2D.ScriptControl
         {
             /*if (currentScript != 1 && currentCurve != -1)
             {
-                repository.currentEntite.ListScript[currentScript].ListCurve.mo [currentCurve]
+                repository.currentEntity.ListScript[currentScript].ListCurve.mo [currentCurve]
             }*/
         }
 
@@ -734,19 +735,19 @@ namespace Edit2D.ScriptControl
 
         private void StopAllScripts()
         {
-            for (int i = 0; i < Repository.listEntite.Count; i++)
+            for (int i = 0; i < Repository.listEntity.Count; i++)
             {
-                Entite entite = Repository.listEntite[i];
+                Entity entity = Repository.listEntity[i];
 
-                StopScript(entite);
+                StopScript(entity);
 
-                for (int k = 0; k < entite.ListParticleSystem.Count; k++)
+                for (int k = 0; k < entity.ListParticleSystem.Count; k++)
                 {
-                    StopScript(entite.ListParticleSystem[k]);
+                    StopScript(entity.ListParticleSystem[k]);
 
-                    for (int l = 0; l < entite.ListParticleSystem[k].ListParticleTemplate.Count; k++)
+                    for (int l = 0; l < entity.ListParticleSystem[k].ListParticleTemplate.Count; k++)
                     {
-                        StopScript(entite.ListParticleSystem[k].ListParticleTemplate[l]);
+                        StopScript(entity.ListParticleSystem[k].ListParticleTemplate[l]);
                     }
                 }
             }

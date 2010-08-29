@@ -8,6 +8,7 @@ using FarseerGames.GettingStarted;
 using Edit2DEngine;
 using Edit2DEngine.Action;
 using Edit2DEngine.Trigger;
+using Edit2DEngine.Entities;
 
 namespace Edit2D
 {
@@ -79,16 +80,16 @@ namespace Edit2D
             return mousePosition;
         }
 
-        public List<Entite> GetSelectedEntite()
+        public List<Entity> GetSelectedEntity()
         {
-            List<Entite> listSelectedEntite = new List<Entite>();
+            List<Entity> listSelectedEntity = new List<Entity>();
 
-            listSelectedEntite.AddRange(ListSelection.Select<Selection, Entite>(s => s.Entite));
+            listSelectedEntity.AddRange(ListSelection.Select<Selection, Entity>(s => s.Entity));
 
-            if (CurrentEntite != null)
-                listSelectedEntite.Add(CurrentEntite);
+            if (CurrentEntity != null)
+                listSelectedEntity.Add(CurrentEntity);
 
-            return listSelectedEntite;
+            return listSelectedEntity;
         }
 
         public bool IsSimpleMode

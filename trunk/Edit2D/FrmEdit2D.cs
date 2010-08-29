@@ -12,7 +12,7 @@ using System.IO;
 using Xna.Tools;
 using Edit2DEngine.Action;
 using Edit2DEngine.Trigger;
-using Edit2DEngine.Particles;
+using Edit2DEngine.Entities.Particles;
 using Edit2DEngine;
 using Edit2DEngine.Render;
 using Edit2D.Properties;
@@ -21,6 +21,7 @@ using FarseerGames.FarseerPhysics.Collisions;
 using Edit2DEngine.Tools;
 using Microsoft.Xna.Framework.Input;
 using Edit2D.UC;
+using Edit2DEngine.Entities;
 
 namespace Edit2D
 {
@@ -155,7 +156,7 @@ namespace Edit2D
             //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             AddEntity();
-            repository.CurrentEntite = repository.listEntite[0];
+            repository.CurrentEntity = repository.listEntity[0];
 
             RefreshTreeView();
 
@@ -172,12 +173,12 @@ namespace Edit2D
             //---
 
             //--- Sélection des entités
-            //InputHandler ihSelectEntite = new InputHandler("SelectEntite");
-            //ihSelectEntite.LeftMouseButtonPressed = true;
-            //ihSelectEntite.ContextCondition = new InputHandlerDelegate(IHContextCondition_SelectEntite);
-            //ihSelectEntite.Actions.Add(new InputHandlerDelegate(IHActions_SelectEntite));
+            //InputHandler ihSelectEntity = new InputHandler("SelectEntity");
+            //ihSelectEntity.LeftMouseButtonPressed = true;
+            //ihSelectEntity.ContextCondition = new InputHandlerDelegate(IHContextCondition_SelectEntity);
+            //ihSelectEntity.Actions.Add(new InputHandlerDelegate(IHActions_SelectEntity));
 
-            //listInputHandler.Add(ihSelectEntite);
+            //listInputHandler.Add(ihSelectEntity);
             //---
 
             //--- Déplacement de la caméra des entités
@@ -191,12 +192,12 @@ namespace Edit2D
             //---
         }
 
-        private bool IHContextCondition_SelectEntite(KeyboardState keyboarState, MouseState mouseState, GameTime gameTime)
+        private bool IHContextCondition_SelectEntity(KeyboardState keyboarState, MouseState mouseState, GameTime gameTime)
         {
             return false;
         }
 
-        private bool IHActions_SelectEntite(KeyboardState keyboarState, MouseState mouseState, GameTime gameTime)
+        private bool IHActions_SelectEntity(KeyboardState keyboarState, MouseState mouseState, GameTime gameTime)
         {
             return false;
         }
@@ -319,34 +320,34 @@ namespace Edit2D
             if (!String.IsNullOrEmpty(repository.CurrentTextureName))
             {
                 //--- Calcul le nom de l'entité
-                string name = Common.CreateNewName<Entite>(repository.listEntite, "Name", repository.CurrentTextureName + "{0}");
+                string name = Common.CreateNewName<Entity>(repository.listEntity, "Name", repository.CurrentTextureName + "{0}");
                 //---
 
-                Entite entite = new Entite(true, false, repository.CurrentTextureName.ToString(), name);
+                Entity entity = new Entity(true, false, repository.CurrentTextureName.ToString(), name);
 
-                entite.IsStatic = true;
-                entite.SetPosition(repository.CurrentPointer.WorldPosition);
-                repository.listEntite.Add(entite);
+                entity.IsStatic = true;
+                entity.SetPosition(repository.CurrentPointer.WorldPosition);
+                repository.listEntity.Add(entity);
 
-                EntiteSelectionChange(repository.CurrentEntite, entite);
+                EntitySelectionChange(repository.CurrentEntity, entity);
 
                 Repository.physicSimulator.Update(0.0000001f);
 
-                entite.geom.CollisionEnabled = true;
+                entity.geom.CollisionEnabled = true;
             }
         }
 
         private void DeleteEntity()
         {
-            if (repository.CurrentEntite != null)
+            if (repository.CurrentEntity != null)
             {
-                repository.CurrentEntite.geom.Dispose();
-                repository.CurrentEntite.Body.Dispose();
-                repository.listEntite.Remove(repository.CurrentEntite);
+                repository.CurrentEntity.geom.Dispose();
+                repository.CurrentEntity.Body.Dispose();
+                repository.listEntity.Remove(repository.CurrentEntity);
 
                 Repository.physicSimulator.Update(0.0000001f);
 
-                EntiteSelectionChange(repository.CurrentEntite, null);
+                EntitySelectionChange(repository.CurrentEntity, null);
                 
                 RefreshTreeView();
             }
@@ -356,12 +357,12 @@ namespace Edit2D
         #region Spring
         private void AddLinearSpring()
         {
-            if (repository.CurrentEntite != null && repository.currentEntite2 != null)
+            if (repository.CurrentEntity != null && repository.currentEntity2 != null)
             {
-                Vector2 vec1 = repository.CurrentEntite.Body.GetLocalPosition(repository.CurrentPointer.WorldPosition);
-                Vector2 vec2 = repository.currentEntite2.Body.GetLocalPosition(repository.CurrentPointer2.WorldPosition);
+                Vector2 vec1 = repository.CurrentEntity.Body.GetLocalPosition(repository.CurrentPointer.WorldPosition);
+                Vector2 vec2 = repository.currentEntity2.Body.GetLocalPosition(repository.CurrentPointer2.WorldPosition);
 
-                repository.CurrentEntite.AddLinearSpring(repository.currentEntite2, vec1, vec2);
+                repository.CurrentEntity.AddLinearSpring(repository.currentEntity2, vec1, vec2);
 
                 Repository.physicSimulator.Update(0.0001f);
             }
@@ -369,12 +370,12 @@ namespace Edit2D
 
         private void AddFixedLinearSpring()
         {
-            if (repository.CurrentEntite != null)
+            if (repository.CurrentEntity != null)
             {
-                Vector2 vec1 = repository.CurrentEntite.Body.GetLocalPosition(repository.CurrentPointer.WorldPosition);
+                Vector2 vec1 = repository.CurrentEntity.Body.GetLocalPosition(repository.CurrentPointer.WorldPosition);
                 Vector2 vec2 = repository.CurrentPointer2.WorldPosition;
 
-                repository.CurrentEntite.AddFixedLinearSpring(vec1, vec2);
+                repository.CurrentEntity.AddFixedLinearSpring(vec1, vec2);
 
                 Repository.physicSimulator.Update(0.0001f);
             }
@@ -382,9 +383,9 @@ namespace Edit2D
 
         private void AddFixedAngleSpring()
         {
-            if (repository.CurrentEntite != null)
+            if (repository.CurrentEntity != null)
             {
-                repository.CurrentEntite.AddFixedAngleSpring();
+                repository.CurrentEntity.AddFixedAngleSpring();
 
                 Repository.physicSimulator.Update(0.0001f);
             }
@@ -392,9 +393,9 @@ namespace Edit2D
 
         private void AddAngleSpring()
         {
-            if (repository.CurrentEntite != null && repository.ListSelection.Count > 0)
+            if (repository.CurrentEntity != null && repository.ListSelection.Count > 0)
             {
-                repository.CurrentEntite.AddAngleSpring(repository.ListSelection[0].Entite);
+                repository.CurrentEntity.AddAngleSpring(repository.ListSelection[0].Entity);
 
                 Repository.physicSimulator.Update(0.0001f);
             }
@@ -404,12 +405,12 @@ namespace Edit2D
         #region Joint
         private void AddPinJoint()
         {
-            if (repository.CurrentEntite != null && repository.currentEntite2 != null)
+            if (repository.CurrentEntity != null && repository.currentEntity2 != null)
             {
-                Vector2 vec1 = repository.CurrentEntite.Body.GetLocalPosition(repository.CurrentPointer.WorldPosition);
-                Vector2 vec2 = repository.currentEntite2.Body.GetLocalPosition(repository.CurrentPointer2.WorldPosition);
+                Vector2 vec1 = repository.CurrentEntity.Body.GetLocalPosition(repository.CurrentPointer.WorldPosition);
+                Vector2 vec2 = repository.currentEntity2.Body.GetLocalPosition(repository.CurrentPointer2.WorldPosition);
 
-                repository.CurrentEntite.AddPinJoint(repository.currentEntite2, vec1, vec2);
+                repository.CurrentEntity.AddPinJoint(repository.currentEntity2, vec1, vec2);
 
                 Repository.physicSimulator.Update(0.0001f);
             }
@@ -417,12 +418,12 @@ namespace Edit2D
 
         private void AddRevoluteJoint()
         {
-            if (repository.CurrentEntite != null && repository.currentEntite2 != null)
+            if (repository.CurrentEntity != null && repository.currentEntity2 != null)
             {
-                Vector2 vec1 = repository.CurrentEntite.Body.GetWorldPosition(repository.CurrentPointer.WorldPosition);
-                Vector2 vec2 = repository.currentEntite2.Body.GetLocalPosition(repository.CurrentPointer2.WorldPosition);
+                Vector2 vec1 = repository.CurrentEntity.Body.GetWorldPosition(repository.CurrentPointer.WorldPosition);
+                Vector2 vec2 = repository.currentEntity2.Body.GetLocalPosition(repository.CurrentPointer2.WorldPosition);
 
-                repository.CurrentEntite.AddRevoluteJoint(repository.currentEntite2, vec1);
+                repository.CurrentEntity.AddRevoluteJoint(repository.currentEntity2, vec1);
 
                 Repository.physicSimulator.Update(0.0001f);
             }
@@ -430,9 +431,9 @@ namespace Edit2D
 
         private void AddFixedRevoluteJoint()
         {
-            if (repository.CurrentEntite != null)
+            if (repository.CurrentEntity != null)
             {
-                repository.CurrentEntite.AddFixedRevoluteJoint(repository.CurrentPointer.WorldPosition);
+                repository.CurrentEntity.AddFixedRevoluteJoint(repository.CurrentPointer.WorldPosition);
 
                 Repository.physicSimulator.Update(0.0001f);
             }
@@ -440,45 +441,45 @@ namespace Edit2D
         #endregion
 
         #region Private methods
-        private bool ChangeEntityName(Entite entite, string newName, string oldName)
+        private bool ChangeEntityName(Entity entity, string newName, string oldName)
         {
             bool nameChanged = false;
-            int countFound = repository.listEntite.FindAll(ent => ent.Name == newName.ToString() && ent != entite).Count;
+            int countFound = repository.listEntity.FindAll(ent => ent.Name == newName.ToString() && ent != entity).Count;
 
-            string nameFound = Common.CreateNewName<Entite>(repository.listEntite, "Name", entite.TextureName + "{0}");
+            string nameFound = Common.CreateNewName<Entity>(repository.listEntity, "Name", entity.TextureName + "{0}");
 
             if (countFound > 0)
             {
                 if (MessageBox.Show(String.Format("Le nom {0} est déja utilisé pour une entité, voulez-vous utiliser le nom {1} ?", newName, nameFound), "Avertissement", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.OK)
                 {
                     nameChanged = true;
-                    entite.Name = nameFound;
+                    entity.Name = nameFound;
                 }
                 else
                 {
                     nameChanged = false;
-                    entite.Name = oldName;
+                    entity.Name = oldName;
                 }
             }
             else
             {
                 nameChanged = true;
-                entite.Name = newName;
+                entity.Name = newName;
             }
 
             return nameChanged;
         }
 
-        private void EntiteSelectionChange(Entite oldEntite, Entite newEntite)
+        private void EntitySelectionChange(Entity oldEntity, Entity newEntity)
         {
-            EntiteSelectionChange(true, oldEntite, newEntite);
+            EntitySelectionChange(true, oldEntity, newEntity);
         }
 
-        private void EntiteSelectionChange(bool refreshTreeView, Entite oldEntite, Object newSelection)
+        private void EntitySelectionChange(bool refreshTreeView, Entity oldEntity, Object newSelection)
         {
             repository.CurrentObject = newSelection;
 
-            repository.CurrentEntite = null;
+            repository.CurrentEntity = null;
             repository.CurrentScript = null;
             repository.CurrentTrigger = null;
             repository.CurrentParticleSystem = null;
@@ -487,22 +488,22 @@ namespace Edit2D
 
             if (newSelection is Particle)
             {
-                repository.CurrentEntite = ((Particle)newSelection).ParticleSystem.Entite;
+                repository.CurrentEntity = ((Particle)newSelection).ParticleSystem.Entity;
                 repository.CurrentParticleSystem = ((Particle)newSelection).ParticleSystem;
                 repository.CurrentTriggerHandler = (ITriggerHandler)newSelection;
                 repository.CurrentActionHandler = (IActionHandler)newSelection;
 
-                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem.Entite;
+                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem.Entity;
 
                 ShowParticleSystemMode();
             }
-            else if (newSelection is Entite)
+            else if (newSelection is Entity)
             {
-                repository.CurrentEntite = (Entite)newSelection;
+                repository.CurrentEntity = (Entity)newSelection;
                 repository.CurrentTriggerHandler = (ITriggerHandler)newSelection;
                 repository.CurrentActionHandler = (IActionHandler)newSelection;
 
-                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentEntite;
+                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentEntity;
 
                 switch (repository.ViewingMode)
                 {
@@ -529,12 +530,12 @@ namespace Edit2D
                 if (repository.CurrentActionHandler is ITriggerHandler)
                     repository.CurrentTriggerHandler = (ITriggerHandler)repository.CurrentActionHandler;
 
-                if(repository.CurrentActionHandler is Entite &&
-                    !repository.CurrentActionHandler.GetType().IsSubclassOf(typeof(Entite)))
+                if(repository.CurrentActionHandler is Entity &&
+                    !repository.CurrentActionHandler.GetType().IsSubclassOf(typeof(Entity)))
                     propertyGrid.PropertyGrid.SelectedObject = repository.CurrentActionHandler;
 
-                if (repository.CurrentTriggerHandler is Entite)
-                    repository.CurrentEntite = (Entite)repository.CurrentTriggerHandler;
+                if (repository.CurrentTriggerHandler is Entity)
+                    repository.CurrentEntity = (Entity)repository.CurrentTriggerHandler;
 
                 ShowScriptMode();
             }
@@ -546,23 +547,23 @@ namespace Edit2D
                 if (repository.CurrentTriggerHandler is IActionHandler)
                     repository.CurrentActionHandler = (IActionHandler)repository.CurrentTriggerHandler;
 
-                if ((repository.CurrentTriggerHandler is Entite &&
-                    !repository.CurrentTriggerHandler.GetType().IsSubclassOf(typeof(Entite))) ||
+                if ((repository.CurrentTriggerHandler is Entity &&
+                    !repository.CurrentTriggerHandler.GetType().IsSubclassOf(typeof(Entity))) ||
                     repository.CurrentTriggerHandler is World)
                     propertyGrid.PropertyGrid.SelectedObject = repository.CurrentTriggerHandler;
 
-                if (repository.CurrentTriggerHandler is Entite)
-                    repository.CurrentEntite = (Entite)repository.CurrentTriggerHandler;
+                if (repository.CurrentTriggerHandler is Entity)
+                    repository.CurrentEntity = (Entity)repository.CurrentTriggerHandler;
 
                 ShowTriggerMode();
             }
             else if (newSelection is ParticleSystem)
             {
-                repository.CurrentEntite = ((ParticleSystem)newSelection).Entite;
+                repository.CurrentEntity = ((ParticleSystem)newSelection).Entity;
                 repository.CurrentParticleSystem = (ParticleSystem)newSelection;
                 repository.CurrentActionHandler = (IActionHandler)newSelection;
 
-                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem.Entite;
+                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem.Entity;
 
                 ShowParticleSystemMode();
             }
@@ -578,12 +579,12 @@ namespace Edit2D
             EnableMode(
                 repository.CurrentActionHandler != null, 
                 repository.CurrentTriggerHandler != null, 
-                repository.CurrentEntite!=null);
+                repository.CurrentEntity!=null);
 
             VisibleMode(
                 repository.CurrentActionHandler != null,
                 repository.CurrentTriggerHandler != null,
-                repository.CurrentEntite != null);
+                repository.CurrentEntity != null);
         }
 
         private void EnableMode(bool enabledModeScript, bool enabledModeTrigger, bool enabledModeParticleSystem)
@@ -729,14 +730,14 @@ namespace Edit2D
 
             repository.Pause = true;
 
-            foreach (Entite entite in repository.listEntite)
+            foreach (Entity entity in repository.listEntity)
             {
-                foreach (TriggerBase trigger in entite.ListTrigger)
+                foreach (TriggerBase trigger in entity.ListTrigger)
                 {
                     trigger.InitTrigger(repository);
                 }
 
-                foreach (Script script in entite.ListScript)
+                foreach (Script script in entity.ListScript)
                 {
                     foreach (ActionBase action in script.ListAction)
                     {
@@ -755,15 +756,15 @@ namespace Edit2D
 
         private void btnRecObjectStatus_Click(object sender, EventArgs e)
         {
-            if (repository.CurrentEntite != null)
+            if (repository.CurrentEntity != null)
             {
-                AddScriptObjectStatus(repository.CurrentEntite.Position, repository.CurrentEntite.Rotation, repository.CurrentEntite.SizeVector);
+                AddScriptObjectStatus(repository.CurrentEntity.Position, repository.CurrentEntity.Rotation, repository.CurrentEntity.SizeVector);
             }
         }
 
         private void btnRecObjectStatusLoop_Click(object sender, EventArgs e)
         {
-            if (repository.CurrentEntite != null)
+            if (repository.CurrentEntity != null)
             {
                 //Script script = null;
 
@@ -873,7 +874,7 @@ namespace Edit2D
 
         private void AddScriptObjectStatus(Vector2 position, float rotation, Vector2 size)
         {
-            if (repository.CurrentEntite != null)
+            if (repository.CurrentEntity != null)
             {
                 if (!(btnScriptModeBar.Checked && repository.CurrentScript != null))
                 {
@@ -982,20 +983,20 @@ namespace Edit2D
         {
             btnPinStatic.Checked = !btnPinStatic.Checked;
 
-            if (repository.CurrentEntite != null)
+            if (repository.CurrentEntity != null)
             {
-                repository.CurrentEntite.IsStatic = btnPinStatic.Checked;
+                repository.CurrentEntity.IsStatic = btnPinStatic.Checked;
 
-                if (repository.tempEntite != null)
-                    repository.tempEntite.IsStatic = btnPinStatic.Checked;
+                if (repository.tempEntity != null)
+                    repository.tempEntity.IsStatic = btnPinStatic.Checked;
             }
 
             for (int i = 0; i < repository.ListSelection.Count; i++)
             {
-                repository.ListSelection[i].Entite.IsStatic = btnPinStatic.Checked;
+                repository.ListSelection[i].Entity.IsStatic = btnPinStatic.Checked;
 
-                if (repository.ListSelection[i].TempEntite != null)
-                    repository.ListSelection[i].TempEntite.IsStatic = btnPinStatic.Checked;
+                if (repository.ListSelection[i].TempEntity != null)
+                    repository.ListSelection[i].TempEntity.IsStatic = btnPinStatic.Checked;
             }
         }
 
@@ -1003,41 +1004,41 @@ namespace Edit2D
         {
             btnColisionable.Checked = !btnColisionable.Checked;
 
-            if (repository.CurrentEntite != null)
+            if (repository.CurrentEntity != null)
             {
-                repository.CurrentEntite.IsColisionable = btnColisionable.Checked;
+                repository.CurrentEntity.IsColisionable = btnColisionable.Checked;
 
-                if (repository.tempEntite != null)
-                    repository.tempEntite.IsColisionable = btnColisionable.Checked;
+                if (repository.tempEntity != null)
+                    repository.tempEntity.IsColisionable = btnColisionable.Checked;
             }
 
             for (int i = 0; i < repository.ListSelection.Count; i++)
             {
-                repository.ListSelection[i].Entite.IsColisionable = btnColisionable.Checked;
+                repository.ListSelection[i].Entity.IsColisionable = btnColisionable.Checked;
 
-                if (repository.ListSelection[i].TempEntite != null)
-                    repository.ListSelection[i].TempEntite.IsColisionable = btnColisionable.Checked;
+                if (repository.ListSelection[i].TempEntity != null)
+                    repository.ListSelection[i].TempEntity.IsColisionable = btnColisionable.Checked;
             }
         }
 
         private void btnResetEntityPhysic_Click(object sender, EventArgs e)
         {
-            if (repository.CurrentEntite != null)
+            if (repository.CurrentEntity != null)
             {
-                Vector2 position = repository.CurrentEntite.Position;
-                float rotation = repository.CurrentEntite.Rotation;
+                Vector2 position = repository.CurrentEntity.Position;
+                float rotation = repository.CurrentEntity.Rotation;
 
-                repository.CurrentEntite.Body.ResetDynamics();
-                repository.CurrentEntite.SetPosition(position);
-                repository.CurrentEntite.Rotation = rotation;
+                repository.CurrentEntity.Body.ResetDynamics();
+                repository.CurrentEntity.SetPosition(position);
+                repository.CurrentEntity.Rotation = rotation;
             }
         }
 
         private void btnCursorToEntityCenter_Click(object sender, EventArgs e)
         {
-            if (repository.CurrentEntite != null)
+            if (repository.CurrentEntity != null)
             {
-                Vector2 position = repository.CurrentEntite.Position;
+                Vector2 position = repository.CurrentEntity.Position;
                 repository.CurrentPointer.WorldPosition = position;
                 repository.CurrentPointer.CalcScreenPositionFromWorldPosition(repository.Camera);
             }
@@ -1045,11 +1046,11 @@ namespace Edit2D
 
         private void btnSetCenterEntity_Click(object sender, EventArgs e)
         {
-            if (repository.CurrentEntite != null)
+            if (repository.CurrentEntity != null)
             {
-                repository.CurrentEntite.SetCenterFromWorldPosition(repository.CurrentPointer.WorldPosition, true);
+                repository.CurrentEntity.SetCenterFromWorldPosition(repository.CurrentPointer.WorldPosition, true);
 
-                repository.tempEntite = (Entite)repository.CurrentEntite.Clone(false);
+                repository.tempEntity = (Entity)repository.CurrentEntity.Clone(false);
 
                 Repository.physicSimulator.Update(0.000002f);
             }
@@ -1057,36 +1058,36 @@ namespace Edit2D
 
         private void btnOrderUp_Click(object sender, EventArgs e)
         {
-            if (repository.CurrentEntite != null && repository.ListSelection.Count > 0)
+            if (repository.CurrentEntity != null && repository.ListSelection.Count > 0)
             {
-                int entiteIndex = repository.listEntite.IndexOf(repository.CurrentEntite);
-                int minIndex = repository.listEntite.Count - 1;
+                int entityIndex = repository.listEntity.IndexOf(repository.CurrentEntity);
+                int minIndex = repository.listEntity.Count - 1;
 
                 for (int i = 0; i < repository.ListSelection.Count; i++)
                 {
-                    int index = repository.listEntite.IndexOf(repository.ListSelection[i].Entite);
+                    int index = repository.listEntity.IndexOf(repository.ListSelection[i].Entity);
 
                     if (index < minIndex)
                         minIndex = index;
                 }
 
-                if (entiteIndex < minIndex)
+                if (entityIndex < minIndex)
                 {
-                    for (int j = entiteIndex; j < minIndex - 1; j++)
+                    for (int j = entityIndex; j < minIndex - 1; j++)
                     {
-                        repository.listEntite[j] = repository.listEntite[j + 1];
+                        repository.listEntity[j] = repository.listEntity[j + 1];
                     }
 
-                    repository.listEntite[minIndex - 1] = repository.CurrentEntite;
+                    repository.listEntity[minIndex - 1] = repository.CurrentEntity;
                 }
-                else if (entiteIndex > minIndex)
+                else if (entityIndex > minIndex)
                 {
-                    for (int j = entiteIndex; j >= minIndex; j--)
+                    for (int j = entityIndex; j >= minIndex; j--)
                     {
-                        repository.listEntite[j] = repository.listEntite[j - 1];
+                        repository.listEntity[j] = repository.listEntity[j - 1];
                     }
 
-                    repository.listEntite[minIndex] = repository.CurrentEntite;
+                    repository.listEntity[minIndex] = repository.CurrentEntity;
                 }
 
                 RefreshTreeView();
@@ -1095,36 +1096,36 @@ namespace Edit2D
 
         private void btnOrderDown_Click(object sender, EventArgs e)
         {
-            if (repository.CurrentEntite != null && repository.ListSelection.Count > 0)
+            if (repository.CurrentEntity != null && repository.ListSelection.Count > 0)
             {
-                int entiteIndex = repository.listEntite.IndexOf(repository.CurrentEntite);
+                int entityIndex = repository.listEntity.IndexOf(repository.CurrentEntity);
                 int maxIndex = 0;
 
                 for (int i = 0; i < repository.ListSelection.Count; i++)
                 {
-                    int index = repository.listEntite.IndexOf(repository.ListSelection[i].Entite);
+                    int index = repository.listEntity.IndexOf(repository.ListSelection[i].Entity);
 
                     if (index > maxIndex)
                         maxIndex = index;
                 }
 
-                if (entiteIndex < maxIndex)
+                if (entityIndex < maxIndex)
                 {
-                    for (int j = entiteIndex; j < maxIndex + 1; j++)
+                    for (int j = entityIndex; j < maxIndex + 1; j++)
                     {
-                        repository.listEntite[j] = repository.listEntite[j + 1];
+                        repository.listEntity[j] = repository.listEntity[j + 1];
                     }
 
-                    repository.listEntite[maxIndex] = repository.CurrentEntite;
+                    repository.listEntity[maxIndex] = repository.CurrentEntity;
                 }
-                else if (entiteIndex > maxIndex)
+                else if (entityIndex > maxIndex)
                 {
-                    for (int j = entiteIndex; j > maxIndex; j--)
+                    for (int j = entityIndex; j > maxIndex; j--)
                     {
-                        repository.listEntite[j] = repository.listEntite[j - 1];
+                        repository.listEntity[j] = repository.listEntity[j - 1];
                     }
 
-                    repository.listEntite[maxIndex + 1] = repository.CurrentEntite;
+                    repository.listEntity[maxIndex + 1] = repository.CurrentEntity;
                 }
 
                 RefreshTreeView();
@@ -1151,9 +1152,9 @@ namespace Edit2D
 
         private void toolStripTextBoxEntityName_Validated(object sender, EventArgs e)
         {
-            if (repository.CurrentEntite != null)
+            if (repository.CurrentEntity != null)
             {
-                if (ChangeEntityName(repository.CurrentEntite, toolStripTextBoxEntityName.Text, repository.CurrentEntite.Name))
+                if (ChangeEntityName(repository.CurrentEntity, toolStripTextBoxEntityName.Text, repository.CurrentEntity.Name))
                 {
                     this.propertyGrid.PropertyGrid.Refresh();
                     RefreshTreeView();
@@ -1191,7 +1192,7 @@ namespace Edit2D
         {
             if (optRightBarEntities.Checked)
             {
-                pnlEntites.Visible = true;
+                pnlEntitys.Visible = true;
                 pnlSpring.Visible = false;
                 pnlJoint.Visible = false;
                 propertyGrid.Visible = false;
@@ -1202,7 +1203,7 @@ namespace Edit2D
         {
             if (optRightBarSpring.Checked)
             {
-                pnlEntites.Visible = false;
+                pnlEntitys.Visible = false;
                 pnlSpring.Visible = true;
                 pnlJoint.Visible = false;
                 propertyGrid.Visible = false;
@@ -1213,7 +1214,7 @@ namespace Edit2D
         {
             if (optRightBarJoint.Checked)
             {
-                pnlEntites.Visible = false;
+                pnlEntitys.Visible = false;
                 pnlSpring.Visible = false;
                 pnlJoint.Visible = true;
                 propertyGrid.Visible = false;
@@ -1224,7 +1225,7 @@ namespace Edit2D
         {
             if (optRightBarProperties.Checked)
             {
-                pnlEntites.Visible = false;
+                pnlEntitys.Visible = false;
                 pnlSpring.Visible = false;
                 pnlJoint.Visible = false;
                 propertyGrid.Visible = true;
@@ -1291,7 +1292,7 @@ namespace Edit2D
             //     les entités sélectionnées sont clonées
             //if (e.Alt && !repository.keyAltPressed)
             //{
-            //    CloneSelectedEntite();
+            //    CloneSelectedEntity();
             //}
 
             if (e.Control)
@@ -1335,7 +1336,7 @@ namespace Edit2D
                 }
                 //---
 
-                if (e.KeyCode == System.Windows.Forms.Keys.S && repository.CurrentEntite != null)
+                if (e.KeyCode == System.Windows.Forms.Keys.S && repository.CurrentEntity != null)
                 {
                     btnPinStatic.PerformClick();
                 }
@@ -1393,16 +1394,16 @@ namespace Edit2D
                 //--- Incrémente le layer des entités sélectionnées
                 if (e.KeyCode == System.Windows.Forms.Keys.Add)
                 {
-                    repository.GetSelectedEntite().ForEach(ent => ent.Layer += 1);
-                    repository.OrderEntite();
+                    repository.GetSelectedEntity().ForEach(ent => ent.Layer += 1);
+                    repository.OrderEntity();
                     RefreshTreeView();
                 }
 
                 //---> Décrémente le layer des entités sélectionnées
                 if (e.KeyCode == System.Windows.Forms.Keys.Subtract)
                 {
-                    repository.GetSelectedEntite().ForEach(ent => ent.Layer -= 1);
-                    repository.OrderEntite();
+                    repository.GetSelectedEntity().ForEach(ent => ent.Layer -= 1);
+                    repository.OrderEntity();
                     RefreshTreeView();
                 }
 
@@ -1415,11 +1416,11 @@ namespace Edit2D
 
         private void PropertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            if (this.propertyGrid.PropertyGrid.SelectedObject != null && this.propertyGrid.PropertyGrid.SelectedObject is Entite)
+            if (this.propertyGrid.PropertyGrid.SelectedObject != null && this.propertyGrid.PropertyGrid.SelectedObject is Entity)
             {
                 if (e.ChangedItem.Label == "Name")
                 {
-                    if (!ChangeEntityName(((Entite)this.propertyGrid.PropertyGrid.SelectedObject), e.ChangedItem.Value.ToString(), e.OldValue.ToString()))
+                    if (!ChangeEntityName(((Entity)this.propertyGrid.PropertyGrid.SelectedObject), e.ChangedItem.Value.ToString(), e.OldValue.ToString()))
                     {
                         this.propertyGrid.PropertyGrid.Refresh();
                     }
@@ -1436,19 +1437,19 @@ namespace Edit2D
             {
                 Object item = treeView.GetItemFromNode(e.Node);
 
-                EntiteSelectionChange(false, repository.CurrentEntite, item);
+                EntitySelectionChange(false, repository.CurrentEntity, item);
             }
         }
 
         private void btnUpEntity_Click(object sender, EventArgs e)
         {
-            int index = repository.listEntite.IndexOf(repository.CurrentEntite);
+            int index = repository.listEntity.IndexOf(repository.CurrentEntity);
 
             if (index > 0)
             {
-                Entite entite = repository.listEntite[index - 1];
-                repository.listEntite[index - 1] = repository.CurrentEntite;
-                repository.listEntite[index] = entite;
+                Entity entity = repository.listEntity[index - 1];
+                repository.listEntity[index - 1] = repository.CurrentEntity;
+                repository.listEntity[index] = entity;
 
                 RefreshTreeView();
             }
@@ -1456,13 +1457,13 @@ namespace Edit2D
 
         private void btnDownEntity_Click(object sender, EventArgs e)
         {
-            int index = repository.listEntite.IndexOf(repository.CurrentEntite);
+            int index = repository.listEntity.IndexOf(repository.CurrentEntity);
 
-            if (index < repository.listEntite.Count - 1)
+            if (index < repository.listEntity.Count - 1)
             {
-                Entite entite = repository.listEntite[index + 1];
-                repository.listEntite[index + 1] = repository.CurrentEntite;
-                repository.listEntite[index] = entite;
+                Entity entity = repository.listEntity[index + 1];
+                repository.listEntity[index + 1] = repository.CurrentEntity;
+                repository.listEntity[index] = entity;
 
                 RefreshTreeView();
             }
@@ -1562,28 +1563,28 @@ namespace Edit2D
             {
                 repository.CurrentPointer2.CalcMousePointerLocation(e.Location, repository.Camera);
             }
-            else if (repository.keyShiftPressed && btnParticleSystemModeBar.Checked && repository.CurrentEntite != null && repository.CurrentEntite.ListParticleSystem.Count > 0)
+            else if (repository.keyShiftPressed && btnParticleSystemModeBar.Checked && repository.CurrentEntity != null && repository.CurrentEntity.ListParticleSystem.Count > 0)
             {
-                CloneSelectedEntite(false);
+                CloneSelectedEntity(false);
                 repository.CurrentPointer2.CalcMousePointerLocation(e.Location, repository.Camera);
                 repository.CurrentPointer2.SaveState();
             }
             else
             {
                 //--- Si la touche MouseMode est pressée et que des entités sont sélectionnées
-                if (repository.keyAltPressed && (repository.CurrentEntite != null || repository.ListSelection.Count > 0))
+                if (repository.keyAltPressed && (repository.CurrentEntity != null || repository.ListSelection.Count > 0))
                 {
                     //---> Clone les entités avant la redéfinition de leur centrer
-                    CloneSelectedEntite(true);
+                    CloneSelectedEntity(true);
 
                     //---> Si le MouseMode courant est Rotate ou scale et qu'il y'a sélection multiple
                     //     Placer le centre des entités sur le curseur
                     if ((repository.MouseMode == MouseMode.Rotate || repository.MouseMode == MouseMode.Resize) && repository.ListSelection.Count > 0)
                     {
-                        repository.GetSelectedEntite().ForEach(ent => ent.SetCenterFromWorldPosition(repository.CurrentPointer2.WorldPosition, true));
+                        repository.GetSelectedEntity().ForEach(ent => ent.SetCenterFromWorldPosition(repository.CurrentPointer2.WorldPosition, true));
                     }
 
-                    CloneSelectedEntite(false);
+                    CloneSelectedEntity(false);
                 }
                 //---
 
@@ -1612,40 +1613,40 @@ namespace Edit2D
                 pointer.ScreenPosition = Vector2.Zero;
                 pointer.CalcMousePointerLocation(e.Location, repository.Camera);
 
-                Entite selectedEntite = repository.GetSelectedEntiteFromLocation(pointer.WorldPosition);
+                Entity selectedEntity = repository.GetSelectedEntityFromLocation(pointer.WorldPosition);
 
                 //---> La multisélection est possible uniquement sur les entités
-                if (selectedEntite == null)
+                if (selectedEntity == null)
                     return;
 
                 //---> Supprime la sélection si la position cliquée est à moins de 10 pixels
                 Selection existSelection = repository.ListSelection.Find(s => Vector2.Distance(s.Pointer.ScreenPosition, pointer.ScreenPosition) <= 20);
                 //---> Repositionne le pointeur si l'entité est déja sélectionnée
-                Selection entiteSelection = repository.ListSelection.Find(s => s.Entite == selectedEntite);
+                Selection entitySelection = repository.ListSelection.Find(s => s.Entity == selectedEntity);
 
                 if (existSelection != null)
                 {
-                    if (existSelection.Entite != null)
-                        existSelection.Entite.Selected = false;
+                    if (existSelection.Entity != null)
+                        existSelection.Entity.Selected = false;
 
                     repository.ListSelection.Remove(existSelection);
                 }
-                else if (entiteSelection != null)
+                else if (entitySelection != null)
                 {
-                    entiteSelection.Pointer.WorldPosition = pointer.WorldPosition;
-                    entiteSelection.Pointer.ScreenPosition = pointer.ScreenPosition;
+                    entitySelection.Pointer.WorldPosition = pointer.WorldPosition;
+                    entitySelection.Pointer.ScreenPosition = pointer.ScreenPosition;
                 }
                 else
                 {
-                    if (selectedEntite != null)
-                        selectedEntite.Selected = true;
+                    if (selectedEntity != null)
+                        selectedEntity.Selected = true;
 
-                    Selection newSelection = new Selection(selectedEntite, pointer.WorldPosition, pointer.ScreenPosition);
+                    Selection newSelection = new Selection(selectedEntity, pointer.WorldPosition, pointer.ScreenPosition);
                     repository.ListSelection.Add(newSelection);
                 }
 
                 //--- Affecte les entités sélectionnées au property grid
-                propertyGrid.PropertyGrid.SelectedObjects = repository.GetSelectedEntite().ToArray();
+                propertyGrid.PropertyGrid.SelectedObjects = repository.GetSelectedEntity().ToArray();
                 //---
             }
             else
@@ -1662,30 +1663,30 @@ namespace Edit2D
                 //---
 
                 //--- Redonne le statut Static à l'entité courante
-                if (repository.CurrentEntite != null)
+                if (repository.CurrentEntity != null)
                 {
-                    if (repository.tempEntite != null)
+                    if (repository.tempEntity != null)
                     {
-                        repository.CurrentEntite.Body.IsStatic = repository.tempEntite.IsStatic;
+                        repository.CurrentEntity.Body.IsStatic = repository.tempEntity.IsStatic;
                     }
                 }
                 //---
 
                 //--- Si il y'a sélection multiple et que le MouseMode est Resize ou Rotate
                 //    Redéfinir le centre des entités
-                if (repository.ListSelection.Count > 0 && (repository.MouseMode == MouseMode.Resize || repository.MouseMode == MouseMode.Rotate) && clonedSelectedEntite.Count > 0)
+                if (repository.ListSelection.Count > 0 && (repository.MouseMode == MouseMode.Resize || repository.MouseMode == MouseMode.Rotate) && clonedSelectedEntity.Count > 0)
                 {
                     for (int i = 0; i < repository.ListSelection.Count; i++)
                     {
-                        repository.ListSelection[i].Entite.SetNewCenter(clonedSelectedEntite[i].Center - repository.ListSelection[i].Entite.Center, true);
+                        repository.ListSelection[i].Entity.SetNewCenter(clonedSelectedEntity[i].Center - repository.ListSelection[i].Entity.Center, true);
                     }
 
-                    if (repository.CurrentEntite != null)
+                    if (repository.CurrentEntity != null)
                     {
-                        repository.CurrentEntite.SetNewCenter(clonedSelectedEntite.Last().Center - repository.CurrentEntite.Center, true);
+                        repository.CurrentEntity.SetNewCenter(clonedSelectedEntity.Last().Center - repository.CurrentEntity.Center, true);
                     }
 
-                    clonedSelectedEntite = new List<Entite>();
+                    clonedSelectedEntity = new List<Entity>();
                 }
                 //---
 
@@ -1694,43 +1695,43 @@ namespace Edit2D
                 {
                     //--- Si la touche Ctrl n'est pas pressée et que la touche MouseMode (Alt) ne
                     //    l'est pas non plus, vide la liste de multisélection
-                    repository.ListSelection.ForEach(s => s.Entite.Selected = false);
+                    repository.ListSelection.ForEach(s => s.Entity.Selected = false);
                     repository.ListSelection = new List<Selection>();
                     //---
 
-                    Entite selectedEntite = repository.GetSelectedEntiteFromLocation(repository.CurrentPointer.WorldPosition);
+                    Entity selectedEntity = repository.GetSelectedEntityFromLocation(repository.CurrentPointer.WorldPosition);
 
-                    if (selectedEntite != null)
-                        EntiteSelectionChange(repository.CurrentEntite, repository.GetSelectedEntiteFromLocation(repository.CurrentPointer.WorldPosition));
+                    if (selectedEntity != null)
+                        EntitySelectionChange(repository.CurrentEntity, repository.GetSelectedEntityFromLocation(repository.CurrentPointer.WorldPosition));
                 }
                 //--- Si la touche MouseMode est pressée, réinjecte les nouvelles valeurs des propriétés (Size, Rotation)
                 else
                 {
                     //TODO : mettrer cela en place pour la mutli sélection
-                    if (repository.CurrentEntite != null && repository.tempEntite != null)
+                    if (repository.CurrentEntity != null && repository.tempEntity != null)
                     {
                         if (repository.MouseMode == MouseMode.Move)
                         {
-                            for (int i = 0; i < repository.CurrentEntite.ListFixedRevoluteJoint.Count; i++)
+                            for (int i = 0; i < repository.CurrentEntity.ListFixedRevoluteJoint.Count; i++)
                             {
-                                repository.CurrentEntite.ListFixedRevoluteJoint[i].Anchor = repository.CurrentEntite.ListFixedRevoluteJoint[i].Anchor + repository.CurrentEntite.Position - repository.tempEntite.Position;
+                                repository.CurrentEntity.ListFixedRevoluteJoint[i].Anchor = repository.CurrentEntity.ListFixedRevoluteJoint[i].Anchor + repository.CurrentEntity.Position - repository.tempEntity.Position;
                             }
                         }
 
                         if (repository.MouseMode == MouseMode.Resize)
                         {
-                            Entite newEntite = repository.ChangeEntitySize(repository.CurrentEntite, repository.tempEntite.Size);
-                            EntiteSelectionChange(repository.CurrentEntite, newEntite);
+                            Entity newEntity = repository.ChangeEntitySize(repository.CurrentEntity, repository.tempEntity.Size);
+                            EntitySelectionChange(repository.CurrentEntity, newEntity);
 
                             Repository.physicSimulator.Update(0.0000001f);
                         }
 
-                        repository.tempEntite = null;
+                        repository.tempEntity = null;
                     }
 
                     //---> Si la touche Alt (MouseMode) est préssée alors que la souris est relâchée
                     //     alors il faut clôner les entités sélectionnées
-                    CloneSelectedEntite(false);
+                    CloneSelectedEntity(false);
                     //prevPos = repository.CurrentPointer;
                     repository.CurrentPointer.SaveState();
                 }
@@ -1776,17 +1777,17 @@ namespace Edit2D
 
                     if (btnParticleSystemModeBar.Checked)
                     {
-                        if (repository.CurrentEntite != null && repository.CurrentEntite.ListParticleSystem.Count > 0)
+                        if (repository.CurrentEntity != null && repository.CurrentEntity.ListParticleSystem.Count > 0)
                         {
-                            Vector2 vec1 = repository.CurrentPointer2.PrevWorldPosition - repository.CurrentEntite.Position;
-                            Vector2 vec2 = repository.CurrentPointer2.WorldPosition - repository.CurrentEntite.Position;
+                            Vector2 vec1 = repository.CurrentPointer2.PrevWorldPosition - repository.CurrentEntity.Position;
+                            Vector2 vec2 = repository.CurrentPointer2.WorldPosition - repository.CurrentEntity.Position;
 
                             vec1.Normalize();
                             vec2.Normalize();
                             float angle = vec1.GetAngle(vec2);
 
                             //TODO : ajouter un prevpos2 lors du MouseDown pour le pointer2
-                            repository.CurrentEntite.ListParticleSystem[0].EmmittingAngle = repository.tempEntite.ListParticleSystem[0].EmmittingAngle + angle;
+                            repository.CurrentEntity.ListParticleSystem[0].EmmittingAngle = repository.tempEntity.ListParticleSystem[0].EmmittingAngle + angle;
                         }
                     }
                 }
@@ -1800,18 +1801,18 @@ namespace Edit2D
                     repository.CurrentPointer.CalcMousePointerLocation(e.Location, repository.Camera);
 
                     //--- MouseMode.Move
-                    if ((repository.CurrentEntite != null || repository.ListSelection.Count > 0) &&
+                    if ((repository.CurrentEntity != null || repository.ListSelection.Count > 0) &&
                          repository.keyAltPressed &&
                          repository.MouseMode == MouseMode.Move)
                     {
                         Vector2 deltaPosition = repository.CurrentPointer.WorldPosition - repository.CurrentPointer.PrevWorldPosition;
 
-                        if (repository.CurrentEntite != null)
-                            repository.CurrentEntite.FixPosition(repository.tempEntite.Position + deltaPosition);
+                        if (repository.CurrentEntity != null)
+                            repository.CurrentEntity.FixPosition(repository.tempEntity.Position + deltaPosition);
 
                         for (int i = 0; i < repository.ListSelection.Count; i++)
                         {
-                            repository.ListSelection[i].Entite.FixPosition(repository.ListSelection[i].TempEntite.Position + deltaPosition);
+                            repository.ListSelection[i].Entity.FixPosition(repository.ListSelection[i].TempEntity.Position + deltaPosition);
                             repository.ListSelection[i].Pointer.WorldPosition = repository.ListSelection[i].Pointer.PrevWorldPosition + deltaPosition;
 
                             repository.ListSelection[i].Pointer.CalcScreenPositionFromWorldPosition(repository.Camera);
@@ -1821,14 +1822,14 @@ namespace Edit2D
 
                     //--- MouseMode.Resize
                     #region Resize
-                    if (repository.CurrentEntite != null && repository.tempEntite != null && repository.keyAltPressed && repository.MouseMode == MouseMode.Resize)
+                    if (repository.CurrentEntity != null && repository.tempEntity != null && repository.keyAltPressed && repository.MouseMode == MouseMode.Resize)
                     {
                         float width = 0;
                         float height = 0;
 
                         //--- Calcul des positions absolues des 4 points du rectangle
-                        float w = (float)repository.tempEntite.Size.Width / 2f;
-                        float h = (float)repository.tempEntite.Size.Height / 2f;
+                        float w = (float)repository.tempEntity.Size.Width / 2f;
+                        float h = (float)repository.tempEntity.Size.Height / 2f;
                         float r = (float)Math.Sqrt(w * w + h * h);
 
                         float angle = 0f;
@@ -1836,17 +1837,17 @@ namespace Edit2D
 
                         angle = (float)Math.Acos(w / r);
 
-                        angleFinalPoint = repository.tempEntite.Rotation + angle + MathHelper.Pi;
-                        Vector2 vec11 = repository.tempEntite.Position - 0 * repository.tempEntite.Center + new Vector2(r * (float)Math.Cos(angleFinalPoint), r * (float)Math.Sin(angleFinalPoint));
+                        angleFinalPoint = repository.tempEntity.Rotation + angle + MathHelper.Pi;
+                        Vector2 vec11 = repository.tempEntity.Position - 0 * repository.tempEntity.Center + new Vector2(r * (float)Math.Cos(angleFinalPoint), r * (float)Math.Sin(angleFinalPoint));
 
-                        angleFinalPoint = repository.tempEntite.Body.Rotation - angle;
-                        Vector2 vec12 = repository.tempEntite.Position - 0 * repository.tempEntite.Center + new Vector2(r * (float)Math.Cos(angleFinalPoint), r * (float)Math.Sin(angleFinalPoint));
+                        angleFinalPoint = repository.tempEntity.Body.Rotation - angle;
+                        Vector2 vec12 = repository.tempEntity.Position - 0 * repository.tempEntity.Center + new Vector2(r * (float)Math.Cos(angleFinalPoint), r * (float)Math.Sin(angleFinalPoint));
 
-                        angleFinalPoint = repository.tempEntite.Body.Rotation + angle;
-                        Vector2 vec21 = repository.tempEntite.Position - 0 * repository.tempEntite.Center + new Vector2(r * (float)Math.Cos(angleFinalPoint), r * (float)Math.Sin(angleFinalPoint));
+                        angleFinalPoint = repository.tempEntity.Body.Rotation + angle;
+                        Vector2 vec21 = repository.tempEntity.Position - 0 * repository.tempEntity.Center + new Vector2(r * (float)Math.Cos(angleFinalPoint), r * (float)Math.Sin(angleFinalPoint));
 
-                        angleFinalPoint = repository.tempEntite.Body.Rotation - angle + MathHelper.Pi;
-                        Vector2 vec22 = repository.tempEntite.Position - 0 * repository.tempEntite.Center + new Vector2(r * (float)Math.Cos(angleFinalPoint), r * (float)Math.Sin(angleFinalPoint));
+                        angleFinalPoint = repository.tempEntity.Body.Rotation - angle + MathHelper.Pi;
+                        Vector2 vec22 = repository.tempEntity.Position - 0 * repository.tempEntity.Center + new Vector2(r * (float)Math.Cos(angleFinalPoint), r * (float)Math.Sin(angleFinalPoint));
 
                         List<Vector2> listVec = new List<Vector2>() { vec11, vec12, vec21, vec22 };
                         //---
@@ -1928,12 +1929,12 @@ namespace Edit2D
                         if (height <= 0)
                             height = 1;
 
-                        //repository.currentEntite.SetSize((int)width, (int)height);
-                        repository.CurrentEntite.ChangeSize((int)width, (int)height, false);
+                        //repository.currentEntity.SetSize((int)width, (int)height);
+                        repository.CurrentEntity.ChangeSize((int)width, (int)height, false);
 
-                        repository.CurrentEntite.Position = repository.tempEntite.Position;
-                        repository.CurrentEntite.Rotation = repository.tempEntite.Rotation;
-                        //repository.currentEntite.ChangeSize((int)width, (int)height, repository.currentEntite.IsColisionable);
+                        repository.CurrentEntity.Position = repository.tempEntity.Position;
+                        repository.CurrentEntity.Rotation = repository.tempEntity.Rotation;
+                        //repository.currentEntity.ChangeSize((int)width, (int)height, repository.currentEntity.IsColisionable);
 
 
                         //Debug.Print(string.Format("Width : {0:0.00} - Height : {1:0.00}", width, height));
@@ -1945,9 +1946,9 @@ namespace Edit2D
                     //---
 
                     //--- MouseMode.Rotate
-                    if ((repository.CurrentEntite != null || repository.ListSelection.Count > 0) && repository.keyAltPressed && repository.MouseMode == MouseMode.Rotate)
+                    if ((repository.CurrentEntity != null || repository.ListSelection.Count > 0) && repository.keyAltPressed && repository.MouseMode == MouseMode.Rotate)
                     {
-                        List<Entite> listSelectedEntite = repository.GetSelectedEntite();
+                        List<Entity> listSelectedEntity = repository.GetSelectedEntity();
 
                         Vector2 vecA = Vector2.Zero;
                         Vector2 vecB = Vector2.Zero;
@@ -1955,28 +1956,28 @@ namespace Edit2D
 
                         for (int i = 0; i < repository.ListSelection.Count; i++)
                         {
-                            vecA = repository.CurrentPointer.PrevWorldPosition - repository.ListSelection[i].Entite.Position;
-                            vecB = repository.CurrentPointer.WorldPosition - repository.ListSelection[i].Entite.Position;
+                            vecA = repository.CurrentPointer.PrevWorldPosition - repository.ListSelection[i].Entity.Position;
+                            vecB = repository.CurrentPointer.WorldPosition - repository.ListSelection[i].Entity.Position;
 
                             vecA.Normalize();
                             vecB.Normalize();
 
                             angle = vecA.GetAngle(vecB);
 
-                            repository.ListSelection[i].Entite.Rotation = repository.ListSelection[i].TempEntite.Rotation + angle;
+                            repository.ListSelection[i].Entity.Rotation = repository.ListSelection[i].TempEntity.Rotation + angle;
                         }
 
-                        if (repository.CurrentEntite != null)
+                        if (repository.CurrentEntity != null)
                         {
-                            vecA = repository.CurrentPointer.PrevWorldPosition - repository.CurrentEntite.Position;
-                            vecB = repository.CurrentPointer.WorldPosition - repository.CurrentEntite.Position;
+                            vecA = repository.CurrentPointer.PrevWorldPosition - repository.CurrentEntity.Position;
+                            vecB = repository.CurrentPointer.WorldPosition - repository.CurrentEntity.Position;
 
                             vecA.Normalize();
                             vecB.Normalize();
 
                             angle = vecA.GetAngle(vecB);
                             this.Text = angle.ToString();
-                            repository.CurrentEntite.Rotation = repository.tempEntite.Rotation + angle;
+                            repository.CurrentEntity.Rotation = repository.tempEntity.Rotation + angle;
                         }
                     }
                     //---
@@ -2027,52 +2028,52 @@ namespace Edit2D
             }
         }
 
-        List<Entite> clonedSelectedEntite = new List<Entite>();
+        List<Entity> clonedSelectedEntity = new List<Entity>();
 
-        private void CloneSelectedEntite(bool cloneLocal)
+        private void CloneSelectedEntity(bool cloneLocal)
         {
             if (cloneLocal)
-                clonedSelectedEntite = new List<Entite>();
+                clonedSelectedEntity = new List<Entity>();
 
             //---> Création des clones lorsque la touche de modification est pressée
-            if (repository.CurrentEntite != null || repository.ListSelection.Count > 0)
+            if (repository.CurrentEntity != null || repository.ListSelection.Count > 0)
             {
                 for (int i = 0; i < repository.ListSelection.Count; i++)
                 {
                     //---> Le body courant devient statique pour tous les MouseMode
                     if (cloneLocal)
-                        clonedSelectedEntite.Add((Entite)repository.ListSelection[i].Entite.Clone(false));
+                        clonedSelectedEntity.Add((Entity)repository.ListSelection[i].Entity.Clone(false));
                     else
-                        repository.ListSelection[i].TempEntite = (Entite)repository.ListSelection[i].Entite.Clone(false);
+                        repository.ListSelection[i].TempEntity = (Entity)repository.ListSelection[i].Entity.Clone(false);
 
                     repository.ListSelection[i].Pointer.SaveState();
-                    repository.ListSelection[i].Entite.IsStatic = true;
+                    repository.ListSelection[i].Entity.IsStatic = true;
 
                     //--- Suppression du body courant si on est en mode Resize
                     if (repository.MouseMode == MouseMode.Resize)
                     {
-                        Repository.physicSimulator.Remove(repository.ListSelection[i].Entite.Body);
-                        Repository.physicSimulator.Remove(repository.ListSelection[i].Entite.geom);
+                        Repository.physicSimulator.Remove(repository.ListSelection[i].Entity.Body);
+                        Repository.physicSimulator.Remove(repository.ListSelection[i].Entity.geom);
                     }
                     //---
                 }
 
                 //TODO : unifier la mutlisélection avec la sélection simple
-                if (repository.CurrentEntite != null)
+                if (repository.CurrentEntity != null)
                 {
                     //---> Le body courant devient statique pour tous les MouseMode
                     if (cloneLocal)
-                        clonedSelectedEntite.Add((Entite)repository.CurrentEntite.Clone(false));
+                        clonedSelectedEntity.Add((Entity)repository.CurrentEntity.Clone(false));
                     else
-                        repository.tempEntite = (Entite)repository.CurrentEntite.Clone(false);
+                        repository.tempEntity = (Entity)repository.CurrentEntity.Clone(false);
 
-                    repository.CurrentEntite.Body.IsStatic = true;
+                    repository.CurrentEntity.Body.IsStatic = true;
 
                     //--- Suppression du body courant si on est en mode Resize
                     if (repository.MouseMode == MouseMode.Resize)
                     {
-                        Repository.physicSimulator.Remove(repository.CurrentEntite.Body);
-                        Repository.physicSimulator.Remove(repository.CurrentEntite.geom);
+                        Repository.physicSimulator.Remove(repository.CurrentEntity.Body);
+                        Repository.physicSimulator.Remove(repository.CurrentEntity.geom);
                     }
                     //---
                 }

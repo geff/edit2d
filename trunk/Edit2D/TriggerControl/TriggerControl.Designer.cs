@@ -805,7 +805,7 @@
             this.label9.Size = new System.Drawing.Size(144, 19);
             this.label9.TabIndex = 0;
             this.label9.Tag = "F2";
-            this.label9.Text = "Entite en collision";
+            this.label9.Text = "Entity en collision";
             // 
             // pnlValueOverflow
             // 

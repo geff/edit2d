@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
-using Edit2DEngine.Particles;
+using Edit2DEngine.Entities.Particles;
 using Microsoft.Xna.Framework;
 using Edit2DEngine.Action;
 using Microsoft.Xna.Framework.Content;
+using Edit2DEngine.Entities;
+using Edit2DEngine.Tools;
 
 namespace Edit2DEngine.Render
 {
@@ -46,24 +48,24 @@ namespace Edit2DEngine.Render
         {
             Repository.physicSimulator.Update(0.2f);
 
-            //bool ist = repository.listEntite[5].geom == Repository.physicSimulator.GeomList[5];
+            //bool ist = repository.listEntity[5].geom == Repository.physicSimulator.GeomList[5];
         }
 
         private void UpdateEntityActionPlayer()
         {
-            for (int i = 0; i < Repository.listEntite.Count; i++)
+            for (int i = 0; i < Repository.listEntity.Count; i++)
             {
-                Entite entite = Repository.listEntite[i];
+                Entity entity = Repository.listEntity[i];
 
-                UpdateActionHandlerPlayer(entite);
+                UpdateActionHandlerPlayer(entity);
 
-                for (int j = 0; j < entite.ListParticleSystem.Count; j++)
+                for (int j = 0; j < entity.ListParticleSystem.Count; j++)
                 {
-                    UpdateActionHandlerPlayer(entite.ListParticleSystem[j]);
+                    UpdateActionHandlerPlayer(entity.ListParticleSystem[j]);
 
-                    for (int k = 0; k < entite.ListParticleSystem[j].ListParticleTemplate.Count; k++)
+                    for (int k = 0; k < entity.ListParticleSystem[j].ListParticleTemplate.Count; k++)
                     {
-                        UpdateActionHandlerPlayer(entite.ListParticleSystem[j].ListParticleTemplate[k]);
+                        UpdateActionHandlerPlayer(entity.ListParticleSystem[j].ListParticleTemplate[k]);
                     }
                 }
             }
@@ -105,26 +107,26 @@ namespace Edit2DEngine.Render
 
         private void UpdateEntityTrigger()
         {
-            for (int i = 0; i < Repository.listEntite.Count; i++)
+            for (int i = 0; i < Repository.listEntity.Count; i++)
             {
-                Entite entite = Repository.listEntite[i];
+                Entity entity = Repository.listEntity[i];
 
                 //--- Update Trigger
-                for (int j = 0; j < entite.ListTrigger.Count; j++)
+                for (int j = 0; j < entity.ListTrigger.Count; j++)
                 {
                     //TODO : appeler LaunchTrigger uniquement à la fin de la boucle
-                    entite.ListTrigger[j].CheckTrigger(Repository);
+                    entity.ListTrigger[j].CheckTrigger(Repository);
                 }
                 //---
 
                 //--- Update Trigger des particules
-                for (int j = 0; j < entite.ListParticleSystem.Count; j++)
+                for (int j = 0; j < entity.ListParticleSystem.Count; j++)
                 {
-                    for (int k = 0; k < entite.ListParticleSystem[j].ListParticle.Count; k++)
+                    for (int k = 0; k < entity.ListParticleSystem[j].ListParticle.Count; k++)
                     {
-                        for (int l = 0; l < entite.ListParticleSystem[j].ListParticle[k].ListTrigger.Count; l++)
+                        for (int l = 0; l < entity.ListParticleSystem[j].ListParticle[k].ListTrigger.Count; l++)
                         {
-                            entite.ListParticleSystem[j].ListParticle[k].ListTrigger[l].CheckTrigger(Repository);
+                            entity.ListParticleSystem[j].ListParticle[k].ListTrigger[l].CheckTrigger(Repository);
                         }
                     }
                 }
@@ -141,15 +143,15 @@ namespace Edit2DEngine.Render
 
         private void UpdateEntityParticleSystem()
         {
-            for (int i = 0; i < Repository.listEntite.Count; i++)
+            for (int i = 0; i < Repository.listEntity.Count; i++)
             {
-                Entite entite = Repository.listEntite[i];
+                Entity entity = Repository.listEntity[i];
 
                 //--- Update Trigger
-                for (int j = 0; j < entite.ListParticleSystem.Count; j++)
+                for (int j = 0; j < entity.ListParticleSystem.Count; j++)
                 {
                     //TODO : appeler LaunchTrigger uniquement à la fin de la boucle
-                    entite.ListParticleSystem[j].Update();
+                    entity.ListParticleSystem[j].Update();
                 }
                 //---
             }
@@ -158,31 +160,34 @@ namespace Edit2DEngine.Render
 
         public void Draw()
         {
-            for (int i = 0; i < Repository.listEntite.Count; i++)
+            for (int i = 0; i < Repository.listEntity.Count; i++)
             {
-                Entite entite = Repository.listEntite[i];
-
-                DrawEntite(entite);
+                DrawEntity(Repository.listEntity[i]);
             }
         }
 
-        private void DrawEntite(Entite entite)
+        private void DrawEntity(Entity entity)
         {
-            if (entite.ListParticleSystem.Count > 0)
+            foreach (IEntityComponent entityComponent in entity.ListEntityComponent)
             {
+                if (entityComponent is EntitySprite)
+                    DrawEntitySprite((EntitySprite)entityComponent);
+            }
 
+            if (entity.ListParticleSystem.Count > 0)
+            {
                 //--- Rendu du système de particule
-                for (int j = 0; j < entite.ListParticleSystem.Count; j++)
+                for (int j = 0; j < entity.ListParticleSystem.Count; j++)
                 {
-                    ParticleSystem pSystem = entite.ListParticleSystem[j];
+                    ParticleSystem pSystem = entity.ListParticleSystem[j];
 
                     ////--- Rendu de l'angle d'émission
-                    //if (entite.Selected)
+                    //if (entity.Selected)
                     //{
                     //    this.SpriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
-                    //    Vector2 vecStart1 = entite.Position;
-                    //    Vector2 vecStart2 = entite.Position;
+                    //    Vector2 vecStart1 = entity.Position;
+                    //    Vector2 vecStart2 = entity.Position;
 
                     //    Vector2 vecEnd1 = new Vector2();
                     //    Vector2 vecEnd2 = new Vector2();
@@ -204,31 +209,34 @@ namespace Edit2DEngine.Render
 
                     for (int k = 0; k < pSystem.ListParticle.Count; k++)
                     {
-                        DrawEntite(pSystem.ListParticle[k]);
+                        DrawEntity(pSystem.ListParticle[k]);
                     }
                 }
                 //---
 
             }
+        }
 
+        private void DrawEntitySprite(EntitySprite entitySprite)
+        {
             //--- Texture de l'entité
             //effect.Begin();
-            //effect.Parameters["isInBackground"].SetValue(entite.IsInBackground);
-            //effect.Parameters["blurFactor"].SetValue(entite.BlurFactor);
+            //effect.Parameters["isInBackground"].SetValue(entity.IsInBackground);
+            //effect.Parameters["blurFactor"].SetValue(entity.BlurFactor);
 
             //int idTechnique = 0;
 
-            //if (entite.BlurFactor > 0f)
+            //if (entity.BlurFactor > 0f)
             //    idTechnique = 1;
-            //if(entite.IsInBackground)
+            //if(entity.IsInBackground)
             //    effect
             //---
 
             //---
             //Vector2 vecScale = new Vector2();
 
-            //vecScale.X = entite.Rectangle.Width / recScreen.Width;
-            //vecScale.X = entite.Rectangle.Height / recScreen.Height;
+            //vecScale.X = entity.Rectangle.Width / recScreen.Width;
+            //vecScale.X = entity.Rectangle.Height / recScreen.Height;
 
 
             //effect.Techniques[idTechnique].Passes[0].Begin();
@@ -236,29 +244,29 @@ namespace Edit2DEngine.Render
 
             //Texture2D texture = null;
 
-            //if (entite is Particle)
+            //if (entity is Particle)
             //{
-            //    texture = TextureManager.LoadParticleTexture2D(entite.TextureName);
+            //    texture = TextureManager.LoadParticleTexture2D(entity.TextureName);
             //}
             //else
             //{
-            //    texture = TextureManager.LoadTexture2D(entite.TextureName);
+            //    texture = TextureManager.LoadTexture2D(entity.TextureName);
             //}
 
-            //Rectangle recDraw = new Rectangle(entite.Rectangle.X, entite.Rectangle.Y, entite.Rectangle.Width, entite.Rectangle.Height);
+            //Rectangle recDraw = new Rectangle(entity.Rectangle.X, entity.Rectangle.Y, entity.Rectangle.Width, entity.Rectangle.Height);
 
             //float PerspectiveFactor = 20f;
-            //Vector2 drawPosition = (entite.Position - repository.Camera.Position) / PerspectiveFactor * (float)entite.Layer;
+            //Vector2 drawPosition = (entity.Position - repository.Camera.Position) / PerspectiveFactor * (float)entity.Layer;
 
-            ////if (entite.Layer != 0)
+            ////if (entity.Layer != 0)
             ////{
             ////    int a = 0;
             ////}
 
             //recDraw.X += (int)drawPosition.X;
 
-            //this.SpriteBatch.Draw(texture, recDraw, null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 1f);
-            //this.spriteBatch.Draw(TextureManager.LoadTexture2D(entite.TextureName), entite.Position, null, entite.Color, entite.Body.Rotation, entite.Center, 1f, SpriteEffects.None, 1f);
+            //this.SpriteBatch.Draw(texture, recDraw, null, entity.Color, entity.Body.Rotation, entity.Center, SpriteEffects.None, 1f);
+            //this.spriteBatch.Draw(TextureManager.LoadTexture2D(entity.TextureName), entity.Position, null, entity.Color, entity.Body.Rotation, entity.Center, 1f, SpriteEffects.None, 1f);
 
             //effect.Techniques[idTechnique].Passes[0].End();
 
@@ -268,7 +276,7 @@ namespace Edit2DEngine.Render
             //-------------------------------------------------------
             EffectPass pass = null;
 
-            if (entite.BlurFactor != 0f)
+            if (entitySprite.BlurFactor != 0f)
             {
                 effect.CurrentTechnique = effect.Techniques["Blur"];
                 pass = effect.Techniques["Blur"].Passes[0];
@@ -282,8 +290,8 @@ namespace Edit2DEngine.Render
 
             //---
 
-            effect.Parameters["isInBackground"].SetValue(entite.IsInBackground);
-            effect.Parameters["blurFactor"].SetValue(entite.BlurFactor);
+            effect.Parameters["isInBackground"].SetValue(entitySprite.IsInBackground);
+            effect.Parameters["blurFactor"].SetValue(entitySprite.BlurFactor);
             effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
 
             effect.Begin();
@@ -291,67 +299,69 @@ namespace Edit2DEngine.Render
 
             Texture2D texture = null;
 
-            if (entite is Particle)
+            //--- TODO : section à supprimer en homogénisant les systèmes de particules et les entités sprites
+            //if (entitySprite is Particle)
+            //{
+            //    texture = TextureManager.LoadParticleTexture2D(entitySprite.TextureName);
+            //}
+            //else
+            //---
             {
-                texture = TextureManager.LoadParticleTexture2D(entite.TextureName);
-            }
-            else
-            {
-                texture = TextureManager.LoadTexture2D(entite.TextureName);
+                texture = TextureManager.LoadTexture2D(entitySprite.TextureName);
             }
 
-            
-            Rectangle recDraw = new Rectangle(entite.Rectangle.X, entite.Rectangle.Y, entite.Rectangle.Width, entite.Rectangle.Height);
+
+            Rectangle recDraw = new Rectangle(entitySprite.Rectangle.X, entitySprite.Rectangle.Y, entitySprite.Rectangle.Width, entitySprite.Rectangle.Height);
             float PerspectiveFactor = 20f;
-            Vector2 drawPosition = (entite.Position - Repository.Camera.Position) / PerspectiveFactor * (float)entite.Layer;
+            Vector2 drawPosition = (entitySprite.AbsolutePosition - Repository.Camera.Position) / PerspectiveFactor * (float)entitySprite.EntityParent.Layer;
             recDraw.X += (int)drawPosition.X;
 
-            this.SpriteBatch.Draw(texture, recDraw, null, entite.Color, entite.Body.Rotation, entite.Center, SpriteEffects.None, 1f);
+            this.SpriteBatch.Draw(texture, recDraw, null, entitySprite.Color, entitySprite.Body.Rotation, entitySprite.Center, SpriteEffects.None, 1f);
 
             pass.End();
             effect.End();
             //---------------------------------------
 
-            //if (((!repository.pause && repository.IsEntityClickableOnPlay) || repository.pause) && ((repository.showPhysic && entite.IsStatic) || entite.Selected))
+            //if (((!repository.pause && repository.IsEntityClickableOnPlay) || repository.pause) && ((repository.showPhysic && entity.IsStatic) || entity.Selected))
             //{
             //    this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
             //    //--- Pin static
-            //    if (repository.showPhysic && entite.IsStatic)
+            //    if (repository.showPhysic && entity.IsStatic)
             //    {
-            //        this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pin"), new Rectangle((int)entite.Position.X, (int)entite.Position.Y, 10, 16), null, Color.White, entite.Body.Rotation,
-            //            entite.SizeVector / 2 + new Vector2(5, 8), SpriteEffects.None, 1f);
+            //        this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pin"), new Rectangle((int)entity.Position.X, (int)entity.Position.Y, 10, 16), null, Color.White, entity.Body.Rotation,
+            //            entity.SizeVector / 2 + new Vector2(5, 8), SpriteEffects.None, 1f);
             //    }
             //    //---
 
             //    //--- Cadre de sélection
-            //    if (entite.Selected)
+            //    if (entity.Selected)
             //    {
-            //        float ratioX = (float)entite.Size.Width / (float)entite.NativeImageSize.Width;
-            //        float ratioY = (float)entite.Size.Height / (float)entite.NativeImageSize.Height;
+            //        float ratioX = (float)entity.Size.Width / (float)entity.NativeImageSize.Width;
+            //        float ratioY = (float)entity.Size.Height / (float)entity.NativeImageSize.Height;
 
             //        Vector2 vecCenter = Vector2.Zero;
-            //        vecCenter.X = 5f * entite.Center.X / (float)entite.Size.Width * ratioX;
-            //        vecCenter.Y = 5f * entite.Center.Y / (float)entite.Size.Height * ratioY;
+            //        vecCenter.X = 5f * entity.Center.X / (float)entity.Size.Width * ratioX;
+            //        vecCenter.Y = 5f * entity.Center.Y / (float)entity.Size.Height * ratioY;
 
-            //        this.spriteBatch.Draw(TextureManager.LoadTexture2D("Anchor"), entite.Rectangle, null, new Color(0, 150, 250, 100), entite.Body.Rotation, vecCenter, SpriteEffects.None, 1f);
+            //        this.spriteBatch.Draw(TextureManager.LoadTexture2D("Anchor"), entity.Rectangle, null, new Color(0, 150, 250, 100), entity.Body.Rotation, vecCenter, SpriteEffects.None, 1f);
             //    }
             //    //---
 
             //    this.spriteBatch.End();
             //}
 
-            //if (entite.Selected && entite.ListParticleSystem.Count > 0)
+            //if (entity.Selected && entity.ListParticleSystem.Count > 0)
             //{
             //    //--- Rendu du système de particule
-            //    for (int j = 0; j < entite.ListParticleSystem.Count; j++)
+            //    for (int j = 0; j < entity.ListParticleSystem.Count; j++)
             //    {
-            //        ParticleSystem pSystem = entite.ListParticleSystem[j];
+            //        ParticleSystem pSystem = entity.ListParticleSystem[j];
 
             //        this.SpriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
-            //        Vector2 vecStart1 = entite.Position;
-            //        Vector2 vecStart2 = entite.Position;
+            //        Vector2 vecStart1 = entity.Position;
+            //        Vector2 vecStart2 = entity.Position;
 
             //        Vector2 vecEnd1 = new Vector2();
             //        Vector2 vecEnd2 = new Vector2();

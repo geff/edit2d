@@ -10,59 +10,57 @@ using FarseerGames.FarseerPhysics.Dynamics.Joints;
 using Microsoft.Xna.Framework;
 using Edit2DEngine.Action;
 using Edit2DEngine.Trigger;
-using Edit2DEngine.Particles;
+using Edit2DEngine.Entities.Particles;
 using System.Drawing;
 using FarseerGames.FarseerPhysics.Collisions;
+using Edit2DEngine.Entities;
 
-namespace Edit2DEngine
+namespace Edit2DEngine.Tools
 {
     public static class FileSystem
     {
-        private static void OpenEntity(Entite entite, bool isParticle, XmlTextReader reader, Repository repository)
+        private static void OpenEntity(Entity entity, bool isParticle, XmlTextReader reader, Repository repository)
         {
-            //entite.AngularSpeed = float.Parse(reader["AngularSpeed"]);
-            entite.IsColisionable = bool.Parse(reader["IsColisionable"]);
-            entite.IsStatic = bool.Parse(reader["IsStatic"]);
-            entite.Name = reader["Name"];
+            entity.IsStatic = bool.Parse(reader["IsStatic"]);
+            entity.Name = reader["Name"];
+            entity.Position = ReadVector2(reader["Position"]);
+            entity.Rotation = float.Parse(reader["Rotation"]);
 
-            int pos = reader["Position"].IndexOf(';');
-            entite.SetPosition(ReadVector2(reader["Position"]));
+            if (reader["Layer"] != null)
+                entity.Layer = int.Parse(reader["Layer"]);
+        }
 
-            entite.Rotation = float.Parse(reader["Rotation"]);
+        private static void OpenEntitySprite(EntitySprite entitySprite, XmlTextReader reader, Repository repository)
+        {
+            entitySprite.Name = reader["Name"];
+            entitySprite.SetPosition(ReadVector2(reader["Position"]));
+            entitySprite.Rotation = float.Parse(reader["Rotation"]);
 
-            pos = reader["Size"].IndexOf(';');
-            entite.Size = new Size(int.Parse(reader["Size"].Substring(0, pos)), int.Parse(reader["Size"].Substring(pos + 1, reader["Size"].Length - pos - 1)));
+            int pos = reader["Size"].IndexOf(';');
+            entitySprite.Size = new Size(int.Parse(reader["Size"].Substring(0, pos)), int.Parse(reader["Size"].Substring(pos + 1, reader["Size"].Length - pos - 1)));
 
             if (reader["Color"] != null)
             {
                 //string[] strColors = reader["Color"].Split(new char[] { ' ', '{', '}', 'R', 'G', 'B', 'A', ':' }, StringSplitOptions.RemoveEmptyEntries);
-                //entite.Color = new Microsoft.Xna.Framework.Graphics.Color(byte.Parse(strColors[0]), byte.Parse(strColors[1]), byte.Parse(strColors[2]), byte.Parse(strColors[3]));
-                entite.Color = reader["Color"].ToColor();
+                //entitySprite.Color = new Microsoft.Xna.Framework.Graphics.Color(byte.Parse(strColors[0]), byte.Parse(strColors[1]), byte.Parse(strColors[2]), byte.Parse(strColors[3]));
+                entitySprite.Color = reader["Color"].ToColor();
             }
 
             if (reader["IsInBackground"] != null)
-                entite.IsInBackground = bool.Parse(reader["IsInBackground"]);
+                entitySprite.IsInBackground = bool.Parse(reader["IsInBackground"]);
 
             if (reader["BlurFactor"] != null)
-                entite.BlurFactor = float.Parse(reader["BlurFactor"]);
+                entitySprite.BlurFactor = float.Parse(reader["BlurFactor"]);
 
             if (reader["FrictionCoefficient"] != null)
-                entite.FrictionCoefficient = float.Parse(reader["FrictionCoefficient"]);
+                entitySprite.FrictionCoefficient = float.Parse(reader["FrictionCoefficient"]);
 
             if (reader["RestitutionCoefficient"] != null)
-                entite.RestitutionCoefficient = float.Parse(reader["RestitutionCoefficient"]);
+                entitySprite.RestitutionCoefficient = float.Parse(reader["RestitutionCoefficient"]);
 
-            if (reader["Layer"] != null)
-                entite.Layer = int.Parse(reader["Layer"]);
+            Texture2D texture = TextureManager.LoadTexture2D(entitySprite.TextureName);
 
-            Texture2D texture = TextureManager.LoadTexture2D(entite.TextureName);
-
-            //if(!isParticle)
-            //    repository.ChangeEntitySize(entite, new Size(texture.Width, texture.Height));
-
-            entite.TextureName = reader["TextureName"];
-
-            bool ist = entite.geom.Body == entite.Body;
+            entitySprite.TextureName = reader["TextureName"];
         }
 
         public static void Open(string fileName, Repository repository)
@@ -70,11 +68,12 @@ namespace Edit2DEngine
             {
                 XmlTextReader reader = new XmlTextReader(fileName);
 
-                Entite entite = null;
+                Entity entity = null;
+                EntitySprite entitySprite = null;
                 int indexPoints = 0;
                 int curActionEventIndex = 0;
 
-                repository.listEntite = new List<Entite>();
+                repository.listEntity = new List<Entity>();
                 Repository.physicSimulator.Clear();
                 ITriggerHandler currentTriggerHandler = null;
                 IActionHandler currentActionHandler = null;
@@ -90,29 +89,33 @@ namespace Edit2DEngine
                             repository.World = new World();
                             currentTriggerHandler = repository.World;
                         }
-                        if (reader.Name == "Entite")
+                        if (reader.Name == "Entity")
                         {
-                            //string name = repository.FoundNewName(reader["Name"]);
                             string name = reader["Name"].ToString();
 
-                            entite = new Entite(true, reader["TextureName"], name);
+                            entity = new Entity(reader["Name"]);
 
-                            OpenEntity(entite, false, reader, repository);
+                            OpenEntity(entity, false, reader, repository);
 
-                            currentTriggerHandler = entite;
-                            currentActionHandler = entite;
+                            currentTriggerHandler = entity;
+                            currentActionHandler = entity;
 
                             dicActionHandler.Add(currentActionHandler.Name, currentActionHandler);
-                            repository.listEntite.Add(entite);
+                            repository.listEntity.Add(entity);
+                        }
+                        else if (reader.Name == "EntitySprite")
+                        {
+                            entitySprite = new EntitySprite(true, reader["TextureName"], reader["Name"]);
+                            OpenEntitySprite(entitySprite, reader, repository);
+
+                            entity.ListEntityComponent.Add(entitySprite);
                         }
                         else if (reader.Name == "FixedLinearSpring")
                         {
-                            Entite ent = repository.listEntite.Last();
-
                             FixedLinearSpring spring = new FixedLinearSpring();
-                            ent.ListFixedLinearSpring.Add(spring);
+                            entitySprite.ListFixedLinearSpring.Add(spring);
 
-                            spring.Body = entite.Body;
+                            spring.Body = entitySprite.Body;
                             spring.BodyAttachPoint = ReadVector2(reader["BodyAttachPoint"]);
                             //spring..Position = ReadVector2(reader["Position"]);
                             spring.WorldAttachPoint = ReadVector2(reader["WorldAttachPoint"]);
@@ -124,17 +127,13 @@ namespace Edit2DEngine
                         }
                         else if (reader.Name == "LinearSpring")
                         {
-                            Entite ent = repository.listEntite.Last();
-
-                            //ent.AddLinearSpring
-
                             LinearSpring spring = new LinearSpring();
-                            ent.ListLinearSpring.Add(spring);
+                            entitySprite.ListLinearSpring.Add(spring);
 
-                            //SpringFactory.Instance.CreateLinearSpring(Repository.physicSimulator, body, vec1, entite.body, vec2, 10f, 10f);
+                            //SpringFactory.Instance.CreateLinearSpring(Repository.physicSimulator, body, vec1, entity.body, vec2, 10f, 10f);
 
-                            spring.Body1 = ent.Body;
-                            spring.Body2 = ent.Body;
+                            spring.Body1 = entitySprite.Body;
+                            spring.Body2 = entitySprite.Body;
                             spring.Tag = reader["Body2"];
                             spring.AttachPoint1 = ReadVector2(reader["AttachPoint1"]);
                             spring.AttachPoint2 = ReadVector2(reader["AttachPoint2"]);
@@ -146,12 +145,10 @@ namespace Edit2DEngine
                         }
                         else if (reader.Name == "FixedRevoluteJoint")
                         {
-                            Entite ent = repository.listEntite.Last();
-
                             FixedRevoluteJoint joint = new FixedRevoluteJoint();
-                            ent.ListFixedRevoluteJoint.Add(joint);
+                            entitySprite.ListFixedRevoluteJoint.Add(joint);
 
-                            joint.Body = entite.Body;
+                            joint.Body = entitySprite.Body;
                             joint.Anchor = ReadVector2(reader["Anchor"]);
                             joint.MaxImpulse = float.Parse(reader["MaxImpulse"]);
 
@@ -243,9 +240,9 @@ namespace Edit2DEngine
                             ActionEvent actionEvent = (ActionEvent)scr.ListAction.Last();
 
                             actionEvent.ActionEventTypes[curActionEventIndex] = ActionEventType.EntityBinding;
-                            actionEvent.EntiteBindingNames[curActionEventIndex] = reader["EntityName"];
-                            actionEvent.EntiteBindingPropertyNames[curActionEventIndex] = reader["PropertyName"];
-                            actionEvent.EntiteBindingPropertyId[curActionEventIndex] = int.Parse(reader["PropertyIndex"]);
+                            actionEvent.EntityBindingNames[curActionEventIndex] = reader["EntityName"];
+                            actionEvent.EntityBindingPropertyNames[curActionEventIndex] = reader["PropertyName"];
+                            actionEvent.EntityBindingPropertyId[curActionEventIndex] = int.Parse(reader["PropertyIndex"]);
                         }
                         else if (reader.Name == "Random")
                         {
@@ -260,7 +257,7 @@ namespace Edit2DEngine
                         {
                             TriggerCollision triggerCollision = new TriggerCollision(reader["TriggerName"], currentTriggerHandler, null);
 
-                            triggerCollision.TargetCollisionEntiteName = reader["TargetEntiteName"];
+                            triggerCollision.TargetCollisionEntityName = reader["TargetEntityName"];
 
                             currentTriggerHandler.ListTrigger.Add(triggerCollision);
                         }
@@ -322,7 +319,7 @@ namespace Edit2DEngine
                         }
                         else if (reader.Name == "ParticleSystem")
                         {
-                            Entite ent = repository.listEntite.Last();
+                            Entity ent = repository.listEntity.Last();
 
                             ParticleSystem pSystem = new ParticleSystem(ent);
                             pSystem.EmmittingAngle = float.Parse(reader["EmmittingAngle"]);
@@ -339,7 +336,7 @@ namespace Edit2DEngine
                         }
                         else if (reader.Name == "ParticleTemplate")
                         {
-                            Entite ent = repository.listEntite.Last();
+                            Entity ent = repository.listEntity.Last();
                             ParticleSystem psSystem = ent.ListParticleSystem.Last();
 
                             Particle particleTemplate = new Particle(false, reader["TextureName"], reader["Name"], psSystem);
@@ -358,27 +355,45 @@ namespace Edit2DEngine
                 LinkTriggerToScript(repository.World, dicActionHandler);
                 //---
 
-                foreach (Entite ent in repository.listEntite)
+                //--- Associe le deuxième corps des ressorts
+                foreach (Entity ent in repository.listEntity)
                 {
-                    foreach (LinearSpring spring in ent.ListLinearSpring)
+                    foreach (IEntityComponent entityComponent in ent.ListEntityComponent)
                     {
-                        spring.Body2 = repository.listEntite.Find(e => e.Name == spring.Tag.ToString()).Body;
+                        if (entityComponent is EntitySprite)
+                        {
+                            foreach (LinearSpring spring in ((EntitySprite)entityComponent).ListLinearSpring)
+                            {
+                                foreach (Entity ent2 in repository.listEntity)
+                                {
+                                    foreach (IEntityComponent entityComponent2 in ent.ListEntityComponent)
+                                    {
+                                        if (entityComponent2 is EntitySprite &&
+                                            spring.Tag.ToString() == ent2.Name + "-" + entityComponent2.Name)
+                                        {
+                                            spring.Body2 = ((EntitySprite)entityComponent2).Body;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     //--- Associe les scripts aux triggers de l'entité
                     LinkTriggerToScript(ent, dicActionHandler);
                     //---
                 }
+                //---
 
                 //Repository.physicSimulator.Update(0.00002f);
 
                 //for (int i = 0; i < Repository.physicSimulator.GeomList.Count; i++)
                 //{
-                //    //Repository.physicSimulator.GeomList[i].SetBody(repository.listEntite[i].Body);
-                //    //repository.listEntite[i].geom = Repository.physicSimulator.GeomList[i];
+                //    //Repository.physicSimulator.GeomList[i].SetBody(repository.listEntity[i].Body);
+                //    //repository.listEntity[i].geom = Repository.physicSimulator.GeomList[i];
                 //}
 
-                repository.OrderEntite();
+                repository.OrderEntity();
             }
         }
 
@@ -391,7 +406,7 @@ namespace Edit2DEngine
                     string scriptName = trigger.ListTargetScriptName[i];
                     string actionHandlerName = trigger.ListTargetActionHandlerName[i];
 
-                    //Script script = repository.listEntite.Find(ent2 => ent2.Name == entiteName).ListScript.Find(scr => scr.ScriptName == scriptName);
+                    //Script script = repository.listEntity.Find(ent2 => ent2.Name == entityName).ListScript.Find(scr => scr.ScriptName == scriptName);
                     Script script = dicActionHandler[actionHandlerName].ListScript.Find(scr => scr.ScriptName == scriptName);
 
                     if (script != null)
@@ -402,46 +417,55 @@ namespace Edit2DEngine
                 {
                     TriggerCollision triggerCol = (TriggerCollision)trigger;
 
-                    triggerCol.TargetEntite = (Entite)dicActionHandler.First(ent2 => ent2.Value is Entite && ent2.Value.Name == triggerCol.TargetCollisionEntiteName).Value;
+                    triggerCol.TargetEntity = (Entity)dicActionHandler.First(ent2 => ent2.Value is Entity && ent2.Value.Name == triggerCol.TargetCollisionEntityName).Value;
                 }
             }
         }
 
-        private static void SaveEntity(Entite entite, bool isParticle, XmlTextWriter writer, Repository repository)
+        private static void SaveEntity(Entity entity, bool isParticle, XmlTextWriter writer, Repository repository)
         {
             if (isParticle)
             {
                 writer.WriteStartElement("ParticleTemplate");
 
-                Particle particle = (Particle)entite;
+                Particle particle = (Particle)entity;
 
                 writer.WriteAttributeString("LifeTime", particle.LifeTime.ToString());
             }
             else
-                writer.WriteStartElement("Entite");
+                writer.WriteStartElement("Entity");
 
-            writer.WriteAttributeString("Position", WriteVector2(entite.Position));
-            writer.WriteAttributeString("Name", entite.Name);
-            writer.WriteAttributeString("TextureName", entite.TextureName);
-            writer.WriteAttributeString("IsColisionable", entite.IsColisionable.ToString());
-            writer.WriteAttributeString("IsStatic", entite.IsStatic.ToString());
-            writer.WriteAttributeString("Size", String.Format("{0};{1}", entite.Size.Width, entite.Size.Height));
-            writer.WriteAttributeString("Rotation", String.Format("{0:0.00}", entite.Rotation));
+            writer.WriteAttributeString("Position", WriteVector2(entity.Position));
+            writer.WriteAttributeString("Name", entity.Name);
+           
+            writer.WriteAttributeString("IsStatic", entity.IsStatic.ToString());
+            //writer.WriteAttributeString("Size", String.Format("{0};{1}", entity.Size.Width, entity.Size.Height));
+            writer.WriteAttributeString("Rotation", String.Format("{0:0.00}", entity.Rotation));
 
-            writer.WriteAttributeString("Color", entite.Color.ToString());
-            writer.WriteAttributeString("BlurFactor", String.Format("{0:0.00}", entite.BlurFactor));
-            writer.WriteAttributeString("IsInBackground", entite.IsInBackground.ToString());
+            //writer.WriteAttributeString("Color", entity.Color.ToString());
+            //writer.WriteAttributeString("BlurFactor", String.Format("{0:0.00}", entity.BlurFactor));
+            //writer.WriteAttributeString("IsInBackground", entity.IsInBackground.ToString());
 
-            writer.WriteAttributeString("FrictionCoefficient", WriteFloat(entite.FrictionCoefficient));
-            writer.WriteAttributeString("RestitutionCoefficient", WriteFloat(entite.RestitutionCoefficient));
-            writer.WriteAttributeString("Layer", entite.Layer.ToString());
+            //writer.WriteAttributeString("FrictionCoefficient", WriteFloat(entity.FrictionCoefficient));
+            //writer.WriteAttributeString("RestitutionCoefficient", WriteFloat(entity.RestitutionCoefficient));
+            writer.WriteAttributeString("Layer", entity.Layer.ToString());
 
+
+            foreach (IEntityComponent entityComponent in entity.ListEntityComponent)
+            {
+                if (entityComponent is EntitySprite)
+                    SaveEntitySprite((EntitySprite)entityComponent, writer, repository);
+
+                //TODO : gérer l'écriture du fichier XML pour les EntityText et Entity3DModel
+            }
+
+            /*
             #region Springs
-            for (int j = 0; j < entite.ListFixedLinearSpring.Count; j++)
+            for (int j = 0; j < entity.ListFixedLinearSpring.Count; j++)
             {
                 writer.WriteStartElement("FixedLinearSpring");
 
-                FixedLinearSpring spring = entite.ListFixedLinearSpring[j];
+                FixedLinearSpring spring = entity.ListFixedLinearSpring[j];
 
                 writer.WriteAttributeString("BodyAttachPoint", WriteVector2(spring.BodyAttachPoint));
                 //writer.WriteAttributeString("Position", WriteVector2(spring.Position));
@@ -450,15 +474,15 @@ namespace Edit2DEngine
                 writer.WriteEndElement();
             }
 
-            for (int j = 0; j < entite.ListLinearSpring.Count; j++)
+            for (int j = 0; j < entity.ListLinearSpring.Count; j++)
             {
                 writer.WriteStartElement("LinearSpring");
 
-                LinearSpring spring = entite.ListLinearSpring[j];
+                LinearSpring spring = entity.ListLinearSpring[j];
 
-                Entite entite2 = repository.GetEntiteFromBody(spring.Body2);
+                Entity entity2 = repository.GetEntityFromBody(spring.Body2);
 
-                writer.WriteAttributeString("Body2", entite2.Name);
+                writer.WriteAttributeString("Body2", entity2.Name);
 
                 writer.WriteAttributeString("AttachPoint1", WriteVector2(spring.AttachPoint1));
                 writer.WriteAttributeString("AttachPoint2", WriteVector2(spring.AttachPoint2));
@@ -469,24 +493,24 @@ namespace Edit2DEngine
             #endregion
 
             #region Joints
-            for (int j = 0; j < entite.ListFixedRevoluteJoint.Count; j++)
+            for (int j = 0; j < entity.ListFixedRevoluteJoint.Count; j++)
             {
                 writer.WriteStartElement("FixedRevoluteJoint");
 
-                FixedRevoluteJoint joint = entite.ListFixedRevoluteJoint[j];
+                FixedRevoluteJoint joint = entity.ListFixedRevoluteJoint[j];
 
                 writer.WriteAttributeString("Anchor", WriteVector2(joint.Anchor));
                 writer.WriteAttributeString("MaxImpulse", WriteFloat(joint.MaxImpulse));
                 writer.WriteEndElement();
             }
             #endregion
-
+*/
             #region Scripts & Actions
-            for (int j = 0; j < entite.ListScript.Count; j++)
+            for (int j = 0; j < entity.ListScript.Count; j++)
             {
                 writer.WriteStartElement("Script");
 
-                Script script = entite.ListScript[j];
+                Script script = entity.ListScript[j];
 
                 writer.WriteAttributeString("ScriptName", script.ScriptName);
 
@@ -557,9 +581,9 @@ namespace Edit2DEngine
                                     break;
                                 case ActionEventType.EntityBinding:
                                     writer.WriteStartElement("EntityBinding");
-                                    writer.WriteAttributeString("EntityName", actionEvent.EntiteBindings[i].Name);
-                                    writer.WriteAttributeString("PropertyName", actionEvent.EntiteBindingProperties[i].Name);
-                                    writer.WriteAttributeString("PropertyIndex", actionEvent.EntiteBindingPropertyId[i].ToString());
+                                    writer.WriteAttributeString("EntityName", actionEvent.EntityBindings[i].Name);
+                                    writer.WriteAttributeString("PropertyName", actionEvent.EntityBindingProperties[i].Name);
+                                    writer.WriteAttributeString("PropertyIndex", actionEvent.EntityBindingPropertyId[i].ToString());
                                     break;
                                 case ActionEventType.Random:
                                     writer.WriteStartElement("Random");
@@ -580,16 +604,16 @@ namespace Edit2DEngine
             #endregion
 
             #region Triggers
-            for (int j = 0; j < entite.ListTrigger.Count; j++)
+            for (int j = 0; j < entity.ListTrigger.Count; j++)
             {
-                TriggerBase trigger = entite.ListTrigger[j];
+                TriggerBase trigger = entity.ListTrigger[j];
 
                 SaveTrigger(writer, trigger);
             }
             #endregion
 
             #region Particle system
-            foreach (ParticleSystem psystem in entite.ListParticleSystem)
+            foreach (ParticleSystem psystem in entity.ListParticleSystem)
             {
                 writer.WriteStartElement("ParticleSystem");
 
@@ -613,6 +637,176 @@ namespace Edit2DEngine
             writer.WriteEndElement();
         }
 
+        private static void SaveEntitySprite(EntitySprite entitySprite, XmlTextWriter writer, Repository repository)
+        {
+            writer.WriteAttributeString("Position", WriteVector2(entitySprite.Position));
+            writer.WriteAttributeString("Name", entitySprite.Name);
+
+            writer.WriteAttributeString("IsStatic", entitySprite.IsStatic.ToString());
+            writer.WriteAttributeString("Size", String.Format("{0};{1}", entitySprite.Size.Width, entitySprite.Size.Height));
+            writer.WriteAttributeString("Rotation", String.Format("{0:0.00}", entitySprite.Rotation));
+
+            writer.WriteAttributeString("Color", entitySprite.Color.ToString());
+            writer.WriteAttributeString("BlurFactor", String.Format("{0:0.00}", entitySprite.BlurFactor));
+            writer.WriteAttributeString("IsInBackground", entitySprite.IsInBackground.ToString());
+
+            writer.WriteAttributeString("FrictionCoefficient", WriteFloat(entitySprite.FrictionCoefficient));
+            writer.WriteAttributeString("RestitutionCoefficient", WriteFloat(entitySprite.RestitutionCoefficient));
+            writer.WriteAttributeString("Layer", entitySprite.Layer.ToString());
+
+            #region Springs
+            for (int j = 0; j < entitySprite.ListFixedLinearSpring.Count; j++)
+            {
+                writer.WriteStartElement("FixedLinearSpring");
+
+                FixedLinearSpring spring = entitySprite.ListFixedLinearSpring[j];
+
+                writer.WriteAttributeString("BodyAttachPoint", WriteVector2(spring.BodyAttachPoint));
+                //writer.WriteAttributeString("Position", WriteVector2(spring.Position));
+                writer.WriteAttributeString("RestLength", WriteFloat(spring.RestLength));
+                writer.WriteAttributeString("WorldAttachPoint", WriteVector2(spring.WorldAttachPoint));
+                writer.WriteEndElement();
+            }
+
+            for (int j = 0; j < entitySprite.ListLinearSpring.Count; j++)
+            {
+                writer.WriteStartElement("LinearSpring");
+
+                LinearSpring spring = entitySprite.ListLinearSpring[j];
+
+                Entity entity2 = repository.GetEntityFromBody(spring.Body2);
+
+                writer.WriteAttributeString("Body2", entity2.Name);
+
+                writer.WriteAttributeString("AttachPoint1", WriteVector2(spring.AttachPoint1));
+                writer.WriteAttributeString("AttachPoint2", WriteVector2(spring.AttachPoint2));
+                writer.WriteAttributeString("RestLength", WriteFloat(spring.RestLength));
+
+                writer.WriteEndElement();
+            }
+            #endregion
+
+            #region Joints
+            for (int j = 0; j < entitySprite.ListFixedRevoluteJoint.Count; j++)
+            {
+                writer.WriteStartElement("FixedRevoluteJoint");
+
+                FixedRevoluteJoint joint = entitySprite.ListFixedRevoluteJoint[j];
+
+                writer.WriteAttributeString("Anchor", WriteVector2(joint.Anchor));
+                writer.WriteAttributeString("MaxImpulse", WriteFloat(joint.MaxImpulse));
+                writer.WriteEndElement();
+            }
+            #endregion
+
+            #region Scripts & Actions
+            for (int j = 0; j < entitySprite.ListScript.Count; j++)
+            {
+                writer.WriteStartElement("Script");
+
+                Script script = entitySprite.ListScript[j];
+
+                writer.WriteAttributeString("ScriptName", script.ScriptName);
+
+                for (int k = 0; k < script.ListAction.Count; k++)
+                {
+                    ActionBase action = script.ListAction[k];
+
+                    if (action is ActionCurve)
+                    {
+                        writer.WriteStartElement("Curve");
+
+                        ActionCurve actionCurve = (ActionCurve)action;
+
+                        writer.WriteAttributeString("ActionName", actionCurve.ActionName);
+                        writer.WriteAttributeString("PropertyName", actionCurve.PropertyName);
+                        writer.WriteAttributeString("IsRelative", actionCurve.IsRelative.ToString());
+                        writer.WriteAttributeString("IsLoop", actionCurve.IsLoop.ToString());
+
+                        for (int l = 0; l < actionCurve.ListCurve.Count; l++)
+                        {
+                            writer.WriteStartElement("Points");
+
+                            Curve curve = actionCurve.ListCurve[l];
+
+                            for (int m = 0; m < curve.Keys.Count; m++)
+                            {
+                                writer.WriteStartElement("Point");
+                                writer.WriteAttributeString("X", WriteFloat(curve.Keys[m].Position));
+                                writer.WriteAttributeString("Y", WriteFloat(curve.Keys[m].Value));
+                                writer.WriteEndElement();
+                            }
+
+                            writer.WriteEndElement();
+                        }
+                        writer.WriteEndElement();
+                    }
+                    else if (action is ActionEvent)
+                    {
+                        writer.WriteStartElement("Event");
+
+                        ActionEvent actionEvent = (ActionEvent)action;
+
+                        writer.WriteAttributeString("ActionName", actionEvent.ActionName);
+                        writer.WriteAttributeString("PropertyName", actionEvent.PropertyName);
+
+                        for (int i = 0; i < actionEvent.ActionEventTypes.Length; i++)
+                        {
+                            writer.WriteStartElement("EventDetail");
+                            writer.WriteAttributeString("EventIndex", i.ToString());
+                            writer.WriteAttributeString("IsRelative", actionEvent.IsRelative[i].ToString());
+                            writer.WriteAttributeString("Duration", actionEvent.Durations[i].ToString());
+                            writer.WriteAttributeString("Speed", actionEvent.Speeds[i].ToString());
+
+                            switch (actionEvent.ActionEventTypes[i])
+                            {
+                                case ActionEventType.Deactivated:
+                                    writer.WriteStartElement("Deactivated");
+                                    break;
+                                case ActionEventType.FixedValue:
+                                    writer.WriteStartElement("FixedValue");
+                                    writer.WriteAttributeString("Value", WriteFloat(actionEvent.FloatValues[i]));
+                                    break;
+                                case ActionEventType.MouseX:
+                                    writer.WriteStartElement("MouseX");
+                                    break;
+                                case ActionEventType.MouseY:
+                                    writer.WriteStartElement("MouseY");
+                                    break;
+                                case ActionEventType.EntityBinding:
+                                    writer.WriteStartElement("EntityBinding");
+                                    writer.WriteAttributeString("EntityName", actionEvent.EntityBindings[i].Name);
+                                    writer.WriteAttributeString("PropertyName", actionEvent.EntityBindingProperties[i].Name);
+                                    writer.WriteAttributeString("PropertyIndex", actionEvent.EntityBindingPropertyId[i].ToString());
+                                    break;
+                                case ActionEventType.Random:
+                                    writer.WriteStartElement("Random");
+                                    writer.WriteAttributeString("RandomMinValue", WriteFloat(actionEvent.RndMinValues[i]));
+                                    writer.WriteAttributeString("RandomMaxValue", WriteFloat(actionEvent.RndMaxValues[i]));
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            writer.WriteEndElement();
+                            writer.WriteEndElement();
+                        }
+                    }
+                }
+                writer.WriteEndElement();
+            }
+            #endregion
+
+            #region Triggers
+            for (int j = 0; j < entitySprite.ListTrigger.Count; j++)
+            {
+                TriggerBase trigger = entitySprite.ListTrigger[j];
+
+                SaveTrigger(writer, trigger);
+            }
+            #endregion
+        }
+
         private static void SaveTrigger(XmlWriter writer, TriggerBase trigger)
         {
             if (trigger is TriggerCollision)
@@ -623,7 +817,7 @@ namespace Edit2DEngine
 
                 writer.WriteAttributeString("TriggerName", triggerCollision.TriggerName);
 
-                writer.WriteAttributeString("TargetEntiteName", triggerCollision.TargetEntite.Name);
+                writer.WriteAttributeString("TargetEntityName", triggerCollision.TargetEntity.Name);
             }
             else if (trigger is TriggerValueChanged)
             {
@@ -672,7 +866,7 @@ namespace Edit2DEngine
             {
                 writer.WriteStartElement("TriggerScript");
 
-                //TODO : gérer correctement selon l'origine de l'entité (Entite ou ParticleSystem)
+                //TODO : gérer correctement selon l'origine de l'entité (Entity ou ParticleSystem)
                 writer.WriteAttributeString("ScriptActionHandlerName", script.ActionHandler.Name);
                 writer.WriteAttributeString("ScriptName", script.ScriptName);
 
@@ -709,11 +903,11 @@ namespace Edit2DEngine
             //---
 
             //--- Liste des entités
-            for (int i = 0; i < repository.listEntite.Count; i++)
+            for (int i = 0; i < repository.listEntity.Count; i++)
             {
-                Entite entite = repository.listEntite[i];
+                Entity entity = repository.listEntity[i];
 
-                SaveEntity(entite, false, writer, repository);
+                SaveEntity(entity, false, writer, repository);
             }
             //---
 

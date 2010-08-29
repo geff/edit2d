@@ -39,8 +39,8 @@ float4 gradientColor1;
 float4 gradientColor2;
 //---
 
-float2   myEntiteSize;
-float2   myEntitePosition;
+float2   myEntitySize;
+float2   myEntityPosition;
 float2   myTextureSize;
 float2 blipPos;
 bool isInBackground = false;

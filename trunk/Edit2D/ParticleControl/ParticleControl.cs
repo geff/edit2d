@@ -7,9 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework.Graphics;
-using Edit2DEngine.Particles;
+using Edit2DEngine.Entities.Particles;
 using Edit2DEngine;
 using Edit2D.UC;
+using Edit2DEngine.Tools;
+using Edit2DEngine.Entities;
 
 namespace Edit2D.ParticleControl
 {
@@ -50,9 +52,9 @@ namespace Edit2D.ParticleControl
         {
             Repository.CurrentParticleSystem = null;
 
-            if (Repository.CurrentEntite != null && listBoxParticleSystem.SelectedIndex != -1)
+            if (Repository.CurrentEntity != null && listBoxParticleSystem.SelectedIndex != -1)
             {
-                Repository.CurrentParticleSystem = Repository.CurrentEntite.ListParticleSystem[listBoxParticleSystem.SelectedIndex];
+                Repository.CurrentParticleSystem = Repository.CurrentEntity.ListParticleSystem[listBoxParticleSystem.SelectedIndex];
             }
 
             CheckNodeGlobalTreeView<ParticleSystem>(Repository.CurrentParticleSystem);
@@ -180,9 +182,9 @@ namespace Edit2D.ParticleControl
         {
             listBoxParticleSystem.Items.Clear();
 
-            if (Repository.CurrentEntite != null)
+            if (Repository.CurrentEntity != null)
             {
-                foreach (ParticleSystem particleSystem in Repository.CurrentEntite.ListParticleSystem)
+                foreach (ParticleSystem particleSystem in Repository.CurrentEntity.ListParticleSystem)
                 {
                     listBoxParticleSystem.Items.Add(particleSystem.Name);
                 }
@@ -210,7 +212,7 @@ namespace Edit2D.ParticleControl
                     listBoxParticleSystem.SelectedIndex = -1;
                     RefreshParticleTemplateListBox(true);
 
-                    RefreshGlobalTreeView<Entite>(Repository.CurrentEntite);
+                    RefreshGlobalTreeView<Entity>(Repository.CurrentEntity);
                 }
             }
         }
@@ -259,17 +261,17 @@ namespace Edit2D.ParticleControl
 
             RefreshParticleSystemListBox(selectParticleSystem);
 
-            this.Visible = (Repository.CurrentEntite != null);
+            this.Visible = (Repository.CurrentEntity != null);
         }
 
         public void AddParticleSystem()
         {
-            if (Repository.CurrentEntite != null)
+            if (Repository.CurrentEntity != null)
             {
-                ParticleSystem particleSystem = new ParticleSystem(Repository.CurrentEntite);
-                particleSystem.Name = Common.CreateNewName<ParticleSystem>(Repository.CurrentEntite.ListParticleSystem, "Name", "ParticleSystem{0}");
+                ParticleSystem particleSystem = new ParticleSystem(Repository.CurrentEntity);
+                particleSystem.Name = Common.CreateNewName<ParticleSystem>(Repository.CurrentEntity.ListParticleSystem, "Name", "ParticleSystem{0}");
 
-                Repository.CurrentEntite.ListParticleSystem.Add(particleSystem);
+                Repository.CurrentEntity.ListParticleSystem.Add(particleSystem);
 
                 //--- Rafraichissement de la liste des scripts et de l'arborescence
                 RefreshParticleSystemListBox(false);
@@ -284,9 +286,9 @@ namespace Edit2D.ParticleControl
 
         public void DeleteParticleSystem()
         {
-            if (Repository.CurrentEntite != null && Repository.CurrentParticleSystem != null)
+            if (Repository.CurrentEntity != null && Repository.CurrentParticleSystem != null)
             {
-                Repository.CurrentEntite.ListParticleSystem.Remove(Repository.CurrentParticleSystem);
+                Repository.CurrentEntity.ListParticleSystem.Remove(Repository.CurrentParticleSystem);
 
                 Repository.CurrentParticleSystem = null;
 
