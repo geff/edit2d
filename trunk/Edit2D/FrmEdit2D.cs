@@ -10,8 +10,8 @@ using Microsoft.Xna.Framework;
 using FarseerGames.GettingStarted;
 using System.IO;
 using Xna.Tools;
-using Edit2DEngine.Action;
-using Edit2DEngine.Trigger;
+using Edit2DEngine.Actions;
+
 using Edit2DEngine.Entities.Particles;
 using Edit2DEngine;
 using Edit2DEngine.Render;

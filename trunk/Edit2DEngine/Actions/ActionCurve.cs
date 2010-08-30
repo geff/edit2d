@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Edit2DEngine.Action;
+using Edit2DEngine.Actions;
 using System.Linq;
 using System.Reflection;
 using System.ComponentModel;
@@ -10,7 +10,7 @@ using Edit2DEngine.Entities.Particles;
 using System.Drawing;
 using Edit2DEngine.Entities;
 
-namespace Edit2DEngine.Action
+namespace Edit2DEngine.Actions
 {
     public class ActionCurve : ActionBase
     {

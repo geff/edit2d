@@ -5,14 +5,14 @@ using System.Text;
 using FarseerGames.FarseerPhysics.Collisions;
 using Edit2DEngine.Entities;
 
-namespace Edit2DEngine.Trigger
+namespace Edit2DEngine.Triggers
 {
     public class TriggerCollision : TriggerBase
     {
-        public Entity TargetEntity { get; set; }
+        public ITriggerCollisionHandler TargetEntity { get; set; }
         public String TargetCollisionEntityName { get; set; }
 
-        public TriggerCollision(String triggerName, ITriggerHandler triggerHandler, Entity targetEntity)
+        public TriggerCollision(String triggerName, ITriggerCollisionHandler triggerHandler, ITriggerCollisionHandler targetEntity)
         {
             this.TriggerName = triggerName;
             this.TriggerHandler = triggerHandler;
@@ -33,7 +33,7 @@ namespace Edit2DEngine.Trigger
             if (this.TargetEntity != null && this.TargetEntity.geom != null)
             {
                 //if (this.Entity.geom.Collide(this.TargetEntity.geom))
-                if (this.TargetEntity.geom.Collide(((Entity)this.TriggerHandler).geom))
+                if (this.TargetEntity.geom.Collide(((ITriggerCollisionHandler)this.TriggerHandler).geom))
                 {
                     LaunchScript(repository);
                 }

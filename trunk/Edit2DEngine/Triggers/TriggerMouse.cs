@@ -6,14 +6,14 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Edit2DEngine.Entities;
 
-namespace Edit2DEngine.Trigger
+namespace Edit2DEngine.Triggers
 {
     public class TriggerMouse : TriggerBase
     {
         public TriggerMouseType TriggerMouseType { get; set; }
         private bool IsMouseOver = false;
 
-        public TriggerMouse(String triggerName, ITriggerHandler triggerHandler, TriggerMouseType triggerMouseType)
+        public TriggerMouse(String triggerName, ITriggerMouseHandler triggerHandler, TriggerMouseType triggerMouseType)
         {
             this.TriggerName = triggerName;
             this.TriggerHandler = triggerHandler;
@@ -36,12 +36,13 @@ namespace Edit2DEngine.Trigger
             //new Vector2(mouseState.X, mouseState.Y) - repository.GetModelViewControlPosition();
             bool launchScript = false;
 
+            //TODO :  utiliser un autre mécanisme pour la détection du clique que la géométrie de l'objet
             switch (TriggerMouseType)
             {
                 case TriggerMouseType.MouseRightClick:
                     if (this.TriggerHandler is Entity)
                     {
-                        if (mouseState.RightButton == ButtonState.Pressed && ((Entity)TriggerHandler).geom.Collide(pos))
+                        if (mouseState.RightButton == ButtonState.Pressed && ((ITriggerMouseHandler)TriggerHandler).ContainsPosition(pos))
                             launchScript = true;
                     }
                     else
@@ -56,7 +57,7 @@ namespace Edit2DEngine.Trigger
                     //    launchScript = true;
                     if (this.TriggerHandler is Entity)
                     {
-                        if (mouseState.LeftButton == ButtonState.Pressed && ((Entity)TriggerHandler).geom.Collide(pos))
+                        if (mouseState.LeftButton == ButtonState.Pressed && ((ITriggerMouseHandler)TriggerHandler).ContainsPosition(pos))
                             launchScript = true;
                     }
                     else
@@ -70,7 +71,7 @@ namespace Edit2DEngine.Trigger
                     //    launchScript = true;
                     if (this.TriggerHandler is Entity)
                     {
-                        if (!IsMouseOver && ((Entity)TriggerHandler).geom.Collide(pos))
+                        if (!IsMouseOver && ((ITriggerMouseHandler)TriggerHandler).ContainsPosition(pos))
                             launchScript = true;
                     }
                     else
@@ -84,7 +85,7 @@ namespace Edit2DEngine.Trigger
                     //    launchScript = true;
                     if (this.TriggerHandler is Entity)
                     {
-                        if (IsMouseOver && !((Entity)TriggerHandler).geom.Collide(pos))
+                        if (IsMouseOver && !((ITriggerMouseHandler)TriggerHandler).ContainsPosition(pos))
                             launchScript = true;
                     }
                     else
@@ -98,7 +99,7 @@ namespace Edit2DEngine.Trigger
                     //    launchScript = true;
                     if (this.TriggerHandler is Entity)
                     {
-                        if (((Entity)TriggerHandler).geom.Collide(pos))
+                        if (((ITriggerMouseHandler)TriggerHandler).ContainsPosition(pos))
                             launchScript = true;
                     }
                     else
@@ -113,7 +114,7 @@ namespace Edit2DEngine.Trigger
 
             if (this.TriggerHandler is Entity)
             {
-                IsMouseOver = ((Entity)TriggerHandler).geom.Collide(pos);
+                IsMouseOver = ((ITriggerMouseHandler)TriggerHandler).ContainsPosition(pos);
             }
             else
             {

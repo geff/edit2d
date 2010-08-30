@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Edit2DEngine.Action
+namespace Edit2DEngine.Actions
 {
     public enum ActionType : int
     {

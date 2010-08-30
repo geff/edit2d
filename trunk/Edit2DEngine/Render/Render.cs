@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Edit2DEngine.Entities.Particles;
 using Microsoft.Xna.Framework;
-using Edit2DEngine.Action;
+using Edit2DEngine.Actions;
 using Microsoft.Xna.Framework.Content;
 using Edit2DEngine.Entities;
 using Edit2DEngine.Tools;
@@ -168,7 +168,7 @@ namespace Edit2DEngine.Render
 
         private void DrawEntity(Entity entity)
         {
-            foreach (IEntityComponent entityComponent in entity.ListEntityComponent)
+            foreach (EntityComponent entityComponent in entity.ListEntityComponent)
             {
                 if (entityComponent is EntitySprite)
                     DrawEntitySprite((EntitySprite)entityComponent);

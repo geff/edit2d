@@ -9,16 +9,19 @@ using Microsoft.Xna.Framework;
 using FarseerGames.FarseerPhysics.Dynamics.Joints;
 using System.ComponentModel;
 using Microsoft.Xna.Framework.Graphics;
-using Edit2DEngine.Trigger;
-using Edit2DEngine.Action;
+
+using Edit2DEngine.Actions;
 using Edit2DEngine.Entities.Particles;
 using System.Drawing;
 using Edit2DEngine.Tools;
+using Edit2DEngine.Triggers;
 
 namespace Edit2DEngine.Entities
 {
-    public class Entity : ICloneable, IActionHandler, ITriggerHandler
+    public class Entity : IActionHandler, ITriggerHandler
     {
+        public Microsoft.Xna.Framework.Rectangle Rectangle { get; set; }
+
         public String Name { get; set; }
         [Browsable(false)]
         public Boolean Selected { get; set; }
@@ -36,7 +39,7 @@ namespace Edit2DEngine.Entities
         public Boolean IsStatic { get; set; }
 
         [Browsable(false)]
-        public List<IEntityComponent> ListEntityComponent { get; set; }
+        public List<EntityComponent> ListEntityComponent { get; set; }
 
         [Browsable(false)]
         public List<Script> ListScript { get; set; }
@@ -56,18 +59,6 @@ namespace Edit2DEngine.Entities
             get { return "Monde\\Entités\\" + this.Name; }
         }
 
-        [Browsable(false)]
-        public bool SupportTriggerChangedValue
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        [Browsable(false)]
-        public bool SupportTriggerCollision
-        {
-            get { throw new NotImplementedException(); }
-        }
-
         private int _layer;
         [Browsable(true)]
         public int Layer
@@ -80,7 +71,7 @@ namespace Edit2DEngine.Entities
             {
                 _layer = value;
 
-                foreach (IEntityComponent entityComponent in this.ListEntityComponent)
+                foreach (EntityComponent entityComponent in this.ListEntityComponent)
                 {
                     entityComponent.ChangeLayer();
                 }
@@ -92,15 +83,18 @@ namespace Edit2DEngine.Entities
             this.Name = name;
         }
 
+        public Entity()
+        { 
+        }
+
         #region ICloneable Members
 
-        public object Clone()
+        public Entity Clone()
         {
             //TODO : gérer la méthode de clone de Enity
             return null;
         }
 
         #endregion
-
     }
 }

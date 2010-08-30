@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 
-namespace Edit2DEngine.Trigger
+namespace Edit2DEngine.Triggers
 {
     public class TriggerTime : TriggerBase
     {

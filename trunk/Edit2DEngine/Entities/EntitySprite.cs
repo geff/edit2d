@@ -10,19 +10,35 @@ using FarseerGames.FarseerPhysics.Dynamics;
 using FarseerGames.FarseerPhysics;
 using FarseerGames.FarseerPhysics.Dynamics.Springs;
 using FarseerGames.FarseerPhysics.Dynamics.Joints;
-using Edit2DEngine.Trigger;
+
 using Edit2DEngine.Entities.Particles;
 using Microsoft.Xna.Framework.Graphics;
 using Edit2DEngine.Tools;
+using FarseerGames.FarseerPhysics.Factories;
+using Edit2DEngine.Triggers;
 
 namespace Edit2DEngine.Entities
 {
-    public class EntitySprite : IEntityComponent
+    public class EntitySprite : EntityComponent, ITriggerCollisionHandler, ITriggerMouseHandler, ITriggerValueChangedHandler
     {
         private String _name;
         private Size _size;
         Vector2 _center = Vector2.Zero;
-        public Geom geom;
+
+        private Geom _geom;
+
+        public Geom geom
+        {
+            get
+            {
+                return _geom;
+            }
+            set
+            {
+                _geom = value;
+            }
+        }
+
         protected Body body;
         private Vertices originalVerts;
 
@@ -263,31 +279,13 @@ namespace Edit2DEngine.Entities
         }
 
         [Browsable(false)]
-        public String TreeViewPath
+        public override string TreeViewPath
         {
             get
             {
-                return "Monde\\Entités\\" + this.EntityParent.Name + this.Name;
+                return "Monde\\Entités\\" + this.EntityParent.Name + "\\Sprite\\" + this.Name;
             }
         }
-
-        //[Browsable(false)]
-        //public bool SupportTrigerChangedValue
-        //{
-        //    get
-        //    {
-        //        return true;
-        //    }
-        //}
-
-        //[Browsable(false)]
-        //public bool SupportTrigerCollision
-        //{
-        //    get
-        //    {
-        //        return true;
-        //    }
-        //}
 
         public EntitySprite(bool linkToPhysiSimulator, bool isCollisionable, string textureName, string name)
         {
@@ -308,21 +306,18 @@ namespace Edit2DEngine.Entities
             ListPinJoint = new List<PinJoint>();
             ListRevoluteJointJoint = new List<RevoluteJoint>();
             ListFixedRevoluteJoint = new List<FixedRevoluteJoint>();
-            ListScript = new List<Script>();
-            ListTrigger = new List<TriggerBase>();
-            ListCustomProperties = new Dictionary<string, object>();
-            ListParticleSystem = new List<ParticleSystem>();
+            
+
+            //ListParticleSystem = new List<ParticleSystem>();
 
             this.Color = Microsoft.Xna.Framework.Graphics.Color.White;
             this.Name = name;
             this.TextureName = textureName;
 
-            if (!(this is Particle))
-                UniqueId = ++Repository.EntityCount;
+            //if (!(this is Particle))
+            UniqueId = ++Repository.EntityCount;
 
             Init(addToPhysicSimulator, isCollisionable);
-
-            this.Layer = 0;
         }
 
         public void Init(bool addToPhysicSimulator, bool isCollisionable)
@@ -610,160 +605,160 @@ namespace Edit2DEngine.Entities
             this.SetNewCenter(this.body.GetLocalPosition(worldPosition), addToPhysicSimulator);
         }
 
-        #region ICloneable Membres
-
-        public object Clone()
+        public override EntityComponent Clone()
         {
             return Clone(false);
         }
 
-        public object Clone(bool addToPhysicSimulator)
+        public EntityComponent Clone(bool addToPhysicSimulator)
         {
-            Entity clone = new Entity(addToPhysicSimulator, this.TextureName, this.Name);
+            EntitySprite clone = new EntitySprite(addToPhysicSimulator, this.TextureName, this.Name);
 
-            clone.ChangeSize(this.Size.Width, this.Size.Height, addToPhysicSimulator);
+            //Entity clone = new Entity(addToPhysicSimulator, this.TextureName, this.Name);
 
-            if (clone.body != null && this.body != null)
-            {
-                clone.body.Rotation = this.body.Rotation;
-                clone.body.Position = this.body.Position;
-                clone.body.IsStatic = this.body.IsStatic;
-                clone.IsStatic = this.body.IsStatic;
-            }
+            //clone.ChangeSize(this.Size.Width, this.Size.Height, addToPhysicSimulator);
 
-            clone.Name = this.Name;
-            clone.TextureName = this.TextureName;
-            clone.NativeImageSize = this.NativeImageSize;
+            //if (clone.body != null && this.body != null)
+            //{
+            //    clone.body.Rotation = this.body.Rotation;
+            //    clone.body.Position = this.body.Position;
+            //    clone.body.IsStatic = this.body.IsStatic;
+            //    clone.IsStatic = this.body.IsStatic;
+            //}
 
-            clone.BlurFactor = this.BlurFactor;
-            clone.IsInBackground = this.IsInBackground;
-            clone.Color = this.Color;
-            clone.FrictionCoefficient = this.FrictionCoefficient;
-            clone.RestitutionCoefficient = this.RestitutionCoefficient;
+            //clone.Name = this.Name;
+            //clone.TextureName = this.TextureName;
+            //clone.NativeImageSize = this.NativeImageSize;
 
-            //--- Centre de l'entité
-            Vector2 deltaPosition = this.Center - clone.Center;
-            if (deltaPosition != Vector2.Zero)
-                clone.SetNewCenter(deltaPosition, false);
-            //---
+            //clone.BlurFactor = this.BlurFactor;
+            //clone.IsInBackground = this.IsInBackground;
+            //clone.Color = this.Color;
+            //clone.FrictionCoefficient = this.FrictionCoefficient;
+            //clone.RestitutionCoefficient = this.RestitutionCoefficient;
 
-            //--- Scripts & Curves
-            for (int j = 0; j < this.ListScript.Count; j++)
-            {
-                Script script = this.ListScript[j];
+            ////--- Centre de l'entité
+            //Vector2 deltaPosition = this.Center - clone.Center;
+            //if (deltaPosition != Vector2.Zero)
+            //    clone.SetNewCenter(deltaPosition, false);
+            ////---
 
-                Script scriptClone = new Script(script.ScriptName, clone);
-                //scriptClone.Duration = script.Duration;
-                clone.ListScript.Add(scriptClone);
+            ////--- Scripts & Curves
+            //for (int j = 0; j < this.ListScript.Count; j++)
+            //{
+            //    Script script = this.ListScript[j];
 
-                for (int k = 0; k < script.ListAction.Count; k++)
-                {
-                    ActionBase action = script.ListAction[k];
+            //    Script scriptClone = new Script(script.ScriptName, clone);
+            //    //scriptClone.Duration = script.Duration;
+            //    clone.ListScript.Add(scriptClone);
 
-                    if (action is ActionCurve)
-                    {
-                        ActionCurve curve = (ActionCurve)action;
-                        ActionCurve curveClone = new ActionCurve(scriptClone, curve.ActionName, curve.IsRelative, curve.IsLoop, curve.PropertyName);
+            //    for (int k = 0; k < script.ListAction.Count; k++)
+            //    {
+            //        ActionBase action = script.ListAction[k];
 
-                        scriptClone.ListAction.Add(curveClone);
+            //        if (action is ActionCurve)
+            //        {
+            //            ActionCurve curve = (ActionCurve)action;
+            //            ActionCurve curveClone = new ActionCurve(scriptClone, curve.ActionName, curve.IsRelative, curve.IsLoop, curve.PropertyName);
 
-                        for (int l = 0; l < curve.ListCurve.Count; l++)
-                        {
-                            Curve newCurve = new Curve();
-                            curveClone.ListCurve.Add(newCurve);
+            //            scriptClone.ListAction.Add(curveClone);
 
-                            for (int m = 0; m < curve.ListCurve[l].Keys.Count; m++)
-                            {
-                                newCurve.Keys.Add(curve.ListCurve[l].Keys[0].Clone());
-                            }
-                        }
-                    }
-                    else if (action is ActionEvent)
-                    {
-                        //ActionEvent actionEvent = (ActionEvent)action;
-                        //ActionEvent actionEventClone = new ActionEvent(actionEvent.Script, actionEvent.ActionName, actionEvent.IsRelative, actionEvent.PropertyName);
-                        //actionEventClone.Value = actionEvent.Value;
-                        //actionEventClone.ChangeValue = actionEvent.ChangeValue;
+            //            for (int l = 0; l < curve.ListCurve.Count; l++)
+            //            {
+            //                Curve newCurve = new Curve();
+            //                curveClone.ListCurve.Add(newCurve);
 
-                        //scriptClone.ListAction.Add(actionEventClone);
-                    }
-                }
-            }
-            //---
+            //                for (int m = 0; m < curve.ListCurve[l].Keys.Count; m++)
+            //                {
+            //                    newCurve.Keys.Add(curve.ListCurve[l].Keys[0].Clone());
+            //                }
+            //            }
+            //        }
+            //        else if (action is ActionEvent)
+            //        {
+            //            //ActionEvent actionEvent = (ActionEvent)action;
+            //            //ActionEvent actionEventClone = new ActionEvent(actionEvent.Script, actionEvent.ActionName, actionEvent.IsRelative, actionEvent.PropertyName);
+            //            //actionEventClone.Value = actionEvent.Value;
+            //            //actionEventClone.ChangeValue = actionEvent.ChangeValue;
 
-            //--- Trigger
-            for (int j = 0; j < ListTrigger.Count; j++)
-            {
-                TriggerBase trigger = ListTrigger[j];
+            //            //scriptClone.ListAction.Add(actionEventClone);
+            //        }
+            //    }
+            //}
+            ////---
 
-                if (trigger is TriggerCollision)
-                {
-                    TriggerCollision triggerCol = (TriggerCollision)trigger;
-                    TriggerCollision cloneTrigger = new TriggerCollision(triggerCol.TriggerName, clone, triggerCol.TargetEntity);
+            ////--- Trigger
+            //for (int j = 0; j < ListTrigger.Count; j++)
+            //{
+            //    TriggerBase trigger = ListTrigger[j];
 
-                    cloneTrigger.ListScript = triggerCol.ListScript;
+            //    if (trigger is TriggerCollision)
+            //    {
+            //        TriggerCollision triggerCol = (TriggerCollision)trigger;
+            //        TriggerCollision cloneTrigger = new TriggerCollision(triggerCol.TriggerName, clone, triggerCol.TargetEntity);
 
-                    clone.ListTrigger.Add(cloneTrigger);
-                }
-                else if (trigger is TriggerValueChanged)
-                {
-                    TriggerValueChanged triggerVal = (TriggerValueChanged)trigger;
-                    TriggerValueChanged cloneTrigger = new TriggerValueChanged(triggerVal.TriggerName, clone, triggerVal.PropertyName, triggerVal.Sens, triggerVal.Value, triggerVal.IsCustomProperty);
+            //        cloneTrigger.ListScript = triggerCol.ListScript;
 
-                    cloneTrigger.ListScript = triggerVal.ListScript;
+            //        clone.ListTrigger.Add(cloneTrigger);
+            //    }
+            //    else if (trigger is TriggerValueChanged)
+            //    {
+            //        TriggerValueChanged triggerVal = (TriggerValueChanged)trigger;
+            //        TriggerValueChanged cloneTrigger = new TriggerValueChanged(triggerVal.TriggerName, clone, triggerVal.PropertyName, triggerVal.Sens, triggerVal.Value, triggerVal.IsCustomProperty);
 
-                    clone.ListTrigger.Add(cloneTrigger);
-                }
-                else if (trigger is TriggerLoad)
-                {
-                    TriggerLoad triggerLoad = (TriggerLoad)trigger;
-                    TriggerLoad cloneTrigger = new TriggerLoad(triggerLoad.TriggerName, clone);
+            //        cloneTrigger.ListScript = triggerVal.ListScript;
 
-                    cloneTrigger.ListScript = triggerLoad.ListScript;
+            //        clone.ListTrigger.Add(cloneTrigger);
+            //    }
+            //    else if (trigger is TriggerLoad)
+            //    {
+            //        TriggerLoad triggerLoad = (TriggerLoad)trigger;
+            //        TriggerLoad cloneTrigger = new TriggerLoad(triggerLoad.TriggerName, clone);
 
-                    clone.ListTrigger.Add(cloneTrigger);
-                }
-                else if (trigger is TriggerMouse)
-                {
-                    TriggerMouse triggerMouse = (TriggerMouse)trigger;
-                    TriggerMouse cloneTrigger = new TriggerMouse(triggerMouse.TriggerName, clone, triggerMouse.TriggerMouseType);
+            //        cloneTrigger.ListScript = triggerLoad.ListScript;
 
-                    cloneTrigger.ListScript = triggerMouse.ListScript;
+            //        clone.ListTrigger.Add(cloneTrigger);
+            //    }
+            //    else if (trigger is TriggerMouse)
+            //    {
+            //        TriggerMouse triggerMouse = (TriggerMouse)trigger;
+            //        TriggerMouse cloneTrigger = new TriggerMouse(triggerMouse.TriggerName, clone, triggerMouse.TriggerMouseType);
 
-                    clone.ListTrigger.Add(cloneTrigger);
-                }
-            }
-            //---
+            //        cloneTrigger.ListScript = triggerMouse.ListScript;
 
-            //--- ParticleSystem
-            for (int j = 0; j < ListParticleSystem.Count; j++)
-            {
-                ParticleSystem pSystem = ListParticleSystem[j];
-                ParticleSystem clonePSystem = new ParticleSystem(clone);
+            //        clone.ListTrigger.Add(cloneTrigger);
+            //    }
+            //}
+            ////---
 
-                clonePSystem.EmmittingAngle = pSystem.EmmittingAngle;
-                clonePSystem.EmmittingFromAllSurface = pSystem.EmmittingFromAllSurface;
-                clonePSystem.FieldAngle = pSystem.FieldAngle;
-                clonePSystem.Name = pSystem.Name;
-                //clonePSystem.ParticleSystemName = pSystem.ParticleSystemName;
-                clonePSystem.Rate = pSystem.Rate;
-                clonePSystem.Velocity = pSystem.Velocity;
+            ////--- ParticleSystem
+            //for (int j = 0; j < ListParticleSystem.Count; j++)
+            //{
+            //    ParticleSystem pSystem = ListParticleSystem[j];
+            //    ParticleSystem clonePSystem = new ParticleSystem(clone);
 
-                clone.ListParticleSystem.Add(clonePSystem);
-                for (int k = 0; k < pSystem.ListParticleTemplate.Count; k++)
-                {
-                    Particle particle = pSystem.ListParticleTemplate[k];
-                    Particle cloneParticle = particle.Clone(true);
+            //    clonePSystem.EmmittingAngle = pSystem.EmmittingAngle;
+            //    clonePSystem.EmmittingFromAllSurface = pSystem.EmmittingFromAllSurface;
+            //    clonePSystem.FieldAngle = pSystem.FieldAngle;
+            //    clonePSystem.Name = pSystem.Name;
+            //    //clonePSystem.ParticleSystemName = pSystem.ParticleSystemName;
+            //    clonePSystem.Rate = pSystem.Rate;
+            //    clonePSystem.Velocity = pSystem.Velocity;
 
-                    clonePSystem.ListParticleTemplate.Add(cloneParticle);
-                }
-            }
-            //---
+            //    clone.ListParticleSystem.Add(clonePSystem);
+            //    for (int k = 0; k < pSystem.ListParticleTemplate.Count; k++)
+            //    {
+            //        Particle particle = pSystem.ListParticleTemplate[k];
+            //        Particle cloneParticle = particle.Clone(true);
+
+            //        clonePSystem.ListParticleTemplate.Add(cloneParticle);
+            //    }
+            //}
+            ////---
 
             return clone;
         }
 
-        public void ChangeLayer()
+        public override void ChangeLayer()
         {
             if (geom != null)
             {
@@ -773,16 +768,18 @@ namespace Edit2DEngine.Entities
             }
         }
 
-        #endregion
+        #region ITriggerMouseHandler Membres
 
-        #region IEntityComponent Members
-
-        public Entity EntityParent
+        public bool ContainsPosition(Vector2 pos)
         {
-            get;
-            set;
+            throw new NotImplementedException();
         }
 
         #endregion
+
+        public override void ApplyForce(Vector2 force)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

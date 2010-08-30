@@ -6,7 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Edit2DEngine.Action;
+using Edit2DEngine.Actions;
 using System.IO;
 using Edit2D.UC;
 

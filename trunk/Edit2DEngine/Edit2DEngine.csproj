@@ -98,7 +98,7 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\EntitySprite.cs" />
-    <Compile Include="Entities\IEntityComponent.cs" />
+    <Compile Include="Entities\EntityComponent.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Tools\FileSystem.cs" />
     <Compile Include="GameBase.cs" />
@@ -116,6 +116,9 @@
     <Compile Include="Tools\Lerp.cs" />
     <Compile Include="Tools\Math.cs" />
     <Compile Include="Tools\MinMax.cs" />
+    <Compile Include="Triggers\ITriggerValueChangedHandler.cs" />
+    <Compile Include="Triggers\ITriggerMouseHandler.cs" />
+    <Compile Include="Triggers\ITriggerCollisionHandler.cs" />
     <Compile Include="Triggers\ITriggerHandler.cs" />
     <Compile Include="Triggers\TriggerBase.cs" />
     <Compile Include="Triggers\TriggerCollision.cs" />
@@ -167,9 +170,6 @@
       <ProductName>Microsoft XNA Framework Redistributable 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Edit2D_TodoList.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Anchors\" />

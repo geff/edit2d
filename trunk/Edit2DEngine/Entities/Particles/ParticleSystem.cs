@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using System.ComponentModel;
-using Edit2DEngine.Action;
+using Edit2DEngine.Actions;
 
 namespace Edit2DEngine.Entities.Particles
 {
@@ -76,8 +76,8 @@ namespace Edit2DEngine.Entities.Particles
                 {
                     particle.IsAlive = false;
 
-                    Repository.physicSimulator.Remove(particle.geom);
-                    Repository.physicSimulator.Remove(particle.Body);
+                    //Repository.physicSimulator.Remove(particle.geom);
+                    //Repository.physicSimulator.Remove(particle.Body);
                 }
             }
 
@@ -108,7 +108,7 @@ namespace Edit2DEngine.Entities.Particles
 
             Particle particle = particleTemplate.Clone(true);
             particle.Position = position;
-            particle.Body.ApplyForce(vecForce);
+            particle.ApplyForce(vecForce);
             particle.Rotation = -MathHelper.PiOver2 + angle;
 
             particle.FrictionCoefficient = 0.005f;

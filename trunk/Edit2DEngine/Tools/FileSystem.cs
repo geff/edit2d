@@ -8,12 +8,13 @@ using FarseerGames.FarseerPhysics.Dynamics.Springs;
 using Microsoft.Xna.Framework.Graphics;
 using FarseerGames.FarseerPhysics.Dynamics.Joints;
 using Microsoft.Xna.Framework;
-using Edit2DEngine.Action;
-using Edit2DEngine.Trigger;
+using Edit2DEngine.Actions;
+
 using Edit2DEngine.Entities.Particles;
 using System.Drawing;
 using FarseerGames.FarseerPhysics.Collisions;
 using Edit2DEngine.Entities;
+using Edit2DEngine.Triggers;
 
 namespace Edit2DEngine.Tools
 {
@@ -358,7 +359,7 @@ namespace Edit2DEngine.Tools
                 //--- Associe le deuxième corps des ressorts
                 foreach (Entity ent in repository.listEntity)
                 {
-                    foreach (IEntityComponent entityComponent in ent.ListEntityComponent)
+                    foreach (EntityComponent entityComponent in ent.ListEntityComponent)
                     {
                         if (entityComponent is EntitySprite)
                         {
@@ -366,7 +367,7 @@ namespace Edit2DEngine.Tools
                             {
                                 foreach (Entity ent2 in repository.listEntity)
                                 {
-                                    foreach (IEntityComponent entityComponent2 in ent.ListEntityComponent)
+                                    foreach (EntityComponent entityComponent2 in ent.ListEntityComponent)
                                     {
                                         if (entityComponent2 is EntitySprite &&
                                             spring.Tag.ToString() == ent2.Name + "-" + entityComponent2.Name)
@@ -451,7 +452,7 @@ namespace Edit2DEngine.Tools
             writer.WriteAttributeString("Layer", entity.Layer.ToString());
 
 
-            foreach (IEntityComponent entityComponent in entity.ListEntityComponent)
+            foreach (EntityComponent entityComponent in entity.ListEntityComponent)
             {
                 if (entityComponent is EntitySprite)
                     SaveEntitySprite((EntitySprite)entityComponent, writer, repository);

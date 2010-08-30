@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Edit2DEngine;
 using Microsoft.Xna.Framework;
-using Edit2DEngine.Action;
+using Edit2DEngine.Actions;
 using Edit2DEngine.Entities;
 
 namespace Edit2D

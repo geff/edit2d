@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FarseerGames.FarseerPhysics.Collisions;
+using Edit2DEngine.Entities;
 
 namespace Edit2DEngine.Triggers
 {
-    public interface ITriggerHandler
+    public interface ITriggerValueChangedHandler : ITriggerHandler
     {
-        List<TriggerBase> ListTrigger { get; set; }
-        String TreeViewPath { get; }
     }
 }
