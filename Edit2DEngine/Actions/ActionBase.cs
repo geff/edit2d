@@ -5,7 +5,7 @@ using System.Text;
 using System.Reflection;
 using System.ComponentModel;
 
-namespace Edit2DEngine.Action
+namespace Edit2DEngine.Actions
 {
     public abstract class ActionBase
     {

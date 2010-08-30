@@ -6,8 +6,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using FarseerGames.GettingStarted;
 using Edit2DEngine;
-using Edit2DEngine.Action;
-using Edit2DEngine.Trigger;
+using Edit2DEngine.Actions;
+
 using Edit2DEngine.Entities;
 
 namespace Edit2D

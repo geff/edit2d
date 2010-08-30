@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Drawing;
 using Edit2DEngine.Entities;
 
-namespace Edit2DEngine.Trigger
+namespace Edit2DEngine.Triggers
 {
     public class TriggerValueChanged : TriggerBase
     {

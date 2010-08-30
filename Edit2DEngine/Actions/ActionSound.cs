@@ -8,7 +8,7 @@ using System.Reflection;
 using Microsoft.Xna.Framework.Audio;
 using System.ComponentModel;
 
-namespace Edit2DEngine.Action
+namespace Edit2DEngine.Actions
 {
     public class ActionSound : ActionBase
     {

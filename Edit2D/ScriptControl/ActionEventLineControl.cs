@@ -6,7 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Edit2DEngine.Action;
+using Edit2DEngine.Actions;
 using Edit2DEngine.Entities.Particles;
 using System.Reflection;
 using Edit2DEngine;

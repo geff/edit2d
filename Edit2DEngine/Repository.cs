@@ -9,8 +9,9 @@ using Edit2DEngine.Entities;
 using System.Drawing;
 using System.Linq;
 using System.Diagnostics;
-using Edit2DEngine.Action;
-using Edit2DEngine.Trigger;
+using Edit2DEngine.Actions;
+using Edit2DEngine.Triggers;
+
 
 namespace Edit2DEngine
 {
@@ -65,27 +66,28 @@ namespace Edit2DEngine
 
         public Entity GetSelectedEntityFromLocation(Vector2 location)
         {
-            List<Geom> listGeom = Repository.physicSimulator.CollideAll(location);
+            //TODO : gérer la sélection d'objet
+            //List<Geom> listGeom = Repository.physicSimulator.CollideAll(location);
 
-            if (listGeom != null && listGeom.Count > 0)
-            {
-                Entity selectedEntity = null;
-                int minIndex = 0;
+            //if (listGeom != null && listGeom.Count > 0)
+            //{
+            //    Entity selectedEntity = null;
+            //    int minIndex = 0;
 
-                for (int i = 0; i < listGeom.Count; i++)
-                {
-                    Entity curEntity = listEntity.Find(e => e.geom == listGeom[i]);
-                    int index = listEntity.IndexOf(curEntity);
+            //    for (int i = 0; i < listGeom.Count; i++)
+            //    {
+            //        Entity curEntity = listEntity.Find(e => e.geom == listGeom[i]);
+            //        int index = listEntity.IndexOf(curEntity);
 
-                    if (selectedEntity == null || (index > minIndex))
-                    {
-                        selectedEntity = curEntity;
-                        minIndex = index;
-                    }
-                }
+            //        if (selectedEntity == null || (index > minIndex))
+            //        {
+            //            selectedEntity = curEntity;
+            //            minIndex = index;
+            //        }
+            //    }
 
-                return selectedEntity;
-            }
+            //    return selectedEntity;
+            //}
 
             return null;
         }
@@ -94,7 +96,8 @@ namespace Edit2DEngine
         {
             if (this.listEntity != null && listEntity.Count > 0)
             {
-                Entity entity = this.listEntity.Find(e => e.ListEntityComponent.Find(ec=> ec is EntitySprite &&  ((EntitySprite)ec).Body == body));
+                Entity entity = this.listEntity.Find(e =>
+                    e.ListEntityComponent.Find(ec=> ec is EntitySprite &&  ((EntitySprite)ec).Body == body) != null);
 
                 return entity;
             }
@@ -151,6 +154,8 @@ namespace Edit2DEngine
 
         public Entity ChangeEntitySize(Entity currentEntity, Size oldSize)
         {
+            //TODO : gérer de nouveau le redimenssionnement
+            /*
             //--- Suppression du Body et du Geom
             Repository.physicSimulator.BodyList.Remove(currentEntity.Body);
             Repository.physicSimulator.GeomList.Remove(currentEntity.geom);
@@ -212,7 +217,7 @@ namespace Edit2DEngine
                 Repository.physicSimulator.Remove(currentEntity.ListFixedLinearSpring[i]);
             }
             //---
-
+            */
             return entity;
         }
 

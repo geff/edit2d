@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.Drawing;
 using Edit2DEngine.Entities;
 
-namespace Edit2DEngine.Action
+namespace Edit2DEngine.Actions
 {
     public class ActionEvent : ActionBase
     {

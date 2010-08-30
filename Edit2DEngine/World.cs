@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Edit2DEngine.Trigger;
+
 using Microsoft.Xna.Framework.Graphics;
 using System.ComponentModel;
+using Edit2DEngine.Triggers;
 
 namespace Edit2DEngine
 {
