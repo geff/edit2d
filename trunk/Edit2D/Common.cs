@@ -17,7 +17,7 @@ namespace Edit2D
                 {
                     newName = String.Format(templateName, cmp);
 
-                    if (list.Exists(l => l.GetType().GetProperty(typeName).GetValue(l, null).ToString() == newName))
+                    if (list!=null && list.Exists(l => l.GetType().GetProperty(typeName).GetValue(l, null).ToString() == newName))
                     {
                         cmp++;
                         newName = String.Empty;

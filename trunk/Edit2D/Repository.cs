@@ -9,6 +9,7 @@ using Edit2DEngine;
 using Edit2DEngine.Actions;
 
 using Edit2DEngine.Entities;
+using Edit2DEngine.Triggers;
 
 namespace Edit2D
 {
@@ -84,12 +85,12 @@ namespace Edit2D
         {
             List<Entity> listSelectedEntity = new List<Entity>();
 
-            listSelectedEntity.AddRange(ListSelection.Select<Selection, Entity>(s => s.Entity));
-
+            listSelectedEntity.AddRange(ListSelection.Select<Selection, Entity>(s => s.EntityComponent.EntityParent));
+            
             if (CurrentEntity != null)
                 listSelectedEntity.Add(CurrentEntity);
 
-            return listSelectedEntity;
+            return listSelectedEntity.Distinct().ToList();
         }
 
         public bool IsSimpleMode

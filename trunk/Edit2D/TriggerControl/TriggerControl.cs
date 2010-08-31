@@ -135,7 +135,7 @@ namespace Edit2D.TriggerControl
                 pnlScript.Left = pnlEntityCollision.Right;
 
                 if (Repository.CurrentTrigger != null && Repository.CurrentTrigger is TriggerCollision)
-                    treeViewCollision.RefreshView<Entity>(((TriggerCollision)Repository.CurrentTrigger).TargetEntity);
+                    treeViewCollision.RefreshView<ITriggerCollisionHandler>(((TriggerCollision)Repository.CurrentTrigger).TargetEntity);
                 else
                 {
                     treeViewCollision.RefreshView(false);
@@ -156,7 +156,7 @@ namespace Edit2D.TriggerControl
                 pnlScript.Left = pnlEntityCollision.Right;
 
                 if (Repository.CurrentTrigger != null && Repository.CurrentTrigger is TriggerCollision)
-                    treeViewCollision.RefreshView<Entity>(((TriggerCollision)Repository.CurrentTrigger).TargetEntity);
+                    treeViewCollision.RefreshView<ITriggerCollisionHandler>(((TriggerCollision)Repository.CurrentTrigger).TargetEntity);
                 else
                 {
                     treeViewCollision.RefreshView(false);
@@ -527,7 +527,7 @@ namespace Edit2D.TriggerControl
                 //---
 
                 //--- Trigger collision
-                treeViewCollision.CheckNode<Entity>(triggerCol.TargetEntity);
+                treeViewCollision.CheckNode<ITriggerCollisionHandler>(triggerCol.TargetEntity);
                 //---
             }
             else if (trigger is TriggerValueChanged)
@@ -633,14 +633,14 @@ namespace Edit2D.TriggerControl
 
                  if (optTypeTriggerCollision.Checked)
                 {
-                    List<Entity> listEntity = treeViewCollision.GetCheckedNodes<Entity>();
+                    List<ITriggerCollisionHandler> listEntity = treeViewCollision.GetCheckedNodes<ITriggerCollisionHandler>();
 
-                    Entity targetEntityCollision = null;
+                    ITriggerCollisionHandler targetEntityCollision = null;
 
                     if (listEntity.Count > 0)
                         targetEntityCollision = listEntity[0];
 
-                    newTrigger = new TriggerCollision(Repository.CurrentTrigger.TriggerName, Repository.CurrentTrigger.TriggerHandler, targetEntityCollision);
+                    newTrigger = new TriggerCollision(Repository.CurrentTrigger.TriggerName, (ITriggerCollisionHandler)Repository.CurrentTrigger.TriggerHandler, targetEntityCollision);
                     newTrigger.ListScript = Repository.CurrentTrigger.ListScript;
 
                     Repository.CurrentTriggerHandler.ListTrigger[listboxTrigger.SelectedIndex] = newTrigger;
@@ -727,7 +727,7 @@ namespace Edit2D.TriggerControl
                     else if (optMouseStayOver.Checked)
                         triggerMousetype = TriggerMouseType.MouseOver;
 
-                    newTrigger = new TriggerMouse(Repository.CurrentTrigger.TriggerName, Repository.CurrentTrigger.TriggerHandler, triggerMousetype);
+                    newTrigger = new TriggerMouse(Repository.CurrentTrigger.TriggerName, (ITriggerMouseHandler)Repository.CurrentTrigger.TriggerHandler, triggerMousetype);
                     newTrigger.ListScript = Repository.CurrentTrigger.ListScript;
                     Repository.CurrentTriggerHandler.ListTrigger[listboxTrigger.SelectedIndex] = newTrigger;
                 }
@@ -845,9 +845,9 @@ namespace Edit2D.TriggerControl
                 }
 
                 //--- Afffiche les types de trigger selon les spécificités du triggerHandler
-                optTypeTriggerValueOverflow.Visible = (Repository.CurrentTriggerHandler.SupportTriggerChangedValue);
-                optTypeTriggerCollision.Visible = (Repository.CurrentTriggerHandler.SupportTriggerCollision);
-                optTypeTriggerNoCollision.Visible = (Repository.CurrentTriggerHandler.SupportTriggerCollision);
+                optTypeTriggerValueOverflow.Visible = (Repository.CurrentTriggerHandler is ITriggerValueChangedHandler);
+                optTypeTriggerCollision.Visible = (Repository.CurrentTriggerHandler is ITriggerCollisionHandler);
+                optTypeTriggerNoCollision.Visible = (Repository.CurrentTriggerHandler is ITriggerCollisionHandler);
                 //---
             }
 

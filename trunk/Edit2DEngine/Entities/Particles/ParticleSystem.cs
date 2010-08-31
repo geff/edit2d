@@ -16,9 +16,9 @@ namespace Edit2DEngine.Entities.Particles
         //public String Name { get { return String.Format("{0}-{1}", Entity.Name, ParticleSystemName); } set{} }
         public String Name { get; set; }
         [Browsable(false)]
-        public List<Particle> ListParticle { get; set; }
+        public List<IParticle> ListParticle { get; set; }
         [Browsable(false)]
-        public List<Particle> ListParticleTemplate { get; set; }
+        public List<IParticle> ListParticleTemplate { get; set; }
         [Browsable(true), AttributeAction]
         public float FieldAngle { get; set; }
         [Browsable(true), AttributeAction]
@@ -37,8 +37,8 @@ namespace Edit2DEngine.Entities.Particles
 
         public ParticleSystem(Entity entity)
         {
-            this.ListParticle = new List<Particle>();
-            this.ListParticleTemplate = new List<Particle>();
+            this.ListParticle = new List<IParticle>();
+            this.ListParticleTemplate = new List<IParticle>();
 
             this.Entity = entity;
             this.EmmittingAngle = -MathHelper.PiOver4;
@@ -70,7 +70,7 @@ namespace Edit2DEngine.Entities.Particles
 
             for (int i = 0; i < ListParticle.Count; i++)
             {
-                Particle particle = ListParticle[i];
+                IParticle particle = ListParticle[i];
 
                 if (time.Subtract(particle.TimeEmitting).TotalMilliseconds >= particle.LifeTime)
                 {
@@ -89,9 +89,10 @@ namespace Edit2DEngine.Entities.Particles
             this.lastEmitting = time;
 
             int indexParticle = (int)rnd.Next(0, ListParticleTemplate.Count);
+
             float angleRnd = (float)rnd.NextDouble() * FieldAngle;
             float angle = EmmittingAngle - FieldAngle / 2f + angleRnd;
-            Vector2 vecForce = new Vector2(this.Velocity * (float)Math.Cos(angle), this.Velocity * (float)Math.Sin(angle));
+            Vector2 force = new Vector2(this.Velocity * (float)Math.Cos(angle), this.Velocity * (float)Math.Sin(angle));
             Vector2 position = new Vector2();
 
             if (this.EmmittingFromAllSurface)
@@ -104,11 +105,20 @@ namespace Edit2DEngine.Entities.Particles
                 position = this.Entity.Position;
             }
 
-            Particle particleTemplate = ListParticleTemplate[indexParticle];
+            IParticle particle = (IParticle)ListParticleTemplate[indexParticle].Clone();//true);
 
-            Particle particle = particleTemplate.Clone(true);
+            if (particle is ParticleSprite)
+            {
+                InitParticleSprite((ParticleSprite)particle, position, force, angle);
+            }
+
+            ListParticle.Add(particle);
+        }
+
+        private void InitParticleSprite(ParticleSprite particle, Vector2 position, Vector2 force, float angle)
+        {
             particle.Position = position;
-            particle.ApplyForce(vecForce);
+            particle.ApplyForce(force);
             particle.Rotation = -MathHelper.PiOver2 + angle;
 
             particle.FrictionCoefficient = 0.005f;
@@ -120,9 +130,7 @@ namespace Edit2DEngine.Entities.Particles
             //particle.Rotation = -angle;
 
             //particle.geom.CollidesWith = FarseerGames.FarseerPhysics.CollisionCategory.All & ~ Entity.geom.CollisionCategories;
-            particle.geom.CollisionGroup = this.Entity.geom.CollisionGroup;
-
-            ListParticle.Add(particle);
+            //particle.geom.CollisionGroup = this.Entity.geom.CollisionGroup;
         }
 
         #region IActionHandler Membres

@@ -18,7 +18,7 @@ using Edit2DEngine.Triggers;
 
 namespace Edit2DEngine.Entities
 {
-    public class Entity : IActionHandler, ITriggerHandler
+    public class Entity : IActionHandler, ITriggerHandler, IMoveableObject, IResizeableObject
     {
         public Microsoft.Xna.Framework.Rectangle Rectangle { get; set; }
 
@@ -35,8 +35,8 @@ namespace Edit2DEngine.Entities
         [Browsable(true), AttributeAction]
         public Microsoft.Xna.Framework.Vector2 Position { get; set; }
 
-        [Browsable(true), AttributeAction, Category("Physic")]
-        public Boolean IsStatic { get; set; }
+        //[Browsable(true), AttributeAction, Category("Physic")]
+        //public Boolean IsStatic { get; set; }
 
         [Browsable(false)]
         public List<EntityComponent> ListEntityComponent { get; set; }
@@ -52,7 +52,7 @@ namespace Edit2DEngine.Entities
 
         [Browsable(false)]
         public List<ParticleSystem> ListParticleSystem { get; set; }
-        
+
         [Browsable(false)]
         public string TreeViewPath
         {
@@ -81,18 +81,33 @@ namespace Edit2DEngine.Entities
         public Entity(string name)
         {
             this.Name = name;
+            this.ListEntityComponent = new List<EntityComponent>();
+            this.ListParticleSystem = new List<ParticleSystem>();
+            this.ListCustomProperties = new Dictionary<string, object>();
+            this.ListScript = new List<Script>();
+            this.ListTrigger = new List<TriggerBase>();
         }
 
         public Entity()
-        { 
+        {
         }
 
         #region ICloneable Members
 
         public Entity Clone()
         {
-            //TODO : gérer la méthode de clone de Enity
+            //TODO : gérer la méthode de clone de Entity
             return null;
+        }
+
+        #endregion
+
+        #region IResizeableObject Membres
+
+        public Vector2 Size
+        {
+            get;
+            set;
         }
 
         #endregion

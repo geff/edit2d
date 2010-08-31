@@ -9,6 +9,7 @@ namespace Edit2DEngine.Triggers
 {
     public interface ITriggerCollisionHandler : ITriggerHandler
     {
-        Geom geom { get; set; }
+        Geom Geom { get; set; }
+        String Name { get; set; }
     }
 }

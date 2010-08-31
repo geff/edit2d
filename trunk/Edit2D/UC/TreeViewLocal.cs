@@ -12,6 +12,7 @@ using System.Reflection;
 using Edit2DEngine.Actions;
 using Edit2DEngine.Entities;
 using Edit2DEngine.Entities.Particles;
+using Edit2DEngine.Triggers;
 
 namespace Edit2D.UC
 {
@@ -199,7 +200,7 @@ namespace Edit2D.UC
                         AddScriptAndTriggerNode((IActionHandler)particleSystem, null, nodeParticleSystem);
                         //---
 
-                        foreach (Particle particle in particleSystem.ListParticleTemplate)
+                        foreach (IParticle particle in particleSystem.ListParticleTemplate)
                         {
                             TreeNode nodeParticle = nodeParticleSystem.Nodes.Add(particle.Name, particle.Name, IMAGE_KEY_EMPTY);
                             nodeParticle.Tag = new Object[] { TreeViewLocalItemType.ParticleSystem, particle };
@@ -316,8 +317,8 @@ namespace Edit2D.UC
                 typeNode = "\\" + NODE_TRIGGER + "\\" + (nodeToCheck as TriggerBase).TriggerName;
             else if (nodeToCheck is ParticleSystem)
                 typeNode = "\\" + NODE_PARTICLESYSTEM + "\\" + (nodeToCheck as ParticleSystem).Name;
-            else if (nodeToCheck is Particle)
-                typeNode = "\\" + NODE_PARTICLESYSTEM + "\\" + (nodeToCheck as Particle).ParticleSystem.Name + "\\" + (nodeToCheck as Particle).Name;
+            else if (nodeToCheck is IParticle)
+                typeNode = "\\" + NODE_PARTICLESYSTEM + "\\" + (nodeToCheck as IParticle).ParticleSystem.Name + "\\" + (nodeToCheck as IParticle).Name;
 
             string fullPath = pathParent + typeNode;
 

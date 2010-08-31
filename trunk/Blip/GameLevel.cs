@@ -21,7 +21,7 @@ namespace Blip
         private Render render;
         private string currentLevelFileName;
 
-        private Entity blip;
+        private EntitySprite blip;
         private float speed = 10f;
         #endregion
 
@@ -129,7 +129,7 @@ namespace Blip
 
         private void InitLevel()
         {
-            blip = repository.listEntity.Find(e => e.Name == "Blip1");
+            blip = (EntitySprite)repository.listEntity.Find(e => e.Name == "Blip1").ListEntityComponent[0];
         }
 
         #endregion
@@ -139,21 +139,19 @@ namespace Blip
             //--- Keyboard
             KeyboardState keyBoardState = Keyboard.GetState();
 
-            if (keyBoardState.IsKeyDown(Keys.Left))
-            {
-                blip.Body.ApplyImpulse(new Vector2(-speed, 0f));
-            }
-            if (keyBoardState.IsKeyDown(Keys.Right))
-            {
-                blip.Body.ApplyImpulse(new Vector2(speed, 0f));
-            }
-
-            if (keyBoardState.IsKeyDown(Keys.Down))
-            {
-                //blip.Body.ApplyImpulse(new Vector2(0f, -speed));
-                blip.Body.ApplyForce(new Vector2(0f, speed));
-
-            }
+            //if (keyBoardState.IsKeyDown(Keys.Left))
+            //{
+            //    blip.Body.ApplyImpulse(new Vector2(-speed, 0f));
+            //}
+            //if (keyBoardState.IsKeyDown(Keys.Right))
+            //{
+            //    blip.Body.ApplyImpulse(new Vector2(speed, 0f));
+            //}
+            //if (keyBoardState.IsKeyDown(Keys.Down))
+            //{
+            //    //blip.Body.ApplyImpulse(new Vector2(0f, -speed));
+            //    blip.Body.ApplyForce(new Vector2(0f, speed));
+            //}
             if(keyBoardState.IsKeyDown(Keys.Up))
             {
                 Jump();
@@ -169,7 +167,7 @@ namespace Blip
         {
             this.GraphicsDevice.Clear(Color.White);
 
-        Matrix mtxCamera = Matrix.Invert(repository.Camera.MatrixTransformation) * Matrix.CreateTranslation((float)this.GraphicsDevice.Viewport.Width / 2f - blip.SizeVector.X/2f, (float)this.GraphicsDevice.Viewport.Height / 2f - blip.SizeVector.Y/2f, 0f);
+            Matrix mtxCamera = Matrix.Invert(repository.Camera.MatrixTransformation) * Matrix.CreateTranslation((float)this.GraphicsDevice.Viewport.Width / 2f - blip.Size.X/2f, (float)this.GraphicsDevice.Viewport.Height / 2f - blip.Size.Y/2f, 0f);
 
             this.SpriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, mtxCamera);
 
@@ -190,7 +188,7 @@ namespace Blip
 
                 List<Vector2> listIntersections = new List<Vector2>();
                 Vector2 startPoint = blip.Position + new Vector2(0, 0f);
-                Vector2 endPoint = blip.Position + new Vector2(blip.SizeVector.Length() / 2f * (float)Math.Cos(angle), blip.SizeVector.Length() / 2f * (float)Math.Sin(angle));
+                Vector2 endPoint = blip.Position + new Vector2(blip.Size.Length() / 2f * (float)Math.Cos(angle), blip.Size.Length() / 2f * (float)Math.Sin(angle));
 
                 List<Geom> listGeomCollide = FarseerGames.FarseerPhysics.Collisions.CollisionHelper.LineSegmentAllGeomsIntersect(ref startPoint, ref endPoint, Repository.physicSimulator, false, ref listIntersections);
 

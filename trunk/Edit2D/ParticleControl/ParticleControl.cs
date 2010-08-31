@@ -107,36 +107,36 @@ namespace Edit2D.ParticleControl
 
         private void listBoxParticleTemplate_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Particle particleTemplate = GetCurrentParticleTemplate();
+            //IParticle particleTemplate = GetCurrentParticleTemplate();
 
-            propParticleTemplate.PropertyGrid.SelectedObject = particleTemplate;
+            //propParticleTemplate.PropertyGrid.SelectedObject = particleTemplate;
 
-            if (particleTemplate != null)
-            {
-                foreach (Bitmap bmp in cmbParticleTemplate.Items)
-                {
-                    if (bmp.Tag.ToString() == particleTemplate.TextureName)
-                    {
-                        cmbParticleTemplate.SelectedItem = bmp;
-                    }
-                }
-            }
-            else
-            {
-                cmbParticleTemplate.SelectedIndex = 0;
-            }
+            //if (particleTemplate != null)
+            //{
+            //    foreach (Bitmap bmp in cmbParticleTemplate.Items)
+            //    {
+            //        if (bmp.Tag.ToString() == particleTemplate.TextureName)
+            //        {
+            //            cmbParticleTemplate.SelectedItem = bmp;
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    cmbParticleTemplate.SelectedIndex = 0;
+            //}
         }
 
         private void btnModifParticleTemplateTexture_Click(object sender, EventArgs e)
         {
-            Particle particleTemplate = GetCurrentParticleTemplate();
+            IParticle particleTemplate = GetCurrentParticleTemplate();
 
             if (particleTemplate != null && cmbParticleTemplate.SelectedIndex != -1)
             {
                 Bitmap bmp = (Bitmap)cmbParticleTemplate.SelectedItem;
 
                 //TODO : il faut peut etre supprimer les body précédents
-                particleTemplate.ChangeTexture(bmp.Tag.ToString(), true, true);
+                //particleTemplate.ChangeTexture(bmp.Tag.ToString(), true, true);
 
                 propParticleTemplate.Refresh();
             }
@@ -192,7 +192,7 @@ namespace Edit2D.ParticleControl
 
             if (selectParticleSystem)
             {
-                if (Repository.CurrentObject is Particle)
+                if (Repository.CurrentObject is IParticle)
                 {
                     listBoxParticleSystem.SelectedIndex = listBoxParticleSystem.FindString(Repository.CurrentParticleSystem.Name);
                     RefreshParticleTemplateListBox(true);
@@ -223,7 +223,7 @@ namespace Edit2D.ParticleControl
 
             if (Repository.CurrentParticleSystem != null)
             {
-                foreach (Particle particleTemplate in Repository.CurrentParticleSystem.ListParticleTemplate)
+                foreach (IParticle particleTemplate in Repository.CurrentParticleSystem.ListParticleTemplate)
                 {
                     listBoxParticleTemplate.Items.Add(particleTemplate.Name);
                 }
@@ -231,10 +231,10 @@ namespace Edit2D.ParticleControl
 
             if (selectParticleTemplate)
             {
-                if (Repository.CurrentObject is Particle)
+                if (Repository.CurrentObject is IParticle)
                 {
-                    listBoxParticleTemplate.SelectedIndex = listBoxParticleTemplate.FindString(((Particle)Repository.CurrentObject).Name);
-                    RefreshGlobalTreeView<Particle>((Particle)Repository.CurrentObject);
+                    listBoxParticleTemplate.SelectedIndex = listBoxParticleTemplate.FindString(((IParticle)Repository.CurrentObject).Name);
+                    RefreshGlobalTreeView<IParticle>((IParticle)Repository.CurrentObject);
                 }
                 else if (listBoxParticleTemplate.Items.Count > 0)
                 {
@@ -296,48 +296,48 @@ namespace Edit2D.ParticleControl
             }
         }
 
-        public Particle AddParticleTemplate()
+        public IParticle AddParticleTemplate()
         {
-            Particle particleTemplate = null;
+            IParticle particleTemplate = null;
 
-            if (Repository.CurrentParticleSystem != null)
-            {
-                Bitmap bmp = null;
+            //if (Repository.CurrentParticleSystem != null)
+            //{
+            //    Bitmap bmp = null;
 
-                if (cmbParticleTemplate.SelectedIndex != -1)
-                {
-                    bmp = (Bitmap)cmbParticleTemplate.SelectedItem;
-                }
-                else
-                {
-                    bmp = (Bitmap)cmbParticleTemplate.Items[0];
-                }
+            //    if (cmbParticleTemplate.SelectedIndex != -1)
+            //    {
+            //        bmp = (Bitmap)cmbParticleTemplate.SelectedItem;
+            //    }
+            //    else
+            //    {
+            //        bmp = (Bitmap)cmbParticleTemplate.Items[0];
+            //    }
 
-                string particleName = Common.CreateNewName<Particle>(Repository.CurrentParticleSystem.ListParticleTemplate, "Name", "Particle{0}");
+            //    string particleName = Common.CreateNewName<IParticle>(Repository.CurrentParticleSystem.ListParticleTemplate, "Name", "Particle{0}");
 
-                particleTemplate = new Particle(false, bmp.Tag.ToString(), particleName, Repository.CurrentParticleSystem);
+            //    particleTemplate = new IParticle(false, bmp.Tag.ToString(), particleName, Repository.CurrentParticleSystem);
 
-                Repository.CurrentParticleSystem.ListParticleTemplate.Add(particleTemplate);
+            //    Repository.CurrentParticleSystem.ListParticleTemplate.Add(particleTemplate);
 
-                RefreshParticleTemplateListBox(false);
-                listBoxParticleTemplate.SelectedIndex = listBoxParticleTemplate.Items.Count - 1;
-                cmbParticleTemplate.SelectedItem = bmp;
+            //    RefreshParticleTemplateListBox(false);
+            //    listBoxParticleTemplate.SelectedIndex = listBoxParticleTemplate.Items.Count - 1;
+            //    cmbParticleTemplate.SelectedItem = bmp;
 
-                RefreshGlobalTreeView();
-            }
+            //    RefreshGlobalTreeView();
+            //}
 
             return particleTemplate;
         }
 
         public void DeleteParticleTemplate()
         {
-            Particle particleTemplate = GetCurrentParticleTemplate();
+            IParticle particleTemplate = GetCurrentParticleTemplate();
 
             if (particleTemplate != null)
             {
                 particleTemplate.ParticleSystem.ListParticleTemplate.Remove(particleTemplate);
 
-                if (Repository.CurrentObject is Particle)
+                if (Repository.CurrentObject is IParticle)
                 {
                     Repository.CurrentObject = null;
                 }
@@ -348,7 +348,7 @@ namespace Edit2D.ParticleControl
             }
         }
 
-        public Particle GetCurrentParticleTemplate()
+        public IParticle GetCurrentParticleTemplate()
         {
             if (Repository.CurrentParticleSystem != null && listBoxParticleTemplate.SelectedIndex != -1)
             {

@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace Edit2DEngine
 {
-    public class Camera
+    public class Camera : IMoveableObject
     {
         public Vector2 Position { get; set; }
         public float Zoom { get; set; }
@@ -59,5 +59,7 @@ namespace Edit2DEngine
                 return mtx;
             }
         }
+
+        public float Rotation { get; set; }
     }
 }

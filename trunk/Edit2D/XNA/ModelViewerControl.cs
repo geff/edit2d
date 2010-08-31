@@ -110,7 +110,7 @@ namespace WinFormsContentLoading
 
             //--- Basic Effect
             basicEffect = new BasicEffect(GraphicsDevice, null);
-            
+
             basicEffect.View = Matrix.CreateLookAt(new Vector3(repository.Camera.Position, 1f), new Vector3(repository.Camera.Position, 0f), Vector3.Up);
             ViewPortSizeChanged();
             //---
@@ -197,14 +197,14 @@ namespace WinFormsContentLoading
             }
         }
 
-        private void CalcNormalMap(Entity entity)
+        private void CalcNormalMap(EntitySprite entity)
         {
             //--> 1 : Calcul de la HeightMap
             //--> 2 : Calcul de la normal map
 
             Texture2D heightMapTexture = null;
             Texture2D normalMapTexture = null;
-            Vector3 spriteScale = Vector3.Transform(new Vector3(entity.SizeVector, 0f), repository.Camera.MatrixScale);
+            Vector3 spriteScale = Vector3.Transform(new Vector3(entity.Size, 0f), repository.Camera.MatrixScale);
             RenderTarget2D renderTarget = new RenderTarget2D(GraphicsDevice, entity.NativeImageSize.Width, entity.NativeImageSize.Height, 1, SurfaceFormat.Color);
 
             //---------------------------------------
@@ -224,7 +224,7 @@ namespace WinFormsContentLoading
             //====== [3] Affecte la texture du sprite
             //--- Texture
             Texture2D texture = null;
-            if (entity is Particle)
+            if (entity is IParticle)
                 texture = TextureManager.LoadParticleTexture2D(entity.TextureName);
             else
                 texture = TextureManager.LoadTexture2D(entity.TextureName);
@@ -285,7 +285,7 @@ namespace WinFormsContentLoading
             heightMapTexture.Save(@"c:\scr\NormalMap.png", ImageFileFormat.Png);
 
             //--- Enregistrer la normal Map
-            if (entity is Particle)
+            if (entity is IParticle)
             {
 
             }
@@ -299,16 +299,16 @@ namespace WinFormsContentLoading
             //---
         }
 
-        private void DrawEntityBasic(Entity entity, bool noPosition, string technique)
+        private void DrawEntityBasic(EntitySprite entity, bool noPosition, string technique)
         {
             DrawEntityBasic(entity, noPosition, technique, 0);
         }
 
-        private void DrawEntityBasicVertices(Entity entity, bool noPosition, string technique, int pass)
+        private void DrawEntityBasicVertices(EntitySprite entity, bool noPosition, string technique, int pass)
         {
             Texture2D texture = null;
 
-            if (entity is Particle)
+            if (entity is IParticle)
                 texture = TextureManager.LoadParticleTexture2D(entity.TextureName);
             else
                 texture = TextureManager.LoadTexture2D(entity.TextureName);
@@ -318,8 +318,8 @@ namespace WinFormsContentLoading
             //GraphicsDevice.VertexDeclaration = new VertexDeclaration(GraphicsDevice, VertexPositionTexture.VertexElements);
             //GraphicsDevice.Textures[0] = texture;
             //GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, entity.TexVertices, 0, entity.NumberTriangles);
-            
-            
+
+
             //--- Pass
             //GraphicsDevice.RenderState.AlphaBlendEnable = false;
             //GraphicsDevice.RenderState.AlphaTestEnable = true;
@@ -345,7 +345,7 @@ namespace WinFormsContentLoading
             //---
 
             basicEffect.Begin();
-            
+
             //basicEffect.CurrentTechnique.Passes[pass].Begin();
             foreach (EffectPass effectPass in basicEffect.CurrentTechnique.Passes)
             {
@@ -359,7 +359,7 @@ namespace WinFormsContentLoading
             //---
         }
 
-        private void DrawEntityBasic(Entity entity, bool noPosition, string technique, int pass)
+        private void DrawEntityBasic(EntitySprite entity, bool noPosition, string technique, int pass)
         {
             //--- Pass
             effect.CurrentTechnique = effect.Techniques[technique];
@@ -376,7 +376,7 @@ namespace WinFormsContentLoading
 
             Texture2D texture = null;
 
-            if (entity is Particle)
+            if (entity is IParticle)
                 texture = TextureManager.LoadParticleTexture2D(entity.TextureName);
             else
                 texture = TextureManager.LoadTexture2D(entity.TextureName);
@@ -403,13 +403,13 @@ namespace WinFormsContentLoading
             //---
         }
 
-        private void DrawEntityEdge(Entity entity)
+        private void DrawEntityEdge(EntitySprite entity)
         {
             int nbPass = 20;
             Color clearColor = Color.TransparentWhite;
 
             Texture2D edgeTexture = null;
-            Vector3 spriteScale = Vector3.Transform(new Vector3(entity.SizeVector, 0f), repository.Camera.MatrixScale);
+            Vector3 spriteScale = Vector3.Transform(new Vector3(entity.Size, 0f), repository.Camera.MatrixScale);
             RenderTarget2D edgeRenderTarget1 = new RenderTarget2D(GraphicsDevice, entity.NativeImageSize.Width, entity.NativeImageSize.Height, 1, SurfaceFormat.Color);
 
             //--- [1] Récupère le RenderTarget principal 
@@ -425,7 +425,7 @@ namespace WinFormsContentLoading
             //====== [3] Affecte la texture du sprite
             //--- Texture
             Texture2D texture = null;
-            if (entity is Particle)
+            if (entity is IParticle)
                 texture = TextureManager.LoadParticleTexture2D(entity.TextureName);
             else
                 texture = TextureManager.LoadTexture2D(entity.TextureName);
@@ -433,7 +433,7 @@ namespace WinFormsContentLoading
 
             //--- Paramètres shader
             effect.Parameters["myTextureSize"].SetValue(new Vector2(entity.NativeImageSize.Width, entity.NativeImageSize.Height));
-            effect.Parameters["myEntitySize"].SetValue(entity.SizeVector);
+            effect.Parameters["myEntitySize"].SetValue(entity.Size);
             effect.Parameters["EdgePassTexture"].SetValue(texture);
             effect.Parameters["initEdgePass"].SetValue(true);
             //---
@@ -461,7 +461,7 @@ namespace WinFormsContentLoading
 
                 //--- [7] Affecte la texture
                 effect.Parameters["myTextureSize"].SetValue(new Vector2(entity.NativeImageSize.Width, entity.NativeImageSize.Height));
-                effect.Parameters["myEntitySize"].SetValue(entity.SizeVector);
+                effect.Parameters["myEntitySize"].SetValue(entity.Size);
                 effect.Parameters["EdgePassTexture"].SetValue(edgeTexture);
                 effect.Parameters["initEdgePass"].SetValue(false);
                 //---
@@ -514,13 +514,13 @@ namespace WinFormsContentLoading
             GraphicsDevice.SetRenderTarget(0, null);
         }
 
-        private void DrawEntityNight(Entity entity)
+        private void DrawEntityNight(EntitySprite entity)
         {
             Texture2D texture = null;
             Texture2D normalMapTexture = null;
 
             //--- Calcul la normal Map si elle n'existe pas
-            if (entity is Particle)
+            if (entity is IParticle)
                 normalMapTexture = TextureManager.LoadParticleTexture2D(String.Format("{0}NormalMap", entity.TextureName));
             else
                 normalMapTexture = TextureManager.LoadTexture2D(String.Format("{0}NormalMap", entity.TextureName));
@@ -529,7 +529,7 @@ namespace WinFormsContentLoading
             {
                 CalcNormalMap(entity);
 
-                if (entity is Particle)
+                if (entity is IParticle)
                     normalMapTexture = TextureManager.LoadParticleTexture2D(String.Format("{0}NormalMap", entity.TextureName));
                 else
                     normalMapTexture = TextureManager.LoadTexture2D(String.Format("{0}NormalMap", entity.TextureName));
@@ -538,7 +538,7 @@ namespace WinFormsContentLoading
 
             //====== [3] Affecte la texture du sprite
             //--- Texture
-            if (entity is Particle)
+            if (entity is IParticle)
                 texture = TextureManager.LoadParticleTexture2D(entity.TextureName);
             else
                 texture = TextureManager.LoadTexture2D(entity.TextureName);
@@ -546,7 +546,7 @@ namespace WinFormsContentLoading
 
             //--- Paramètres shader
             effect.Parameters["myTextureSize"].SetValue(new Vector2(entity.NativeImageSize.Width, entity.NativeImageSize.Height));
-            //effect.Parameters["myEntitySize"].SetValue(entity.SizeVector);
+            //effect.Parameters["myEntitySize"].SetValue(entity.Size);
             effect.Parameters["myEntityPosition"].SetValue(entity.Position);
             effect.Parameters["timeMS"].SetValue((int)DateTime.Now.TimeOfDay.TotalMilliseconds);
             effect.Parameters["NormalMapTexture"].SetValue(normalMapTexture);
@@ -567,13 +567,13 @@ namespace WinFormsContentLoading
             //---
         }
 
-        private void DrawEntityBlur(Entity entity)
+        private void DrawEntityBlur(EntitySprite entity)
         {
             Texture2D texture = null;
 
             //====== [3] Affecte la texture du sprite
             //--- Texture
-            if (entity is Particle)
+            if (entity is IParticle)
                 texture = TextureManager.LoadParticleTexture2D(entity.TextureName);
             else
                 texture = TextureManager.LoadTexture2D(entity.TextureName);
@@ -581,7 +581,7 @@ namespace WinFormsContentLoading
 
             //--- Paramètres shader
             effect.Parameters["myTextureSize"].SetValue(new Vector2(entity.NativeImageSize.Width, entity.NativeImageSize.Height));
-            //effect.Parameters["myEntitySize"].SetValue(entity.SizeVector);
+            //effect.Parameters["myEntitySize"].SetValue(entity.Size);
             effect.Parameters["myEntityPosition"].SetValue(entity.Position);
             effect.Parameters["timeMS"].SetValue((int)DateTime.Now.TimeOfDay.TotalMilliseconds);
             //---
@@ -608,21 +608,30 @@ namespace WinFormsContentLoading
 
                     for (int k = 0; k < pSystem.ListParticle.Count; k++)
                     {
-                        DrawEntity(pSystem.ListParticle[k]);
+                        //DrawEntity(pSystem.ListParticle[k]);
+                        //TODO : créer DrawParticle()
                     }
                 }
                 //---
             }
             //---
-            
-            effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
-            effect.Parameters["isSelected"].SetValue(entity.Selected);
-            effect.Parameters["myTextureSize"].SetValue(new Vector2(entity.NativeImageSize.Width, entity.NativeImageSize.Height));
 
-            //DrawEntityEdge(entity);
-            //DrawEntityBasic(entity, false, "Edge");
-            //DrawEntityBasic(entity, false, "SpriteBatch");
-            DrawEntityBasicVertices(entity, false, "SpriteBatch", 0);
+            foreach (EntityComponent entityComponent in entity.ListEntityComponent)
+            {
+                if (entityComponent is EntitySprite)
+                {
+                    effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
+                    effect.Parameters["isSelected"].SetValue(entity.Selected);
+                    effect.Parameters["myTextureSize"].SetValue(new Vector2(((EntitySprite)entityComponent).NativeImageSize.Width, ((EntitySprite)entityComponent).NativeImageSize.Height));
+
+                    //DrawEntityEdge(entity);
+                    //DrawEntityBasic(entity, false, "Edge");
+                    //DrawEntityBasic(entity, false, "SpriteBatch");
+                    DrawEntityBasicVertices((EntitySprite)entityComponent, false, "SpriteBatch", 0);
+                }
+            }
+
+
             //--- Night
             //DrawEntityNight(entity);
             //---
@@ -630,7 +639,7 @@ namespace WinFormsContentLoading
             //--- Blur
             //---
 
-
+            /*
             if (!repository.IsSimpleMode && ((!repository.Pause && repository.IsEntityClickableOnPlay) || repository.Pause) && ((repository.ShowDebugMode && entity.IsStatic) || entity.Selected))
             {
                 this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
@@ -644,19 +653,20 @@ namespace WinFormsContentLoading
                                                      (int)(16f));
 
                     this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pin"), recPin, null, Color.White, entity.Rotation,
-                        entity.SizeVector / 2f + new Vector2(5f, 8f), SpriteEffects.None, 0f);
+                        new Vector2(5f + (float)entity.Rectangle.Width / 2f, 8f + (float)entity.Rectangle.Height / 2f), SpriteEffects.None, 0f);
                 }
                 //---
 
                 //--- Couche du layer
                 if (repository.ShowDebugMode)
                 {
-                    spriteBatch.DrawString(spriteFont, entity.Layer.ToString(), entity.Position + new Vector2(10f, -10f), Color.Red, entity.Rotation, entity.SizeVector / 2f + new Vector2(5f, 8f), 1f, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(spriteFont, entity.Layer.ToString(), entity.Position + new Vector2(10f, -10f), Color.Red, entity.Rotation, new Vector2(5f + (float)entity.Rectangle.Width / 2f, 8f + (float)entity.Rectangle.Height / 2f), 1f, SpriteEffects.None, 0);
                 }
                 //---
 
                 this.spriteBatch.End();
             }
+            */
 
             if (entity.Selected && entity.ListParticleSystem.Count > 0)
             {
@@ -695,8 +705,8 @@ namespace WinFormsContentLoading
             {
                 lineBrush.Color = Color.Green;
                 this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
-                
-                for (int i = 0; i < repository.ListCurveLine.Count-1; i++)
+
+                for (int i = 0; i < repository.ListCurveLine.Count - 1; i++)
                 {
                     Vector2 vecStart = repository.ListCurveLine[i];
                     Vector2 vecEnd = repository.ListCurveLine[i + 1];
@@ -780,22 +790,25 @@ namespace WinFormsContentLoading
             {
                 Entity entity = repository.listEntity[i];
 
-                Rectangle recEntity = Rectangle.Empty;
-                Vector3 vecPosEntity = new Vector3(entity.Position - entity.Center, 0f);
-                Vector3 vecSizeEntity = new Vector3(entity.geom.AABB.Width, entity.geom.AABB.Height, 0);
-
-                vecPosEntity = Vector3.Transform(vecPosEntity, repository.Camera.MatrixTransformation);
-                vecSizeEntity = Vector3.Transform(vecSizeEntity, repository.Camera.MatrixScale);
-
-                recEntity = new Rectangle((int)vecPosEntity.X, (int)vecPosEntity.Y, (int)vecSizeEntity.X, (int)vecSizeEntity.Y);
-
-
-
-
-                if (recScreen.Intersects(recEntity) ||
-                    repository.ShowDebugMode && repository.ViewingMode == ViewingMode.Script && entity.Selected && repository.CurrentEntity == entity)
+                for (int j = 0; j < entity.ListEntityComponent.Count; j++)
                 {
-                    listEntityToDraw.Add(entity);
+                    if (entity.ListEntityComponent[j] is EntitySprite)
+                    {
+                        Rectangle recEntity = Rectangle.Empty;
+                        Vector3 vecPosEntity = new Vector3(((EntitySprite)entity.ListEntityComponent[j]).Position - ((EntitySprite)entity.ListEntityComponent[j]).Center, 0f);
+                        Vector3 vecSizeEntity = new Vector3(((EntitySprite)entity.ListEntityComponent[j]).Geom.AABB.Width, ((EntitySprite)entity.ListEntityComponent[j]).Geom.AABB.Height, 0);
+
+                        vecPosEntity = Vector3.Transform(vecPosEntity, repository.Camera.MatrixTransformation);
+                        vecSizeEntity = Vector3.Transform(vecSizeEntity, repository.Camera.MatrixScale);
+
+                        recEntity = new Rectangle((int)vecPosEntity.X, (int)vecPosEntity.Y, (int)vecSizeEntity.X, (int)vecSizeEntity.Y);
+
+                        if (recScreen.Intersects(recEntity) ||
+                            repository.ShowDebugMode && repository.ViewingMode == ViewingMode.Script && entity.Selected && repository.CurrentEntity == entity)
+                        {
+                            listEntityToDraw.Add(entity);
+                        }
+                    }
                 }
             }
 
