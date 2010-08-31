@@ -22,6 +22,9 @@ namespace Edit2DEngine
         public static int EntityCount = 0;
         public bool Pause = false;
 
+        public IMoveableObject CurrentMoveableObject { get; set; }
+        public IResizeableObject CurrentResizeableObject { get; set; }
+        
         private Entity _currentEntity;
         public Entity CurrentEntity
         {
@@ -49,6 +52,9 @@ namespace Edit2DEngine
         public List<Entity> listEntity;
         public Camera Camera;
 
+        public EntityPhysicObject CurrentEntityPhysic;
+        public EntityPhysicObject CurrentEntityPhysic2;
+
         public static PhysicsSimulator physicSimulator;
         public string CurrentTextureName;
         public Stopwatch WatchLoading;
@@ -62,6 +68,20 @@ namespace Edit2DEngine
             this.WatchLoading = new Stopwatch();
 
             Repository.physicSimulator = new PhysicsSimulator(new Vector2(0, 9.81f));
+        }
+
+        public EntityComponent GetSelectedEntityComponentFromLocation(Vector2 location)
+        {
+            EntityComponent entityComponentSelected = null;
+
+            foreach (Entity entity in listEntity)
+            {
+                entityComponentSelected = entity.ListEntityComponent.Find(ec => ec.ContainsLocation(location));
+            }
+
+            //TODO : gérer la sélection en tenant compte de la superposition par couche et par ordre
+
+            return entityComponentSelected;
         }
 
         public Entity GetSelectedEntityFromLocation(Vector2 location)
@@ -218,7 +238,9 @@ namespace Edit2DEngine
             }
             //---
             */
-            return entity;
+            //return entity;
+
+            return null;
         }
 
         public void OrderEntity()

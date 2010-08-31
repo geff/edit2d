@@ -9,7 +9,7 @@ using Edit2DEngine.Triggers;
 
 namespace Edit2DEngine
 {
-    public class World : ITriggerHandler
+    public class World : ITriggerMouseHandler
     {
         [Browsable(false)]
         public List<TriggerBase> ListTrigger { get; set; }
@@ -49,6 +49,11 @@ namespace Edit2DEngine
             {
                 return false;
             }
+        }
+
+        public bool ContainsLocation(Microsoft.Xna.Framework.Vector2 pos)
+        {
+            return false;
         }
     }
 }

@@ -209,7 +209,9 @@ namespace Edit2DEngine.Render
 
                     for (int k = 0; k < pSystem.ListParticle.Count; k++)
                     {
-                        DrawEntity(pSystem.ListParticle[k]);
+                        if(pSystem.ListParticle[k] is EntitySprite)
+                            DrawEntitySprite((EntitySprite)pSystem.ListParticle[k]);
+                        //TODO : compléter le rendu avec EntityText, Entity3DModel
                     }
                 }
                 //---
@@ -330,7 +332,7 @@ namespace Edit2DEngine.Render
             //    if (repository.showPhysic && entity.IsStatic)
             //    {
             //        this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pin"), new Rectangle((int)entity.Position.X, (int)entity.Position.Y, 10, 16), null, Color.White, entity.Body.Rotation,
-            //            entity.SizeVector / 2 + new Vector2(5, 8), SpriteEffects.None, 1f);
+            //            entity.Size / 2 + new Vector2(5, 8), SpriteEffects.None, 1f);
             //    }
             //    //---
 

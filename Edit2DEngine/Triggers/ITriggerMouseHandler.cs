@@ -10,6 +10,6 @@ namespace Edit2DEngine.Triggers
 {
     public interface ITriggerMouseHandler : ITriggerHandler
     {
-        bool ContainsPosition(Vector2 pos);
+        bool ContainsLocation(Vector2 pos);
     }
 }

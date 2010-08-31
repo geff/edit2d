@@ -11,19 +11,19 @@ namespace Edit2D
 {
     public class Selection
     {
-        public Entity TempEntity { get; set; }
+        public EntityComponent TempEntityComponent { get; set; }
         //public Vector2 TempPointer { get; set; }
         //public Vector2 TempPointerDraw { get; set; }
 
-        public Entity Entity { get; set; }
+        public EntityComponent EntityComponent { get; set; }
         //public Vector2 Pointer { get; set; }
         //public Vector2 PointerDraw { get; set; }
 
         public Pointer Pointer { get; set; }
 
-        public Selection(Entity entity, Vector2 worldPointer, Vector2 screePointer)
+        public Selection(EntityComponent entityComponent, Vector2 worldPointer, Vector2 screePointer)
         {
-            this.Entity = entity;
+            this.EntityComponent = entityComponent;
             this.Pointer = new Pointer();
             this.Pointer.WorldPosition = worldPointer;
             this.Pointer.ScreenPosition = screePointer;

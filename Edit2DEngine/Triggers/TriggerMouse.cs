@@ -42,7 +42,7 @@ namespace Edit2DEngine.Triggers
                 case TriggerMouseType.MouseRightClick:
                     if (this.TriggerHandler is Entity)
                     {
-                        if (mouseState.RightButton == ButtonState.Pressed && ((ITriggerMouseHandler)TriggerHandler).ContainsPosition(pos))
+                        if (mouseState.RightButton == ButtonState.Pressed && ((ITriggerMouseHandler)TriggerHandler).ContainsLocation(pos))
                             launchScript = true;
                     }
                     else
@@ -57,7 +57,7 @@ namespace Edit2DEngine.Triggers
                     //    launchScript = true;
                     if (this.TriggerHandler is Entity)
                     {
-                        if (mouseState.LeftButton == ButtonState.Pressed && ((ITriggerMouseHandler)TriggerHandler).ContainsPosition(pos))
+                        if (mouseState.LeftButton == ButtonState.Pressed && ((ITriggerMouseHandler)TriggerHandler).ContainsLocation(pos))
                             launchScript = true;
                     }
                     else
@@ -71,7 +71,7 @@ namespace Edit2DEngine.Triggers
                     //    launchScript = true;
                     if (this.TriggerHandler is Entity)
                     {
-                        if (!IsMouseOver && ((ITriggerMouseHandler)TriggerHandler).ContainsPosition(pos))
+                        if (!IsMouseOver && ((ITriggerMouseHandler)TriggerHandler).ContainsLocation(pos))
                             launchScript = true;
                     }
                     else
@@ -85,7 +85,7 @@ namespace Edit2DEngine.Triggers
                     //    launchScript = true;
                     if (this.TriggerHandler is Entity)
                     {
-                        if (IsMouseOver && !((ITriggerMouseHandler)TriggerHandler).ContainsPosition(pos))
+                        if (IsMouseOver && !((ITriggerMouseHandler)TriggerHandler).ContainsLocation(pos))
                             launchScript = true;
                     }
                     else
@@ -99,7 +99,7 @@ namespace Edit2DEngine.Triggers
                     //    launchScript = true;
                     if (this.TriggerHandler is Entity)
                     {
-                        if (((ITriggerMouseHandler)TriggerHandler).ContainsPosition(pos))
+                        if (((ITriggerMouseHandler)TriggerHandler).ContainsLocation(pos))
                             launchScript = true;
                     }
                     else
@@ -114,7 +114,7 @@ namespace Edit2DEngine.Triggers
 
             if (this.TriggerHandler is Entity)
             {
-                IsMouseOver = ((ITriggerMouseHandler)TriggerHandler).ContainsPosition(pos);
+                IsMouseOver = ((ITriggerMouseHandler)TriggerHandler).ContainsLocation(pos);
             }
             else
             {

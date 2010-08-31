@@ -30,10 +30,10 @@ namespace Edit2DEngine.Triggers
 
         public override void CheckTrigger(Repository repository)
         {
-            if (this.TargetEntity != null && this.TargetEntity.geom != null)
+            if (this.TargetEntity != null && this.TargetEntity.Geom != null)
             {
                 //if (this.Entity.geom.Collide(this.TargetEntity.geom))
-                if (this.TargetEntity.geom.Collide(((ITriggerCollisionHandler)this.TriggerHandler).geom))
+                if (this.TargetEntity.Geom.Collide(((ITriggerCollisionHandler)this.TriggerHandler).Geom))
                 {
                     LaunchScript(repository);
                 }
