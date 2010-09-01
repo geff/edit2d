@@ -11,20 +11,28 @@ using System.Linq;
 using System.Diagnostics;
 using Edit2DEngine.Actions;
 using Edit2DEngine.Triggers;
+using Edit2DEngine.CustomProperties;
 
 
 namespace Edit2DEngine
 {
     public class Repository
     {
-        public Entity tempEntity;
+        public Object tempObject;
         private Random rnd;
         public static int EntityCount = 0;
         public bool Pause = false;
 
+        public ICustomPropertyHandler CurrentCustomPropertyHandler { get; set; }
         public IMoveableObject CurrentMoveableObject { get; set; }
         public IResizeableObject CurrentResizeableObject { get; set; }
-        
+        public Object CurrentObject { get; set; }
+        public IActionHandler CurrentActionHandler { get; set; }
+        public ITriggerHandler CurrentTriggerHandler { get; set; }
+        public ParticleSystem CurrentParticleSystem { get; set; }
+        public EntityPhysicObject CurrentEntityPhysic;
+        public EntityPhysicObject CurrentEntityPhysic2;
+
         private Entity _currentEntity;
         public Entity CurrentEntity
         {
@@ -43,18 +51,11 @@ namespace Edit2DEngine
             }
         }
 
-        public Object CurrentObject { get; set; }
-        public IActionHandler CurrentActionHandler { get; set; }
-        public ITriggerHandler CurrentTriggerHandler { get; set; }
-        public ParticleSystem CurrentParticleSystem { get; set; }
+
         public World World { get; set; }
-        public Entity currentEntity2;
+        //public Entity currentEntity2;
         public List<Entity> listEntity;
         public Camera Camera;
-
-        public EntityPhysicObject CurrentEntityPhysic;
-        public EntityPhysicObject CurrentEntityPhysic2;
-
         public static PhysicsSimulator physicSimulator;
         public string CurrentTextureName;
         public Stopwatch WatchLoading;

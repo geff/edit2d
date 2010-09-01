@@ -23,6 +23,7 @@ using Microsoft.Xna.Framework.Input;
 using Edit2D.UC;
 using Edit2DEngine.Entities;
 using Edit2DEngine.Triggers;
+using Edit2DEngine.CustomProperties;
 
 namespace Edit2D
 {
@@ -136,7 +137,9 @@ namespace Edit2D
                 TreeViewLocalItemType.Script |
                 TreeViewLocalItemType.Trigger |
                 TreeViewLocalItemType.ParticleSystem |
-                TreeViewLocalItemType.SubEntity;
+                TreeViewLocalItemType.EntitySprite |
+                TreeViewLocalItemType.EntityText |
+                TreeViewLocalItemType.Entity3DModel;
             treeView.ItemTypeCheckBoxed =
                 TreeViewLocalItemType.World |
                 TreeViewLocalItemType.Entity |
@@ -144,7 +147,9 @@ namespace Edit2D
                 TreeViewLocalItemType.Script |
                 TreeViewLocalItemType.Trigger |
                 TreeViewLocalItemType.ParticleSystem |
-                TreeViewLocalItemType.SubEntity;
+                TreeViewLocalItemType.EntitySprite |
+                TreeViewLocalItemType.EntityText |
+                TreeViewLocalItemType.Entity3DModel;
             treeView.AllowMultipleItemChecked = false;
             treeView.AllowUncheckedNode = false;
             treeView.Repository = repository;
@@ -331,7 +336,7 @@ namespace Edit2D
 
                 //--- Création de l'EntitySprite
                 string nameEntitySprite = Common.CreateNewName<EntityComponent>(entity.ListEntityComponent, "Name", repository.CurrentTextureName + "{0}");
-                EntitySprite entitySprite = new EntitySprite(true, repository.CurrentTextureName, nameEntitySprite);
+                EntitySprite entitySprite = new EntitySprite(true, repository.CurrentTextureName, nameEntitySprite, entity);
 
                 entity.ListEntityComponent.Add(entitySprite);
                 //---
@@ -492,13 +497,14 @@ namespace Edit2D
             repository.CurrentParticleSystem = null;
             repository.CurrentActionHandler = null;
             repository.CurrentTriggerHandler = null;
+            repository.CurrentCustomPropertyHandler = null;
+            repository.CurrentMoveableObject = null;
+            repository.CurrentResizeableObject = null;
 
             if (newSelection is IParticle)
             {
                 repository.CurrentEntity = ((IParticle)newSelection).ParticleSystem.Entity;
                 repository.CurrentParticleSystem = ((IParticle)newSelection).ParticleSystem;
-                repository.CurrentTriggerHandler = (ITriggerHandler)newSelection;
-                repository.CurrentActionHandler = (IActionHandler)newSelection;
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem.Entity;
 
@@ -507,8 +513,6 @@ namespace Edit2D
             else if (newSelection is Entity)
             {
                 repository.CurrentEntity = (Entity)newSelection;
-                repository.CurrentTriggerHandler = (ITriggerHandler)newSelection;
-                repository.CurrentActionHandler = (IActionHandler)newSelection;
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.CurrentEntity;
 
@@ -568,7 +572,6 @@ namespace Edit2D
             {
                 repository.CurrentEntity = ((ParticleSystem)newSelection).Entity;
                 repository.CurrentParticleSystem = (ParticleSystem)newSelection;
-                repository.CurrentActionHandler = (IActionHandler)newSelection;
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem.Entity;
 
@@ -576,12 +579,23 @@ namespace Edit2D
             }
             else if (newSelection is World)
             {
-                repository.CurrentTriggerHandler = (ITriggerHandler)newSelection;
-
                 propertyGrid.PropertyGrid.SelectedObject = repository.World;
 
                 ShowTriggerMode();
             }
+
+            //--- Détermine les Handler courants
+            if (newSelection is ICustomPropertyHandler)
+                repository.CurrentCustomPropertyHandler = (ICustomPropertyHandler)newSelection;
+            if (newSelection is IActionHandler)
+                repository.CurrentActionHandler = (IActionHandler)newSelection;
+            if (newSelection is ITriggerHandler)
+                repository.CurrentTriggerHandler = (ITriggerHandler)newSelection;
+            if (newSelection is IMoveableObject)
+                repository.CurrentMoveableObject = (IMoveableObject)newSelection;
+            if (newSelection is IResizeableObject)
+                repository.CurrentResizeableObject = (IResizeableObject)newSelection;
+            //---
 
             EnableMode(
                 repository.CurrentActionHandler != null,
@@ -1683,7 +1697,7 @@ namespace Edit2D
                 //--- Redonne le statut Static à l'entité courante
                 if (repository.CurrentEntityPhysic != null)
                 {
-                    if (repository.tempEntity != null)
+                    if (repository.tempObject != null)
                     {
                         //TODO : gérer de nouveau cette fonctionnalité
                         //repository.CurrentEntityPhysic.Body.IsStatic = repository.tempEntity.IsStatic;
@@ -1809,7 +1823,7 @@ namespace Edit2D
                             float angle = vec1.GetAngle(vec2);
 
                             //TODO : ajouter un prevpos2 lors du MouseDown pour le pointer2
-                            repository.CurrentEntity.ListParticleSystem[0].EmmittingAngle = repository.tempEntity.ListParticleSystem[0].EmmittingAngle + angle;
+                            repository.CurrentEntity.ListParticleSystem[0].EmmittingAngle = ((Entity)repository.tempObject).ListParticleSystem[0].EmmittingAngle + angle;
                         }
                     }
                 }
@@ -1823,14 +1837,13 @@ namespace Edit2D
                     repository.CurrentPointer.CalcMousePointerLocation(e.Location, repository.Camera);
 
                     //--- MouseMode.Move
-                    if ((repository.CurrentEntity != null || repository.ListSelection.Count > 0) &&
+                    if ((repository.CurrentMoveableObject != null || repository.ListSelection.Count > 0) &&
                          repository.keyAltPressed &&
                          repository.MouseMode == MouseMode.Move)
                     {
                         Vector2 deltaPosition = repository.CurrentPointer.WorldPosition - repository.CurrentPointer.PrevWorldPosition;
 
-                        if (repository.CurrentEntity != null)
-                            repository.CurrentEntity.Position = (repository.tempEntity.Position + deltaPosition);
+                        repository.CurrentMoveableObject.Position = ((IMoveableObject)repository.tempObject).Position + deltaPosition;
 
                         for (int i = 0; i < repository.ListSelection.Count; i++)
                         {
@@ -1844,7 +1857,7 @@ namespace Edit2D
 
                     //--- MouseMode.Resize
                     #region Resize
-                    if (repository.CurrentResizeableObject != null && repository.tempEntity != null && repository.keyAltPressed && repository.MouseMode == MouseMode.Resize)
+                    if (repository.CurrentResizeableObject != null && repository.tempObject != null && repository.keyAltPressed && repository.MouseMode == MouseMode.Resize)
                     {
                         //TODO : rétablir le redimenssionnement
                         /*
@@ -2001,7 +2014,8 @@ namespace Edit2D
 
                             angle = vecA.GetAngle(vecB);
                             this.Text = angle.ToString();
-                            repository.CurrentEntity.Rotation = repository.tempEntity.Rotation + angle;
+
+                            repository.CurrentEntity.Rotation = ((Entity)repository.tempObject).Rotation + angle;
                         }
                     }
                     //---
@@ -2056,9 +2070,9 @@ namespace Edit2D
         private void CloneSelectedEntity(bool cloneLocal)
         {
             //TODO : rétablir cette fonctionnalité
-            /*
-            if (cloneLocal)
-                clonedSelectedEntityPhysicObject = new List<Entity>();
+            //TODO : voir à quoi sert cloneLocal
+            //if (cloneLocal)
+            //    clonedSelectedEntityPhysicObject = new List<Entity>();
 
             //---> Création des clones lorsque la touche de modification est pressée
             if (repository.CurrentEntity != null || repository.ListSelection.Count > 0)
@@ -2066,19 +2080,23 @@ namespace Edit2D
                 for (int i = 0; i < repository.ListSelection.Count; i++)
                 {
                     //---> Le body courant devient statique pour tous les MouseMode
-                    if (cloneLocal)
-                        clonedSelectedEntityPhysicObject.Add((Entity)repository.ListSelection[i].EntityComponent.Clone(false));
-                    else
-                        repository.ListSelection[i].TempEntityComponent = (Entity)repository.ListSelection[i].EntityComponent.Clone(false);
+                    //if (cloneLocal)
+                    //    clonedSelectedEntityPhysicObject.Add((Entity)repository.ListSelection[i].EntityComponent.Clone(false));
+                    //else
+                    repository.ListSelection[i].TempEntityComponent = (EntityComponent)repository.ListSelection[i].EntityComponent.Clone();//false);
 
                     repository.ListSelection[i].Pointer.SaveState();
-                    repository.ListSelection[i].EntityComponent.IsStatic = true;
 
-                    //--- Suppression du body courant si on est en mode Resize
-                    if (repository.MouseMode == MouseMode.Resize)
+                    if (repository.ListSelection[i].EntityComponent is EntityPhysicObject)
                     {
-                        Repository.physicSimulator.Remove(repository.ListSelection[i].EntityComponent.Body);
-                        Repository.physicSimulator.Remove(repository.ListSelection[i].EntityComponent.geom);
+                        ((EntityPhysicObject)repository.ListSelection[i].EntityComponent).IsStatic = true;
+
+                        //--- Suppression du body courant si on est en mode Resize
+                        if (repository.MouseMode == MouseMode.Resize)
+                        {
+                            Repository.physicSimulator.Remove(((EntityPhysicObject)repository.ListSelection[i].EntityComponent).Body);
+                            Repository.physicSimulator.Remove(((EntityPhysicObject)repository.ListSelection[i].EntityComponent).Geom);
+                        }
                     }
                     //---
                 }
@@ -2087,23 +2105,23 @@ namespace Edit2D
                 if (repository.CurrentEntity != null)
                 {
                     //---> Le body courant devient statique pour tous les MouseMode
-                    if (cloneLocal)
-                        clonedSelectedEntityPhysicObject.Add((Entity)repository.CurrentEntity.Clone(false));
-                    else
-                        repository.tempEntity = (Entity)repository.CurrentEntity.Clone(false);
+                    //if (cloneLocal)
+                    //    clonedSelectedEntityPhysicObject.Add((Entity)repository.CurrentEntity.Clone(false));
+                    //else
+                    repository.tempObject = repository.CurrentEntity.Clone();// (false);
 
-                    repository.CurrentEntity.Body.IsStatic = true;
+                    //repository.CurrentEntity.Body.IsStatic = true;
 
                     //--- Suppression du body courant si on est en mode Resize
-                    if (repository.MouseMode == MouseMode.Resize)
-                    {
-                        Repository.physicSimulator.Remove(repository.CurrentEntity.Body);
-                        Repository.physicSimulator.Remove(repository.CurrentEntity.geom);
-                    }
+                    //if (repository.MouseMode == MouseMode.Resize)
+                    //{
+                    //    Repository.physicSimulator.Remove(repository.CurrentEntity.Body);
+                    //    Repository.physicSimulator.Remove(repository.CurrentEntity.geom);
+                    //}
                     //---
                 }
             }
-             */
+
         }
 
         private void modelViewerControl_Resize(object sender, EventArgs e)

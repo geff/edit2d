@@ -13,6 +13,7 @@ using Edit2DEngine.Actions;
 using Edit2DEngine.Entities;
 using Edit2DEngine.Entities.Particles;
 using Edit2DEngine.Triggers;
+using Edit2DEngine.CustomProperties;
 
 namespace Edit2D.UC
 {
@@ -35,6 +36,9 @@ namespace Edit2D.UC
 
         private const String IMAGE_KEY_EMPTY = "icon_Empty";
         private const String IMAGE_KEY_ENTITY = "icon_Entity";
+        private const String IMAGE_KEY_ENTITY_SPRITE = "icon_Entity";
+        private const String IMAGE_KEY_ENTITY_TEXT = "icon_Entity";
+        private const String IMAGE_KEY_ENTITY_3D_MODEL = "icon_Entity";
         private const String IMAGE_KEY_PARTICLE_SYSTEM = "icon_Particlesystem";
         private const String IMAGE_KEY_SCRIPT = "icon_Script";
         private const String IMAGE_KEY_TRIGGER = "icon_Trigger";
@@ -52,6 +56,9 @@ namespace Edit2D.UC
         private string NODE_WORLD = "Monde";
         private string NODE_MOUSE = "Souris";
         private string NODE_ENTITY = "Entités";
+        private string NODE_ENTITY_SPRITE = "Sprite";
+        private string NODE_ENTITY_TEXT = "Text";
+        private string NODE_ENTITY_3D_MODEL = "Model3D";
         private string NODE_PROPERTIES = "Propriétés";
         private string NODE_SCRIPT = "Scripts";
         private string NODE_TRIGGER = "Déclencheurs";
@@ -147,24 +154,7 @@ namespace Edit2D.UC
                 TreeNode nodeEntity = nodeEntities.Nodes.Add(entity.Name, entity.Name, IMAGE_KEY_EMPTY);
                 nodeEntity.Tag = new Object[] { TreeViewLocalItemType.Entity, entity };
 
-                //--- Propriétés
-                if ((ItemTypeShowed & TreeViewLocalItemType.EntityProperties) == TreeViewLocalItemType.EntityProperties)
-                {
-                    TreeNode nodeProperties = nodeEntity.Nodes.Add(NODE_PROPERTIES, NODE_PROPERTIES, IMAGE_KEY_PROPERTY);
-                    nodeProperties.Tag = new Object[] { TreeViewLocalItemType.EntityProperties };
-
-                    PropertyInfo[] propertiesInfo = entity.GetType().GetProperties();
-
-                    foreach (PropertyInfo propertyInfo in propertiesInfo)
-                    {
-                        if (propertyInfo.GetCustomAttributes(typeof(AttributeAction), true).Length > 0)
-                        {
-                            TreeNode nodeProperty = nodeProperties.Nodes.Add(propertyInfo.Name, propertyInfo.Name, IMAGE_KEY_EMPTY);
-                            nodeProperty.Tag = new Object[] { TreeViewLocalItemType.EntityProperties, propertyInfo };
-                        }
-                    }
-                }
-                //---
+                AddPropertyNode(entity, nodeEntity);
 
                 //TODO : gérer les propriétés personalisées
                 //--- Propriétés personalisées
@@ -177,6 +167,40 @@ namespace Edit2D.UC
 
                 //    treeViewCustomProperties.Nodes.Add(node);
                 //}
+                //---
+
+                //--- Sous-entités
+                if (true)
+                {
+                    TreeNode nodeEntitiesSprite = null;
+                    //TreeNode nodeEntitiesText = null;
+                    //TreeNode nodeEntities3DModel = null;
+
+                    if (entity.ListEntityComponent.Count<EntityComponent>() > 0)
+                    {
+                        nodeEntitiesSprite = nodeEntity.Nodes.Add(NODE_ENTITY_SPRITE, NODE_ENTITY_SPRITE, IMAGE_KEY_ENTITY_SPRITE);
+                        nodeEntitiesSprite.Tag = new Object[] { TreeViewLocalItemType.EntitySprite};
+                    }
+
+                    foreach (EntityComponent entityComponent in entity.ListEntityComponent)
+                    {
+                        TreeNode nodeEntityComponent = null;
+
+                        if (entityComponent is EntitySprite)
+                        {
+                            nodeEntityComponent = nodeEntitiesSprite.Nodes.Add(entityComponent.Name, entityComponent.Name, IMAGE_KEY_EMPTY);
+                            nodeEntityComponent.Tag = new Object[] { TreeViewLocalItemType.EntitySprite, entityComponent };
+                        }
+
+                        AddPropertyNode(entityComponent, nodeEntityComponent);
+
+                        //TODO : gérer les propriétés personalisées
+                        //--- Propriétés personalisées
+                        //---
+
+                        AddScriptAndTriggerNode((IActionHandler)entityComponent, (ITriggerHandler)entityComponent, nodeEntityComponent);
+                    }
+                }
                 //---
 
                 //--- Script et Trigger
@@ -249,6 +273,32 @@ namespace Edit2D.UC
 
             this.EndUpdate();
             this.IsRefreshing = false;
+        }
+
+        private void AddPropertyNode(Object obj, TreeNode node)
+        {
+            //--- Propriétés
+            if ((ItemTypeShowed & TreeViewLocalItemType.EntityProperties) == TreeViewLocalItemType.EntityProperties)
+            {
+                TreeNode nodeProperties = node.Nodes.Add(NODE_PROPERTIES, NODE_PROPERTIES, IMAGE_KEY_PROPERTY);
+                nodeProperties.Tag = new Object[] { TreeViewLocalItemType.EntityProperties };
+
+                PropertyInfo[] propertiesInfo = obj.GetType().GetProperties();
+
+                foreach (PropertyInfo propertyInfo in propertiesInfo)
+                {
+                    if (propertyInfo.GetCustomAttributes(typeof(AttributeAction), true).Length > 0)
+                    {
+                        TreeNode nodeProperty = nodeProperties.Nodes.Add(propertyInfo.Name, propertyInfo.Name, IMAGE_KEY_EMPTY);
+                        nodeProperty.Tag = new Object[] { TreeViewLocalItemType.EntityProperties, propertyInfo };
+                    }
+                }
+            }
+            //---
+        }
+
+        private void AddCustomPropertyNode(ICustomPropertyHandler customPropertyHandler, TreeNode node)
+        {
         }
 
         private void AddScriptAndTriggerNode(IActionHandler actionHandler, ITriggerHandler triggerHandler, TreeNode nodeEntity)
@@ -795,12 +845,15 @@ namespace Edit2D.UC
         None = 0,
         World = 1,
         Entity = 2,
-        Script = 4,
-        Trigger = 8,
-        ParticleSystem = 16,
-        SubEntity = 32,
-        EntityProperties = 64,
-        CustomProperties = 128,
-        Mouse = 256
+        EntitySprite = 4,
+        EntityText = 8,
+        Entity3DModel = 16,
+        Script = 32,
+        Trigger = 64,
+        ParticleSystem = 128,
+        SubEntity = 256,
+        EntityProperties = 512,
+        CustomProperties = 1024,
+        Mouse = 2048
     }
 }

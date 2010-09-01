@@ -6,10 +6,11 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using System.ComponentModel;
 using Edit2DEngine.Triggers;
+using Edit2DEngine.CustomProperties;
 
 namespace Edit2DEngine
 {
-    public class World : ITriggerMouseHandler
+    public class World : ITriggerMouseHandler, ICustomPropertyHandler
     {
         [Browsable(false)]
         public List<TriggerBase> ListTrigger { get; set; }
