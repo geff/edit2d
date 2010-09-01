@@ -6,10 +6,11 @@ using Edit2DEngine.Triggers;
 using Edit2DEngine.Actions;
 using Microsoft.Xna.Framework;
 using System.ComponentModel;
+using Edit2DEngine.CustomProperties;
 
 namespace Edit2DEngine.Entities
 {
-    public abstract class EntityComponent : ITriggerHandler, IActionHandler, ICloneable, IMoveableObject, IResizeableObject
+    public abstract class EntityComponent : ITriggerHandler, IActionHandler, ICloneable, IMoveableObject, IResizeableObject, ICustomPropertyHandler
     {
         public String Name { get; set; }
         public Entity EntityParent { get; set; }

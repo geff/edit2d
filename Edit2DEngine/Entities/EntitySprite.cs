@@ -36,17 +36,17 @@ namespace Edit2DEngine.Entities
             }
         }
 
-        public EntitySprite(bool linkToPhysiSimulator, bool isCollisionable, string textureName, string name)
+        public EntitySprite(bool linkToPhysiSimulator, bool isCollisionable, string textureName, string name, Entity entityParent)
         {
-            Constructor(linkToPhysiSimulator, isCollisionable, textureName, name);
+            Constructor(linkToPhysiSimulator, isCollisionable, textureName, name, entityParent);
         }
 
-        public EntitySprite(bool linkToPhysiSimulator, string textureName, string name)
+        public EntitySprite(bool linkToPhysiSimulator, string textureName, string name, Entity entityParent)
         {
-            Constructor(linkToPhysiSimulator, true, textureName, name);
+            Constructor(linkToPhysiSimulator, true, textureName, name, entityParent);
         }
 
-        private void Constructor(bool addToPhysicSimulator, bool isCollisionable, string textureName, string name)
+        private void Constructor(bool addToPhysicSimulator, bool isCollisionable, string textureName, string name, Entity entityParent)
         {
             ListFixedLinearSpring = new List<FixedLinearSpring>();
             ListLinearSpring = new List<LinearSpring>();
@@ -56,6 +56,7 @@ namespace Edit2DEngine.Entities
             ListRevoluteJointJoint = new List<RevoluteJoint>();
             ListFixedRevoluteJoint = new List<FixedRevoluteJoint>();
 
+            this.EntityParent = entityParent;
             this.ListScript = new List<Script>();
             this.ListTrigger = new List<TriggerBase>();
 

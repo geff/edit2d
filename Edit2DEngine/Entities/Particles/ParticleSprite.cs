@@ -20,8 +20,8 @@ namespace Edit2DEngine.Entities.Particles
         [Browsable(false)]
         public TimeSpan TimeEmitting { get; set; }
 
-        public ParticleSprite(bool linkToPhysiSimulator, bool isCollisionable, string textureName, string name):
-            base(linkToPhysiSimulator, isCollisionable, textureName, name)
+        public ParticleSprite(bool linkToPhysiSimulator, bool isCollisionable, string textureName, string name, Entity entityParent):
+            base(linkToPhysiSimulator, isCollisionable, textureName, name, entityParent)
         {
         }
     }

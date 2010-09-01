@@ -596,40 +596,40 @@ namespace WinFormsContentLoading
             //---
         }
 
-        private void DrawEntity(Entity entity)
+        private void DrawEntitySprite(EntitySprite entitySprite)
         {
             //--- Affichage des particules
-            if (entity.ListParticleSystem.Count > 0)
-            {
-                //--- Rendu du système de particule
-                for (int j = 0; j < entity.ListParticleSystem.Count; j++)
-                {
-                    ParticleSystem pSystem = entity.ListParticleSystem[j];
+            //if (entity.ListParticleSystem.Count > 0)
+            //{
+            //    //--- Rendu du système de particule
+            //    for (int j = 0; j < entity.ListParticleSystem.Count; j++)
+            //    {
+            //        ParticleSystem pSystem = entity.ListParticleSystem[j];
 
-                    for (int k = 0; k < pSystem.ListParticle.Count; k++)
-                    {
-                        //DrawEntity(pSystem.ListParticle[k]);
-                        //TODO : créer DrawParticle()
-                    }
-                }
-                //---
-            }
+            //        for (int k = 0; k < pSystem.ListParticle.Count; k++)
+            //        {
+            //            //DrawEntity(pSystem.ListParticle[k]);
+            //            //TODO : créer DrawParticle()
+            //        }
+            //    }
+            //    //---
+            //}
             //---
 
-            foreach (EntityComponent entityComponent in entity.ListEntityComponent)
-            {
-                if (entityComponent is EntitySprite)
-                {
+            //foreach (EntityComponent entityComponent in entitySprite.ListEntityComponent)
+            //{
+            //    if (entityComponent is EntitySprite)
+            //    {
                     effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
-                    effect.Parameters["isSelected"].SetValue(entity.Selected);
-                    effect.Parameters["myTextureSize"].SetValue(new Vector2(((EntitySprite)entityComponent).NativeImageSize.Width, ((EntitySprite)entityComponent).NativeImageSize.Height));
+                    effect.Parameters["isSelected"].SetValue(entitySprite.Selected);
+                    effect.Parameters["myTextureSize"].SetValue(new Vector2(entitySprite.NativeImageSize.Width, entitySprite.NativeImageSize.Height));
 
                     //DrawEntityEdge(entity);
                     //DrawEntityBasic(entity, false, "Edge");
                     //DrawEntityBasic(entity, false, "SpriteBatch");
-                    DrawEntityBasicVertices((EntitySprite)entityComponent, false, "SpriteBatch", 0);
-                }
-            }
+                    DrawEntityBasicVertices(entitySprite, false, "SpriteBatch", 0);
+            //    }
+            //}
 
 
             //--- Night
@@ -668,40 +668,40 @@ namespace WinFormsContentLoading
             }
             */
 
-            if (entity.Selected && entity.ListParticleSystem.Count > 0)
-            {
-                lineBrush.Color = Color.Red;
-                //--- Rendu du système de particule
-                for (int j = 0; j < entity.ListParticleSystem.Count; j++)
-                {
-                    ParticleSystem pSystem = entity.ListParticleSystem[j];
+            //if (entity.Selected && entity.ListParticleSystem.Count > 0)
+            //{
+            //    lineBrush.Color = Color.Red;
+            //    //--- Rendu du système de particule
+            //    for (int j = 0; j < entity.ListParticleSystem.Count; j++)
+            //    {
+            //        ParticleSystem pSystem = entity.ListParticleSystem[j];
 
-                    this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
+            //        this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
 
-                    Vector2 vecStart1 = entity.Position;
-                    Vector2 vecStart2 = entity.Position;
+            //        Vector2 vecStart1 = entity.Position;
+            //        Vector2 vecStart2 = entity.Position;
 
-                    Vector2 vecEnd1 = new Vector2();
-                    Vector2 vecEnd2 = new Vector2();
+            //        Vector2 vecEnd1 = new Vector2();
+            //        Vector2 vecEnd2 = new Vector2();
 
-                    //float angle = Vector2.UnitX.GetAngle(pSystem.EmittingVector);
+            //        //float angle = Vector2.UnitX.GetAngle(pSystem.EmittingVector);
 
-                    float rayon = 30f;
+            //        float rayon = 30f;
 
-                    vecEnd1 = vecStart1 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f));
-                    vecEnd2 = vecStart2 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f));
+            //        vecEnd1 = vecStart1 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle + pSystem.FieldAngle / 2f));
+            //        vecEnd2 = vecStart2 + new Vector2(rayon * (float)Math.Cos(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f), rayon * (float)Math.Sin(pSystem.EmmittingAngle - pSystem.FieldAngle / 2f));
 
-                    lineBrush.Draw(spriteBatch, vecStart1, vecEnd1);
-                    lineBrush.Draw(spriteBatch, vecStart2, vecEnd2);
-                    lineBrush.Draw(spriteBatch, vecEnd1, vecEnd2);
+            //        lineBrush.Draw(spriteBatch, vecStart1, vecEnd1);
+            //        lineBrush.Draw(spriteBatch, vecStart2, vecEnd2);
+            //        lineBrush.Draw(spriteBatch, vecEnd1, vecEnd2);
 
-                    this.spriteBatch.End();
-                }
-                //---
-            }
+            //        this.spriteBatch.End();
+            //    }
+            //    //---
+            //}
 
             //--- Affichage de la courbe active
-            if (repository.ShowDebugMode && repository.ViewingMode == ViewingMode.Script && entity.Selected && repository.CurrentEntity == entity)
+                    if (repository.ShowDebugMode && repository.ViewingMode == ViewingMode.Script && entitySprite.Selected && repository.CurrentObject == entitySprite)
             {
                 lineBrush.Color = Color.Green;
                 this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);
@@ -783,20 +783,23 @@ namespace WinFormsContentLoading
             effect.End();
             //---
 
-            List<Entity> listEntityToDraw = new List<Entity>();
+            List<EntitySprite> listEntitySpriteToDraw = new List<EntitySprite>();
             Rectangle recScreen = new Rectangle(GraphicsDevice.Viewport.X + 0, GraphicsDevice.Viewport.Y + 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
             for (int i = 0; i < repository.listEntity.Count; i++)
             {
+                //TODO : gérer l'affichage des système de particules
                 Entity entity = repository.listEntity[i];
 
                 for (int j = 0; j < entity.ListEntityComponent.Count; j++)
                 {
                     if (entity.ListEntityComponent[j] is EntitySprite)
                     {
+                        EntitySprite entitySprite = (EntitySprite)entity.ListEntityComponent[j];
+
                         Rectangle recEntity = Rectangle.Empty;
-                        Vector3 vecPosEntity = new Vector3(((EntitySprite)entity.ListEntityComponent[j]).Position - ((EntitySprite)entity.ListEntityComponent[j]).Center, 0f);
-                        Vector3 vecSizeEntity = new Vector3(((EntitySprite)entity.ListEntityComponent[j]).Geom.AABB.Width, ((EntitySprite)entity.ListEntityComponent[j]).Geom.AABB.Height, 0);
+                        Vector3 vecPosEntity = new Vector3(entitySprite.Position - entitySprite.Center, 0f);
+                        Vector3 vecSizeEntity = new Vector3(entitySprite.Geom.AABB.Width, entitySprite.Geom.AABB.Height, 0);
 
                         vecPosEntity = Vector3.Transform(vecPosEntity, repository.Camera.MatrixTransformation);
                         vecSizeEntity = Vector3.Transform(vecSizeEntity, repository.Camera.MatrixScale);
@@ -806,19 +809,18 @@ namespace WinFormsContentLoading
                         if (recScreen.Intersects(recEntity) ||
                             repository.ShowDebugMode && repository.ViewingMode == ViewingMode.Script && entity.Selected && repository.CurrentEntity == entity)
                         {
-                            listEntityToDraw.Add(entity);
+                            listEntitySpriteToDraw.Add(entitySprite);
                         }
                     }
                 }
             }
 
-            for (int i = 0; i < listEntityToDraw.Count; i++)
+            for (int i = 0; i < listEntitySpriteToDraw.Count; i++)
             {
-                DrawEntity(listEntityToDraw[i]);
+                DrawEntitySprite(listEntitySpriteToDraw[i]);
             }
 
-            repository.FrmEdit2D.Text = listEntityToDraw.Count.ToString();
-
+            repository.FrmEdit2D.Text = listEntitySpriteToDraw.Count.ToString();
 
             if (repository.Screenshot)
             {

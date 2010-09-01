@@ -106,7 +106,7 @@ namespace Edit2DEngine.Tools
                         }
                         else if (reader.Name == "EntitySprite")
                         {
-                            entitySprite = new EntitySprite(true, reader["TextureName"], reader["Name"]);
+                            entitySprite = new EntitySprite(true, reader["TextureName"], reader["Name"], entity);
                             OpenEntitySprite(entitySprite, reader, repository);
 
                             entity.ListEntityComponent.Add(entitySprite);
@@ -343,7 +343,7 @@ namespace Edit2DEngine.Tools
 
                             if (reader["ParticleType"] == "Sprite")
                             {
-                                particleTemplate = new ParticleSprite(false, true, reader["TextureName"], reader["Name"]);
+                                particleTemplate = new ParticleSprite(false, true, reader["TextureName"], reader["Name"], psSystem.Entity);
                             }
                             else if(reader["ParticleType"] == "Text")
                             {
