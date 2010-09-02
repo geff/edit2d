@@ -121,6 +121,8 @@ namespace Edit2DEngine.Entities
             //if (deltaPosition != Vector2.Zero)
             //    clone.SetNewCenter(deltaPosition, false);
 
+            clone.Rotation = this.Rotation;
+            clone.Position = this.Position;
             clone.Center = this.Center;
             //---
 

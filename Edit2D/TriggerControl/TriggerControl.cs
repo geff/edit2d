@@ -862,7 +862,8 @@ namespace Edit2D.TriggerControl
                 //---> Si le triggerHandler contient des déclencheurs, alors
                 //      L'arborescence est rafraichie
                 //      Le premier déclencheur est sélectionné
-                else if (Repository.CurrentTriggerHandler.ListTrigger.Count > 0)
+                else if (Repository.CurrentTriggerHandler != null &&
+                         Repository.CurrentTriggerHandler.ListTrigger.Count > 0)
                 {
                     RefreshGlobalTreeView(false);
                     listboxTrigger.SelectedIndex = 0;

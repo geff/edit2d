@@ -326,13 +326,22 @@ namespace Edit2D
         {
             if (!String.IsNullOrEmpty(repository.CurrentTextureName))
             {
-                //--- Calcul le nom de l'entité
-                string name = Common.CreateNewName<Entity>(repository.listEntity, "Name", repository.CurrentTextureName + "{0}");
-                //---
+                Entity entity = null;
 
-                Entity entity = new Entity(name);//true, false, repository.CurrentTextureName.ToString(), name);
+                if (repository.CurrentEntity != null)
+                {
+                    entity = repository.CurrentEntity;
+                }
+                else
+                {
+                    //--- Calcul le nom de l'entité
+                    string name = Common.CreateNewName<Entity>(repository.listEntity, "Name", repository.CurrentTextureName + "{0}");
+                    //---
 
-                entity.Position = repository.CurrentPointer.WorldPosition;
+                    entity = new Entity(name);
+                    entity.Position = repository.CurrentPointer.WorldPosition;
+                    repository.listEntity.Add(entity);
+                }
 
                 //--- Création de l'EntitySprite
                 string nameEntitySprite = Common.CreateNewName<EntityComponent>(entity.ListEntityComponent, "Name", repository.CurrentTextureName + "{0}");
@@ -341,9 +350,7 @@ namespace Edit2D
                 entity.ListEntityComponent.Add(entitySprite);
                 //---
 
-                repository.listEntity.Add(entity);
-
-                EntitySelectionChange(repository.CurrentEntity, entity);
+                EntitySelectionChange(true, repository.CurrentEntity, entitySprite);
 
                 Repository.physicSimulator.Update(0.0000001f);
             }
@@ -359,7 +366,7 @@ namespace Edit2D
 
                 Repository.physicSimulator.Update(0.0000001f);
 
-                EntitySelectionChange(repository.CurrentEntity, null);
+                EntitySelectionChange(true, repository.CurrentEntity, null);
 
                 RefreshTreeView();
             }
@@ -482,11 +489,6 @@ namespace Edit2D
             return nameChanged;
         }
 
-        private void EntitySelectionChange(Entity oldEntity, Entity newEntity)
-        {
-            EntitySelectionChange(true, oldEntity, newEntity);
-        }
-
         private void EntitySelectionChange(bool refreshTreeView, Entity oldEntity, Object newSelection)
         {
             repository.CurrentObject = newSelection;
@@ -509,6 +511,17 @@ namespace Edit2D
                 propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem.Entity;
 
                 ShowParticleSystemMode();
+            }
+            else if (newSelection is EntityComponent)
+            {
+                repository.CurrentEntity = ((EntityComponent)newSelection).EntityParent;
+
+                propertyGrid.PropertyGrid.SelectedObject = newSelection;
+
+                if (newSelection is EntityPhysicObject)
+                {
+                    repository.CurrentEntityPhysic = (EntityPhysicObject)newSelection;
+                }
             }
             else if (newSelection is Entity)
             {
@@ -1629,7 +1642,6 @@ namespace Edit2D
 
         private void modelViewerControl_MouseUp(object sender, MouseEventArgs e)
         {
-
             //EvaluateInput();
 
             if (!repository.Pause && !btnGameClickableOnPlay.Checked)
@@ -1735,10 +1747,9 @@ namespace Edit2D
                     repository.ListSelection = new List<Selection>();
                     //---
 
-                    Entity selectedEntity = repository.GetSelectedEntityFromLocation(repository.CurrentPointer.WorldPosition);
+                    Object selectedObject = repository.GetSelectedObectFromLocation(repository.CurrentPointer.WorldPosition);
 
-                    if (selectedEntity != null)
-                        EntitySelectionChange(repository.CurrentEntity, repository.GetSelectedEntityFromLocation(repository.CurrentPointer.WorldPosition));
+                    EntitySelectionChange(true, repository.CurrentEntity, selectedObject);
                 }
                 //--- Si la touche MouseMode est pressée, réinjecte les nouvelles valeurs des propriétés (Size, Rotation)
                 else
