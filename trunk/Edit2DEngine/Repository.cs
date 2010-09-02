@@ -85,7 +85,7 @@ namespace Edit2DEngine
             return entityComponentSelected;
         }
 
-        public Entity GetSelectedEntityFromLocation(Vector2 location)
+        public Object GetSelectedObectFromLocation(Vector2 location)
         {
             //TODO : gérer la sélection d'objet
             //List<Geom> listGeom = Repository.physicSimulator.CollideAll(location);
@@ -109,6 +109,17 @@ namespace Edit2DEngine
 
             //    return selectedEntity;
             //}
+
+            foreach (Entity entity in listEntity)
+            {
+                foreach (EntityComponent entityComponent in entity.ListEntityComponent)
+                {
+                    if (entityComponent.ContainsLocation(location))
+                    {
+                        return entityComponent;
+                    }
+                }
+            }
 
             return null;
         }
