@@ -86,14 +86,14 @@ namespace Edit2D
 
             repository.CurrentTextureName = "BigRec";
             repository.CurrentPointer2.WorldPosition = new Vector2(100, 10);
-            repository.CurrentPointer.WorldPosition = new Vector2(2000, 200);
+            repository.CurrentPointer.WorldPosition = new Vector2(200, 200);
             repository.FrmEdit2D = this;
             repository.Pause = true;
 
             repository.World.GradientColor1 = Microsoft.Xna.Framework.Graphics.Color.White;
             repository.World.GradientColor2 = Microsoft.Xna.Framework.Graphics.Color.White;
 
-            //this.WindowState = FormWindowState.Maximized;
+            this.WindowState = FormWindowState.Maximized;
 
             //--- Mode simplifié
             if (repository.IsSimpleMode)
@@ -491,6 +491,8 @@ namespace Edit2D
 
         private void EntitySelectionChange(bool refreshTreeView, Entity oldEntity, Object newSelection)
         {
+            repository.ListSelection = new List<Selection>();
+
             repository.CurrentObject = newSelection;
 
             repository.CurrentEntity = null;
@@ -522,6 +524,8 @@ namespace Edit2D
                 {
                     repository.CurrentEntityPhysic = (EntityPhysicObject)newSelection;
                 }
+
+                repository.ListSelection.Add(new Selection(((EntityComponent)newSelection), repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition)); 
             }
             else if (newSelection is Entity)
             {
@@ -1703,6 +1707,10 @@ namespace Edit2D
                     vecFocal = new Vector2(e.Location.X, e.Location.Y);
                     vecOldCorner = repository.Camera.NewCorner;
                     oldZoom = repository.Camera.Zoom;
+
+                    //--- Met à jour la grille de propriétés pour l'objet sélectionné
+                    propertyGrid.PropertyGrid.Refresh();
+                    //---
                 }
                 //---
 

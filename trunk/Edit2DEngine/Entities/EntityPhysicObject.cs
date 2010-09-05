@@ -22,6 +22,7 @@ namespace Edit2DEngine.Entities
         protected Vertices originalVerts;
         protected Vector2 _size;
         protected Vector2 _center = Vector2.Zero;
+        protected Vector2 _relativePosition = Vector2.Zero;
 
         [Category("Spring")]
         public List<LinearSpring> ListLinearSpring { get; set; }
@@ -117,22 +118,31 @@ namespace Edit2DEngine.Entities
             get
             {
                 if (body == null)
-                    return Vector2.Zero;
+                    return EntityParent.Position + EntityParent.Center;
 
                 return new Microsoft.Xna.Framework.Vector2(body.Position.X, body.Position.Y);
             }
             set
             {
-                SetPosition(value);
+                RelativePosition = value - EntityParent.Position + EntityParent.Center;
+                //SetPosition(value);
             }
         }
 
-        [Browsable(false)]
-        public Microsoft.Xna.Framework.Vector2 AbsolutePosition
+        [Browsable(true), AttributeAction]
+        public Microsoft.Xna.Framework.Vector2 RelativePosition
         {
             get
             {
-                return new Microsoft.Xna.Framework.Vector2(body.Position.X, body.Position.Y) + this.EntityParent.Position;
+                _relativePosition = body.Position - EntityParent.Position + EntityParent.Center;
+
+                return _relativePosition;
+                    //new Microsoft.Xna.Framework.Vector2(body.Position.X, body.Position.Y) + this.EntityParent.Position;
+            }
+            set
+            {
+                _relativePosition = value;
+                SetPosition(_relativePosition, EntityParent.Position + EntityParent.Center);
             }
         }
 
@@ -255,12 +265,12 @@ namespace Edit2DEngine.Entities
 
         public abstract void ChangeSize(int width, int height, bool addToPhysicSimulator);
 
-        public void SetPosition(Microsoft.Xna.Framework.Vector2 position)
+        public void SetPosition(Microsoft.Xna.Framework.Vector2 relativePosition, Microsoft.Xna.Framework.Vector2 parentPosition)
         {
             if (body != null)
             {
                 body.ResetDynamics();
-                body.Position = new Vector2(position.X, position.Y);
+                body.Position = new Vector2(relativePosition.X+parentPosition.X, relativePosition.Y+parentPosition.Y);
                 //CreateVerticesForRendering();
             }
         }

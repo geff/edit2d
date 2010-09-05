@@ -34,7 +34,7 @@ namespace Edit2DEngine.Tools
         private static void OpenEntitySprite(EntitySprite entitySprite, XmlTextReader reader, Repository repository)
         {
             entitySprite.Name = reader["Name"];
-            entitySprite.SetPosition(ReadVector2(reader["Position"]));
+            //entitySprite.SetPosition(ReadVector2(reader["Position"]));
             entitySprite.Rotation = float.Parse(reader["Rotation"]);
 
             int pos = reader["Size"].IndexOf(';');
