@@ -315,7 +315,7 @@ namespace Edit2DEngine.Render
 
             Rectangle recDraw = new Rectangle(entitySprite.Rectangle.X, entitySprite.Rectangle.Y, entitySprite.Rectangle.Width, entitySprite.Rectangle.Height);
             float PerspectiveFactor = 20f;
-            Vector2 drawPosition = (entitySprite.AbsolutePosition - Repository.Camera.Position) / PerspectiveFactor * (float)entitySprite.EntityParent.Layer;
+            Vector2 drawPosition = (entitySprite.RelativePosition - Repository.Camera.Position) / PerspectiveFactor * (float)entitySprite.EntityParent.Layer;
             recDraw.X += (int)drawPosition.X;
 
             this.SpriteBatch.Draw(texture, recDraw, null, entitySprite.Color, entitySprite.Body.Rotation, entitySprite.Center, SpriteEffects.None, 1f);

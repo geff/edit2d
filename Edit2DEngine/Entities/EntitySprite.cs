@@ -260,7 +260,14 @@ namespace Edit2DEngine.Entities
 
         public override object Clone()
         {
-            return null;// Clone(false);
+            EntitySprite clone = new EntitySprite(false, this.TextureName, this.Name, this.EntityParent);
+
+            clone.RelativePosition = this.RelativePosition;
+            clone.Position = this.Position;
+            clone.Rotation = this.Rotation;
+            clone.Size = this.Size;
+
+            return clone;
         }
     }
 }
