@@ -231,8 +231,8 @@ namespace Edit2DEngine.Entities
                 clone.ListParticleSystem.Add(clonePSystem);
                 for (int k = 0; k < pSystem.ListParticleTemplate.Count; k++)
                 {
-                    IParticle particle = pSystem.ListParticleTemplate[k];
-                    IParticle cloneParticle = (IParticle)particle.Clone();
+                    Particle particle = pSystem.ListParticleTemplate[k];
+                    Particle cloneParticle = (Particle)particle.Clone();
 
                     clonePSystem.ListParticleTemplate.Add(cloneParticle);
                 }
