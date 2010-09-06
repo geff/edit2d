@@ -209,8 +209,9 @@ namespace Edit2DEngine.Render
 
                     for (int k = 0; k < pSystem.ListParticle.Count; k++)
                     {
-                        if(pSystem.ListParticle[k] is EntitySprite)
-                            DrawEntitySprite((EntitySprite)pSystem.ListParticle[k]);
+                        DrawEntity(pSystem.ListParticle[k]);
+                        //if(pSystem.ListParticle[k] is EntitySprite)
+                        //    DrawEntitySprite((EntitySprite)pSystem.ListParticle[k]);
                         //TODO : compléter le rendu avec EntityText, Entity3DModel
                     }
                 }

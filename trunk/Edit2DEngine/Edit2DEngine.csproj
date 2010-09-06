@@ -101,13 +101,12 @@
     <Compile Include="Entities\EntityPhysicObject.cs" />
     <Compile Include="Entities\EntitySprite.cs" />
     <Compile Include="Entities\EntityComponent.cs" />
-    <Compile Include="Entities\Particles\ParticleSprite.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="IMoveableObject.cs" />
     <Compile Include="IResizeableObject.cs" />
     <Compile Include="Tools\FileSystem.cs" />
     <Compile Include="GameBase.cs" />
-    <Compile Include="Entities\Particles\IParticle.cs" />
+    <Compile Include="Entities\Particles\Particle.cs" />
     <Compile Include="Entities\Particles\ParticleSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Render\Render.cs" />

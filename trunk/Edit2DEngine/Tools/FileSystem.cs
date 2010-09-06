@@ -339,11 +339,11 @@ namespace Edit2DEngine.Tools
                         {
                             Entity ent = repository.listEntity.Last();
                             ParticleSystem psSystem = ent.ListParticleSystem.Last();
-                            IParticle particleTemplate = null;
+                            Particle particleTemplate = null;
 
                             if (reader["ParticleType"] == "Sprite")
                             {
-                                particleTemplate = new ParticleSprite(false, true, reader["TextureName"], reader["Name"], psSystem.Entity);
+                                //particleTemplate = new ParticleSprite(false, true, reader["TextureName"], reader["Name"], psSystem.Entity);
                             }
                             else if(reader["ParticleType"] == "Text")
                             {
@@ -442,7 +442,7 @@ namespace Edit2DEngine.Tools
             {
                 writer.WriteStartElement("ParticleTemplate");
 
-                IParticle particle = (IParticle)entity;
+                Particle particle = (Particle)entity;
 
                 writer.WriteAttributeString("LifeTime", particle.LifeTime.ToString());
             }
@@ -639,7 +639,7 @@ namespace Edit2DEngine.Tools
                 writer.WriteAttributeString("Rate", psystem.Rate.ToString());
                 writer.WriteAttributeString("Velocity", WriteFloat(psystem.Velocity));
 
-                foreach (IParticle particleTemplate in psystem.ListParticleTemplate)
+                foreach (Particle particleTemplate in psystem.ListParticleTemplate)
                 {
                     //SaveEntity(particleTemplate, true, writer, repository);
                 }

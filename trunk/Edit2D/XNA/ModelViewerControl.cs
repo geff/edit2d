@@ -224,7 +224,7 @@ namespace WinFormsContentLoading
             //====== [3] Affecte la texture du sprite
             //--- Texture
             Texture2D texture = null;
-            if (entity is IParticle)
+            if (entity is Particle)
                 texture = TextureManager.LoadParticleTexture2D(entity.TextureName);
             else
                 texture = TextureManager.LoadTexture2D(entity.TextureName);
@@ -285,7 +285,7 @@ namespace WinFormsContentLoading
             heightMapTexture.Save(@"c:\scr\NormalMap.png", ImageFileFormat.Png);
 
             //--- Enregistrer la normal Map
-            if (entity is IParticle)
+            if (entity is Particle)
             {
 
             }
@@ -308,7 +308,7 @@ namespace WinFormsContentLoading
         {
             Texture2D texture = null;
 
-            if (entity is IParticle)
+            if (entity is Particle)
                 texture = TextureManager.LoadParticleTexture2D(entity.TextureName);
             else
                 texture = TextureManager.LoadTexture2D(entity.TextureName);
@@ -376,7 +376,7 @@ namespace WinFormsContentLoading
 
             Texture2D texture = null;
 
-            if (entity is IParticle)
+            if (entity is Particle)
                 texture = TextureManager.LoadParticleTexture2D(entity.TextureName);
             else
                 texture = TextureManager.LoadTexture2D(entity.TextureName);
@@ -425,7 +425,7 @@ namespace WinFormsContentLoading
             //====== [3] Affecte la texture du sprite
             //--- Texture
             Texture2D texture = null;
-            if (entity is IParticle)
+            if (entity is Particle)
                 texture = TextureManager.LoadParticleTexture2D(entity.TextureName);
             else
                 texture = TextureManager.LoadTexture2D(entity.TextureName);
@@ -520,7 +520,7 @@ namespace WinFormsContentLoading
             Texture2D normalMapTexture = null;
 
             //--- Calcul la normal Map si elle n'existe pas
-            if (entity is IParticle)
+            if (entity is Particle)
                 normalMapTexture = TextureManager.LoadParticleTexture2D(String.Format("{0}NormalMap", entity.TextureName));
             else
                 normalMapTexture = TextureManager.LoadTexture2D(String.Format("{0}NormalMap", entity.TextureName));
@@ -529,7 +529,7 @@ namespace WinFormsContentLoading
             {
                 CalcNormalMap(entity);
 
-                if (entity is IParticle)
+                if (entity is Particle)
                     normalMapTexture = TextureManager.LoadParticleTexture2D(String.Format("{0}NormalMap", entity.TextureName));
                 else
                     normalMapTexture = TextureManager.LoadTexture2D(String.Format("{0}NormalMap", entity.TextureName));
@@ -538,7 +538,7 @@ namespace WinFormsContentLoading
 
             //====== [3] Affecte la texture du sprite
             //--- Texture
-            if (entity is IParticle)
+            if (entity is Particle)
                 texture = TextureManager.LoadParticleTexture2D(entity.TextureName);
             else
                 texture = TextureManager.LoadTexture2D(entity.TextureName);
@@ -573,7 +573,7 @@ namespace WinFormsContentLoading
 
             //====== [3] Affecte la texture du sprite
             //--- Texture
-            if (entity is IParticle)
+            if (entity is Particle)
                 texture = TextureManager.LoadParticleTexture2D(entity.TextureName);
             else
                 texture = TextureManager.LoadTexture2D(entity.TextureName);

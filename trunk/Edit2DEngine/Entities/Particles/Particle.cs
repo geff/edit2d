@@ -12,19 +12,19 @@ using Edit2DEngine.Triggers;
 
 namespace Edit2DEngine.Entities.Particles
 {
-    public interface IParticle : ICloneable, IActionHandler, ITriggerHandler
+    public class Particle : Entity
     {
         [Category("Particle")]
-        int LifeTime { get; set; }
+        public int LifeTime { get; set; }
 
         [Browsable(false), Category("Particle")]
-        bool IsAlive { get; set; }
+        public bool IsAlive { get; set; }
         
         [Browsable(false)]
-        ParticleSystem ParticleSystem { get; set; }
+        public ParticleSystem ParticleSystem { get; set; }
         
         [Browsable(false)]
-        TimeSpan TimeEmitting { get; set; }
+        public TimeSpan TimeEmitting { get; set; }
 
 
         //public IParticle(bool addToPhysicSimulator, string name, ParticleSystem particleSystem) 

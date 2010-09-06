@@ -129,7 +129,7 @@ namespace Edit2D.ParticleControl
 
         private void btnModifParticleTemplateTexture_Click(object sender, EventArgs e)
         {
-            IParticle particleTemplate = GetCurrentParticleTemplate();
+            Particle particleTemplate = GetCurrentParticleTemplate();
 
             if (particleTemplate != null && cmbParticleTemplate.SelectedIndex != -1)
             {
@@ -192,7 +192,7 @@ namespace Edit2D.ParticleControl
 
             if (selectParticleSystem)
             {
-                if (Repository.CurrentObject is IParticle)
+                if (Repository.CurrentObject is Particle)
                 {
                     listBoxParticleSystem.SelectedIndex = listBoxParticleSystem.FindString(Repository.CurrentParticleSystem.Name);
                     RefreshParticleTemplateListBox(true);
@@ -223,7 +223,7 @@ namespace Edit2D.ParticleControl
 
             if (Repository.CurrentParticleSystem != null)
             {
-                foreach (IParticle particleTemplate in Repository.CurrentParticleSystem.ListParticleTemplate)
+                foreach (Particle particleTemplate in Repository.CurrentParticleSystem.ListParticleTemplate)
                 {
                     listBoxParticleTemplate.Items.Add(particleTemplate.Name);
                 }
@@ -231,10 +231,10 @@ namespace Edit2D.ParticleControl
 
             if (selectParticleTemplate)
             {
-                if (Repository.CurrentObject is IParticle)
+                if (Repository.CurrentObject is Particle)
                 {
-                    listBoxParticleTemplate.SelectedIndex = listBoxParticleTemplate.FindString(((IParticle)Repository.CurrentObject).Name);
-                    RefreshGlobalTreeView<IParticle>((IParticle)Repository.CurrentObject);
+                    listBoxParticleTemplate.SelectedIndex = listBoxParticleTemplate.FindString(((Particle)Repository.CurrentObject).Name);
+                    RefreshGlobalTreeView<Particle>((Particle)Repository.CurrentObject);
                 }
                 else if (listBoxParticleTemplate.Items.Count > 0)
                 {
@@ -296,9 +296,9 @@ namespace Edit2D.ParticleControl
             }
         }
 
-        public IParticle AddParticleTemplate()
+        public Particle AddParticleTemplate()
         {
-            IParticle particleTemplate = null;
+            Particle particleTemplate = null;
 
             //if (Repository.CurrentParticleSystem != null)
             //{
@@ -331,13 +331,13 @@ namespace Edit2D.ParticleControl
 
         public void DeleteParticleTemplate()
         {
-            IParticle particleTemplate = GetCurrentParticleTemplate();
+            Particle particleTemplate = GetCurrentParticleTemplate();
 
             if (particleTemplate != null)
             {
                 particleTemplate.ParticleSystem.ListParticleTemplate.Remove(particleTemplate);
 
-                if (Repository.CurrentObject is IParticle)
+                if (Repository.CurrentObject is Particle)
                 {
                     Repository.CurrentObject = null;
                 }
@@ -348,7 +348,7 @@ namespace Edit2D.ParticleControl
             }
         }
 
-        public IParticle GetCurrentParticleTemplate()
+        public Particle GetCurrentParticleTemplate()
         {
             if (Repository.CurrentParticleSystem != null && listBoxParticleTemplate.SelectedIndex != -1)
             {

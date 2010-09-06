@@ -16,9 +16,9 @@ namespace Edit2DEngine.Entities.Particles
         //public String Name { get { return String.Format("{0}-{1}", Entity.Name, ParticleSystemName); } set{} }
         public String Name { get; set; }
         [Browsable(false)]
-        public List<IParticle> ListParticle { get; set; }
+        public List<Particle> ListParticle { get; set; }
         [Browsable(false)]
-        public List<IParticle> ListParticleTemplate { get; set; }
+        public List<Particle> ListParticleTemplate { get; set; }
         [Browsable(true), AttributeAction]
         public float FieldAngle { get; set; }
         [Browsable(true), AttributeAction]
@@ -37,8 +37,8 @@ namespace Edit2DEngine.Entities.Particles
 
         public ParticleSystem(Entity entity)
         {
-            this.ListParticle = new List<IParticle>();
-            this.ListParticleTemplate = new List<IParticle>();
+            this.ListParticle = new List<Particle>();
+            this.ListParticleTemplate = new List<Particle>();
 
             this.Entity = entity;
             this.EmmittingAngle = -MathHelper.PiOver4;
@@ -70,7 +70,7 @@ namespace Edit2DEngine.Entities.Particles
 
             for (int i = 0; i < ListParticle.Count; i++)
             {
-                IParticle particle = ListParticle[i];
+                Particle particle = ListParticle[i];
 
                 if (time.Subtract(particle.TimeEmitting).TotalMilliseconds >= particle.LifeTime)
                 {
@@ -105,33 +105,44 @@ namespace Edit2DEngine.Entities.Particles
                 position = this.Entity.Position;
             }
 
-            IParticle particle = (IParticle)ListParticleTemplate[indexParticle].Clone();//true);
+            Particle particle = (Particle)ListParticleTemplate[indexParticle].Clone();//true);
 
-            if (particle is ParticleSprite)
-            {
-                InitParticleSprite((ParticleSprite)particle, position, force, angle);
-            }
+            particle.Position = position;
+            //particle.ApplyForce(force);
+            particle.Rotation = -MathHelper.PiOver2 + angle;
+
+            //particle.FrictionCoefficient = 0.005f;
+            //particle.RestitutionCoefficient = 0.005f;
+            //particle.Body.MinimumVelocity = 1f;
+            //particle.Body.Mass = 5f;
+            //particle.Body.MomentOfInertia = 2;
+            particle.TimeEmitting = this.lastEmitting;
+
+            //if (particle is ParticleSprite)
+            //{
+            //    InitParticleSprite((ParticleSprite)particle, position, force, angle);
+            //}
 
             ListParticle.Add(particle);
         }
 
-        private void InitParticleSprite(ParticleSprite particle, Vector2 position, Vector2 force, float angle)
-        {
-            particle.Position = position;
-            particle.ApplyForce(force);
-            particle.Rotation = -MathHelper.PiOver2 + angle;
+        //private void InitParticleSprite(ParticleSprite particle, Vector2 position, Vector2 force, float angle)
+        //{
+        //    particle.Position = position;
+        //    particle.ApplyForce(force);
+        //    particle.Rotation = -MathHelper.PiOver2 + angle;
 
-            particle.FrictionCoefficient = 0.005f;
-            particle.RestitutionCoefficient = 0.005f;
-            particle.Body.MinimumVelocity = 1f;
-            particle.Body.Mass = 5f;
-            particle.Body.MomentOfInertia = 2;
-            particle.TimeEmitting = this.lastEmitting;
-            //particle.Rotation = -angle;
+        //    particle.FrictionCoefficient = 0.005f;
+        //    particle.RestitutionCoefficient = 0.005f;
+        //    particle.Body.MinimumVelocity = 1f;
+        //    particle.Body.Mass = 5f;
+        //    particle.Body.MomentOfInertia = 2;
+        //    particle.TimeEmitting = this.lastEmitting;
+        //    //particle.Rotation = -angle;
 
-            //particle.geom.CollidesWith = FarseerGames.FarseerPhysics.CollisionCategory.All & ~ Entity.geom.CollisionCategories;
-            //particle.geom.CollisionGroup = this.Entity.geom.CollisionGroup;
-        }
+        //    //particle.geom.CollidesWith = FarseerGames.FarseerPhysics.CollisionCategory.All & ~ Entity.geom.CollisionCategories;
+        //    //particle.geom.CollisionGroup = this.Entity.geom.CollisionGroup;
+        //}
 
         #region IActionHandler Membres
         [Browsable(false)]

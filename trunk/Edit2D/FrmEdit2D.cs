@@ -505,10 +505,10 @@ namespace Edit2D
             repository.CurrentMoveableObject = null;
             repository.CurrentResizeableObject = null;
 
-            if (newSelection is IParticle)
+            if (newSelection is Particle)
             {
-                repository.CurrentEntity = ((IParticle)newSelection).ParticleSystem.Entity;
-                repository.CurrentParticleSystem = ((IParticle)newSelection).ParticleSystem;
+                repository.CurrentEntity = ((Particle)newSelection).ParticleSystem.Entity;
+                repository.CurrentParticleSystem = ((Particle)newSelection).ParticleSystem;
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem.Entity;
 
