@@ -35,12 +35,12 @@ namespace Edit2DEngine.Entities
         public float Rotation { get; set; }
 
         [Browsable(true), AttributeAction]
-        public Microsoft.Xna.Framework.Vector2 Position 
-        
-        { get
+        public Microsoft.Xna.Framework.Vector2 Position
         {
-            return _position;
-        }
+            get
+            {
+                return _position;
+            }
             set
             {
                 foreach (EntityComponent entityComponent in this.ListEntityComponent)
@@ -240,6 +240,29 @@ namespace Edit2DEngine.Entities
             //---
 
             return clone;
+        }
+
+        public void UpdateRectangle()
+        {
+            float left = float.MaxValue;
+            float right = float.MinValue;
+            float top = float.MaxValue;
+            float bottom = float.MinValue;
+
+            foreach (EntityComponent entityComponent in this.ListEntityComponent)
+            {
+                if (entityComponent.Position.X - entityComponent.Center.X < left)
+                    left = entityComponent.Position.X - entityComponent.Center.X;
+                if (entityComponent.Position.X - entityComponent.Center.X + entityComponent.Size.X > right)
+                    right = entityComponent.Position.X - entityComponent.Center.X + entityComponent.Size.X;
+
+                if (entityComponent.Position.Y - entityComponent.Center.Y < top)
+                    top = entityComponent.Position.Y - entityComponent.Center.Y;
+                if (entityComponent.Position.Y - entityComponent.Center.Y + entityComponent.Size.Y > bottom)
+                    bottom = entityComponent.Position.Y - entityComponent.Center.Y + entityComponent.Size.Y;
+            }
+
+            this.Rectangle = new Microsoft.Xna.Framework.Rectangle((int)left, (int)top, (int)(right - left), (int)(bottom - top));
         }
 
         #region IResizeableObject Membres

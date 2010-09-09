@@ -12,6 +12,27 @@ namespace Edit2DEngine.Entities
 {
     public abstract class EntityComponent : ITriggerHandler, IActionHandler, ICloneable, IMoveableObject, IResizeableObject, ICustomPropertyHandler
     {
+        //[Browsable(false)]
+        public abstract Microsoft.Xna.Framework.Vector2 Center{ get; set; }
+        //{
+        //    //get { return new Microsoft.Xna.Framework.Vector2(this.Size.Width / 2, this.Size.Height / 2); }
+        //    //get { return new Microsoft.Xna.Framework.Vector2(this.Size.Width / 6, this.Size.Height / 2); }
+
+        //    //get { return new Microsoft.Xna.Framework.Vector2(0,0); }
+        //    //get { return new Microsoft.Xna.Framework.Vector2(50, 50); }
+        //    //get { return new Microsoft.Xna.Framework.Vector2(NativeImageSize.Width / 2, NativeImageSize.Height / 2); }
+
+        //    get
+        //    {
+        //        return _center;
+        //    }
+        //    set
+        //    {
+        //        _center = value;
+        //        //CreateVerticesForRendering();
+        //    }
+        //}
+
         public String Name { get; set; }
         public Entity EntityParent { get; set; }
         public abstract String TreeViewPath { get; }

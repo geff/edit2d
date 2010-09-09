@@ -43,6 +43,26 @@ namespace Edit2DEngine.Entities
         [Browsable(false)]
         public int UniqueId { get; set; }
 
+        [Browsable(false)]
+        public override Microsoft.Xna.Framework.Vector2 Center
+        {
+            //get { return new Microsoft.Xna.Framework.Vector2(this.Size.Width / 2, this.Size.Height / 2); }
+            //get { return new Microsoft.Xna.Framework.Vector2(this.Size.Width / 6, this.Size.Height / 2); }
+
+            //get { return new Microsoft.Xna.Framework.Vector2(0,0); }
+            //get { return new Microsoft.Xna.Framework.Vector2(50, 50); }
+            //get { return new Microsoft.Xna.Framework.Vector2(NativeImageSize.Width / 2, NativeImageSize.Height / 2); }
+
+            get
+            {
+                return _center;
+            }
+            set
+            {
+                _center = value;
+                //CreateVerticesForRendering();
+            }
+        }
 
         public Boolean IsStatic
         {
@@ -81,26 +101,6 @@ namespace Edit2DEngine.Entities
             }
         }
 
-        [Browsable(false)]
-        public Microsoft.Xna.Framework.Vector2 Center
-        {
-            //get { return new Microsoft.Xna.Framework.Vector2(this.Size.Width / 2, this.Size.Height / 2); }
-            //get { return new Microsoft.Xna.Framework.Vector2(this.Size.Width / 6, this.Size.Height / 2); }
-
-            //get { return new Microsoft.Xna.Framework.Vector2(0,0); }
-            //get { return new Microsoft.Xna.Framework.Vector2(50, 50); }
-            //get { return new Microsoft.Xna.Framework.Vector2(NativeImageSize.Width / 2, NativeImageSize.Height / 2); }
-
-            get
-            {
-                return _center;
-            }
-            set
-            {
-                _center = value;
-                //CreateVerticesForRendering();
-            }
-        }
 
         [Browsable(false)]
         public Microsoft.Xna.Framework.Rectangle Rectangle
@@ -125,7 +125,6 @@ namespace Edit2DEngine.Entities
             set
             {
                 RelativePosition = value - EntityParent.Position + EntityParent.Center;
-                //SetPosition(value);
             }
         }
 
@@ -135,9 +134,7 @@ namespace Edit2DEngine.Entities
             get
             {
                 _relativePosition = body.Position - EntityParent.Position + EntityParent.Center;
-
                 return _relativePosition;
-                    //new Microsoft.Xna.Framework.Vector2(body.Position.X, body.Position.Y) + this.EntityParent.Position;
             }
             set
             {
@@ -273,6 +270,8 @@ namespace Edit2DEngine.Entities
                 body.Position = new Vector2(relativePosition.X+parentPosition.X, relativePosition.Y+parentPosition.Y);
                 //CreateVerticesForRendering();
             }
+
+            this.EntityParent.UpdateRectangle();
         }
 
         public void FixPosition(Vector2 position)

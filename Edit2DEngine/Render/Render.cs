@@ -26,7 +26,7 @@ namespace Edit2DEngine.Render
             this.GraphicsDevice = graphicsDevice;
             this.Repository = repository;
 
-            if(contentManager != null)
+            if (contentManager != null)
                 effect = contentManager.Load<Effect>(@"Content\Shader\SpriteBatch");
         }
 
@@ -155,7 +155,7 @@ namespace Edit2DEngine.Render
                 }
                 //---
             }
-        } 
+        }
         #endregion
 
         public void Draw()
@@ -168,6 +168,10 @@ namespace Edit2DEngine.Render
 
         private void DrawEntity(Entity entity)
         {
+            Texture2D texture = TextureManager.LoadTexture2D("BigRec");
+
+            this.SpriteBatch.Draw(texture, entity.Rectangle, Color.Beige);
+
             foreach (EntityComponent entityComponent in entity.ListEntityComponent)
             {
                 if (entityComponent is EntitySprite)

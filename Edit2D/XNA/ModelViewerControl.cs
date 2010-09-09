@@ -791,6 +791,15 @@ namespace WinFormsContentLoading
                 //TODO : gérer l'affichage des système de particules
                 Entity entity = repository.listEntity[i];
 
+                if (entity.Selected)
+                {
+                    this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
+
+                    this.spriteBatch.Draw(TextureManager.LoadTexture2D("BigRec"), entity.Rectangle, null, Color.LightYellow);
+
+                    this.spriteBatch.End();
+                }
+
                 for (int j = 0; j < entity.ListEntityComponent.Count; j++)
                 {
                     if (entity.ListEntityComponent[j] is EntitySprite)
