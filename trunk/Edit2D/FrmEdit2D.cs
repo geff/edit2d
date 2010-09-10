@@ -347,7 +347,16 @@ namespace Edit2D
                 string nameEntitySprite = Common.CreateNewName<EntityComponent>(entity.ListEntityComponent, "Name", repository.CurrentTextureName + "{0}");
                 EntitySprite entitySprite = new EntitySprite(true, repository.CurrentTextureName, nameEntitySprite, entity);
 
+                if (repository.keyCtrlPressed)
+                    entitySprite.Position = repository.CurrentPointer2.WorldPosition;
+                else
+                    entitySprite.Position = repository.CurrentPointer.WorldPosition;
+
                 entity.ListEntityComponent.Add(entitySprite);
+                //---
+
+                //---
+                entity.UpdateRectangle();
                 //---
 
                 EntitySelectionChange(true, repository.CurrentEntity, entitySprite);
@@ -525,7 +534,7 @@ namespace Edit2D
                     repository.CurrentEntityPhysic = (EntityPhysicObject)newSelection;
                 }
 
-                repository.ListSelection.Add(new Selection(((EntityComponent)newSelection), repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition)); 
+                repository.ListSelection.Add(new Selection(((EntityComponent)newSelection), repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
             }
             else if (newSelection is Entity)
             {
@@ -1757,12 +1766,19 @@ namespace Edit2D
 
                     Object selectedObject = repository.GetSelectedObectFromLocation(repository.CurrentPointer.WorldPosition);
 
+                    //--- Garde l'entity courante sélectionnée si la souris clique dans son rectangle
+                    if (repository.CurrentEntity != null && selectedObject  == null && repository.CurrentEntity.Rectangle.Contains((int)repository.CurrentPointer.WorldPosition.X, (int)repository.CurrentPointer.WorldPosition.Y))
+                    {
+                        selectedObject = repository.CurrentEntity;
+                    }
+                    //---
+
                     EntitySelectionChange(true, repository.CurrentEntity, selectedObject);
                 }
                 //--- Si la touche MouseMode est pressée, réinjecte les nouvelles valeurs des propriétés (Size, Rotation)
                 else
                 {
-                    //TODO : mettrer cela en place pour la mutli sélection
+                    //TODO : mettre cela en place pour la mutli sélection
                     //if (repository.CurrentEntity != null && repository.tempEntity != null)
                     //{
                     //    if (repository.MouseMode == MouseMode.Move)

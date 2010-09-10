@@ -34,7 +34,8 @@ namespace Edit2DEngine.Tools
             {
                 if ((Path.GetFileNameWithoutExtension(file) == "BigRec" ||
                         Path.GetFileNameWithoutExtension(file) == "Pin" ||
-                        Path.GetFileNameWithoutExtension(file) == "Pointer"
+                        Path.GetFileNameWithoutExtension(file) == "Pointer" ||
+                        Path.GetFileNameWithoutExtension(file) == "Empty"
                     ) || !IsSimpleMode)
                 {
                     Texture2D texture = Texture2D.FromFile(graphicsDevice, file);
