@@ -10,7 +10,7 @@ using Edit2DEngine.CustomProperties;
 
 namespace Edit2DEngine.Entities
 {
-    public abstract class EntityComponent : ITriggerHandler, IActionHandler, ICloneable, IMoveableObject, IResizeableObject, ICustomPropertyHandler
+    public abstract class EntityComponent : ITriggerHandler, IActionHandler, ICloneable, IMoveableObject, IResizeableObject, ISelectableObject, ICustomPropertyHandler
     {
         //[Browsable(false)]
         public abstract Microsoft.Xna.Framework.Vector2 Center{ get; set; }

@@ -124,13 +124,17 @@ namespace Edit2D.ScriptControl
 
         private void listboxScript_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Repository.CurrentScript = null;
+            //Repository.CurrentScript = null;
 
             if (listboxScript.SelectedIndex != -1)
-                Repository.CurrentScript = Repository.CurrentActionHandler.ListScript[listboxScript.SelectedIndex];
+            {
+                ((FrmEdit2D)this.ParentForm).EntitySelectionChange(true, false, Repository.CurrentActionHandler.ListScript[listboxScript.SelectedIndex]);
+            }
+
+            //    Repository.CurrentScript = Repository.CurrentActionHandler.ListScript[listboxScript.SelectedIndex];
 
             RefreshActionView(true);
-            CheckNodeGlobalTreeView<Script>(Repository.CurrentScript);
+            //CheckNodeGlobalTreeView<Script>(Repository.CurrentScript);
 
             if (Repository.CurrentScript != null)
             {
@@ -841,8 +845,8 @@ namespace Edit2D.ScriptControl
             if (Repository.CurrentActionHandler != null && Repository.CurrentScript != null)
             {
                 Repository.CurrentActionHandler.ListScript.Remove(Repository.CurrentScript);
-
-                Repository.CurrentScript = null;
+                
+                //Repository.CurrentScript = null;
 
                 RefreshScriptView(true);
             }

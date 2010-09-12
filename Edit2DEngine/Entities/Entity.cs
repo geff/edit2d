@@ -19,7 +19,7 @@ using Edit2DEngine.CustomProperties;
 
 namespace Edit2DEngine.Entities
 {
-    public class Entity : IActionHandler, ITriggerHandler, ITriggerMouseHandler, IMoveableObject, IResizeableObject, ICustomPropertyHandler
+    public class Entity : IActionHandler, ITriggerHandler, ITriggerMouseHandler, IMoveableObject, IResizeableObject, ISelectableObject, ICustomPropertyHandler, ICloneable
     {
         private Vector2 _position = Vector2.Zero;
         public Microsoft.Xna.Framework.Rectangle Rectangle { get; set; }
@@ -109,7 +109,7 @@ namespace Edit2DEngine.Entities
         {
         }
 
-        public Entity Clone()
+        public Object Clone()
         {
             //TODO : gérer la méthode de clone de Entity
             Entity clone = new Entity(this.Name);

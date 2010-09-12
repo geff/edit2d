@@ -267,6 +267,7 @@ namespace Edit2DEngine.Entities
             clone.Rotation = this.Rotation;
             clone.Size = this.Size;
 
+            clone.EntityParent = (Entity)this.EntityParent.Clone();
             return clone;
         }
     }

@@ -620,14 +620,14 @@ namespace WinFormsContentLoading
             //{
             //    if (entityComponent is EntitySprite)
             //    {
-                    effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
-                    effect.Parameters["isSelected"].SetValue(entitySprite.Selected);
-                    effect.Parameters["myTextureSize"].SetValue(new Vector2(entitySprite.NativeImageSize.Width, entitySprite.NativeImageSize.Height));
+            effect.Parameters["timeMS"].SetValue(DateTime.Now.Millisecond);
+            effect.Parameters["isSelected"].SetValue(entitySprite.Selected);
+            effect.Parameters["myTextureSize"].SetValue(new Vector2(entitySprite.NativeImageSize.Width, entitySprite.NativeImageSize.Height));
 
-                    //DrawEntityEdge(entity);
-                    //DrawEntityBasic(entity, false, "Edge");
-                    //DrawEntityBasic(entity, false, "SpriteBatch");
-                    DrawEntityBasicVertices(entitySprite, false, "SpriteBatch", 0);
+            //DrawEntityEdge(entity);
+            //DrawEntityBasic(entity, false, "Edge");
+            //DrawEntityBasic(entity, false, "SpriteBatch");
+            DrawEntityBasicVertices(entitySprite, false, "SpriteBatch", 0);
             //    }
             //}
 
@@ -701,7 +701,10 @@ namespace WinFormsContentLoading
             //}
 
             //--- Affichage de la courbe active
-                    if (repository.ShowDebugMode && repository.ViewingMode == ViewingMode.Script && entitySprite.Selected && repository.CurrentObject == entitySprite)
+            if (repository.ShowDebugMode && 
+                repository.ViewingMode == ViewingMode.Script &&
+                entitySprite.Selected &&
+                repository.CurrentActionHandler == entitySprite)
             {
                 lineBrush.Color = Color.Green;
                 this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, repository.Camera.MatrixTransformation);

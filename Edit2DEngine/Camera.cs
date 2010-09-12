@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace Edit2DEngine
 {
-    public class Camera : IMoveableObject
+    public class Camera : IMoveableObject, ISelectableObject
     {
         public Vector2 Position { get; set; }
         public float Zoom { get; set; }
@@ -14,6 +14,7 @@ namespace Edit2DEngine
         public Vector2 Focal { get; set; }
         public Vector2 OldCorner { get; set; }
         public Vector2 NewCorner { get; set; }
+        public Boolean Selected { get; set; }
 
         public Camera()
         {
@@ -61,5 +62,10 @@ namespace Edit2DEngine
         }
 
         public float Rotation { get; set; }
+
+        public bool ContainsLocation(Vector2 pos)
+        {
+             return Vector2.Distance(pos, this.Position) < 10f;
+        }
     }
 }
