@@ -58,6 +58,7 @@ namespace Edit2D
         public FrmEdit2D()
         {
             InitializeComponent();
+
             modelViewerControl.MouseWheel += new MouseEventHandler(modelViewerControl_MouseWheel);
             this.Load += new EventHandler(Form1_Load);
             listView.DrawItem += new DrawListViewItemEventHandler(listView_DrawItem);
@@ -163,7 +164,7 @@ namespace Edit2D
             //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             AddEntity();
-            repository.CurrentEntity = repository.listEntity[0];
+            //repository.CurrentEntity = repository.listEntity[0];
 
             RefreshTreeView();
 
@@ -359,7 +360,7 @@ namespace Edit2D
                 entity.UpdateRectangle();
                 //---
 
-                EntitySelectionChange(true, repository.CurrentEntity, entitySprite);
+                EntitySelectionChange(true, entitySprite);
 
                 Repository.physicSimulator.Update(0.0000001f);
             }
@@ -375,7 +376,7 @@ namespace Edit2D
 
                 Repository.physicSimulator.Update(0.0000001f);
 
-                EntitySelectionChange(true, repository.CurrentEntity, null);
+                EntitySelectionChange(true, null);
 
                 RefreshTreeView();
             }
@@ -498,47 +499,62 @@ namespace Edit2D
             return nameChanged;
         }
 
-        private void EntitySelectionChange(bool refreshTreeView, Entity oldEntity, Object newSelection)
+        public void EntitySelectionChange(bool refreshTreeView, Object newSelection)
         {
-            repository.ListSelection = new List<Selection>();
+            EntitySelectionChange(refreshTreeView, true, newSelection);
+        }
 
-            repository.CurrentObject = newSelection;
+        public void EntitySelectionChange(bool refreshTreeView, bool clearSelection, Object newSelection)
+        {
+            //--- Si la touche Ctrl n'est pas préssée, la liste de sélection est vidées
+            if (!repository.keyCtrlPressed && clearSelection)
+            {
+                foreach (Selection selection in repository.ListSelection)
+                {
+                    if (selection.SelectableObject != null)
+                        selection.SelectableObject.Selected = false;
+                }
 
-            repository.CurrentEntity = null;
-            repository.CurrentScript = null;
-            repository.CurrentTrigger = null;
-            repository.CurrentParticleSystem = null;
-            repository.CurrentActionHandler = null;
-            repository.CurrentTriggerHandler = null;
-            repository.CurrentCustomPropertyHandler = null;
-            repository.CurrentMoveableObject = null;
-            repository.CurrentResizeableObject = null;
+                repository.ListSelection = new List<Selection>();
+            }
+            //---
 
             if (newSelection is Particle)
             {
-                repository.CurrentEntity = ((Particle)newSelection).ParticleSystem.Entity;
-                repository.CurrentParticleSystem = ((Particle)newSelection).ParticleSystem;
+                //repository.CurrentEntity = ((Particle)newSelection).ParticleSystem.Entity;
+                //repository.CurrentParticleSystem = ((Particle)newSelection).ParticleSystem;
+
+                if (refreshTreeView)
+                    treeView.RefreshView<Particle>((Particle)newSelection);
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem.Entity;
+
+                repository.ListSelection.Add(new Selection(newSelection, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
 
                 ShowParticleSystemMode();
             }
             else if (newSelection is EntityComponent)
             {
-                repository.CurrentEntity = ((EntityComponent)newSelection).EntityParent;
+                //repository.CurrentEntity = ((EntityComponent)newSelection).EntityParent;
+
+                if (refreshTreeView)
+                    treeView.RefreshView<EntityComponent>((EntityComponent)newSelection);
 
                 propertyGrid.PropertyGrid.SelectedObject = newSelection;
 
-                if (newSelection is EntityPhysicObject)
-                {
-                    repository.CurrentEntityPhysic = (EntityPhysicObject)newSelection;
-                }
+                //if (newSelection is EntityPhysicObject)
+                //{
+                //    repository.CurrentEntityPhysic = (EntityPhysicObject)newSelection;
+                //}
 
-                repository.ListSelection.Add(new Selection(((EntityComponent)newSelection), repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
+                repository.ListSelection.Add(new Selection(newSelection, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
             }
             else if (newSelection is Entity)
             {
-                repository.CurrentEntity = (Entity)newSelection;
+                repository.ListSelection.Add(new Selection(newSelection, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
+
+                if (refreshTreeView)
+                    treeView.RefreshView<Entity>((Entity)newSelection);
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.CurrentEntity;
 
@@ -561,43 +577,73 @@ namespace Edit2D
             }
             else if (newSelection is Script)
             {
-                repository.CurrentScript = (Script)newSelection;
-                repository.CurrentActionHandler = ((Script)newSelection).ActionHandler;
+                //repository.CurrentScript = (Script)newSelection;
+                //repository.CurrentActionHandler = ((Script)newSelection).ActionHandler;
 
-                if (repository.CurrentActionHandler is ITriggerHandler)
-                    repository.CurrentTriggerHandler = (ITriggerHandler)repository.CurrentActionHandler;
+                //if (repository.CurrentActionHandler is ITriggerHandler)
+                //    repository.CurrentTriggerHandler = (ITriggerHandler)repository.CurrentActionHandler;
 
-                if (repository.CurrentActionHandler is Entity &&
-                    !repository.CurrentActionHandler.GetType().IsSubclassOf(typeof(Entity)))
-                    propertyGrid.PropertyGrid.SelectedObject = repository.CurrentActionHandler;
+                //if (repository.CurrentActionHandler is Entity &&
+                //    !repository.CurrentActionHandler.GetType().IsSubclassOf(typeof(Entity)))
 
-                if (repository.CurrentTriggerHandler is Entity)
-                    repository.CurrentEntity = (Entity)repository.CurrentTriggerHandler;
+                if (refreshTreeView)
+                    treeView.RefreshView<Script>((Script)newSelection);
+
+                //--- Supprime le script sélectionnés auparavant
+                repository.ListSelection.RemoveAll(s => s.Script != null);
+                //---
+
+                //---
+                repository.ListSelection.Add(new Selection(newSelection, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
+                //---
+
+                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentActionHandler;
+
+                //if (repository.CurrentTriggerHandler is Entity)
+                //    repository.CurrentEntity = (Entity)repository.CurrentTriggerHandler;
 
                 ShowScriptMode();
             }
             else if (newSelection is TriggerBase)
             {
-                repository.CurrentTrigger = (TriggerBase)newSelection;
-                repository.CurrentTriggerHandler = ((TriggerBase)newSelection).TriggerHandler;
+                //repository.CurrentTrigger = (TriggerBase)newSelection;
+                //repository.CurrentTriggerHandler = ((TriggerBase)newSelection).TriggerHandler;
 
-                if (repository.CurrentTriggerHandler is IActionHandler)
-                    repository.CurrentActionHandler = (IActionHandler)repository.CurrentTriggerHandler;
+                //if (repository.CurrentTriggerHandler is IActionHandler)
+                //    repository.CurrentActionHandler = (IActionHandler)repository.CurrentTriggerHandler;
 
-                if ((repository.CurrentTriggerHandler is Entity &&
-                    !repository.CurrentTriggerHandler.GetType().IsSubclassOf(typeof(Entity))) ||
-                    repository.CurrentTriggerHandler is World)
-                    propertyGrid.PropertyGrid.SelectedObject = repository.CurrentTriggerHandler;
+                //if ((repository.CurrentTriggerHandler is Entity &&
+                //    !repository.CurrentTriggerHandler.GetType().IsSubclassOf(typeof(Entity))) ||
+                //    repository.CurrentTriggerHandler is World)
+                //    propertyGrid.PropertyGrid.SelectedObject = repository.CurrentTriggerHandler;
 
-                if (repository.CurrentTriggerHandler is Entity)
-                    repository.CurrentEntity = (Entity)repository.CurrentTriggerHandler;
+                //if (repository.CurrentTriggerHandler is Entity)
+                //    repository.CurrentEntity = (Entity)repository.CurrentTriggerHandler;
+
+                if (refreshTreeView)
+                    treeView.RefreshView<TriggerBase>((TriggerBase)newSelection);
+
+                //--- Supprime le script sélectionnés auparavant
+                repository.ListSelection.RemoveAll(s => s.Trigger != null);
+                //---
+
+                //---
+                repository.ListSelection.Add(new Selection(newSelection, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
+                //---
+
+                propertyGrid.PropertyGrid.SelectedObject = repository.CurrentTriggerHandler;
 
                 ShowTriggerMode();
             }
             else if (newSelection is ParticleSystem)
             {
-                repository.CurrentEntity = ((ParticleSystem)newSelection).Entity;
-                repository.CurrentParticleSystem = (ParticleSystem)newSelection;
+                //repository.CurrentEntity = ((ParticleSystem)newSelection).Entity;
+                //repository.CurrentParticleSystem = (ParticleSystem)newSelection;
+
+                if (refreshTreeView)
+                    treeView.RefreshView<ParticleSystem>((ParticleSystem)newSelection);
+
+                repository.ListSelection.Add(new Selection(newSelection, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem.Entity;
 
@@ -605,23 +651,28 @@ namespace Edit2D
             }
             else if (newSelection is World)
             {
+                repository.ListSelection.Add(new Selection(newSelection, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
+
                 propertyGrid.PropertyGrid.SelectedObject = repository.World;
 
                 ShowTriggerMode();
             }
 
             //--- Détermine les Handler courants
-            if (newSelection is ICustomPropertyHandler)
-                repository.CurrentCustomPropertyHandler = (ICustomPropertyHandler)newSelection;
-            if (newSelection is IActionHandler)
-                repository.CurrentActionHandler = (IActionHandler)newSelection;
-            if (newSelection is ITriggerHandler)
-                repository.CurrentTriggerHandler = (ITriggerHandler)newSelection;
-            if (newSelection is IMoveableObject)
-                repository.CurrentMoveableObject = (IMoveableObject)newSelection;
-            if (newSelection is IResizeableObject)
-                repository.CurrentResizeableObject = (IResizeableObject)newSelection;
+            //if (newSelection is ICustomPropertyHandler)
+            //    repository.CurrentCustomPropertyHandler = (ICustomPropertyHandler)newSelection;
+            //if (newSelection is IActionHandler)
+            //    repository.CurrentActionHandler = (IActionHandler)newSelection;
+            //if (newSelection is ITriggerHandler)
+            //    repository.CurrentTriggerHandler = (ITriggerHandler)newSelection;
+            //if (newSelection is IMoveableObject)
+            //    repository.CurrentMoveableObject = (IMoveableObject)newSelection;
+            //if (newSelection is IResizeableObject)
+            //    repository.CurrentResizeableObject = (IResizeableObject)newSelection;
             //---
+
+            if (newSelection is ISelectableObject)
+                ((ISelectableObject)newSelection).Selected = true;
 
             EnableMode(
                 repository.CurrentActionHandler != null,
@@ -926,7 +977,10 @@ namespace Edit2D
                 if (!(btnScriptModeBar.Checked && repository.CurrentScript != null))
                 {
                     ShowScriptMode();
-                    repository.CurrentScript = this.scriptControl.AddScriptToCurrentEntity();
+                    //repository.CurrentScript = this.scriptControl.AddScriptToCurrentEntity();
+
+                    this.scriptControl.AddScriptToCurrentEntity();
+
                     if (repository.CurrentScript == null)
                         return;
                 }
@@ -1030,22 +1084,14 @@ namespace Edit2D
         {
             btnPinStatic.Checked = !btnPinStatic.Checked;
 
-            //if (repository.CurrentEntity != null)
-            //{
-            //    repository.CurrentEntity.IsStatic = btnPinStatic.Checked;
-
-            //    if (repository.tempEntity != null)
-            //        repository.tempEntity.IsStatic = btnPinStatic.Checked;
-            //}
-
             for (int i = 0; i < repository.ListSelection.Count; i++)
             {
-                if (repository.ListSelection[i].EntityComponent is EntityPhysicObject)
+                if (repository.ListSelection[i].EntityPhysicObject != null)
                 {
-                    ((EntityPhysicObject)repository.ListSelection[i].EntityComponent).IsStatic = btnPinStatic.Checked;
+                    repository.ListSelection[i].EntityPhysicObject.IsStatic = btnPinStatic.Checked;
 
-                    if (repository.ListSelection[i].TempEntityComponent != null)
-                        ((EntityPhysicObject)repository.ListSelection[i].TempEntityComponent).IsStatic = btnPinStatic.Checked;
+                    if (repository.ListSelection[i].Temp != null)
+                        repository.ListSelection[i].Temp.EntityPhysicObject.IsStatic = btnPinStatic.Checked;
                 }
             }
         }
@@ -1064,24 +1110,34 @@ namespace Edit2D
 
             for (int i = 0; i < repository.ListSelection.Count; i++)
             {
-                if (repository.ListSelection[i].EntityComponent is EntityPhysicObject)
+                if (repository.ListSelection[i].EntityPhysicObject != null)
                 {
-                    ((EntityPhysicObject)repository.ListSelection[i].EntityComponent).IsColisionable = btnColisionable.Checked;
+                    repository.ListSelection[i].EntityPhysicObject.IsColisionable = btnColisionable.Checked;
 
-                    if (repository.ListSelection[i].TempEntityComponent != null)
-                        ((EntityPhysicObject)repository.ListSelection[i].TempEntityComponent).IsColisionable = btnColisionable.Checked;
+                    if (repository.ListSelection[i].Temp != null)
+                        repository.ListSelection[i].Temp.EntityPhysicObject.IsColisionable = btnColisionable.Checked;
                 }
             }
         }
 
         private void btnResetEntityPhysic_Click(object sender, EventArgs e)
         {
-            if (repository.CurrentEntityPhysic != null)
-            {
-                //Vector2 position = repository.CurrentEntity.Position;
-                //float rotation = repository.CurrentEntity.Rotation;
+            //if (repository.CurrentEntityPhysic != null)
+            //{
+            //    //Vector2 position = repository.CurrentEntity.Position;
+            //    //float rotation = repository.CurrentEntity.Rotation;
 
-                repository.CurrentEntityPhysic.Body.ResetDynamics();
+            //    //repository.CurrentEntityPhysic.Body.ResetDynamics();
+
+
+            //}
+
+            for (int i = 0; i < repository.ListSelection.Count; i++)
+            {
+                if (repository.ListSelection[i].EntityPhysicObject != null)
+                {
+                    repository.ListSelection[i].EntityPhysicObject.Body.ResetDynamics();
+                }
             }
         }
 
@@ -1359,14 +1415,14 @@ namespace Edit2D
                 repository.keyShiftPressed = true;
 
             //--- Change le curseur selon le MouseMode sélectionné
-            if (repository.keyAltPressed)
+            //if (repository.keyAltPressed)
             {
                 modelViewerControl.Cursor = dicCursors[repository.MouseMode];
             }
-            else
-            {
-                modelViewerControl.Cursor = dicCursors[MouseMode.Select];
-            }
+            //else
+            //{
+            //    modelViewerControl.Cursor = dicCursors[MouseMode.Select];
+            //}
             //---
         }
 
@@ -1382,14 +1438,14 @@ namespace Edit2D
                     repository.keyShiftPressed = false;
 
                 //--- Change le curseur selon le MouseMode sélectionné
-                if (repository.keyAltPressed)
+                //if (repository.keyAltPressed)
                 {
                     modelViewerControl.Cursor = dicCursors[repository.MouseMode];
                 }
-                else
-                {
-                    modelViewerControl.Cursor = dicCursors[MouseMode.Select];
-                }
+                //else
+                //{
+                //    modelViewerControl.Cursor = dicCursors[MouseMode.Select];
+                //}
                 //---
 
                 if (e.KeyCode == System.Windows.Forms.Keys.S && repository.CurrentEntity != null)
@@ -1493,7 +1549,7 @@ namespace Edit2D
             {
                 Object item = treeView.GetItemFromNode(e.Node);
 
-                EntitySelectionChange(false, repository.CurrentEntity, item);
+                EntitySelectionChange(false, item);
             }
         }
 
@@ -1621,17 +1677,43 @@ namespace Edit2D
             }
             else if (repository.keyShiftPressed && btnParticleSystemModeBar.Checked && repository.CurrentEntity != null && repository.CurrentEntity.ListParticleSystem.Count > 0)
             {
-                CloneSelectedEntity(false);
+                //CloneSelectedEntity(false);
                 repository.CurrentPointer2.CalcMousePointerLocation(e.Location, repository.Camera);
                 repository.CurrentPointer2.SaveState();
             }
             else
             {
+                repository.CurrentPointer.CalcMousePointerLocation(e.Location, repository.Camera);
+
+                //---> enregistre la position du pointeur clické
+                repository.CurrentPointer.SaveState();
+                //---
+
+                //--- Sélection de l'entité
+                //--- Si la touche Ctrl n'est pas pressée et que la touche MouseMode (Alt) ne
+                //    l'est pas non plus, vide la liste de multisélection
+                //repository.ListSelection.ForEach(s => s.EntityComponent.Selected = false);
+                //repository.ListSelection = new List<Selection>();
+                //---
+
+                Object selectedObject = repository.GetSelectedObectFromLocation(repository.CurrentPointer.WorldPosition);
+
+                //--- Garde l'entity courante sélectionnée si la souris clique dans son rectangle
+                if (repository.CurrentEntity != null && selectedObject == null && repository.CurrentEntity.Rectangle.Contains((int)repository.CurrentPointer.WorldPosition.X, (int)repository.CurrentPointer.WorldPosition.Y))
+                {
+                    selectedObject = repository.CurrentEntity;
+                }
+                //---
+
+                EntitySelectionChange(true, selectedObject);
+                //---
+
                 //--- Si la touche MouseMode est pressée et que des entités sont sélectionnées
-                if (repository.keyAltPressed && (repository.CurrentEntity != null || repository.ListSelection.Count > 0))
+                if (//repository.keyAltPressed &&
+                    (repository.CurrentEntity != null || repository.ListSelection.Count > 0))
                 {
                     //---> Clone les entités avant la redéfinition de leur centrer
-                    CloneSelectedEntity(true);
+                    //CloneSelectedEntity(true);
 
                     //---> Si le MouseMode courant est Rotate ou scale et qu'il y'a sélection multiple
                     //     Placer le centre des entités sur le curseur
@@ -1641,14 +1723,8 @@ namespace Edit2D
                         //repository.GetSelectedEntity().ForEach(ent => ent.SetCenterFromWorldPosition(repository.CurrentPointer2.WorldPosition, true));
                     }
 
-                    CloneSelectedEntity(false);
+                    //CloneSelectedEntity(false);
                 }
-                //---
-
-                repository.CurrentPointer.CalcMousePointerLocation(e.Location, repository.Camera);
-
-                //---> enregistre la position du pointeur clické
-                repository.CurrentPointer.SaveState();
                 //---
             }
         }
@@ -1724,14 +1800,14 @@ namespace Edit2D
                 //---
 
                 //--- Redonne le statut Static à l'entité courante
-                if (repository.CurrentEntityPhysic != null)
-                {
-                    if (repository.tempObject != null)
-                    {
-                        //TODO : gérer de nouveau cette fonctionnalité
-                        //repository.CurrentEntityPhysic.Body.IsStatic = repository.tempEntity.IsStatic;
-                    }
-                }
+                //if (repository.CurrentEntityPhysic != null)
+                //{
+                //    //if (repository.tempObject != null)
+                //    {
+                //        //TODO : gérer de nouveau cette fonctionnalité
+                //        //repository.CurrentEntityPhysic.Body.IsStatic = repository.tempEntity.IsStatic;
+                //    }
+                //}
                 //---
 
                 //--- Si il y'a sélection multiple et que le MouseMode est Resize ou Rotate
@@ -1756,56 +1832,41 @@ namespace Edit2D
                 //---
 
                 //--- Si la touche MouseMode n'est pas pressée, change l'entité courante
-                if (!repository.keyAltPressed)
+                //if (!repository.keyAltPressed)
                 {
-                    //--- Si la touche Ctrl n'est pas pressée et que la touche MouseMode (Alt) ne
-                    //    l'est pas non plus, vide la liste de multisélection
-                    repository.ListSelection.ForEach(s => s.EntityComponent.Selected = false);
-                    repository.ListSelection = new List<Selection>();
-                    //---
-
-                    Object selectedObject = repository.GetSelectedObectFromLocation(repository.CurrentPointer.WorldPosition);
-
-                    //--- Garde l'entity courante sélectionnée si la souris clique dans son rectangle
-                    if (repository.CurrentEntity != null && selectedObject  == null && repository.CurrentEntity.Rectangle.Contains((int)repository.CurrentPointer.WorldPosition.X, (int)repository.CurrentPointer.WorldPosition.Y))
-                    {
-                        selectedObject = repository.CurrentEntity;
-                    }
-                    //---
-
-                    EntitySelectionChange(true, repository.CurrentEntity, selectedObject);
+                   
                 }
                 //--- Si la touche MouseMode est pressée, réinjecte les nouvelles valeurs des propriétés (Size, Rotation)
-                else
-                {
-                    //TODO : mettre cela en place pour la mutli sélection
-                    //if (repository.CurrentEntity != null && repository.tempEntity != null)
-                    //{
-                    //    if (repository.MouseMode == MouseMode.Move)
-                    //    {
-                    //        for (int i = 0; i < repository.CurrentEntity.ListFixedRevoluteJoint.Count; i++)
-                    //        {
-                    //            repository.CurrentEntity.ListFixedRevoluteJoint[i].Anchor = repository.CurrentEntity.ListFixedRevoluteJoint[i].Anchor + repository.CurrentEntity.Position - repository.tempEntity.Position;
-                    //        }
-                    //    }
+                //else
+                //{
+                //    //TODO : mettre cela en place pour la mutli sélection
+                //    //if (repository.CurrentEntity != null && repository.tempEntity != null)
+                //    //{
+                //    //    if (repository.MouseMode == MouseMode.Move)
+                //    //    {
+                //    //        for (int i = 0; i < repository.CurrentEntity.ListFixedRevoluteJoint.Count; i++)
+                //    //        {
+                //    //            repository.CurrentEntity.ListFixedRevoluteJoint[i].Anchor = repository.CurrentEntity.ListFixedRevoluteJoint[i].Anchor + repository.CurrentEntity.Position - repository.tempEntity.Position;
+                //    //        }
+                //    //    }
 
-                    //    if (repository.MouseMode == MouseMode.Resize)
-                    //    {
-                    //        Entity newEntity = repository.ChangeEntitySize(repository.CurrentEntity, repository.tempEntity.Size);
-                    //        EntitySelectionChange(repository.CurrentEntity, newEntity);
+                //    //    if (repository.MouseMode == MouseMode.Resize)
+                //    //    {
+                //    //        Entity newEntity = repository.ChangeEntitySize(repository.CurrentEntity, repository.tempEntity.Size);
+                //    //        EntitySelectionChange(repository.CurrentEntity, newEntity);
 
-                    //        Repository.physicSimulator.Update(0.0000001f);
-                    //    }
+                //    //        Repository.physicSimulator.Update(0.0000001f);
+                //    //    }
 
-                    //    repository.tempEntity = null;
-                    //}
+                //    //    repository.tempEntity = null;
+                //    //}
 
-                    //---> Si la touche Alt (MouseMode) est préssée alors que la souris est relâchée
-                    //     alors il faut clôner les entités sélectionnées
-                    CloneSelectedEntity(false);
-                    //prevPos = repository.CurrentPointer;
-                    repository.CurrentPointer.SaveState();
-                }
+                //    //---> Si la touche Alt (MouseMode) est préssée alors que la souris est relâchée
+                //    //     alors il faut clôner les entités sélectionnées
+                //    //CloneSelectedEntity(false);
+                //    //prevPos = repository.CurrentPointer;
+                //    //repository.CurrentPointer.SaveState();
+                //}
                 //---
             }
         }
@@ -1848,7 +1909,7 @@ namespace Edit2D
 
                     if (btnParticleSystemModeBar.Checked)
                     {
-                        if (repository.CurrentEntity != null && repository.CurrentEntity.ListParticleSystem.Count > 0)
+                        if (repository.CurrentParticleSystem != null)
                         {
                             Vector2 vec1 = repository.CurrentPointer2.PrevWorldPosition - repository.CurrentEntity.Position;
                             Vector2 vec2 = repository.CurrentPointer2.WorldPosition - repository.CurrentEntity.Position;
@@ -1858,7 +1919,7 @@ namespace Edit2D
                             float angle = vec1.GetAngle(vec2);
 
                             //TODO : ajouter un prevpos2 lors du MouseDown pour le pointer2
-                            repository.CurrentEntity.ListParticleSystem[0].EmmittingAngle = ((Entity)repository.tempObject).ListParticleSystem[0].EmmittingAngle + angle;
+                            repository.ListSelection[0].ParticleSystem.EmmittingAngle = repository.ListSelection[0].Temp.ParticleSystem.EmmittingAngle + angle;
                         }
                     }
                 }
@@ -1872,27 +1933,34 @@ namespace Edit2D
                     repository.CurrentPointer.CalcMousePointerLocation(e.Location, repository.Camera);
 
                     //--- MouseMode.Move
-                    if ((repository.CurrentMoveableObject != null || repository.ListSelection.Count > 0) &&
-                         repository.keyAltPressed &&
+                    if (repository.ListSelection.Count > 0 &&
+                         //repository.keyAltPressed &&
                          repository.MouseMode == MouseMode.Move)
                     {
                         Vector2 deltaPosition = repository.CurrentPointer.WorldPosition - repository.CurrentPointer.PrevWorldPosition;
 
-                        repository.CurrentMoveableObject.Position = ((IMoveableObject)repository.tempObject).Position + deltaPosition;
+                        //repository.CurrentMoveableObject.Position = ((IMoveableObject)repository.tempObject).Position + deltaPosition;
 
                         for (int i = 0; i < repository.ListSelection.Count; i++)
                         {
-                            repository.ListSelection[i].EntityComponent.Position = (repository.ListSelection[i].TempEntityComponent.Position + deltaPosition);
-                            repository.ListSelection[i].Pointer.WorldPosition = repository.ListSelection[i].Pointer.PrevWorldPosition + deltaPosition;
+                            if (repository.ListSelection[i].MoveableObject != null)
+                            {
+                                //---> Déplacement de l'objet
+                                repository.ListSelection[i].MoveableObject.Position = repository.ListSelection[i].Temp.MoveableObject.Position + deltaPosition;
+                                //---> Déplacement du curseur de sélection pointant sur l'objet
+                                repository.ListSelection[i].Pointer.WorldPosition = repository.ListSelection[i].Temp.Pointer.WorldPosition + deltaPosition;
 
-                            repository.ListSelection[i].Pointer.CalcScreenPositionFromWorldPosition(repository.Camera);
+                                repository.ListSelection[i].Pointer.CalcScreenPositionFromWorldPosition(repository.Camera);
+                            }
                         }
                     }
                     //---
 
                     //--- MouseMode.Resize
                     #region Resize
-                    if (repository.CurrentResizeableObject != null && repository.tempObject != null && repository.keyAltPressed && repository.MouseMode == MouseMode.Resize)
+                    if (repository.ListSelection.Count>0 && 
+                        //repository.keyAltPressed &&
+                        repository.MouseMode == MouseMode.Resize)
                     {
                         //TODO : rétablir le redimenssionnement
                         /*
@@ -2018,9 +2086,11 @@ namespace Edit2D
                     //---
 
                     //--- MouseMode.Rotate
-                    if ((repository.CurrentMoveableObject != null || repository.ListSelection.Count > 0) && repository.keyAltPressed && repository.MouseMode == MouseMode.Rotate)
+                    if (repository.ListSelection.Count > 0 && 
+                        //repository.keyAltPressed && 
+                        repository.MouseMode == MouseMode.Rotate)
                     {
-                        List<Entity> listSelectedEntity = repository.GetSelectedEntity();
+                        //List<Entity> listSelectedEntity = repository.GetSelectedEntity();
 
                         Vector2 vecA = Vector2.Zero;
                         Vector2 vecB = Vector2.Zero;
@@ -2028,30 +2098,33 @@ namespace Edit2D
 
                         for (int i = 0; i < repository.ListSelection.Count; i++)
                         {
-                            vecA = repository.CurrentPointer.PrevWorldPosition - repository.ListSelection[i].EntityComponent.Position;
-                            vecB = repository.CurrentPointer.WorldPosition - repository.ListSelection[i].EntityComponent.Position;
+                            if (repository.ListSelection[i].MoveableObject != null)
+                            {
+                                vecA = repository.CurrentPointer.PrevWorldPosition - repository.ListSelection[i].MoveableObject.Position;
+                                vecB = repository.CurrentPointer.WorldPosition - repository.ListSelection[i].MoveableObject.Position;
 
-                            vecA.Normalize();
-                            vecB.Normalize();
+                                vecA.Normalize();
+                                vecB.Normalize();
 
-                            angle = vecA.GetAngle(vecB);
+                                angle = vecA.GetAngle(vecB);
 
-                            repository.ListSelection[i].EntityComponent.Rotation = repository.ListSelection[i].TempEntityComponent.Rotation + angle;
+                                repository.ListSelection[i].MoveableObject.Rotation = repository.ListSelection[i].Temp.MoveableObject.Rotation + angle;
+                            }
                         }
 
-                        if (repository.CurrentEntity != null)
-                        {
-                            vecA = repository.CurrentPointer.PrevWorldPosition - repository.CurrentEntity.Position;
-                            vecB = repository.CurrentPointer.WorldPosition - repository.CurrentEntity.Position;
+                        //if (repository.CurrentEntity != null)
+                        //{
+                        //    vecA = repository.CurrentPointer.PrevWorldPosition - repository.CurrentEntity.Position;
+                        //    vecB = repository.CurrentPointer.WorldPosition - repository.CurrentEntity.Position;
 
-                            vecA.Normalize();
-                            vecB.Normalize();
+                        //    vecA.Normalize();
+                        //    vecB.Normalize();
 
-                            angle = vecA.GetAngle(vecB);
-                            this.Text = angle.ToString();
+                        //    angle = vecA.GetAngle(vecB);
+                        //    this.Text = angle.ToString();
 
-                            repository.CurrentEntity.Rotation = ((Entity)repository.tempObject).Rotation + angle;
-                        }
+                        //    repository.CurrentEntity.Rotation = ((Entity)repository.tempObject).Rotation + angle;
+                        //}
                     }
                     //---
                 }
@@ -2104,6 +2177,7 @@ namespace Edit2D
 
         private void CloneSelectedEntity(bool cloneLocal)
         {
+            /*
             //TODO : rétablir cette fonctionnalité
             //TODO : voir à quoi sert cloneLocal
             //if (cloneLocal)
@@ -2156,7 +2230,7 @@ namespace Edit2D
                     //---
                 }
             }
-
+            */
         }
 
         private void modelViewerControl_Resize(object sender, EventArgs e)

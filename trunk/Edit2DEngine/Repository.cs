@@ -18,38 +18,10 @@ namespace Edit2DEngine
 {
     public class Repository
     {
-        public Object tempObject;
+        //public Object tempObject;
         private Random rnd;
         public static int EntityCount = 0;
         public bool Pause = false;
-
-        public ICustomPropertyHandler CurrentCustomPropertyHandler { get; set; }
-        public IMoveableObject CurrentMoveableObject { get; set; }
-        public IResizeableObject CurrentResizeableObject { get; set; }
-        public Object CurrentObject { get; set; }
-        public IActionHandler CurrentActionHandler { get; set; }
-        public ITriggerHandler CurrentTriggerHandler { get; set; }
-        public ParticleSystem CurrentParticleSystem { get; set; }
-        public EntityPhysicObject CurrentEntityPhysic;
-        public EntityPhysicObject CurrentEntityPhysic2;
-
-        private Entity _currentEntity;
-        public Entity CurrentEntity
-        {
-            get
-            {
-                return _currentEntity;
-            }
-            set
-            {
-                listEntity.ForEach(ent => ent.Selected = false);
-
-                _currentEntity = value;
-
-                if (value != null)
-                    _currentEntity.Selected = true;
-            }
-        }
 
 
         public World World { get; set; }

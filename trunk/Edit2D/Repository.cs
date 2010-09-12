@@ -10,6 +10,8 @@ using Edit2DEngine.Actions;
 
 using Edit2DEngine.Entities;
 using Edit2DEngine.Triggers;
+using Edit2DEngine.CustomProperties;
+using Edit2DEngine.Entities.Particles;
 
 namespace Edit2D
 {
@@ -36,17 +38,155 @@ namespace Edit2D
         public List<Vector2> ListCurveLine { get; set; }
         public List<Vector2> ListCurvePoint { get; set; }
 
-        private Script _currentScript = null;
+        public ICustomPropertyHandler CurrentCustomPropertyHandler
+        {
+            get
+            {
+                if (this.ListSelection.Count != 1)
+                    return null;
+
+                return this.ListSelection[0].CustomPropertyHandler;
+            }
+        }
+
+        public IActionHandler CurrentActionHandler
+        {
+            get
+            {
+                if (this.ListSelection.Count != 1)
+                    return null;
+
+                return this.ListSelection[0].ActionHandler;
+            }
+        }
+
+        public ITriggerHandler CurrentTriggerHandler
+        {
+            get
+            {
+                if (this.ListSelection.Count != 1)
+                    return null;
+
+                return this.ListSelection[0].TriggerHandler;
+            }
+        }
+
+        public ParticleSystem CurrentParticleSystem
+        {
+            get
+            {
+                if (this.ListSelection.Count != 1)
+                    return null;
+
+                return this.ListSelection[0].ParticleSystem;
+            }
+        }
+
+        public EntityPhysicObject CurrentEntityPhysic
+        {
+            get
+            {
+                EntityPhysicObject currentEntityPhysicObject = null;
+
+                for (int i = 0; i < this.ListSelection.Count; i++)
+                {
+                    if (this.ListSelection[i].EntityPhysicObject != null)
+                        currentEntityPhysicObject = this.ListSelection[i].EntityPhysicObject;
+
+                    if (currentEntityPhysicObject != null)
+                        return currentEntityPhysicObject;
+                }
+
+                return currentEntityPhysicObject;
+            }
+        }
+
+        public EntityPhysicObject CurrentEntityPhysic2
+        {
+            get
+            {
+                EntityPhysicObject currentEntityPhysicObject = null;
+                int count = 0;
+
+                for (int i = 0; i < this.ListSelection.Count; i++)
+                {
+                    if (this.ListSelection[i].EntityPhysicObject != null)
+                    {
+                        currentEntityPhysicObject = this.ListSelection[i].EntityPhysicObject;
+                        count++;
+                    }
+
+                    if (currentEntityPhysicObject != null && count == 2)
+                        return currentEntityPhysicObject;
+                }
+
+                return null;
+            }
+        }
+
+        public Object CurrentObject
+        {
+            get
+            {
+                if (this.ListSelection.Count != 1)
+                    return null;
+                else
+                    return this.ListSelection[0].Object;
+            }
+        }
+
+        public Entity CurrentEntity
+        {
+            get
+            {
+                Entity currentEntity = null;
+
+                if (this.ListSelection.Count != 1)
+                    return null;
+
+                for (int i = 0; i < this.ListSelection.Count; i++)
+                {
+                    if (this.ListSelection[i].Entity != null)
+                        currentEntity = this.ListSelection[i].Entity;
+                    if (this.ListSelection[i].EntityComponent != null)
+                        currentEntity = this.ListSelection[i].EntityComponent.EntityParent;
+
+                    if (currentEntity != null)
+                        return currentEntity;
+                }
+
+                return currentEntity;
+            }
+        }
+
         public Script CurrentScript
         {
             get
             {
-                return _currentScript;
-            }
-            set
-            {
-                _currentScript = value;
-                CalcDrawingCurve();
+                Script currentScript = null;
+
+                if (this.ListSelection.Count != 1)
+                    return null;
+
+                for (int i = 0; i < this.ListSelection.Count; i++)
+                {
+                    if (this.ListSelection[i].Script != null)
+                        currentScript = this.ListSelection[i].Script;
+
+                    if (currentScript != null)
+                        return currentScript;
+                }
+
+                for (int i = 0; i < this.ListSelection.Count; i++)
+                {
+                    if (this.ListSelection[i].ActionHandler != null && this.ListSelection[i].ActionHandler.ListScript.Count > 0)
+                        currentScript = this.ListSelection[i].ActionHandler.ListScript[0];
+
+                    if (currentScript != null)
+                        return currentScript;
+                }
+
+                return currentScript;
             }
         }
         //---
@@ -86,7 +226,7 @@ namespace Edit2D
             List<Entity> listSelectedEntity = new List<Entity>();
 
             listSelectedEntity.AddRange(ListSelection.Select<Selection, Entity>(s => s.EntityComponent.EntityParent));
-            
+
             if (CurrentEntity != null)
                 listSelectedEntity.Add(CurrentEntity);
 
@@ -145,7 +285,7 @@ namespace Edit2D
                             //---> Durée pour une ligne affichée (100 ms)
                             int durationLine = 100;
                             int nbLine = 0;
-                            for (int l = 0; l <= actionCurve.Duration; l+=durationLine, nbLine++)
+                            for (int l = 0; l <= actionCurve.Duration; l += durationLine, nbLine++)
                             {
                                 if (ListCurveLine.Count <= nbLine)
                                 {
@@ -159,7 +299,7 @@ namespace Edit2D
 
                             if (actionCurve.Duration % durationLine > 0)
                             {
-                                if (ListCurveLine.Count <= nbLine+1)
+                                if (ListCurveLine.Count <= nbLine + 1)
                                 {
                                     ListCurveLine.Add(new Vector2(curve.Evaluate((float)actionCurve.Duration), 0));
                                 }

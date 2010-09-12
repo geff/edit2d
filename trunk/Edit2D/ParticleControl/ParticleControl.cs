@@ -50,15 +50,16 @@ namespace Edit2D.ParticleControl
 
         private void listBoxParticleSystem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Repository.CurrentParticleSystem = null;
+            //Repository.CurrentParticleSystem = null;
 
             if (Repository.CurrentEntity != null && listBoxParticleSystem.SelectedIndex != -1)
             {
-                Repository.CurrentParticleSystem = Repository.CurrentEntity.ListParticleSystem[listBoxParticleSystem.SelectedIndex];
+                //Repository.CurrentParticleSystem = Repository.CurrentEntity.ListParticleSystem[listBoxParticleSystem.SelectedIndex];
+                ((FrmEdit2D)this.ParentForm).EntitySelectionChange(true, false, Repository.CurrentEntity.ListParticleSystem[listBoxParticleSystem.SelectedIndex]);
             }
 
-            CheckNodeGlobalTreeView<ParticleSystem>(Repository.CurrentParticleSystem);
-            propParticleSystem.PropertyGrid.SelectedObject = Repository.CurrentParticleSystem;
+            //CheckNodeGlobalTreeView<ParticleSystem>(Repository.CurrentParticleSystem);
+            //propParticleSystem.PropertyGrid.SelectedObject = Repository.CurrentParticleSystem;
 
             RefreshParticleTemplateListBox(true);
         }
@@ -290,7 +291,7 @@ namespace Edit2D.ParticleControl
             {
                 Repository.CurrentEntity.ListParticleSystem.Remove(Repository.CurrentParticleSystem);
 
-                Repository.CurrentParticleSystem = null;
+                //Repository.CurrentParticleSystem = null;
 
                 RefreshParticleSystemListBox(true);
             }
@@ -337,10 +338,10 @@ namespace Edit2D.ParticleControl
             {
                 particleTemplate.ParticleSystem.ListParticleTemplate.Remove(particleTemplate);
 
-                if (Repository.CurrentObject is Particle)
-                {
-                    Repository.CurrentObject = null;
-                }
+                //if (Repository.CurrentObject is Particle)
+                //{
+                //    Repository.CurrentObject = null;
+                //}
 
                 RefreshParticleTemplateListBox(true);
 
