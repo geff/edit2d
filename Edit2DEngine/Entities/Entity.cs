@@ -279,7 +279,7 @@ namespace Edit2DEngine.Entities
 
         public bool ContainsLocation(Vector2 pos)
         {
-            throw new NotImplementedException();
+            return this.Rectangle.Contains((int)pos.X, (int)pos.Y);
         }
 
         #endregion

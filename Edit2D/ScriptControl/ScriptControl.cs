@@ -336,7 +336,6 @@ namespace Edit2D.ScriptControl
                 listboxScript.Items.Add(Repository.CurrentActionHandler.ListScript[i].ScriptName);
             }
 
-
             if (selectScript)
             {
                 if (Repository.CurrentScript != null)
@@ -844,10 +843,13 @@ namespace Edit2D.ScriptControl
         {
             if (Repository.CurrentActionHandler != null && Repository.CurrentScript != null)
             {
+                //---> Supprime le script de son propriétaire
                 Repository.CurrentActionHandler.ListScript.Remove(Repository.CurrentScript);
-                
-                //Repository.CurrentScript = null;
 
+                //---> Supprime le script de la sélection
+                Repository.ListSelection.RemoveAll(s => s.Script == Repository.CurrentScript);
+
+                //---> Rafraichi le contrôle en sélectionnant le premier script
                 RefreshScriptView(true);
             }
         }
