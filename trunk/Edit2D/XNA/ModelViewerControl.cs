@@ -794,11 +794,21 @@ namespace WinFormsContentLoading
                 //TODO : gérer l'affichage des système de particules
                 Entity entity = repository.listEntity[i];
 
+                //---> Rectangle de sélection de l'entité
                 if (entity.Selected)
                 {
                     this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
 
-                    this.spriteBatch.Draw(TextureManager.LoadTexture2D("Empty"), entity.Rectangle, null, Color.Khaki);
+                    Rectangle recEntity = Rectangle.Empty;
+                    Vector3 vecPosEntity = new Vector3(entity.Rectangle.X, entity.Rectangle.Y, 0f);
+                    Vector3 vecSizeEntity = new Vector3(entity.Rectangle.Width, entity.Rectangle.Height, 0);
+
+                    vecPosEntity = Vector3.Transform(vecPosEntity, repository.Camera.MatrixTransformation);
+                    vecSizeEntity = Vector3.Transform(vecSizeEntity, repository.Camera.MatrixScale);
+
+                    recEntity = new Rectangle((int)vecPosEntity.X, (int)vecPosEntity.Y, (int)vecSizeEntity.X, (int)vecSizeEntity.Y);
+
+                    this.spriteBatch.Draw(TextureManager.LoadTexture2D("Empty"), recEntity, null, Color.Khaki);
 
                     this.spriteBatch.End();
                 }

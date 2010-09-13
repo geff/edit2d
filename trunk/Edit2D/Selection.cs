@@ -62,6 +62,12 @@ namespace Edit2D
                 this.EntityPhysicObject = (EntityPhysicObject)selectedObject;
             if (selectedObject is Camera)
                 this.Camera = (Camera)selectedObject;
+            if (selectedObject is Script)
+                this.Script = (Script)selectedObject;
+            if (selectedObject is TriggerBase)
+                this.Trigger = (TriggerBase)selectedObject;
+            if (selectedObject is ParticleSystem)
+                this.ParticleSystem = (ParticleSystem)selectedObject;
 
             if (selectedObject is IActionHandler)
                 this.ActionHandler = (IActionHandler)selectedObject;

@@ -29,7 +29,6 @@ namespace Edit2D
         public Pointer CurrentPointer { get; set; }
         public Pointer CurrentPointer2 { get; set; }
 
-        public TriggerBase CurrentTrigger { get; set; }
 
         public MouseMode MouseMode = MouseMode.Move;
         public ViewingMode ViewingMode = ViewingMode.Nothing;
@@ -53,7 +52,7 @@ namespace Edit2D
         {
             get
             {
-                if (this.ListSelection.Count != 1)
+                if (!(this.ListSelection.Count == 1 || this.ListSelection.Count==2))
                     return null;
 
                 return this.ListSelection[0].ActionHandler;
@@ -64,7 +63,7 @@ namespace Edit2D
         {
             get
             {
-                if (this.ListSelection.Count != 1)
+                if (!(this.ListSelection.Count == 1 || this.ListSelection.Count == 2))
                     return null;
 
                 return this.ListSelection[0].TriggerHandler;
@@ -75,7 +74,7 @@ namespace Edit2D
         {
             get
             {
-                if (this.ListSelection.Count != 1)
+                if (!(this.ListSelection.Count == 1 || this.ListSelection.Count == 2))
                     return null;
 
                 return this.ListSelection[0].ParticleSystem;
@@ -128,7 +127,7 @@ namespace Edit2D
         {
             get
             {
-                if (this.ListSelection.Count != 1)
+                if (!(this.ListSelection.Count == 1 || this.ListSelection.Count == 2))
                     return null;
                 else
                     return this.ListSelection[0].Object;
@@ -141,7 +140,7 @@ namespace Edit2D
             {
                 Entity currentEntity = null;
 
-                if (this.ListSelection.Count != 1)
+                if (!(this.ListSelection.Count == 1 || this.ListSelection.Count == 2))
                     return null;
 
                 for (int i = 0; i < this.ListSelection.Count; i++)
@@ -163,32 +162,48 @@ namespace Edit2D
         {
             get
             {
-                Script currentScript = null;
-
-                if (this.ListSelection.Count != 1)
+                if (!(this.ListSelection.Count == 1 || this.ListSelection.Count == 2))
                     return null;
 
                 for (int i = 0; i < this.ListSelection.Count; i++)
                 {
                     if (this.ListSelection[i].Script != null)
-                        currentScript = this.ListSelection[i].Script;
-
-                    if (currentScript != null)
-                        return currentScript;
+                        return  this.ListSelection[i].Script;
                 }
 
                 for (int i = 0; i < this.ListSelection.Count; i++)
                 {
                     if (this.ListSelection[i].ActionHandler != null && this.ListSelection[i].ActionHandler.ListScript.Count > 0)
-                        currentScript = this.ListSelection[i].ActionHandler.ListScript[0];
-
-                    if (currentScript != null)
-                        return currentScript;
+                        return this.ListSelection[i].ActionHandler.ListScript[0];
                 }
 
-                return currentScript;
+                return null;
             }
         }
+
+        public TriggerBase CurrentTrigger
+        {
+            get
+            {
+                if (!(this.ListSelection.Count == 1 || this.ListSelection.Count == 2))
+                    return null;
+
+                for (int i = 0; i < this.ListSelection.Count; i++)
+                {
+                    if (this.ListSelection[i].Trigger != null)
+                        return this.ListSelection[i].Trigger;
+                }
+
+                for (int i = 0; i < this.ListSelection.Count; i++)
+                {
+                    if (this.ListSelection[i].TriggerHandler != null && this.ListSelection[i].TriggerHandler.ListTrigger.Count > 0)
+                        return this.ListSelection[i].TriggerHandler.ListTrigger[0];
+                }
+
+                return null;
+            }
+        }
+
         //---
 
         public bool Screenshot = false;

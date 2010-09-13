@@ -93,7 +93,13 @@ namespace Edit2DEngine
                 }
             }
 
-            return null;
+            foreach (Entity entity in listEntity)
+            {
+                if (entity.ContainsLocation(location))
+                    return entity;
+            }
+
+            return this.World;
         }
 
         public Entity GetEntityFromBody(FarseerGames.FarseerPhysics.Dynamics.Body body)
