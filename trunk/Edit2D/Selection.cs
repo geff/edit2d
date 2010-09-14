@@ -76,8 +76,20 @@ namespace Edit2D
             if (selectedObject is ICustomPropertyHandler)
                 this.CustomPropertyHandler = (ICustomPropertyHandler)selectedObject;
 
-            if (selectedObject is ICloneable && createClone)
-                this.Temp = new Selection(((ICloneable)selectedObject).Clone(), worldPointer, screenPointer, false);
+            if (createClone)
+                UpdateClone();
+        }
+
+        public void UpdateClone()
+        {
+            if (this.Object is ICloneable)
+                this.Temp = new Selection(((ICloneable)this.Object).Clone(), this.Pointer.WorldPosition, this.Pointer.ScreenPosition, false);
+        }
+
+        public void UpdatePointer(Pointer pointer)
+        {
+            this.Pointer.WorldPosition = pointer.WorldPosition;
+            this.Pointer.ScreenPosition = pointer.ScreenPosition;
         }
     }
 }

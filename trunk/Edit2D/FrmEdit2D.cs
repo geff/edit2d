@@ -364,7 +364,7 @@ namespace Edit2D
                 entity.UpdateRectangle();
                 //---
 
-                EntitySelectionChange(true, entitySprite);
+                EntitySelectionChange(true, true, entitySprite);
 
                 Repository.physicSimulator.Update(0.0000001f);
             }
@@ -514,12 +514,21 @@ namespace Edit2D
             //TODO : voir si ce bout de code ne pose pas problème
             if (repository.ListSelection.Exists(s => s.Object == newSelection))
             {
+                Selection selection = repository.ListSelection.Find(s => s.Object == newSelection);
+                
+                if(repository.keyCtrlPressed)
+                    selection.UpdatePointer(repository.CurrentPointer2);
+                else
+                    selection.UpdatePointer(repository.CurrentPointer);
+
+                selection.UpdateClone();
+
                 return;
             }
             //---
 
             //--- Si la touche Ctrl n'est pas préssée, la liste de sélection est vidées
-            if (!repository.keyCtrlPressed && clearSelection)
+            if (!repository.keyCtrlPressed || clearSelection)
             {
                 foreach (Selection selection in repository.ListSelection)
                 {
@@ -599,7 +608,7 @@ namespace Edit2D
                 //---
 
                 //--- Vérifie ou ajoute le propriétaire du trigger
-                if (!repository.ListSelection.Exists(s => s.ActionHandler == ((TriggerBase)newSelection).TriggerHandler))
+                if (!repository.ListSelection.Exists(s => s.TriggerHandler == ((TriggerBase)newSelection).TriggerHandler))
                 {
                     repository.ListSelection.Add(new Selection(((TriggerBase)newSelection).TriggerHandler, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
                 }
@@ -618,8 +627,8 @@ namespace Edit2D
                 //---
 
                 //--- Sélectionne le propriétaire
-                if (repository.CurrentActionHandler is ISelectableObject)
-                    ((ISelectableObject)repository.CurrentActionHandler).Selected = true;
+                if (repository.CurrentTriggerHandler is ISelectableObject)
+                    ((ISelectableObject)repository.CurrentTriggerHandler).Selected = true;
                 //---
 
                 ShowTriggerMode();
@@ -640,8 +649,6 @@ namespace Edit2D
                 repository.ListSelection.Add(new Selection(newSelection, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.World;
-
-                ShowTriggerMode();
             }
 
             if(repository.ViewingMode == ViewingMode.Script && newSelection is IActionHandler)
