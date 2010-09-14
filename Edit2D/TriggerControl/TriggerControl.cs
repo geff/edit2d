@@ -495,7 +495,8 @@ namespace Edit2D.TriggerControl
 
         private void SelectTrigger(TriggerBase trigger)
         {
-            //Repository.CurrentTrigger = trigger;
+            if(trigger != null)
+                ((FrmEdit2D)ParentForm).EntitySelectionChange(true, true, trigger);
 
             if (trigger == null)
             {
