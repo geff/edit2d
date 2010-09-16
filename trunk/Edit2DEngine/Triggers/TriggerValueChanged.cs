@@ -17,7 +17,6 @@ namespace Edit2DEngine.Triggers
         public PropertyInfo TriggerProperty { get; set; }
         public TriggerValueChangedSens[] Sens { get; set; }
         public Boolean IsCustomProperty { get; set; }
-        public Entity Entity { get; set; }
 
         public Object Value
         {
@@ -76,7 +75,6 @@ namespace Edit2DEngine.Triggers
             this.TriggerName = triggerName;
 
             this.TriggerHandler = triggerHandler;
-            this.Entity = (Entity)triggerHandler;
 
             this.ListScript = new List<Script>();
             this.ListTargetActionHandlerName = new List<string>();
@@ -113,28 +111,28 @@ namespace Edit2DEngine.Triggers
                         {
                             case "Size":
                                 if (i == 0)
-                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.Entity, null)).Width > sizeValue.Width;
+                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Width > sizeValue.Width;
                                 else if (i == 1)
-                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.Entity, null)).Height > sizeValue.Height;
+                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Height > sizeValue.Height;
                                 break;
                             case "Vector2":
                                 if (i == 0)
-                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.Entity, null)).X > vector2Value.X;
+                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.TriggerHandler, null)).X > vector2Value.X;
                                 else if (i == 1)
-                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.Entity, null)).Y > vector2Value.Y;
+                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Y > vector2Value.Y;
                                 break;
                             case "Single":
-                                launchTrigger &= ((float)this.TriggerProperty.GetValue(this.Entity, null) > floatValue);
+                                launchTrigger &= ((float)this.TriggerProperty.GetValue(this.TriggerHandler, null) > floatValue);
                                 break;
                             case "Color":
                                 if (i == 0)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).R > colorValue.R);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).R > colorValue.R);
                                 else if (i == 1)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).G > colorValue.G);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).G > colorValue.G);
                                 else if (i == 2)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).B > colorValue.B);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).B > colorValue.B);
                                 else if (i == 3)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).A > colorValue.A);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).A > colorValue.A);
                                 break;
 
                             default:
@@ -146,28 +144,28 @@ namespace Edit2DEngine.Triggers
                         {
                             case "Size":
                                 if (i == 0)
-                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.Entity, null)).Width < sizeValue.Width;
+                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Width < sizeValue.Width;
                                 else if (i == 1)
-                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.Entity, null)).Height < sizeValue.Height;
+                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Height < sizeValue.Height;
                                 break;
                             case "Vector2":
                                 if (i == 0)
-                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.Entity, null)).X < vector2Value.X;
+                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.TriggerHandler, null)).X < vector2Value.X;
                                 else if (i == 1)
-                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.Entity, null)).Y < vector2Value.Y;
+                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Y < vector2Value.Y;
                                 break;
                             case "Single":
-                                launchTrigger &= ((float)this.TriggerProperty.GetValue(this.Entity, null) < floatValue);
+                                launchTrigger &= ((float)this.TriggerProperty.GetValue(this.TriggerHandler, null) < floatValue);
                                 break;
                             case "Color":
                                 if (i == 0)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).R < colorValue.R);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).R < colorValue.R);
                                 else if (i == 1)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).G < colorValue.G);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).G < colorValue.G);
                                 else if (i == 2)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).B < colorValue.B);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).B < colorValue.B);
                                 else if (i == 3)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).A < colorValue.A);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).A < colorValue.A);
                                 break;
 
                             default:
@@ -179,28 +177,28 @@ namespace Edit2DEngine.Triggers
                         {
                             case "Size":
                                 if (i == 0)
-                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.Entity, null)).Width >= sizeValue.Width;
+                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Width >= sizeValue.Width;
                                 else if (i == 1)
-                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.Entity, null)).Height >= sizeValue.Height;
+                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Height >= sizeValue.Height;
                                 break;
                             case "Vector2":
                                 if (i == 0)
-                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.Entity, null)).X >= vector2Value.X;
+                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.TriggerHandler, null)).X >= vector2Value.X;
                                 else if (i == 1)
-                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.Entity, null)).Y >= vector2Value.Y;
+                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Y >= vector2Value.Y;
                                 break;
                             case "Single":
-                                launchTrigger &= ((float)this.TriggerProperty.GetValue(this.Entity, null) >= floatValue);
+                                launchTrigger &= ((float)this.TriggerProperty.GetValue(this.TriggerHandler, null) >= floatValue);
                                 break;
                             case "Color":
                                 if (i == 0)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).R >= colorValue.R);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).R >= colorValue.R);
                                 else if (i == 1)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).G >= colorValue.G);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).G >= colorValue.G);
                                 else if (i == 2)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).B >= colorValue.B);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).B >= colorValue.B);
                                 else if (i == 3)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).A >= colorValue.A);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).A >= colorValue.A);
                                 break;
 
                             default:
@@ -212,28 +210,28 @@ namespace Edit2DEngine.Triggers
                         {
                             case "Size":
                                 if (i == 0)
-                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.Entity, null)).Width <= sizeValue.Width;
+                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Width <= sizeValue.Width;
                                 else if (i == 1)
-                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.Entity, null)).Height <= sizeValue.Height;
+                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Height <= sizeValue.Height;
                                 break;
                             case "Vector2":
                                 if (i == 0)
-                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.Entity, null)).X <= vector2Value.X;
+                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.TriggerHandler, null)).X <= vector2Value.X;
                                 else if (i == 1)
-                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.Entity, null)).Y <= vector2Value.Y;
+                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Y <= vector2Value.Y;
                                 break;
                             case "Single":
-                                launchTrigger &= ((float)this.TriggerProperty.GetValue(this.Entity, null) <= floatValue);
+                                launchTrigger &= ((float)this.TriggerProperty.GetValue(this.TriggerHandler, null) <= floatValue);
                                 break;
                             case "Color":
                                 if (i == 0)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).R <= colorValue.R);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).R <= colorValue.R);
                                 else if (i == 1)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).G <= colorValue.G);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).G <= colorValue.G);
                                 else if (i == 2)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).B <= colorValue.B);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).B <= colorValue.B);
                                 else if (i == 3)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).A <= colorValue.A);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).A <= colorValue.A);
                                 break;
 
                             default:
@@ -245,28 +243,28 @@ namespace Edit2DEngine.Triggers
                         {
                             case "Size":
                                 if (i == 0)
-                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.Entity, null)).Width == sizeValue.Width;
+                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Width == sizeValue.Width;
                                 else if (i == 1)
-                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.Entity, null)).Height == sizeValue.Height;
+                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Height == sizeValue.Height;
                                 break;
                             case "Vector2":
                                 if (i == 0)
-                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.Entity, null)).X == vector2Value.X;
+                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.TriggerHandler, null)).X == vector2Value.X;
                                 else if (i == 1)
-                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.Entity, null)).Y == vector2Value.Y;
+                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Y == vector2Value.Y;
                                 break;
                             case "Single":
-                                launchTrigger &= ((float)this.TriggerProperty.GetValue(this.Entity, null) == floatValue);
+                                launchTrigger &= ((float)this.TriggerProperty.GetValue(this.TriggerHandler, null) == floatValue);
                                 break;
                             case "Color":
                                 if (i == 0)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).R == colorValue.R);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).R == colorValue.R);
                                 else if (i == 1)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).G == colorValue.G);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).G == colorValue.G);
                                 else if (i == 2)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).B == colorValue.B);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).B == colorValue.B);
                                 else if (i == 3)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).A == colorValue.A);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).A == colorValue.A);
                                 break;
 
                             default:
@@ -278,28 +276,28 @@ namespace Edit2DEngine.Triggers
                         {
                             case "Size":
                                 if (i == 0)
-                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.Entity, null)).Width != sizeValue.Width;
+                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Width != sizeValue.Width;
                                 else if (i == 1)
-                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.Entity, null)).Height != sizeValue.Height;
+                                    launchTrigger &= ((System.Drawing.Size)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Height != sizeValue.Height;
                                 break;
                             case "Vector2":
                                 if (i == 0)
-                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.Entity, null)).X != vector2Value.X;
+                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.TriggerHandler, null)).X != vector2Value.X;
                                 else if (i == 1)
-                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.Entity, null)).Y != vector2Value.Y;
+                                    launchTrigger &= ((Vector2)this.TriggerProperty.GetValue(this.TriggerHandler, null)).Y != vector2Value.Y;
                                 break;
                             case "Single":
-                                launchTrigger &= ((float)this.TriggerProperty.GetValue(this.Entity, null) != floatValue);
+                                launchTrigger &= ((float)this.TriggerProperty.GetValue(this.TriggerHandler, null) != floatValue);
                                 break;
                             case "Color":
                                 if (i == 0)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).R != colorValue.R);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).R != colorValue.R);
                                 else if (i == 1)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).G != colorValue.G);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).G != colorValue.G);
                                 else if (i == 2)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).B != colorValue.B);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).B != colorValue.B);
                                 else if (i == 3)
-                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.Entity, null)).A != colorValue.A);
+                                    launchTrigger &= (((Microsoft.Xna.Framework.Graphics.Color)this.TriggerProperty.GetValue(this.TriggerHandler, null)).A != colorValue.A);
                                 break;
 
                             default:

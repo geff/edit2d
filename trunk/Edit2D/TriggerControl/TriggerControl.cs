@@ -52,8 +52,8 @@ namespace Edit2D.TriggerControl
             treeViewValueChanged.AllowMultipleItemChecked = false;
             treeViewValueChanged.AllowUncheckedNode = true;
 
-            treeViewCollision.ItemTypeShowed = TreeViewLocalItemType.Entity;
-            treeViewCollision.ItemTypeCheckBoxed = TreeViewLocalItemType.Entity;
+            treeViewCollision.ItemTypeShowed = TreeViewLocalItemType.EntitySprite | TreeViewLocalItemType.EntityText;
+            treeViewCollision.ItemTypeCheckBoxed = TreeViewLocalItemType.EntitySprite | TreeViewLocalItemType.EntityText;
             treeViewCollision.AllowMultipleItemChecked = false;
             treeViewCollision.AllowUncheckedNode = true;
 
@@ -495,9 +495,6 @@ namespace Edit2D.TriggerControl
 
         private void SelectTrigger(TriggerBase trigger)
         {
-            if(trigger != null)
-                ((FrmEdit2D)ParentForm).EntitySelectionChange(true, true, trigger);
-
             if (trigger == null)
             {
                 pnlTypeTrigger.Visible = false;
@@ -511,6 +508,8 @@ namespace Edit2D.TriggerControl
             }
             else
             {
+                ((FrmEdit2D)ParentForm).EntitySelectionChange(true, true, trigger);
+
                 pnlTypeTrigger.Visible = true;
                 pnlScript.Visible = true;
 
@@ -552,7 +551,7 @@ namespace Edit2D.TriggerControl
                     }
                     else
                     {
-                        treeViewValueChanged.CheckNode<PropertyInfo>(triggerVal.TriggerProperty, triggerVal.Entity.TreeViewPath);
+                        treeViewValueChanged.CheckNode<PropertyInfo>(triggerVal.TriggerProperty, triggerVal.TriggerHandler.TreeViewPath);
                         ShowPropertyDetail(triggerVal.TriggerProperty);
                     }
                 }
@@ -860,7 +859,7 @@ namespace Edit2D.TriggerControl
             {
                 if (Repository.CurrentTrigger != null)
                 {
-                    RefreshGlobalTreeView<TriggerBase>(Repository.CurrentTrigger);
+                    //RefreshGlobalTreeView<TriggerBase>(Repository.CurrentTrigger);
                     int index = listboxTrigger.FindString(Repository.CurrentTrigger.TriggerName);
                     listboxTrigger.SelectedIndex = index;
                 }
@@ -870,7 +869,7 @@ namespace Edit2D.TriggerControl
                 else if (Repository.CurrentTriggerHandler != null &&
                          Repository.CurrentTriggerHandler.ListTrigger.Count > 0)
                 {
-                    RefreshGlobalTreeView(false);
+                    //RefreshGlobalTreeView(false);
                     listboxTrigger.SelectedIndex = 0;
                 }
                 //---> Si le triggerHandler ne contient pas de déclencheurs, alors
@@ -878,7 +877,7 @@ namespace Edit2D.TriggerControl
                 //      L'interface est vidée
                 else
                 {
-                    RefreshGlobalTreeView<ITriggerHandler>(Repository.CurrentTriggerHandler);
+                    //RefreshGlobalTreeView<ITriggerHandler>(Repository.CurrentTriggerHandler);
                     SelectTrigger(null);
                 }
             }
