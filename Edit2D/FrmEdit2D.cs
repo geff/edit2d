@@ -544,7 +544,7 @@ namespace Edit2D
             {
                 repository.ListSelection.Add(new Selection(newSelection, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
 
-                if (refreshTreeView)
+                if (refreshTreeView && !ObjectContainsElement(newSelection))
                     treeView.RefreshView<Particle>((Particle)newSelection);
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.CurrentParticleSystem.Entity;
@@ -555,7 +555,7 @@ namespace Edit2D
             {
                 repository.ListSelection.Add(new Selection(newSelection, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
 
-                if (refreshTreeView)
+                if (refreshTreeView && !ObjectContainsElement(newSelection))
                     treeView.RefreshView<EntityComponent>((EntityComponent)newSelection);
 
                 propertyGrid.PropertyGrid.SelectedObject = newSelection;
@@ -564,7 +564,7 @@ namespace Edit2D
             {
                 repository.ListSelection.Add(new Selection(newSelection, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
 
-                if (refreshTreeView)
+                if (refreshTreeView && !ObjectContainsElement(newSelection))
                     treeView.RefreshView<Entity>((Entity)newSelection);
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.CurrentEntity;
@@ -650,8 +650,17 @@ namespace Edit2D
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.World;
             }
+            else if (newSelection == null)
+            {
+                //---> Rafraichi l'arbo
+                if (refreshTreeView)
+                    treeView.RefreshView(false);
+            }
 
-            if(repository.ViewingMode == ViewingMode.Script && newSelection is IActionHandler)
+            if (newSelection is ISelectableObject)
+                ((ISelectableObject)newSelection).Selected = true;
+
+            if (repository.ViewingMode == ViewingMode.Script && newSelection is IActionHandler)
                 scriptControl.RefreshScriptControl(true);
 
             if (repository.ViewingMode == ViewingMode.Trigger && newSelection is ITriggerHandler)
@@ -659,12 +668,6 @@ namespace Edit2D
 
             if (repository.ViewingMode == ViewingMode.ParticleSystem && newSelection is Entity)
                 particleControl.RefreshParticleControl(true);
-
-            if (newSelection == null)
-                treeView.RefreshView(false);
-
-            if (newSelection is ISelectableObject)
-                ((ISelectableObject)newSelection).Selected = true;
 
             EnableMode(
                 repository.CurrentActionHandler != null,
@@ -675,6 +678,19 @@ namespace Edit2D
                 repository.CurrentActionHandler != null,
                 repository.CurrentTriggerHandler != null,
                 repository.CurrentEntity != null);
+        }
+
+        private bool ObjectContainsElement(Object obj)
+        {
+            Boolean containsElement = false;
+
+            if (obj is ITriggerHandler)
+                containsElement = ((ITriggerHandler)obj).ListTrigger.Count > 0;
+
+            if (!containsElement && obj is IActionHandler)
+                containsElement = ((IActionHandler)obj).ListScript.Count > 0;
+
+            return containsElement;
         }
 
         private void EnableMode(bool enabledModeScript, bool enabledModeTrigger, bool enabledModeParticleSystem)
