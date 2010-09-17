@@ -515,8 +515,8 @@ namespace Edit2D
             if (repository.ListSelection.Exists(s => s.Object == newSelection))
             {
                 Selection selection = repository.ListSelection.Find(s => s.Object == newSelection);
-                
-                if(repository.keyCtrlPressed)
+
+                if (repository.keyCtrlPressed)
                     selection.UpdatePointer(repository.CurrentPointer2);
                 else
                     selection.UpdatePointer(repository.CurrentPointer);
@@ -1814,7 +1814,7 @@ namespace Edit2D
                 //--- Si la touche MouseMode n'est pas pressée, change l'entité courante
                 //if (!repository.keyAltPressed)
                 {
-                   
+
                 }
                 //--- Si la touche MouseMode est pressée, réinjecte les nouvelles valeurs des propriétés (Size, Rotation)
                 //else
@@ -1914,12 +1914,9 @@ namespace Edit2D
 
                     //--- MouseMode.Move
                     if (repository.ListSelection.Count > 0 &&
-                         //repository.keyAltPressed &&
                          repository.MouseMode == MouseMode.Move)
                     {
                         Vector2 deltaPosition = repository.CurrentPointer.WorldPosition - repository.CurrentPointer.PrevWorldPosition;
-
-                        //repository.CurrentMoveableObject.Position = ((IMoveableObject)repository.tempObject).Position + deltaPosition;
 
                         for (int i = 0; i < repository.ListSelection.Count; i++)
                         {
@@ -1938,8 +1935,7 @@ namespace Edit2D
 
                     //--- MouseMode.Resize
                     #region Resize
-                    if (repository.ListSelection.Count>0 && 
-                        //repository.keyAltPressed &&
+                    if (repository.ListSelection.Count > 0 &&
                         repository.MouseMode == MouseMode.Resize)
                     {
                         //TODO : rétablir le redimenssionnement
@@ -2066,12 +2062,9 @@ namespace Edit2D
                     //---
 
                     //--- MouseMode.Rotate
-                    if (repository.ListSelection.Count > 0 && 
-                        //repository.keyAltPressed && 
+                    if (repository.ListSelection.Count > 0 &&
                         repository.MouseMode == MouseMode.Rotate)
                     {
-                        //List<Entity> listSelectedEntity = repository.GetSelectedEntity();
-
                         Vector2 vecA = Vector2.Zero;
                         Vector2 vecB = Vector2.Zero;
                         float angle = 0f;
@@ -2091,20 +2084,6 @@ namespace Edit2D
                                 repository.ListSelection[i].MoveableObject.Rotation = repository.ListSelection[i].Temp.MoveableObject.Rotation + angle;
                             }
                         }
-
-                        //if (repository.CurrentEntity != null)
-                        //{
-                        //    vecA = repository.CurrentPointer.PrevWorldPosition - repository.CurrentEntity.Position;
-                        //    vecB = repository.CurrentPointer.WorldPosition - repository.CurrentEntity.Position;
-
-                        //    vecA.Normalize();
-                        //    vecB.Normalize();
-
-                        //    angle = vecA.GetAngle(vecB);
-                        //    this.Text = angle.ToString();
-
-                        //    repository.CurrentEntity.Rotation = ((Entity)repository.tempObject).Rotation + angle;
-                        //}
                     }
                     //---
                 }
