@@ -795,7 +795,7 @@ namespace WinFormsContentLoading
                 Entity entity = repository.listEntity[i];
 
                 //---> Rectangle de sélection de l'entité
-                if (entity.Selected)
+                //if (entity.Selected)
                 {
                     this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
 
@@ -842,7 +842,7 @@ namespace WinFormsContentLoading
                 DrawEntitySprite(listEntitySpriteToDraw[i]);
             }
 
-            repository.FrmEdit2D.Text = listEntitySpriteToDraw.Count.ToString();
+            //repository.FrmEdit2D.Text = listEntitySpriteToDraw.Count.ToString();
 
             if (repository.Screenshot)
             {

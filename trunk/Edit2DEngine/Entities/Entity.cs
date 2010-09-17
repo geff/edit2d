@@ -23,6 +23,7 @@ namespace Edit2DEngine.Entities
     {
         private Vector2 _position = Vector2.Zero;
         public Microsoft.Xna.Framework.Rectangle Rectangle { get; set; }
+        public int UniqueId { get; set; }
 
         public String Name { get; set; }
         [Browsable(false)]
@@ -103,6 +104,7 @@ namespace Edit2DEngine.Entities
             this.ListCustomProperties = new Dictionary<string, object>();
             this.ListScript = new List<Script>();
             this.ListTrigger = new List<TriggerBase>();
+            this.UniqueId = ++Repository.EntityCount;
         }
 
         public Entity()
@@ -251,15 +253,15 @@ namespace Edit2DEngine.Entities
 
             foreach (EntityComponent entityComponent in this.ListEntityComponent)
             {
-                if (entityComponent.Position.X - entityComponent.Center.X < left)
-                    left = entityComponent.Position.X - entityComponent.Center.X;
-                if (entityComponent.Position.X - entityComponent.Center.X + entityComponent.Size.X > right)
-                    right = entityComponent.Position.X - entityComponent.Center.X + entityComponent.Size.X;
+                if (entityComponent.Rectangle.Left < left)
+                    left = entityComponent.Rectangle.Left;
+                if (entityComponent.Rectangle.Right > right)
+                    right = entityComponent.Rectangle.Right;
 
-                if (entityComponent.Position.Y - entityComponent.Center.Y < top)
-                    top = entityComponent.Position.Y - entityComponent.Center.Y;
-                if (entityComponent.Position.Y - entityComponent.Center.Y + entityComponent.Size.Y > bottom)
-                    bottom = entityComponent.Position.Y - entityComponent.Center.Y + entityComponent.Size.Y;
+                if (entityComponent.Rectangle.Top < top)
+                    top = entityComponent.Rectangle.Top;
+                if (entityComponent.Rectangle.Bottom > bottom)
+                    bottom = entityComponent.Rectangle.Bottom;
             }
 
             this.Rectangle = new Microsoft.Xna.Framework.Rectangle((int)left, (int)top, (int)(right - left), (int)(bottom - top));

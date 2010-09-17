@@ -35,18 +35,13 @@ namespace Edit2DEngine.Entities
                 return "Monde\\Entités\\" + this.EntityParent.Name + "\\Sprite\\" + this.Name;
             }
         }
-
-        public EntitySprite(bool linkToPhysiSimulator, bool isCollisionable, string textureName, string name, Entity entityParent)
+         
+        public EntitySprite(bool linkToPhysiSimulator, string textureName, string name, Entity entityParent):
+            this(linkToPhysiSimulator, true, textureName, name, entityParent)
         {
-            Constructor(linkToPhysiSimulator, isCollisionable, textureName, name, entityParent);
         }
 
-        public EntitySprite(bool linkToPhysiSimulator, string textureName, string name, Entity entityParent)
-        {
-            Constructor(linkToPhysiSimulator, true, textureName, name, entityParent);
-        }
-
-        private void Constructor(bool addToPhysicSimulator, bool isCollisionable, string textureName, string name, Entity entityParent)
+        public EntitySprite(bool addToPhysicSimulator, bool isCollisionable, string textureName, string name, Entity entityParent)
         {
             ListFixedLinearSpring = new List<FixedLinearSpring>();
             ListLinearSpring = new List<LinearSpring>();
@@ -60,14 +55,13 @@ namespace Edit2DEngine.Entities
             this.ListScript = new List<Script>();
             this.ListTrigger = new List<TriggerBase>();
 
-            //ListParticleSystem = new List<ParticleSystem>();
 
             this.Color = Microsoft.Xna.Framework.Graphics.Color.White;
             this.Name = name;
             this.TextureName = textureName;
+            _addedToPhysicSimulator = addToPhysicSimulator;
 
-            //if (!(this is Particle))
-            UniqueId = ++Repository.EntityCount;
+            this.UniqueId = ++Repository.EntityComponentCount;
 
             Init(addToPhysicSimulator, isCollisionable);
         }
@@ -76,10 +70,11 @@ namespace Edit2DEngine.Entities
         {
             ChangeTexture(this.TextureName, addToPhysicSimulator, isCollisionable);
 
-            if (Geom != null)
+            if (addToPhysicSimulator)
             {
                 Geom.CollisionEnabled = isCollisionable;
-                Geom.CollidesWith = CollisionCategory.All;
+                Geom.CollisionCategories = (CollisionCategory)Math.Pow(2,this.EntityParent.UniqueId);
+                Geom.CollidesWith = CollisionCategory.All & ~Geom.CollisionCategories;
                 Geom.CollisionResponseEnabled = true;
                 Geom.FrictionCoefficient = 0.5f;
                 Geom.RestitutionCoefficient = 0.5f;
@@ -87,12 +82,12 @@ namespace Edit2DEngine.Entities
         }
 
 
-        public override void ChangeSize(int width, int height, bool addToPhysicSimulator)
+        public override void ChangeSize(int width, int height, bool addToPhysicSimulator, bool isCollisionable)
         {
-            this._size = new Vector2(width, height);
+            _size = new Vector2(width, height);
 
             Texture2D texture = GetTexture();
-            CreateBodyFromVertices(addToPhysicSimulator, true, ref body, ref _geom, width, height);
+            CreateBodyFromVertices(addToPhysicSimulator, isCollisionable, width, height);
         }
 
         public virtual void ChangeTexture(string textureName, bool addToPhysicSimulator, bool isCollisionable)
@@ -105,7 +100,7 @@ namespace Edit2DEngine.Entities
             _size = new Vector2(texture.Width, texture.Height);
 
             CalcVerticesFromTexture(texture);
-            CreateBodyFromVertices(addToPhysicSimulator, isCollisionable, ref body, ref _geom, texture.Width, texture.Height);
+            CreateBodyFromVertices(addToPhysicSimulator, isCollisionable, texture.Width, texture.Height);
         }
 
         private void CalcVerticesFromTexture(Texture2D polygonTexture)
@@ -117,37 +112,37 @@ namespace Edit2DEngine.Entities
             polygonTexture.GetData(data);
 
             //--- Calcul des vertices originaux
-            originalVerts = Vertices.CreatePolygon(data, polygonTexture.Width, polygonTexture.Height);//, 1f, 127, true, true);// 2f, out vec);
+            _originalVerts = Vertices.CreatePolygon(data, polygonTexture.Width, polygonTexture.Height);//, 1f, 127, true, true);// 2f, out vec);
             //---
         }
 
-        private void CreateBodyFromVertices(Boolean addToPhysicSimulator, bool isCollisionable, ref Body polygonBody, ref Geom polygonGeom, int width, int height)
+        private void CreateBodyFromVertices(Boolean addToPhysicSimulator, bool isCollisionable, int width, int height)
         {
             float widthFactor = (float)width / (float)NativeImageSize.Width;
             float heightFactor = (float)height / (float)NativeImageSize.Height;
 
             //--- Copie des vertices originaux puis transformation
-            Vertices verts = new Vertices(originalVerts);
+            Vertices verts = new Vertices(_originalVerts);
             Vector2 vecScale = new Vector2(widthFactor, heightFactor);
             verts.Scale(ref vecScale);
             //---
 
             //--- Calcul du centre du polygone
-            this._center = originalVerts.GetCentroid();
+            _center = _originalVerts.GetCentroid();
             //---
 
             //--- Calcul des Vertices pour l'affichage
-            CreateVerticesForRendering(originalVerts);
+            CreateVerticesForRendering(_originalVerts);
             //---
 
             //Use the body factory to create the physics body
             if (addToPhysicSimulator)
             {
                 //--- Suppression du body et du geom
-                if (polygonBody != null)
-                    Repository.physicSimulator.Remove(polygonBody);
-                if (polygonGeom != null)
-                    Repository.physicSimulator.Remove(polygonGeom);
+                if (_body != null)
+                    Repository.physicSimulator.Remove(_body);
+                if (_geom != null)
+                    Repository.physicSimulator.Remove(_geom);
                 //---
 
                 Vector2 prevBodyPosition = Vector2.Zero;
@@ -156,47 +151,46 @@ namespace Edit2DEngine.Entities
                 bool prevCollisionable = false;
                 float prevMass = 5f;
 
-                if (polygonBody != null)
+                if (_body != null)
                 {
-                    prevBodyPosition = polygonBody.Position;
-                    prevBodyRotation = polygonBody.Rotation;
-                    prevStatic = polygonBody.IsStatic;
-                    prevCollisionable = polygonGeom.CollisionEnabled;
-                    prevMass = polygonBody.Mass;
+                    prevBodyPosition = _body.Position;
+                    prevBodyRotation = _body.Rotation;
+                    prevStatic = _body.IsStatic;
+                    prevCollisionable = _geom.CollisionEnabled;
+                    prevMass = _body.Mass;
                 }
 
+                _body = BodyFactory.Instance.CreatePolygonBody(Repository.physicSimulator, verts, 5);
 
-                polygonBody = BodyFactory.Instance.CreatePolygonBody(Repository.physicSimulator, verts, 5);
+                _geom = GeomFactory.Instance.CreatePolygonGeom(Repository.physicSimulator, _body, verts, 0f);
 
-                polygonGeom = GeomFactory.Instance.CreatePolygonGeom(Repository.physicSimulator, polygonBody, verts, 0f);
+                _geom.SetBody(_body);
 
-                polygonGeom.SetBody(polygonBody);
-
-                if (polygonBody != null)
+                //if (_body != null)
                 {
-                    polygonBody.Position = prevBodyPosition;
-                    polygonBody.Rotation = prevBodyRotation;
-                    polygonBody.IsStatic = prevStatic;
+                    _body.Position = prevBodyPosition;
+                    _body.Rotation = prevBodyRotation;
+                    _body.IsStatic = prevStatic;
 
                     if (isCollisionable)
                     {
-                        polygonGeom.CollisionEnabled = prevCollisionable;
+                        _geom.CollisionEnabled = prevCollisionable;
                     }
                     else
                     {
-                        polygonGeom.CollisionEnabled = false;
+                        _geom.CollisionEnabled = false;
                     }
-                    polygonBody.Mass = prevMass;
+                    _body.Mass = prevMass;
                 }
             }
             else
             {
-                polygonBody = BodyFactory.Instance.CreatePolygonBody(verts, 5);
-                polygonGeom = GeomFactory.Instance.CreatePolygonGeom(polygonBody, verts, 0f);
+                _body = BodyFactory.Instance.CreatePolygonBody(verts, 5);
+                _geom = GeomFactory.Instance.CreatePolygonGeom(_body, verts, 0f);
 
                 //--- Si l'entité n'est pas ajouté au moteur physique, ne pas créer le Body et le Geom
-                //polygonBody = null;
-                //polygonGeom = null;
+                //_body = null;
+                //_geom = null;
                 //---
             }
         }
@@ -260,14 +254,13 @@ namespace Edit2DEngine.Entities
 
         public override object Clone()
         {
-            EntitySprite clone = new EntitySprite(false, this.TextureName, this.Name, this.EntityParent);
+            Entity entityParent = (Entity)this.EntityParent.Clone();
+            EntitySprite clone = new EntitySprite(false, false, this.TextureName, this.Name, entityParent);
 
-            clone.RelativePosition = this.RelativePosition;
-            clone.Position = this.Position;
-            clone.Rotation = this.Rotation;
             clone.Size = this.Size;
+            clone.RelativePosition = this.RelativePosition;
+            clone.Rotation = this.Rotation;
 
-            clone.EntityParent = (Entity)this.EntityParent.Clone();
             return clone;
         }
     }

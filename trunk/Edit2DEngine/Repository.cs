@@ -21,6 +21,7 @@ namespace Edit2DEngine
         //public Object tempObject;
         private Random rnd;
         public static int EntityCount = 0;
+        public static int EntityComponentCount = 0;
         public bool Pause = false;
 
 
