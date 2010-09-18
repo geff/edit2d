@@ -69,6 +69,8 @@ namespace Edit2D
 
         private void Init()
         {
+            this.Visible = false;
+
             rnd = new Random();
 
             timer.Interval = 1;
@@ -162,17 +164,18 @@ namespace Edit2D
 
             particleControl.InitParticleControl();
 
-            btnScriptModeBar.PerformClick();
 
-            WinformVisualStyle.ApplyStyle(this, "LightGray");
-            //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
+            //WinformVisualStyle.ApplyStyle(this, "LightGray");
+            WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             AddEntity();
-            //repository.CurrentEntity = repository.listEntity[0];
+            modelViewerControl.Cursor = dicCursors[repository.MouseMode];
 
             RefreshTreeView();
 
-            //InitInputHandler();
+            this.Visible = true;
+
+            btnScriptModeBar.PerformClick();
         }
 
         /*
@@ -372,6 +375,7 @@ namespace Edit2D
 
         private void DeleteEntity()
         {
+            //TODO : gérer la suppression sur l'ensemble des objets
             if (repository.CurrentEntity != null)
             {
                 //repository.CurrentEntity.geom.Dispose();
@@ -1408,30 +1412,12 @@ namespace Edit2D
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            //---> Si la touche Alt (MouseMode) vient d'être préssée
-            //     les entités sélectionnées sont clonées
-            //if (e.Alt && !repository.keyAltPressed)
-            //{
-            //    CloneSelectedEntity();
-            //}
-
             if (e.Control)
                 repository.keyCtrlPressed = true;
             if (e.Alt)
                 repository.keyAltPressed = true;
             if (e.Shift)
                 repository.keyShiftPressed = true;
-
-            //--- Change le curseur selon le MouseMode sélectionné
-            //if (repository.keyAltPressed)
-            {
-                modelViewerControl.Cursor = dicCursors[repository.MouseMode];
-            }
-            //else
-            //{
-            //    modelViewerControl.Cursor = dicCursors[MouseMode.Select];
-            //}
-            //---
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
@@ -1444,17 +1430,6 @@ namespace Edit2D
                     repository.keyAltPressed = false;
                 if (!e.Shift && repository.keyShiftPressed)
                     repository.keyShiftPressed = false;
-
-                //--- Change le curseur selon le MouseMode sélectionné
-                //if (repository.keyAltPressed)
-                {
-                    modelViewerControl.Cursor = dicCursors[repository.MouseMode];
-                }
-                //else
-                //{
-                //    modelViewerControl.Cursor = dicCursors[MouseMode.Select];
-                //}
-                //---
 
                 if (e.KeyCode == System.Windows.Forms.Keys.S && repository.CurrentEntity != null)
                 {
@@ -1492,6 +1467,8 @@ namespace Edit2D
                         btnMove.PerformClick();
                     }
                 }
+
+                modelViewerControl.Cursor = dicCursors[repository.MouseMode];
 
                 if (e.KeyCode == System.Windows.Forms.Keys.A)
                 {
