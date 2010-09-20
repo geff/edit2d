@@ -21,7 +21,6 @@ namespace Edit2D
         public IResizeableObject ResizeableObject { get; set; }
         public ISelectableObject SelectableObject { get; set; }
 
-
         public Entity Entity { get; set; }
         public EntityComponent EntityComponent { get; set; }
         public EntityPhysicObject EntityPhysicObject { get; set; }

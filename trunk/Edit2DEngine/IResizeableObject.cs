@@ -9,5 +9,6 @@ namespace Edit2DEngine
     public interface IResizeableObject
     {
         Vector2 Size { get; set; }
+        Vector2 Center { get; set; }
     }
 }

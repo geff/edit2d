@@ -35,8 +35,8 @@ namespace Edit2DEngine.Entities
                 return "Monde\\Entités\\" + this.EntityParent.Name + "\\Sprite\\" + this.Name;
             }
         }
-         
-        public EntitySprite(bool linkToPhysiSimulator, string textureName, string name, Entity entityParent):
+
+        public EntitySprite(bool linkToPhysiSimulator, string textureName, string name, Entity entityParent) :
             this(linkToPhysiSimulator, true, textureName, name, entityParent)
         {
         }
@@ -73,7 +73,7 @@ namespace Edit2DEngine.Entities
             if (addToPhysicSimulator)
             {
                 Geom.CollisionEnabled = isCollisionable;
-                Geom.CollisionCategories = (CollisionCategory)Math.Pow(2,this.EntityParent.UniqueId);
+                Geom.CollisionCategories = (CollisionCategory)Math.Pow(2, this.EntityParent.UniqueId);
                 Geom.CollidesWith = CollisionCategory.All & ~Geom.CollisionCategories;
                 Geom.CollisionResponseEnabled = true;
                 Geom.FrictionCoefficient = 0.5f;
@@ -166,39 +166,26 @@ namespace Edit2DEngine.Entities
 
                 _geom.SetBody(_body);
 
-                //if (_body != null)
-                {
-                    _body.Position = prevBodyPosition;
-                    _body.Rotation = prevBodyRotation;
-                    _body.IsStatic = prevStatic;
+                _body.Position = prevBodyPosition;
+                _body.Rotation = prevBodyRotation;
+                _body.IsStatic = prevStatic;
 
-                    if (isCollisionable)
-                    {
-                        _geom.CollisionEnabled = prevCollisionable;
-                    }
-                    else
-                    {
-                        _geom.CollisionEnabled = false;
-                    }
-                    _body.Mass = prevMass;
+                if (isCollisionable)
+                {
+                    _geom.CollisionEnabled = prevCollisionable;
                 }
+                else
+                {
+                    _geom.CollisionEnabled = false;
+                }
+                _body.Mass = prevMass;
             }
             else
             {
                 _body = BodyFactory.Instance.CreatePolygonBody(verts, 5);
                 _geom = GeomFactory.Instance.CreatePolygonGeom(_body, verts, 0f);
-
-                //--- Si l'entité n'est pas ajouté au moteur physique, ne pas créer le Body et le Geom
-                //_body = null;
-                //_geom = null;
-                //---
             }
         }
-
-        //private void CreateVerticesForRendering()
-        //{
-        //    CreateVerticesForRendering(this.Center);
-        //}
 
         private void CreateVerticesForRendering(Vertices vertices)
         {
@@ -258,8 +245,9 @@ namespace Edit2DEngine.Entities
             EntitySprite clone = new EntitySprite(false, false, this.TextureName, this.Name, entityParent);
 
             clone.Size = this.Size;
-            clone.RelativePosition = this.RelativePosition;
             clone.Rotation = this.Rotation;
+            clone.EntityParent.Rectangle = this.EntityParent.Rectangle;
+            clone.RelativePosition = this.RelativePosition;
 
             return clone;
         }
