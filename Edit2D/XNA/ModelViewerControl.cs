@@ -799,6 +799,7 @@ namespace WinFormsContentLoading
                 {
                     this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
 
+                    //---
                     Rectangle recEntity = Rectangle.Empty;
                     Vector3 vecPosEntity = new Vector3(entity.Rectangle.X, entity.Rectangle.Y, 0f);
                     Vector3 vecSizeEntity = new Vector3(entity.Rectangle.Width, entity.Rectangle.Height, 0);
@@ -807,8 +808,20 @@ namespace WinFormsContentLoading
                     vecSizeEntity = Vector3.Transform(vecSizeEntity, repository.Camera.MatrixScale);
 
                     recEntity = new Rectangle((int)vecPosEntity.X, (int)vecPosEntity.Y, (int)vecSizeEntity.X, (int)vecSizeEntity.Y);
+                    //---
+
+                    //---
+                    Texture2D textureCenter = TextureManager.LoadTexture2D("Center");
+
+                    Rectangle recEntityCenter = Rectangle.Empty;
+                    vecPosEntity = new Vector3(entity.Rectangle.X-textureCenter.Width/2+entity.Center.X, entity.Rectangle.Y-textureCenter.Height/2+entity.Center.Y, 0f);
+                    vecPosEntity = Vector3.Transform(vecPosEntity, repository.Camera.MatrixTransformation);
+
+                    recEntityCenter = new Rectangle((int)vecPosEntity.X, (int)vecPosEntity.Y, textureCenter.Width, textureCenter.Height);
+                    //---
 
                     this.spriteBatch.Draw(TextureManager.LoadTexture2D("Empty"), recEntity, null, Color.Khaki);
+                    this.spriteBatch.Draw(textureCenter, recEntityCenter, null, Color.White);
 
                     this.spriteBatch.End();
                 }

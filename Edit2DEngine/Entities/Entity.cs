@@ -29,8 +29,27 @@ namespace Edit2DEngine.Entities
         [Browsable(false)]
         public Boolean Selected { get; set; }
 
-        [Browsable(true), AttributeAction]
-        public Microsoft.Xna.Framework.Vector2 Center { get; set; }
+        [Browsable(true), AttributeAction, Category("Center")]
+        public Microsoft.Xna.Framework.Vector2 Center
+        {
+            get
+            {
+                return CenterPercent * this.Size;
+            }
+            set
+            {
+                //---> Change la position de l'objet lorsque le centre est redéfini
+                //_position = _position - this.Center + value;
+
+                CenterPercent = value / this.Size;
+            }
+        }
+
+        [Browsable(true), AttributeAction, Category("Center")]
+        public Microsoft.Xna.Framework.Vector2 CenterPercent { get; set; }
+
+        [Browsable(true), Category("Center")]
+        public Boolean CenterFixed { get; set; }
 
         [Browsable(true), AttributeAction]
         public float Rotation { get; set; }
@@ -99,6 +118,7 @@ namespace Edit2DEngine.Entities
         public Entity(string name)
         {
             this.Name = name;
+            this.CenterPercent = new Vector2(0.5f);
             this.ListEntityComponent = new List<EntityComponent>();
             this.ListParticleSystem = new List<ParticleSystem>();
             this.ListCustomProperties = new Dictionary<string, object>();
@@ -125,7 +145,9 @@ namespace Edit2DEngine.Entities
 
             clone.Rotation = this.Rotation;
             clone.Position = this.Position;
-            clone.Center = this.Center;
+            clone.Rectangle = this.Rectangle;
+            clone.CenterPercent = this.CenterPercent;
+            clone.Size = this.Size;
             //---
 
             //--- Scripts & Curves
@@ -271,8 +293,14 @@ namespace Edit2DEngine.Entities
 
         public Vector2 Size
         {
-            get;
-            set;
+            get
+            {
+                return new Vector2(this.Rectangle.Width, this.Rectangle.Height);
+            }
+            set
+            {
+                //TODO : ajoute le code qui permet de redimensionner l'ensemble des EntityComponent enfants
+            }
         }
 
         #endregion

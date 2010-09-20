@@ -88,8 +88,8 @@ namespace Edit2D
             InitRender();
 
             repository.CurrentTextureName = "BigRec";
-            repository.CurrentPointer2.WorldPosition = new Vector2(100, 10);
-            repository.CurrentPointer.WorldPosition = new Vector2(200, 200);
+            repository.CurrentPointer2.WorldPosition = new Vector2(450, 150);
+            repository.CurrentPointer.WorldPosition = new Vector2(600, 200);
             repository.FrmEdit2D = this;
             repository.Pause = true;
 
@@ -115,8 +115,8 @@ namespace Edit2D
                 this.Top = Screen.PrimaryScreen.WorkingArea.Height - this.Size.Height;
                 this.ShowIcon = false;
                 modelViewerControl.ChangeViewPortSize = true;
-                repository.CurrentPointer2.WorldPosition = new Vector2(10, 10);
-                repository.CurrentPointer.WorldPosition = new Vector2(100, 100);
+                //repository.CurrentPointer2.WorldPosition = new Vector2(10, 10);
+                //repository.CurrentPointer.WorldPosition = new Vector2(100, 100);
                 repository.ShowDebugMode = false;
 
                 //toolStripMenu.Visible = false;
@@ -165,10 +165,14 @@ namespace Edit2D
             particleControl.InitParticleControl();
 
 
-            //WinformVisualStyle.ApplyStyle(this, "LightGray");
-            WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
+            WinformVisualStyle.ApplyStyle(this, "LightGray");
+            //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             AddEntity();
+            repository.keyCtrlPressed = true;
+            AddEntity();
+            repository.keyCtrlPressed = false;
+
             modelViewerControl.Cursor = dicCursors[repository.MouseMode];
 
             RefreshTreeView();
@@ -1165,15 +1169,18 @@ namespace Edit2D
 
         private void btnSetCenterEntity_Click(object sender, EventArgs e)
         {
-            if (repository.CurrentEntityPhysic != null)
+            foreach (Selection selection in repository.ListSelection)
             {
-                repository.CurrentEntityPhysic.SetCenterFromWorldPosition(repository.CurrentPointer.WorldPosition, true);
-
-                //TODO : rétablir le clone dans l'entité temporaire
-                //repository.tempEntity = (Entity)repository.CurrentEntity.Clone(false);
-
-                Repository.physicSimulator.Update(0.000002f);
+                if (selection.ResizeableObject != null && selection.MoveableObject != null)
+                {
+                    selection.ResizeableObject.Center = selection.Pointer.WorldPosition - selection.MoveableObject.Position + selection.ResizeableObject.Center;
+                }
             }
+
+            //TODO : ligne de code à mettre pour la définition du centre des entités physiques
+            //repository.CurrentEntityPhysic.SetCenterFromWorldPosition(repository.CurrentPointer.WorldPosition, true);
+
+            Repository.physicSimulator.Update(0.000002f);
         }
 
         private void btnOrderUp_Click(object sender, EventArgs e)
@@ -1907,6 +1914,9 @@ namespace Edit2D
                                 repository.ListSelection[i].Pointer.CalcScreenPositionFromWorldPosition(repository.Camera);
                             }
                         }
+
+                        if(repository.CurrentEntity!=null)
+                            this.Text = repository.CurrentEntity.Center.ToString();
                     }
                     //---
 

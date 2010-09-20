@@ -33,8 +33,10 @@ namespace Edit2DEngine.Tools
             foreach (String file in files)
             {
                 if ((Path.GetFileNameWithoutExtension(file) == "BigRec" ||
+                        Path.GetFileNameWithoutExtension(file) == "BigRec2" ||
                         Path.GetFileNameWithoutExtension(file) == "Pin" ||
                         Path.GetFileNameWithoutExtension(file) == "Pointer" ||
+                        Path.GetFileNameWithoutExtension(file) == "Center" ||
                         Path.GetFileNameWithoutExtension(file) == "Empty"
                     ) || !IsSimpleMode)
                 {

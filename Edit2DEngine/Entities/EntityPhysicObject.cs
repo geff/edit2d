@@ -102,30 +102,16 @@ namespace Edit2DEngine.Entities
             }
         }
 
-
-        //[Browsable(false)]
-        //public Microsoft.Xna.Framework.Rectangle Rectangle
-        //{
-        //    get
-        //    {
-        //        Microsoft.Xna.Framework.Rectangle rec = new Microsoft.Xna.Framework.Rectangle((int)(this.Position.X), (int)(this.Position.Y), (int)this.Size.X, (int)this.Size.Y);
-        //        return rec;
-        //    }
-        //}
-
         [Browsable(true), AttributeAction]
         public override Microsoft.Xna.Framework.Vector2 Position
         {
             get
             {
-                //if (_body == null)
-                //    return _relativePosition + EntityParent.Position + EntityParent.Center;
-
                 return new Microsoft.Xna.Framework.Vector2(_body.Position.X, _body.Position.Y);
             }
             set
             {
-                RelativePosition = value - EntityParent.Position + EntityParent.Center;
+                RelativePosition = value - EntityParent.Position;
             }
         }
 
@@ -134,13 +120,12 @@ namespace Edit2DEngine.Entities
         {
             get
             {
-                //_relativePosition = body.Position - EntityParent.Position + EntityParent.Center;
                 return _relativePosition;
             }
             set
             {
                 _relativePosition = value;
-                SetPosition(_relativePosition, EntityParent.Position + EntityParent.Center);
+                SetPosition(_relativePosition, EntityParent.Position);
             }
         }
 
@@ -149,14 +134,10 @@ namespace Edit2DEngine.Entities
         {
             get
             {
-                //if (this._body == null)
-                //    return 0f;
-
                 return _body.Rotation;
             }
             set
             {
-                //if (_body != null)
                 _body.Rotation = value;
                 this.EntityParent.UpdateRectangle();
             }
@@ -266,23 +247,15 @@ namespace Edit2DEngine.Entities
 
         public void SetPosition(Microsoft.Xna.Framework.Vector2 relativePosition, Microsoft.Xna.Framework.Vector2 parentPosition)
         {
-            //if (_body != null)
-            {
-                float prevRotation = _body.Rotation;
-                _body.ResetDynamics();
-                _body.Position = new Vector2(relativePosition.X + parentPosition.X, relativePosition.Y + parentPosition.Y);
-                _body.Rotation = prevRotation;
+            float prevRotation = _body.Rotation;
+            _body.ResetDynamics();
+            _body.Position = new Vector2(relativePosition.X + parentPosition.X, relativePosition.Y + parentPosition.Y);
+            _body.Rotation = prevRotation;
 
-                //CreateVerticesForRendering();
-            }
+            //CreateVerticesForRendering();
 
             this.EntityParent.UpdateRectangle();
         }
-
-        //public void FixPosition(Vector2 position)
-        //{
-        //    _body.Position = position;
-        //}
 
         public void SetNewCenter(Vector2 deltaPosition, bool addToPhysicSimulator)
         {
@@ -318,21 +291,6 @@ namespace Edit2DEngine.Entities
             this.SetNewCenter(this._body.GetLocalPosition(worldPosition), addToPhysicSimulator);
         }
 
-        //public override object Clone()
-        //{
-        //    return Clone(false);
-        //}
-
-        /*
-        public object Clone(bool addToPhysicSimulator)
-        {
-            EntitySprite clone = new EntitySprite(addToPhysicSimulator, this.TextureName, this.Name);
-
-            
-
-            return clone;
-        }
-        */
         public override bool ContainsLocation(Vector2 location)
         {
             return Geom.Collide(location);
