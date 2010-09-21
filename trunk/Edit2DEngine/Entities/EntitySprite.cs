@@ -204,6 +204,7 @@ namespace Edit2DEngine.Entities
                 this.TexIndices[5] = 3;
             }
 
+
             //--- Calculer les vecteurs minimaux et maximaux pour l'AABB
             Vector2 vecMin = new Vector2(float.MaxValue, float.MaxValue);
             Vector2 vecMax = new Vector2(float.MinValue, float.MinValue);
@@ -222,6 +223,8 @@ namespace Edit2DEngine.Entities
             //---
 
             AABB boundingBox = new AABB(ref vecMin, ref vecMax);
+
+            //AABB boundingBox = new AABB(vertices);
             
             float midWidth = boundingBox.Width / 2f;
             float midHeight = boundingBox.Height / 2f;
@@ -258,10 +261,18 @@ namespace Edit2DEngine.Entities
             Entity entityParent = (Entity)this.EntityParent.Clone();
             EntitySprite clone = new EntitySprite(false, false, this.TextureName, this.Name, entityParent);
 
+            entityParent.ListEntityComponent.Add(clone);
+
             clone.Size = this.Size;
+            
+            //clone.Position = this.Position;
             clone.Rotation = this.Rotation;
-            clone.EntityParent.Rectangle = this.EntityParent.Rectangle;
-            clone.RelativePosition = this.RelativePosition;
+            clone._relativePosition = this.RelativePosition;
+            clone.SetPosition(this.Position, Vector2.Zero);
+
+            //clone.EntityParent.Rectangle = this.EntityParent.Rectangle;
+            //clone.EntityParent.Position = this.EntityParent.Position;
+            //clone._po = this.Position;
 
             return clone;
         }

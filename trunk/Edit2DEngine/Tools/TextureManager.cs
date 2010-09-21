@@ -10,6 +10,7 @@ namespace Edit2DEngine.Tools
     public static class TextureManager
     {
         public static Dictionary<String, Texture2D> ListTexture2D = new Dictionary<string, Texture2D>();
+        public static Dictionary<String, Texture2D> ListUITexture2D = new Dictionary<string, Texture2D>();
         public static Dictionary<String, Texture2D> ListParticleTexture2D = new Dictionary<string, Texture2D>();
         public static bool IsSimpleMode = true;
 
@@ -21,6 +22,7 @@ namespace Edit2DEngine.Tools
         public static void InitTextureManager(GraphicsDevice graphicsDevice, string dataPath, string patternFile)
         {
             LoadTextures(graphicsDevice, dataPath + @"Data\Pics\", patternFile, ref ListTexture2D);
+            LoadTextures(graphicsDevice, dataPath + @"Data\Pics\UI\", patternFile, ref ListUITexture2D);
 
             LoadTextures(graphicsDevice, dataPath + @"Data\Pics\Particles\", patternFile, ref ListParticleTexture2D);
         }
@@ -55,6 +57,25 @@ namespace Edit2DEngine.Tools
 
                 if (ListTexture2D.ContainsKey(name))
                     return ListTexture2D[name];
+                else
+                    return null;
+            }
+            catch
+            {
+            }
+
+            return null;
+        }
+
+        public static Texture2D LoadUITexture2D(string name)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(name))
+                    return null;
+
+                if (ListUITexture2D.ContainsKey(name))
+                    return ListUITexture2D[name];
                 else
                     return null;
             }

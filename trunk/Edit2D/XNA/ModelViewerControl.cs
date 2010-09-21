@@ -700,6 +700,25 @@ namespace WinFormsContentLoading
             //    //---
             //}
 
+            //--- Affichage du centre de rotation
+            if (entitySprite.Selected)
+            {
+                //---
+                Texture2D textureCenter = TextureManager.LoadUITexture2D("Center");
+
+                Rectangle recEntityCenter = Rectangle.Empty;
+                Vector3 vecPosEntity = new Vector3(entitySprite.Position.X - textureCenter.Width / 2, entitySprite.Position.Y - textureCenter.Height / 2, 0f);
+                vecPosEntity = Vector3.Transform(vecPosEntity, repository.Camera.MatrixTransformation);
+
+                //recEntityCenter = new Rectangle((int)vecPosEntity.X, (int)vecPosEntity.Y, textureCenter.Width, textureCenter.Height);
+                //---
+
+                this.spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
+                this.spriteBatch.Draw(textureCenter, new Vector2(vecPosEntity.X, vecPosEntity.Y), Color.White);
+                this.spriteBatch.End();
+            }
+            //---
+
             //--- Affichage de la courbe active
             if (repository.ShowDebugMode && 
                 repository.ViewingMode == ViewingMode.Script &&
@@ -811,7 +830,7 @@ namespace WinFormsContentLoading
                     //---
 
                     //---
-                    Texture2D textureCenter = TextureManager.LoadTexture2D("Center");
+                    Texture2D textureCenter = TextureManager.LoadUITexture2D("Center");
 
                     Rectangle recEntityCenter = Rectangle.Empty;
                     vecPosEntity = new Vector3(entity.Rectangle.X-textureCenter.Width/2+entity.Center.X, entity.Rectangle.Y-textureCenter.Height/2+entity.Center.Y, 0f);
@@ -820,7 +839,7 @@ namespace WinFormsContentLoading
                     recEntityCenter = new Rectangle((int)vecPosEntity.X, (int)vecPosEntity.Y, textureCenter.Width, textureCenter.Height);
                     //---
 
-                    this.spriteBatch.Draw(TextureManager.LoadTexture2D("Empty"), recEntity, null, Color.Khaki);
+                    this.spriteBatch.Draw(TextureManager.LoadUITexture2D("Empty"), recEntity, null, Color.Khaki);
                     this.spriteBatch.Draw(textureCenter, recEntityCenter, null, Color.White);
 
                     this.spriteBatch.End();
@@ -891,17 +910,17 @@ namespace WinFormsContentLoading
             Vector2 vecPointerMidSize = new Vector2(5, 5);
 
             //--- Pointeur de la souris
-            this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.CurrentPointer.ScreenPosition - vecPointerMidSize, null, Color.Red);
+            this.spriteBatch.Draw(TextureManager.LoadUITexture2D("Pointer"), repository.CurrentPointer.ScreenPosition - vecPointerMidSize, null, Color.Red);
             //---
 
             //--- Pointeur secondaire de la souris
-            this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.CurrentPointer2.ScreenPosition - vecPointerMidSize, null, Color.Green);
+            this.spriteBatch.Draw(TextureManager.LoadUITexture2D("Pointer"), repository.CurrentPointer2.ScreenPosition - vecPointerMidSize, null, Color.Green);
             //---
 
             //--- Pointeurs multi
             for (int i = 0; i < repository.ListSelection.Count; i++)
             {
-                this.spriteBatch.Draw(TextureManager.LoadTexture2D("Pointer"), repository.ListSelection[i].Pointer.ScreenPosition - vecPointerMidSize, null, Color.Blue);
+                this.spriteBatch.Draw(TextureManager.LoadUITexture2D("Pointer"), repository.ListSelection[i].Pointer.ScreenPosition - vecPointerMidSize, null, Color.Blue);
             }
             //---
 

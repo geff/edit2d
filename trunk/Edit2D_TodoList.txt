@@ -1,6 +1,9 @@
 Edit2D TODOLIST :
 
 * Création de l'objet Entity composé d'une liste de IEntityComponent (EntityText, Entitysprite, Entity3DModel)
+* Gérer la rotation de l'Entity
+* Mettre en place Farseer 3
+* Gérer le redimensionnement des EntityComponent
 * Renommer l'action ActionEvent en ActionValue
 * Compléter l'ActionValue avec ActionValueDetail et ActionValueOperation pour imbriquer les opérations
 * Modifier l'UC ActionValue (ancien ActionEvent)
