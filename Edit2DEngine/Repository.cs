@@ -24,7 +24,6 @@ namespace Edit2DEngine
         public static int EntityComponentCount = 0;
         public bool Pause = false;
 
-
         public World World { get; set; }
         //public Entity currentEntity2;
         public List<Entity> listEntity;

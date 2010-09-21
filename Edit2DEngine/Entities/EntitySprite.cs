@@ -204,11 +204,25 @@ namespace Edit2DEngine.Entities
                 this.TexIndices[5] = 3;
             }
 
-            //float midWidth = this.Size.X / 2f;
-            //float midHeight = this.Size.Y / 2f;
+            //--- Calculer les vecteurs minimaux et maximaux pour l'AABB
+            Vector2 vecMin = new Vector2(float.MaxValue, float.MaxValue);
+            Vector2 vecMax = new Vector2(float.MinValue, float.MinValue);
 
-            AABB boundingBox = new AABB(vertices);
+            foreach (Vector2 vector in vertices)
+            {
+                if (vector.X < vecMin.X)
+                    vecMin.X = vector.X;
+                if (vector.X > vecMax.X)
+                    vecMax.X = vector.X;
+                if (vector.Y < vecMin.Y)
+                    vecMin.Y = vector.Y;
+                if (vector.Y > vecMax.Y)
+                    vecMax.Y = vector.Y;
+            }
+            //---
 
+            AABB boundingBox = new AABB(ref vecMin, ref vecMax);
+            
             float midWidth = boundingBox.Width / 2f;
             float midHeight = boundingBox.Height / 2f;
 
