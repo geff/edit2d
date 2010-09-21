@@ -203,11 +203,11 @@
     <Compile Include="XNA\ServiceContainer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CurveEditor\CurveControl\CurveControl.csproj">
+    <ProjectReference Include="..\CurveEditor\CurveControl\CurveControl_2008.csproj">
       <Project>{C2A845A6-EF89-4D81-9C77-269BFDC5759F}</Project>
       <Name>CurveControl</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Edit2DEngine\Edit2DEngine.csproj">
+    <ProjectReference Include="..\Edit2DEngine\Edit2DEngine_2008.csproj">
       <Project>{5C65D8A9-7565-4315-93B8-9DA83320F109}</Project>
       <Name>Edit2DEngine</Name>
     </ProjectReference>
