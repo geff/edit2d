@@ -21,6 +21,7 @@ namespace Edit2DEngine.Entities
 {
     public class Entity : IActionHandler, ITriggerHandler, ITriggerMouseHandler, IMoveableObject, IResizeableObject, ISelectableObject, ICustomPropertyHandler, ICloneable
     {
+        private Boolean _isClone = false;
         private Vector2 _position = Vector2.Zero;
         public Microsoft.Xna.Framework.Rectangle Rectangle { get; set; }
         public int UniqueId { get; set; }
@@ -63,9 +64,12 @@ namespace Edit2DEngine.Entities
             }
             set
             {
-                foreach (EntityComponent entityComponent in this.ListEntityComponent)
+                if (!_isClone)
                 {
-                    entityComponent.Position += value - _position;
+                    foreach (EntityComponent entityComponent in this.ListEntityComponent)
+                    {
+                        entityComponent.Position += value - _position;
+                    }
                 }
 
                 _position = value;
@@ -136,6 +140,7 @@ namespace Edit2DEngine.Entities
             //TODO : gérer la méthode de clone de Entity
             Entity clone = new Entity(this.Name);
 
+            clone._isClone = true;
             clone.Name = this.Name;
 
             //--- Centre de l'entité
@@ -268,6 +273,9 @@ namespace Edit2DEngine.Entities
 
         public void UpdateRectangle()
         {
+            if (_isClone)
+                return;
+
             float left = float.MaxValue;
             float right = float.MinValue;
             float top = float.MaxValue;
@@ -287,6 +295,8 @@ namespace Edit2DEngine.Entities
             }
 
             this.Rectangle = new Microsoft.Xna.Framework.Rectangle((int)left, (int)top, (int)(right - left), (int)(bottom - top));
+
+            _position = new Vector2(left + this.Center.X, top + this.Center.Y);
         }
 
         #region IResizeableObject Membres

@@ -55,9 +55,9 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FarseerPhysics, Version=2.1.1.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\FarseerPhysics.dll</HintPath>
+    <Reference Include="FarseerPhysics_2008, Version=2.1.1.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\Lib\FarseerPhysics_2008.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86">
       <Private>False</Private>
