@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C# Express 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edit2D", "Edit2D\Edit2D.csproj", "{234E9085-8B73-4BBA-8363-6898048124AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edit2D", "Edit2D\Edit2D_2008.csproj", "{234E9085-8B73-4BBA-8363-6898048124AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurveControl", "CurveEditor\CurveControl\CurveControl.csproj", "{C2A845A6-EF89-4D81-9C77-269BFDC5759F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurveControl", "CurveEditor\CurveControl\CurveControl_2008.csproj", "{C2A845A6-EF89-4D81-9C77-269BFDC5759F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edit2DEngine", "Edit2DEngine\Edit2DEngine.csproj", "{5C65D8A9-7565-4315-93B8-9DA83320F109}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edit2DEngine", "Edit2DEngine\Edit2DEngine_2008.csproj", "{5C65D8A9-7565-4315-93B8-9DA83320F109}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip", "Blip\Blip.csproj", "{847D29FD-0E8A-4D52-948F-9BE608094EDA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blip", "Blip\Blip_2008.csproj", "{847D29FD-0E8A-4D52-948F-9BE608094EDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
