@@ -40,6 +40,11 @@ public static class ColorExtension
         return boolTab;
     }
 
+    public static Color ToXnaColor(this System.Drawing.Color color)
+    {
+        return new Color(color.R, color.G, color.B, color.A);
+    }
+
     public static string ArrayToString(this bool[] boolTab)
     {
         string boolString = "{";
