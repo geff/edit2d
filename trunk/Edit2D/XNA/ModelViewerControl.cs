@@ -89,7 +89,7 @@ namespace WinFormsContentLoading
             this.repository = repository;
             this.lineBrush = new LineBrush(1, Color.Red);
             this.rectangleBrush = new RectangleBrush(10, 10, Color.DarkGreen, Color.DarkKhaki);
-
+            
             // Start the animation timer.
             timer = Stopwatch.StartNew();
 
@@ -820,6 +820,7 @@ namespace WinFormsContentLoading
 
                     //---
                     Rectangle recEntity = Rectangle.Empty;
+
                     Vector3 vecPosEntity = new Vector3(entity.Rectangle.X, entity.Rectangle.Y, 0f);
                     Vector3 vecSizeEntity = new Vector3(entity.Rectangle.Width, entity.Rectangle.Height, 0);
 
@@ -839,7 +840,11 @@ namespace WinFormsContentLoading
                     recEntityCenter = new Rectangle((int)vecPosEntity.X, (int)vecPosEntity.Y, textureCenter.Width, textureCenter.Height);
                     //---
 
-                    this.spriteBatch.Draw(TextureManager.LoadUITexture2D("Empty"), recEntity, null, Color.Khaki);
+                    recEntity.Inflate(2, 2);
+                    this.spriteBatch.Draw(TextureManager.LoadUITexture2D("Empty"), recEntity, null, WinformVisualStyle.SelectedColor.ToXnaColor());
+
+                    recEntity.Inflate(-2, -2);
+                    this.spriteBatch.Draw(TextureManager.LoadUITexture2D("Empty"), recEntity, null, WinformVisualStyle.MouseOverColor.ToXnaColor());
                     this.spriteBatch.Draw(textureCenter, recEntityCenter, null, Color.White);
 
                     this.spriteBatch.End();
