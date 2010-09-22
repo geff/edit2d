@@ -40,7 +40,7 @@ namespace Edit2DEngine.Entities
             set
             {
                 //---> Change la position de l'objet lorsque le centre est redéfini
-                //_position = _position - this.Center + value;
+                _position = _position - this.Center + value;
 
                 CenterPercent = value / this.Size;
             }
@@ -64,15 +64,16 @@ namespace Edit2DEngine.Entities
             }
             set
             {
+                Vector2 delta = value - _position;
+                _position = value;
+
                 if (!_isClone)
                 {
                     foreach (EntityComponent entityComponent in this.ListEntityComponent)
                     {
-                        entityComponent.Position += value - _position;
+                        entityComponent.Position += delta;
                     }
                 }
-
-                _position = value;
             }
         }
 
@@ -142,12 +143,6 @@ namespace Edit2DEngine.Entities
 
             clone._isClone = true;
             clone.Name = this.Name;
-
-            //--- Centre de l'entité
-            //Vector2 deltaPosition = this.Center - clone.Center;
-            //if (deltaPosition != Vector2.Zero)
-            //    clone.SetNewCenter(deltaPosition, false);
-
             clone.Rotation = this.Rotation;
             clone.Position = this.Position;
             clone.Rectangle = this.Rectangle;

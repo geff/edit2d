@@ -317,9 +317,13 @@ namespace Edit2DEngine.Entities
             {
                 Microsoft.Xna.Framework.Rectangle rectangle = Microsoft.Xna.Framework.Rectangle.Empty;
 
-                rectangle.Location = new Microsoft.Xna.Framework.Point((int)_geom.AABB.Min.X, (int)_geom.AABB.Min.Y);
-                rectangle.Width = (int)_geom.AABB.Max.X - rectangle.Left;
-                rectangle.Height = (int)_geom.AABB.Max.Y - rectangle.Top;
+                //rectangle.Location = new Microsoft.Xna.Framework.Point((int)Math.Round((double)_geom.AABB.Min.X), (int)Math.Round((double)_geom.AABB.Min.Y));
+                //rectangle.Width = (int)Math.Round((double)(_geom.AABB.Max.X - _geom.AABB.Min.X));
+                //rectangle.Height = (int)Math.Round((double)(_geom.AABB.Max.Y - _geom.AABB.Min.Y));
+
+                rectangle.Location = new Microsoft.Xna.Framework.Point((int)(this.Position.X - this.Center.X), (int)(this.Position.Y - this.Center.Y));
+                rectangle.Width = (int)this.Size.X;
+                rectangle.Height= (int)this.Size.Y;
 
                 return rectangle;
             }
