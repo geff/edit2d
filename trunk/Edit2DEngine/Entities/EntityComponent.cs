@@ -26,7 +26,7 @@ namespace Edit2DEngine.Entities
 
         public List<Script> ListScript { get; set; }
         public List<TriggerBase> ListTrigger { get; set; }
-        //TODO : gérer les cutsom properties
+        //TODO : gérer les custom properties
         public Dictionary<string, object> ListCustomProperties { get; set; }
 
         [Browsable(false)]

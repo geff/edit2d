@@ -261,6 +261,7 @@ namespace Edit2DEngine.Entities
             Entity entityParent = (Entity)this.EntityParent.Clone();
             EntitySprite clone = new EntitySprite(false, false, this.TextureName, this.Name, entityParent);
 
+            clone._isClone = true;
             entityParent.ListEntityComponent.Add(clone);
 
             clone.Size = this.Size;
@@ -269,6 +270,7 @@ namespace Edit2DEngine.Entities
             clone.Rotation = this.Rotation;
             clone._relativePosition = this.RelativePosition;
             clone.SetPosition(this.Position, Vector2.Zero);
+            //clone.Center = this.Center;
 
             //clone.EntityParent.Rectangle = this.EntityParent.Rectangle;
             //clone.EntityParent.Position = this.EntityParent.Position;
