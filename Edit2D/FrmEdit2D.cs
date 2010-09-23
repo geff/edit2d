@@ -87,7 +87,7 @@ namespace Edit2D
 
             InitRender();
 
-            repository.CurrentTextureName = "BigRec";
+            repository.CurrentTextureName = "BigRec2";
             repository.CurrentPointer2.WorldPosition = new Vector2(450, 150);
             repository.CurrentPointer.WorldPosition = new Vector2(600, 200);
             repository.FrmEdit2D = this;
@@ -169,6 +169,7 @@ namespace Edit2D
             //WinformVisualStyle.ApplyStyle(this, "AlmostDarkGrayBlue");
 
             AddEntity();
+            repository.CurrentEntityPhysic.Rotation = 0.7853f;
             repository.keyCtrlPressed = true;
             AddEntity();
             repository.keyCtrlPressed = false;
@@ -1173,7 +1174,10 @@ namespace Edit2D
             {
                 if (selection.ResizeableObject != null && selection.MoveableObject != null)
                 {
-                    selection.ResizeableObject.Center = selection.Pointer.WorldPosition - selection.MoveableObject.Position + selection.ResizeableObject.Center;
+                    if (selection.Object is Entity)
+                        selection.ResizeableObject.Center = selection.Pointer.WorldPosition - selection.MoveableObject.Position + selection.ResizeableObject.Center;
+                    else if (selection.Object is EntityComponent)
+                        selection.ResizeableObject.Center = selection.Pointer.WorldPosition;
                 }
             }
 

@@ -24,6 +24,7 @@ namespace Edit2DEngine.Entities
         protected Vector2 _center = Vector2.Zero;
         protected Vector2 _relativePosition = Vector2.Zero;
         protected Boolean _addedToPhysicSimulator = false;
+        protected Boolean _isClone;
 
         [Category("Spring")]
         public List<LinearSpring> ListLinearSpring { get; set; }
@@ -47,21 +48,13 @@ namespace Edit2DEngine.Entities
         [Browsable(false)]
         public override Microsoft.Xna.Framework.Vector2 Center
         {
-            //get { return new Microsoft.Xna.Framework.Vector2(this.Size.Width / 2, this.Size.Height / 2); }
-            //get { return new Microsoft.Xna.Framework.Vector2(this.Size.Width / 6, this.Size.Height / 2); }
-
-            //get { return new Microsoft.Xna.Framework.Vector2(0,0); }
-            //get { return new Microsoft.Xna.Framework.Vector2(50, 50); }
-            //get { return new Microsoft.Xna.Framework.Vector2(NativeImageSize.Width / 2, NativeImageSize.Height / 2); }
-
             get
             {
                 return _center;
             }
             set
             {
-                _center = value;
-                //CreateVerticesForRendering();
+                this.SetCenterFromWorldPosition(value, true);
             }
         }
 
@@ -265,30 +258,21 @@ namespace Edit2DEngine.Entities
 
             Geom.LocalVertices.Translate(ref deltaPosition);
 
-            ////---
-            //TexVertices[0].Position += new Vector3(deltaPosition+new Vector2(50f), 0f);
-            //TexVertices[1].Position += new Vector3(deltaPosition + new Vector2(50f), 0f);
-            //TexVertices[2].Position += new Vector3(deltaPosition + new Vector2(50f), 0f);
-            //TexVertices[3].Position += new Vector3(deltaPosition + new Vector2(50f), 0f);
-            ////---
-
             DistanceGrid.Instance.RemoveDistanceGrid(this.Geom);
             DistanceGrid.Instance.CreateDistanceGrid(this.Geom);
 
             deltaPosition = -deltaPosition;
 
-            Vector2 worldPosition = this._body.GetWorldPosition(deltaPosition);
+            Vector2 worldPosition = _body.GetWorldPosition(deltaPosition);
 
-            this.Center += deltaPosition;
-            this.Position = worldPosition;
+            _center += deltaPosition;
+            this.SetPosition(worldPosition, Vector2.Zero);
             this.Rotation = rotation;
-
-            //CreateVerticesForRendering(
         }
 
         public void SetCenterFromWorldPosition(Vector2 worldPosition, bool addToPhysicSimulator)
         {
-            this.SetNewCenter(this._body.GetLocalPosition(worldPosition), addToPhysicSimulator);
+            this.SetNewCenter(_body.GetLocalPosition(worldPosition), addToPhysicSimulator);
         }
 
         public override bool ContainsLocation(Vector2 location)
