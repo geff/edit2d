@@ -63,4 +63,14 @@ public static class ColorExtension
         float pdot = vec1.X * vec2.Y - vec1.Y * vec2.X;
         return (float)Math.Atan2(pdot, dot);
     }
+
+    public static Vector3 GetVector3(this Vector2 vec)
+    {
+        return new Vector3(vec, 0f);
+    }
+
+    public static Vector2 GetVector2(this Vector3 vec)
+    {
+        return new Vector2(vec.X, vec.Y);
+    }
 }

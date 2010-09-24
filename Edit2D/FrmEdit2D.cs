@@ -520,7 +520,6 @@ namespace Edit2D
         public void EntitySelectionChange(bool refreshTreeView, bool clearSelection, Object newSelection)
         {
             //--- Ne pas activer le changement de sélection si l'entité est déja dans la liste
-            //TODO : voir si ce bout de code ne pose pas problème
             if (repository.ListSelection.Exists(s => s.Object == newSelection))
             {
                 Selection selection = repository.ListSelection.Find(s => s.Object == newSelection);
@@ -575,6 +574,9 @@ namespace Edit2D
 
                 if (refreshTreeView && !ObjectContainsElement(newSelection))
                     treeView.RefreshView<Entity>((Entity)newSelection);
+
+                //---> Stock en mémoire pour chaque EntityComponent enfant l'angle de rotation avant la sélection de l'Entity parent
+                ((Entity)newSelection).ListEntityComponent.ForEach(ec => ec.PrevRotation = ec.Rotation);
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.CurrentEntity;
             }
@@ -1172,17 +1174,12 @@ namespace Edit2D
         {
             foreach (Selection selection in repository.ListSelection)
             {
-                if (selection.ResizeableObject != null && selection.MoveableObject != null)
+                if (selection.ResizeableObject != null)
                 {
-                    if (selection.Object is Entity)
-                        selection.ResizeableObject.Center = selection.Pointer.WorldPosition - selection.MoveableObject.Position + selection.ResizeableObject.Center;
-                    else if (selection.Object is EntityComponent)
-                        selection.ResizeableObject.Center = selection.Pointer.WorldPosition;
+                    //---> L'accesseur Set de la propriété Center se fait en référence World
+                    selection.ResizeableObject.Center = selection.Pointer.WorldPosition;
                 }
             }
-
-            //TODO : ligne de code à mettre pour la définition du centre des entités physiques
-            //repository.CurrentEntityPhysic.SetCenterFromWorldPosition(repository.CurrentPointer.WorldPosition, true);
 
             Repository.physicSimulator.Update(0.000002f);
         }
@@ -1694,6 +1691,16 @@ namespace Edit2D
 
                 EntitySelectionChange(true, selectedObject);
                 //---
+
+                //--- Si le mode est rotation et l'entité sélectionnée est Entity, alors les EntityComponent sont sélectionnés
+                //if (repository.MouseMode == MouseMode.Rotate && selectedObject is Entity)
+                //{
+                //    foreach (EntityComponent entityComponent in repository.CurrentEntity.ListEntityComponent)
+                //    {
+                //        repository.ListSelection.Add(new Selection(entityComponent, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
+                //    }
+                //}
+                //---
             }
         }
 
@@ -1919,7 +1926,7 @@ namespace Edit2D
                             }
                         }
 
-                        if(repository.CurrentEntity!=null)
+                        if (repository.CurrentEntity != null)
                             this.Text = repository.CurrentEntity.Center.ToString();
                     }
                     //---
@@ -2073,6 +2080,7 @@ namespace Edit2D
                                 angle = vecA.GetAngle(vecB);
 
                                 repository.ListSelection[i].MoveableObject.Rotation = repository.ListSelection[i].Temp.MoveableObject.Rotation + angle;
+                                //repository.ListSelection[i].MoveableObject.SetRotation(repository.ListSelection[i].Temp.MoveableObject.Rotation, angle);
                             }
                         }
                     }

@@ -10,5 +10,7 @@ namespace Edit2DEngine
     {
         Vector2 Position { get; set; }
         float Rotation { get; set; }
+
+        void SetRotation(float prevRotation, float delta);
     }
 }
