@@ -13,8 +13,8 @@ namespace Edit2DEngine.Entities
     public abstract class EntityComponent : ITriggerHandler, IActionHandler, ICloneable, IMoveableObject, IResizeableObject, ISelectableObject, ICustomPropertyHandler
     {
         //[Browsable(false)]
-        public abstract Microsoft.Xna.Framework.Vector2 Center{ get; set; }
- 
+        public abstract Microsoft.Xna.Framework.Vector2 Center { get; set; }
+
         public String Name { get; set; }
         public Entity EntityParent { get; set; }
         public abstract String TreeViewPath { get; }
@@ -36,7 +36,24 @@ namespace Edit2DEngine.Entities
 
         public abstract Vector2 Position { get; set; }
         public abstract float Rotation { get; set; }
+        public float PrevRotation { get; set; }
         public abstract Vector2 Size { get; set; }
         public abstract Rectangle Rectangle { get; }
+
+        public void RotationFromEntityCenter(float prevRotation, float delta)
+        {
+            Vector3 relativePosition = this.Position.GetVector3() - this.EntityParent.Position.GetVector3();
+
+            relativePosition = Vector3.Transform(relativePosition, Matrix.CreateRotationZ(delta));
+
+            this.Position = this.EntityParent.Position + relativePosition.GetVector2();
+            this.Rotation += delta;
+        }
+
+
+        public void SetRotation(float prevRotation, float delta)
+        {
+            this.Rotation = prevRotation + delta;
+        }
     }
 }

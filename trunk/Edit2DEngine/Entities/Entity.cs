@@ -23,6 +23,8 @@ namespace Edit2DEngine.Entities
     {
         private Boolean _isClone = false;
         private Vector2 _position = Vector2.Zero;
+        private float _rotation = 0f;
+
         public Microsoft.Xna.Framework.Rectangle Rectangle { get; set; }
         public int UniqueId { get; set; }
 
@@ -35,14 +37,16 @@ namespace Edit2DEngine.Entities
         {
             get
             {
+                //---> L'accesseur Set de la propriété Center se fait en référence locale
                 return CenterPercent * this.Size;
             }
             set
             {
-                //---> Change la position de l'objet lorsque le centre est redéfini
-                _position = _position - this.Center + value;
+                //---> L'accesseur Set de la propriété Center se fait en référence World
+                CenterPercent = (value - _position + this.Center) / this.Size;
 
-                CenterPercent = value / this.Size;
+                //---> Change la position de l'objet lorsque le centre est redéfini
+                _position = value;
             }
         }
 
@@ -53,7 +57,26 @@ namespace Edit2DEngine.Entities
         public Boolean CenterFixed { get; set; }
 
         [Browsable(true), AttributeAction]
-        public float Rotation { get; set; }
+        public float Rotation
+        {
+            get
+            {
+                return _rotation;
+            }
+            set
+            {
+                float delta = value - _rotation;
+                _rotation = value;
+
+                if (!_isClone)
+                {
+                    foreach (EntityComponent entityComponent in this.ListEntityComponent)
+                    {
+                        entityComponent.RotationFromEntityCenter(entityComponent.PrevRotation, delta);
+                    }
+                }
+            }
+        }
 
         [Browsable(true), AttributeAction]
         public Microsoft.Xna.Framework.Vector2 Position
@@ -318,5 +341,11 @@ namespace Edit2DEngine.Entities
         }
 
         #endregion
+
+
+        public void SetRotation(float prevRotation, float delta)
+        {
+           
+        }
     }
 }

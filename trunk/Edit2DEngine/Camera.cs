@@ -67,5 +67,11 @@ namespace Edit2DEngine
         {
              return Vector2.Distance(pos, this.Position) < 10f;
         }
+
+
+        public void SetRotation(float prevRotation, float delta)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
