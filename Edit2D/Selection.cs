@@ -20,7 +20,7 @@ namespace Edit2D
         public IMoveableObject MoveableObject { get; set; }
         public IResizeableObject ResizeableObject { get; set; }
         public ISelectableObject SelectableObject { get; set; }
-
+        public IInnerClone InnerClone { get; set; }
         public Entity Entity { get; set; }
         public EntityComponent EntityComponent { get; set; }
         public EntityPhysicObject EntityPhysicObject { get; set; }
@@ -74,6 +74,8 @@ namespace Edit2D
                 this.TriggerHandler = (ITriggerHandler)selectedObject;
             if (selectedObject is ICustomPropertyHandler)
                 this.CustomPropertyHandler = (ICustomPropertyHandler)selectedObject;
+            if (selectedObject is IInnerClone)
+                InnerClone = (IInnerClone)selectedObject;
 
             if (createClone)
                 UpdateClone();

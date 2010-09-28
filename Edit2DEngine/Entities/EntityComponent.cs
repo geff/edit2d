@@ -10,9 +10,10 @@ using Edit2DEngine.CustomProperties;
 
 namespace Edit2DEngine.Entities
 {
-    public abstract class EntityComponent : ITriggerHandler, IActionHandler, ICloneable, IMoveableObject, IResizeableObject, ISelectableObject, ICustomPropertyHandler
+    public abstract class EntityComponent : ITriggerHandler, IActionHandler, ICloneable, IMoveableObject, IResizeableObject, ISelectableObject, ICustomPropertyHandler, IInnerClone
     {
-        //[Browsable(false)]
+        public Object CloneObject { get; set; }
+
         public abstract Microsoft.Xna.Framework.Vector2 Center { get; set; }
 
         public String Name { get; set; }
@@ -40,14 +41,21 @@ namespace Edit2DEngine.Entities
         public abstract Vector2 Size { get; set; }
         public abstract Rectangle Rectangle { get; }
 
-        public void RotationFromEntityCenter(float prevRotation, float delta)
+        public void RotationFromEntityCenter(float delta)
         {
-            Vector3 relativePosition = this.Position.GetVector3() - this.EntityParent.Position.GetVector3();
+            Vector3 relativePosition = ((EntityComponent)this.CloneObject).Position.GetVector3() -  ((Entity)this.EntityParent).Position.GetVector3();
 
             relativePosition = Vector3.Transform(relativePosition, Matrix.CreateRotationZ(delta));
 
-            this.Position = this.EntityParent.Position + relativePosition.GetVector2();
-            this.Rotation += delta;
+            Vector2 troncatedPosition = new Vector2();
+
+            troncatedPosition.X = (int)(((Entity)this.EntityParent).Position.X + relativePosition.GetVector2().X);
+            troncatedPosition.Y = (int)(((Entity)this.EntityParent).Position.Y + relativePosition.GetVector2().Y);
+
+            this.Position = troncatedPosition;
+
+            
+            this.Rotation =  ((EntityComponent)this.CloneObject).Rotation+ delta;
         }
 
 

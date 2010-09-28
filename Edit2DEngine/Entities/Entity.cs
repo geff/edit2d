@@ -19,11 +19,12 @@ using Edit2DEngine.CustomProperties;
 
 namespace Edit2DEngine.Entities
 {
-    public class Entity : IActionHandler, ITriggerHandler, ITriggerMouseHandler, IMoveableObject, IResizeableObject, ISelectableObject, ICustomPropertyHandler, ICloneable
+    public class Entity : IActionHandler, ITriggerHandler, ITriggerMouseHandler, IMoveableObject, IResizeableObject, ISelectableObject, ICustomPropertyHandler, ICloneable, IInnerClone
     {
         private Boolean _isClone = false;
         private Vector2 _position = Vector2.Zero;
         private float _rotation = 0f;
+        public Object CloneObject { get; set; }
 
         public Microsoft.Xna.Framework.Rectangle Rectangle { get; set; }
         public int UniqueId { get; set; }
@@ -38,7 +39,13 @@ namespace Edit2DEngine.Entities
             get
             {
                 //---> L'accesseur Set de la propriété Center se fait en référence locale
+                //Vector2 troncatedCenter = new Vector2();
+                //troncatedCenter.X = (int)((CenterPercent * this.Size).X);
+                //troncatedCenter.Y = (int)((CenterPercent * this.Size).Y);
+                //return troncatedCenter;
+
                 return CenterPercent * this.Size;
+
             }
             set
             {
@@ -72,8 +79,11 @@ namespace Edit2DEngine.Entities
                 {
                     foreach (EntityComponent entityComponent in this.ListEntityComponent)
                     {
-                        entityComponent.RotationFromEntityCenter(entityComponent.PrevRotation, delta);
+                        entityComponent.RotationFromEntityCenter(Rotation -  ((Entity)this.CloneObject).Rotation);
                     }
+
+
+                    this.Center = ((Entity)this.CloneObject).Position;
                 }
             }
         }
