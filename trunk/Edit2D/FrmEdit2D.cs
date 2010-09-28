@@ -87,7 +87,7 @@ namespace Edit2D
 
             InitRender();
 
-            repository.CurrentTextureName = "BigRec2";
+            repository.CurrentTextureName = "BigRec";
             repository.CurrentPointer2.WorldPosition = new Vector2(450, 150);
             repository.CurrentPointer.WorldPosition = new Vector2(600, 200);
             repository.FrmEdit2D = this;
@@ -520,19 +520,24 @@ namespace Edit2D
         public void EntitySelectionChange(bool refreshTreeView, bool clearSelection, Object newSelection)
         {
             //--- Ne pas activer le changement de sélection si l'entité est déja dans la liste
-            if (repository.ListSelection.Exists(s => s.Object == newSelection))
-            {
-                Selection selection = repository.ListSelection.Find(s => s.Object == newSelection);
+            //if (repository.ListSelection.Exists(s => s.Object == newSelection))
+            //{
+            //    Selection selection = repository.ListSelection.Find(s => s.Object == newSelection);
 
-                if (repository.keyCtrlPressed)
-                    selection.UpdatePointer(repository.CurrentPointer2);
-                else
-                    selection.UpdatePointer(repository.CurrentPointer);
+            //    if (repository.keyCtrlPressed)
+            //        selection.UpdatePointer(repository.CurrentPointer2);
+            //    else
+            //        selection.UpdatePointer(repository.CurrentPointer);
 
-                selection.UpdateClone();
+            //    //---> Met à jour le clone dans la sélection
+            //    selection.UpdateClone();
 
-                return;
-            }
+            //    //---> Met à jour le clone dans l'objet lui même
+            //    if (selection.InnerClone != null)
+            //        selection.InnerClone.CloneObject = selection.Temp.Object;
+
+            //    return;
+            //}
             //---
 
             //--- Si la touche Ctrl n'est pas préssée, la liste de sélection est vidées
@@ -562,9 +567,11 @@ namespace Edit2D
             else if (newSelection is EntityComponent)
             {
                 repository.ListSelection.Add(new Selection(newSelection, repository.CurrentPointer.WorldPosition, repository.CurrentPointer.ScreenPosition));
-
+                
                 if (refreshTreeView && !ObjectContainsElement(newSelection))
                     treeView.RefreshView<EntityComponent>((EntityComponent)newSelection);
+
+                //((EntityComponent)newSelection).CloneObject = repository.ListSelection.Last().Temp.EntityComponent;
 
                 propertyGrid.PropertyGrid.SelectedObject = newSelection;
             }
@@ -575,8 +582,10 @@ namespace Edit2D
                 if (refreshTreeView && !ObjectContainsElement(newSelection))
                     treeView.RefreshView<Entity>((Entity)newSelection);
 
-                //---> Stock en mémoire pour chaque EntityComponent enfant l'angle de rotation avant la sélection de l'Entity parent
-                ((Entity)newSelection).ListEntityComponent.ForEach(ec => ec.PrevRotation = ec.Rotation);
+                //---> Stock en mémoire l'état de l'objet avant sa manipulation
+                //((Entity)newSelection).CloneObject = repository.ListSelection.Last().Temp.Entity;
+                ((Entity)newSelection).ListEntityComponent.ForEach(ec => ec.CloneObject = ec.Clone());
+                //---
 
                 propertyGrid.PropertyGrid.SelectedObject = repository.CurrentEntity;
             }
@@ -668,8 +677,10 @@ namespace Edit2D
                     treeView.RefreshView(false);
             }
 
-            if (newSelection is ISelectableObject)
-                ((ISelectableObject)newSelection).Selected = true;
+            if (newSelection is IInnerClone)
+            {
+                ((IInnerClone)newSelection).CloneObject = repository.ListSelection.Last().Temp.Object;
+            }
 
             if (repository.ViewingMode == ViewingMode.Script && newSelection is IActionHandler)
                 scriptControl.RefreshScriptControl(true);

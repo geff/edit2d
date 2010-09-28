@@ -31,7 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -92,6 +92,7 @@
     <Compile Include="Entities\Particles\ParticleSystem.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="GameBase.cs" />
+    <Compile Include="IInnerClone.cs" />
     <Compile Include="IMoveableObject.cs" />
     <Compile Include="IResizeableObject.cs" />
     <Compile Include="ISelectableObject.cs" />
