@@ -55,7 +55,7 @@ namespace Edit2D.ParticleControl
             if (Repository.CurrentEntity != null && listBoxParticleSystem.SelectedIndex != -1)
             {
                 //Repository.CurrentParticleSystem = Repository.CurrentEntity.ListParticleSystem[listBoxParticleSystem.SelectedIndex];
-                ((FrmEdit2D)this.ParentForm).EntitySelectionChange(true, false, Repository.CurrentEntity.ListParticleSystem[listBoxParticleSystem.SelectedIndex]);
+                EntitySelectionChange(Repository.CurrentEntity.ListParticleSystem[listBoxParticleSystem.SelectedIndex]);
             }
 
             //CheckNodeGlobalTreeView<ParticleSystem>(Repository.CurrentParticleSystem);

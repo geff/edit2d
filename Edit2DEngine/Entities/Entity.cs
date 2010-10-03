@@ -79,11 +79,10 @@ namespace Edit2DEngine.Entities
                 {
                     foreach (EntityComponent entityComponent in this.ListEntityComponent)
                     {
-                        entityComponent.RotationFromEntityCenter(Rotation -  ((Entity)this.CloneObject).Rotation);
+                        entityComponent.RotationFromEntityCenter(Rotation - ((Entity)this.CloneObject).Rotation);
+                        //---> Détermine le centre de l'entity à chaque rotation d'EntityComponent afin de ne pas avoir une déviation progressive du centre
+                        this.Center = ((Entity)this.CloneObject).Position;
                     }
-
-
-                    this.Center = ((Entity)this.CloneObject).Position;
                 }
             }
         }
@@ -355,7 +354,7 @@ namespace Edit2DEngine.Entities
 
         public void SetRotation(float prevRotation, float delta)
         {
-           
+
         }
     }
 }
