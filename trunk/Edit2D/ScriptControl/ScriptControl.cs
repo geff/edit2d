@@ -124,17 +124,11 @@ namespace Edit2D.ScriptControl
 
         private void listboxScript_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //Repository.CurrentScript = null;
+            Script currentScript = Repository.CurrentActionHandler.ListScript[listboxScript.SelectedIndex];
+            currentAction = -1;
 
-            if (listboxScript.SelectedIndex != -1)
-            {
-                ((FrmEdit2D)this.ParentForm).EntitySelectionChange(true, false, Repository.CurrentActionHandler.ListScript[listboxScript.SelectedIndex]);
-            }
-
-            //    Repository.CurrentScript = Repository.CurrentActionHandler.ListScript[listboxScript.SelectedIndex];
-
+            EntitySelectionChange(currentScript);
             RefreshActionView(true);
-            //CheckNodeGlobalTreeView<Script>(Repository.CurrentScript);
 
             if (Repository.CurrentScript != null)
             {
@@ -327,13 +321,12 @@ namespace Edit2D.ScriptControl
             listboxScript.Items.Clear();
             txtScriptName.Clear();
 
-            if (Repository.CurrentActionHandler == null)
-                return;
-
-
-            for (int i = 0; i < Repository.CurrentActionHandler.ListScript.Count; i++)
+            if (Repository.CurrentActionHandler != null)
             {
-                listboxScript.Items.Add(Repository.CurrentActionHandler.ListScript[i].ScriptName);
+                for (int i = 0; i < Repository.CurrentActionHandler.ListScript.Count; i++)
+                {
+                    listboxScript.Items.Add(Repository.CurrentActionHandler.ListScript[i].ScriptName);
+                }
             }
 
             if (selectScript)
@@ -342,16 +335,16 @@ namespace Edit2D.ScriptControl
                 {
                     listboxScript.SelectedIndex = listboxScript.FindString(Repository.CurrentScript.ScriptName);
                 }
-                else if (Repository.CurrentActionHandler.ListScript.Count > 0)
+                else if (Repository.CurrentActionHandler != null &&
+                         Repository.CurrentActionHandler.ListScript.Count > 0)
                 {
-                    RefreshGlobalTreeView();
                     listboxScript.SelectedIndex = 0;
                 }
                 else
                 {
+                    EntitySelectionChange(Repository.CurrentActionHandler);
+                    currentAction = -1;
                     RefreshActionView(true);
-
-                    RefreshGlobalTreeView<IActionHandler>(Repository.CurrentActionHandler);
                 }
             }
         }
@@ -478,7 +471,6 @@ namespace Edit2D.ScriptControl
                     treeViewAction.SelectedNode = treeViewAction.Nodes[currentAction];
                     currentSubAction = 0;
                     propAction.Visible = true;
-
                 }
                 if (treeViewAction.Nodes.Count > 0)
                 {
@@ -829,7 +821,7 @@ namespace Edit2D.ScriptControl
             //--- Rafraichissement de la liste des scripts et de l'arborescence
             currentAction = -1;
             RefreshScriptView(false);
-            RefreshGlobalTreeView();
+            //RefreshGlobalTreeView();
             //---
 
             //--- Sélectionne le nouveau script
@@ -843,11 +835,20 @@ namespace Edit2D.ScriptControl
         {
             if (Repository.CurrentActionHandler != null && Repository.CurrentScript != null)
             {
+                //IActionHandler currentActionHandler = Repository.CurrentActionHandler;
+
                 //---> Supprime le script de son propriétaire
                 Repository.CurrentActionHandler.ListScript.Remove(Repository.CurrentScript);
 
                 //---> Supprime le script de la sélection
                 Repository.ListSelection.RemoveAll(s => s.Script == Repository.CurrentScript);
+
+                //---> Si le ActionHandler courant n'est plus sélectionné (le script supprimé était le dernier du ActionHandler)
+                //     Défini le ActionHandler comme la sélection courante
+                //if (Repository.CurrentActionHandler == null)
+                //{
+                //    this.EntitySelectionChange(currentActionHandler);
+                //}
 
                 //---> Rafraichi le contrôle en sélectionnant le premier script
                 RefreshScriptView(true);

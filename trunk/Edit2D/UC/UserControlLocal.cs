@@ -22,5 +22,10 @@ namespace Edit2D.UC
         {
             ((FrmEdit2D)this.ParentForm).treeView.CheckNode<T>(nodeToCheck);
         }
+
+        protected void EntitySelectionChange(Object newSelection)
+        {
+            ((FrmEdit2D)this.ParentForm).EntitySelectionChange(false, true, true, newSelection);
+        }
     }
 }

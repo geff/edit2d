@@ -503,18 +503,17 @@ namespace Edit2D.TriggerControl
                 pnlMouse.Visible = false;
                 pnlTime.Visible = false;
                 pnlScript.Visible = false;
+                EntitySelectionChange(Repository.CurrentActionHandler);
 
                 return;
             }
             else
             {
-                ((FrmEdit2D)ParentForm).EntitySelectionChange(true, true, trigger);
-
                 pnlTypeTrigger.Visible = true;
                 pnlScript.Visible = true;
 
                 RefreshTreeViewScript(trigger);
-                CheckNodeGlobalTreeView<TriggerBase>(trigger);
+                EntitySelectionChange(trigger);
             }
 
             if (trigger is TriggerCollision)
@@ -787,7 +786,7 @@ namespace Edit2D.TriggerControl
 
             //--- Rafraichissement de la liste des déclencheurs et de l'arborescence
             RefreshTriggerControl(false);
-            RefreshGlobalTreeView();
+            //RefreshGlobalTreeView();
             //---
 
             //--- Sélectionne le nouveau déclencheur
@@ -801,11 +800,20 @@ namespace Edit2D.TriggerControl
         {
             if (Repository.CurrentTriggerHandler != null && Repository.CurrentTrigger != null)
             {
+                ITriggerHandler currentTriggerHandler = Repository.CurrentTriggerHandler;
+
                 //---> Supprime le trigger de son propriétaire
                 Repository.CurrentTriggerHandler.ListTrigger.Remove(Repository.CurrentTrigger);
 
                 //---> Supprime le trigger de la sélection
                 Repository.ListSelection.RemoveAll(s => s.Trigger == Repository.CurrentTrigger); ;
+
+                //---> Si le TriggerHandler courant n'est plus sélectionné (le trigger supprimé était le dernier du TriggerHandler)
+                //     Défini le TriggerHandler comme la sélection courante
+                if (Repository.CurrentTriggerHandler == null)
+                {
+                    this.EntitySelectionChange(currentTriggerHandler);
+                }
 
                 //---> Rafraichi le contrôle en sélectionnant le premier trigger
                 RefreshTriggerControl(true);
@@ -841,27 +849,25 @@ namespace Edit2D.TriggerControl
             listboxTrigger.Items.Clear();
             txtTriggerName.Clear();
 
-            if (Repository.CurrentTriggerHandler == null)
-                return;
-
-            for (int i = 0; i < Repository.CurrentTriggerHandler.ListTrigger.Count; i++)
+            if (Repository.CurrentTriggerHandler != null)
             {
-                listboxTrigger.Items.Add(Repository.CurrentTriggerHandler.ListTrigger[i].TriggerName);
-            }
+                for (int i = 0; i < Repository.CurrentTriggerHandler.ListTrigger.Count; i++)
+                {
+                    listboxTrigger.Items.Add(Repository.CurrentTriggerHandler.ListTrigger[i].TriggerName);
+                }
 
-            //--- Afffiche les types de trigger selon les spécificités du triggerHandler
-            optTypeTriggerValueOverflow.Visible = (Repository.CurrentTriggerHandler is ITriggerValueChangedHandler);
-            optTypeTriggerCollision.Visible = (Repository.CurrentTriggerHandler is ITriggerCollisionHandler);
-            optTypeTriggerNoCollision.Visible = (Repository.CurrentTriggerHandler is ITriggerCollisionHandler);
-            //---
+                //--- Afffiche les types de trigger selon les spécificités du triggerHandler
+                optTypeTriggerValueOverflow.Visible = (Repository.CurrentTriggerHandler is ITriggerValueChangedHandler);
+                optTypeTriggerCollision.Visible = (Repository.CurrentTriggerHandler is ITriggerCollisionHandler);
+                optTypeTriggerNoCollision.Visible = (Repository.CurrentTriggerHandler is ITriggerCollisionHandler);
+                //---
+            }
 
             if (selectTrigger)
             {
                 if (Repository.CurrentTrigger != null)
                 {
-                    //RefreshGlobalTreeView<TriggerBase>(Repository.CurrentTrigger);
-                    int index = listboxTrigger.FindString(Repository.CurrentTrigger.TriggerName);
-                    listboxTrigger.SelectedIndex = index;
+                    listboxTrigger.SelectedIndex = listboxTrigger.FindString(Repository.CurrentTrigger.TriggerName);
                 }
                 //---> Si le triggerHandler contient des déclencheurs, alors
                 //      L'arborescence est rafraichie
@@ -869,7 +875,6 @@ namespace Edit2D.TriggerControl
                 else if (Repository.CurrentTriggerHandler != null &&
                          Repository.CurrentTriggerHandler.ListTrigger.Count > 0)
                 {
-                    //RefreshGlobalTreeView(false);
                     listboxTrigger.SelectedIndex = 0;
                 }
                 //---> Si le triggerHandler ne contient pas de déclencheurs, alors
@@ -877,7 +882,6 @@ namespace Edit2D.TriggerControl
                 //      L'interface est vidée
                 else
                 {
-                    //RefreshGlobalTreeView<ITriggerHandler>(Repository.CurrentTriggerHandler);
                     SelectTrigger(null);
                 }
             }
